@@ -1,0 +1,3 @@
+Le diagramme circulaire va nous permettre de regrouper les productions des 
+differentes sections sur un meme graphe.
+Et de creer un graphe pour chaque section.
