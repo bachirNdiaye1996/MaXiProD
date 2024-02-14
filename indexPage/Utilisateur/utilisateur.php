@@ -6,40 +6,62 @@ if(!$_SESSION['niveau']){
     header('Location: 404.php');
 }
 
-include "../connexion/conexiondb.php";
+include "../../connexion/conexiondb.php";
+
+
+//Variables
+
+
+
+//** Debut select des receptions
+    $sql = "SELECT * FROM `utilisateur` where `actif`=1 ORDER BY `id` DESC;";
+
+    // On prépare la requête
+    $query = $db->prepare($sql);
+
+    // On exécute
+    $query->execute();
+
+    // On récupère les valeurs dans un tableau associatif
+    $Utilisateurs = $query->fetchAll();
+
+//** Fin select des receptions
+
 
 ?>
+
 
 
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
+
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <link rel="shortcut icon" href="../image/iconOnglet.png" />
+    <link rel="shortcut icon" href="../../image/iconOnglet.png" />
     <title>METAL AFRIQUE</title>
 
     <!-- Custom fonts for this template -->
-    <link href="../indexPage/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="../../indexPage/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link
         href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
         rel="stylesheet">
 
     <!-- Sweet Alert -->
-    <link href="../libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css"/>
-    <script src="../libs/sweetalert2/sweetalert2.min.js"></script>
-    <script src="../libs/sweetalert2/jquery-1.12.4.js"></script>
+    <link href="../../libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css"/>
+    <script src="../../libs/sweetalert2/sweetalert2.min.js"></script>
+    <script src="../../libs/sweetalert2/jquery-1.12.4.js"></script>
 
     <!-- Custom styles for this template -->
-    <link href="../indexPage/css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="../../indexPage/css/sb-admin-2.min.css" rel="stylesheet">
 
     <!-- Custom styles for this page -->
-    <link href="../indexPage/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <link href="../../indexPage/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 
 </head>
 
@@ -47,11 +69,12 @@ include "../connexion/conexiondb.php";
 
     <!-- Page Wrapper -->
     <div id="wrapper">
+
         <!-- Sidebar -->
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
-            <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="../indexPage/accueil.php">
+             <!-- Sidebar - Brand -->
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="../../indexPage/accueil.php">
                 <div class="sidebar-brand-icon rotate-n-15">
                     <i class="fas fa-laugh-wink"></i>
                 </div>
@@ -63,7 +86,7 @@ include "../connexion/conexiondb.php";
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
-                <a class="nav-link" href="../indexPage/accueil.php">
+                <a class="nav-link" href="../../indexPage/accueil.php">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Accueil Dashboard</span></a>
             </li>
@@ -84,10 +107,11 @@ include "../connexion/conexiondb.php";
                     data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Stockage :</h6>
-                        <a class="collapse-item" href="../stockage/reception.php">Réception</a>
-                        <a class="collapse-item active" href="../stockage/transfert.php">Transfert</a>
-                        <a class="collapse-item" href="../stockage/stockage.php">Stockage</a>
-                        <a class="collapse-item" href="../stockage/graphe.php">Graphique</a>
+                        <a class="collapse-item" href="../../stockage/reception.php">Réception</a>
+                        <a class="collapse-item" href="../../stockage/receptionPlanifie.php">Réception planifiée</a>
+                        <a class="collapse-item active" href="../../stockage/transfert.php">Transfert</a>
+                        <a class="collapse-item" href="../../stockage/stockage.php">Stockage</a>
+                        <a class="collapse-item" href="../../stockage/graphe.php">Graphique</a>
                     </div>
                 </div>
             </li>
@@ -193,8 +217,8 @@ include "../connexion/conexiondb.php";
             <!-- Main Content -->
             <div id="content">
 
-                <!-- Topbar -->
-                <nav class="navbar navbar-expand navbar-light bg-white topbar static-top shadow">
+                 <!-- Topbar -->
+                 <nav class="navbar navbar-expand navbar-light bg-white topbar static-top shadow">
                     <!-- Sidebar Toggle (Topbar) -->
                     <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
                         <i class="fa fa-bars"></i>
@@ -307,7 +331,7 @@ include "../connexion/conexiondb.php";
                                 </h6>
                                 <a class="dropdown-item d-flex align-items-center" href="#">
                                     <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="../indexPage/img/undraw_profile_1.svg"
+                                        <img class="rounded-circle" src="../../indexPage/img/undraw_profile_1.svg"
                                             alt="...">
                                         <div class="status-indicator bg-success"></div>
                                     </div>
@@ -319,7 +343,7 @@ include "../connexion/conexiondb.php";
                                 </a>
                                 <a class="dropdown-item d-flex align-items-center" href="#">
                                     <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="../indexPage/img/undraw_profile_2.svg"
+                                        <img class="rounded-circle" src="../../indexPage/img/undraw_profile_2.svg"
                                             alt="...">
                                         <div class="status-indicator"></div>
                                     </div>
@@ -331,7 +355,7 @@ include "../connexion/conexiondb.php";
                                 </a>
                                 <a class="dropdown-item d-flex align-items-center" href="#">
                                     <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="../indexPage/img/undraw_profile_3.svg"
+                                        <img class="rounded-circle" src="../../indexPage/img/undraw_profile_3.svg"
                                             alt="...">
                                         <div class="status-indicator bg-warning"></div>
                                     </div>
@@ -365,7 +389,7 @@ include "../connexion/conexiondb.php";
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo $_SESSION['nomcomplet']; ?></span>
                                 <img class="img-profile rounded-circle"
-                                    src="../indexPage/img/undraw_profile.svg">
+                                    src="../../indexPage/img/undraw_profile.svg">
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
@@ -383,7 +407,7 @@ include "../connexion/conexiondb.php";
                                     Activités
                                 </a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="../index.php">
+                                <a class="dropdown-item" href="../../index.php">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Déconnexion
                                 </a>
@@ -396,16 +420,123 @@ include "../connexion/conexiondb.php";
                 <!-- End of Topbar -->
 
                 <!-- Begin Page Content -->
+
                 <div class="container-fluid">
 
                     <!-- Page Heading -->
-                    <h1 class="h3 mb-4 text-gray-800">Blank Page</h1>
-
-                </div>
-                <!-- /.container-fluid -->
-
-            </div>
-            <!-- End of Main Content -->
+                    <div class="row">
+                        <div class="col-xl-3 col-md-6 mb-1">
+                            <img src="../../image/stockage/ferabeton.jpg" class="img-fluid" alt="" style="border-radius: 50%; margin:20px; opacity: 0.7;" width="200">
+                        </div>
+                    </div>
+                    <!-- DataTales Example -->
+                    <!-- Fade In Utility -->
+                    <div class="col-lg-12">
+                        <div class="card position-relative">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Liste des utilisateurs</h6>
+                            </div>
+                            <div class="row m-2">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                        <thead>
+                                            <tr>       
+                                                <th>Nom complet</th>                                                                                
+                                                <th>Email</th>
+                                                <th>Niveau utilisateur</th>
+                                                <th>Matricule</th>
+                                                <th>Date de création</th>
+                                                <th>Option</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php
+                                                $i=0;
+                                                foreach($Utilisateurs as $utilisateur){
+                                                    $i++;
+                                                    //if($article['status'] == 'termine'){<p><a class="" href="#">Underline opacity 0</a></p>
+                                            ?>
+                                                <tr>
+                                                    <td style="background-color:#CFFEDA ;"><?= $utilisateur['nomcomplet'] ?></td>
+                                                    <td style="background-color:#CFFEDA ;"><?= $utilisateur['email'] ?></td>
+                                                    <td style="background-color:#CFFEDA ;"><?= $utilisateur['niveau'] ?></td>
+                                                    <td style="background-color:#CFFEDA ;"><?= $utilisateur['matricule'] ?></td>
+                                                    <td style="background-color:#CFFEDA ;"><?= $utilisateur['datecreation'] ?></td>
+                                                    <td style="background-color:#CFFEDA ; text-align: center;">
+                                                        <a href="javascript:void(0);" class="suprimerUtilisateur<?= $i ?> px-2 text-danger" title="Suprimer l'utilisateur"><i class="fa fa-cut"></i></a>
+                                                    </td>
+                                                </tr>
+                                                <!-- Pour le sweetAlert Suprimer transfert !-->
+                                                <script>
+                                                    console.log(<?= $i ?>);
+                                                    $(document).ready( function(){
+                                                        $('.suprimerUtilisateur<?= $i ?>').click(function(e) {
+                                                            e.preventDefault();
+                                                            Swal.fire({
+                                                            title: 'En es-tu sure?',
+                                                            text: 'Voulez-vous vraiment suprimer cette réception ?',
+                                                            icon: 'warning',
+                                                            showCancelButton: true,
+                                                            confirmButtonColor: '#3085d6',
+                                                            cancelButtonColor: '#d33',
+                                                            confirmButtonText: "Suprimer la réception",
+                                                            }).then((result) => {
+                                                                if (result.isConfirmed) {                                                                                                                  
+                                                                    $.ajax({
+                                                                            type: "POST",
+                                                                            url: 'supressionReception.php?idsupreception=<?= $reception['idreception'] ?>',
+                                                                            //data: str,
+                                                                            success: function( response ) {
+                                                                                Swal.fire({
+                                                                                    text: 'Réception suprimée avec succes!',
+                                                                                    icon: 'success',
+                                                                                    timer: 3000,
+                                                                                    showConfirmButton: false,
+                                                                                });
+                                                                                location.reload();
+                                                                            },
+                                                                            error: function( response ) {
+                                                                                $('#status').text('Impossible de supprimer cette réception : '+ response.status + " " + response.statusText);
+                                                                                //console.log( response );
+                                                                            }						
+                                                                    });
+                                                                }
+                                                            });
+                                                        });
+                                                    });
+                                                </script>
+                                                <!-- Pour le sweetAlert Suprimer transfert !--> 
+                                            <?php
+                                                }
+                                            ?> 
+                                        </tbody>
+                                    </table>
+                                    <!-- Bouton et pagnination--> 
+                                    <?php 
+                                        //if($_SESSION['niveau']=='kemc'){
+                                    ?>
+                                        <div class="col-md-8 align-items-center">
+                                            <div class="d-flex gap-2 pt-4">
+                                                <?php
+                                                    //if($_SESSION['niveau']=='kemc' && $result2['actifda'] == 0){
+                                                ?>
+                                                    <a href="./creerUtilisateur.php" class="ajouterReception btn btn-success w-lg bouton"><i class="fa fa-plus me-1"></i> Créer utilisateur</a>
+                                                    <a href="../../indexPage/accueil.php" class="btn btn-danger w-lg bouton ml-3"><i class="fa fa-angle-double-left mr-2"></i>Retour</a>
+                                                <?php
+                                                    //} 
+                                                ?>
+                                            </div>
+                                        </div>
+                                    <?php
+                                        //}
+                                    ?>
+                                </div>
+                            </div>
+                            <!-- Tableau d'en bas -->
+                        </div>
+                    </div>
+                </div><!-- /.modal -->
+            </div><!-- div Content -->
 
             <!-- Footer -->
             <footer class="sticky-footer bg-white">
@@ -416,46 +547,32 @@ include "../connexion/conexiondb.php";
             </footer>
             <!-- End of Footer -->
 
-        </div>
-        <!-- End of Content Wrapper -->
+        </div><!-- End of Content Wrapper -->
 
-    </div>
-    <!-- End of Page Wrapper -->
+    </div><!-- End of Content Wrapper -->
 
     <!-- Scroll to Top Button-->
     <a class="scroll-to-top rounded" href="#page-top">
         <i class="fas fa-angle-up"></i>
     </a>
 
-    <!-- Logout Modal-->
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="login.html">Logout</a>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- Bootstrap core JavaScript-->
-    <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../../indexPage/vendor/jquery/jquery.min.js"></script>
+    <script src="../../indexPage/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
     <!-- Core plugin JavaScript-->
-    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="../../indexPage/vendor/jquery-easing/jquery.easing.min.js"></script>
 
     <!-- Custom scripts for all pages-->
-    <script src="js/sb-admin-2.min.js"></script>
+    <script src="../../indexPage/js/sb-admin-2.min.js"></script>
+
+    <!-- Page level plugins -->
+    <script src="../../indexPage/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="../../indexPage/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+    <!-- Page level custom scripts -->
+    <script src="../../indexPage/js/demo/datatables-demo.js"></script>
 
 </body>
 

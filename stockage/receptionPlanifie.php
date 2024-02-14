@@ -11,107 +11,9 @@ include "../connexion/conexiondb.php";
 
 //Variables
 
-//** Debut  Validerectification 
-    $mess2="";
-    if(isset($_POST['Validerectification'])){
-        //print_r($_POST);
-        if(!empty($_POST['motifRectifier'])){  
-            $id=htmlspecialchars($_POST['idreception']);
-            $user=htmlspecialchars($_POST['user']);
-            //$motifRectifier=htmlspecialchars($_POST['motifRectifier']);
-            $req ="UPDATE reception SET actifapprouvreception=1, `status` = 'En cours de rectification', acceptereception=1, user=? WHERE idreception=$id;"; 
-            //$db->query($req); 
-            $reqtitre = $db->prepare($req);
-            $reqtitre->execute(array($user));
-
-
-            $reqMatiere ="UPDATE matiere SET actifapprouvreception=0 WHERE idmatiere = ?;"; 
-            //$db->query($req); 
-            $reqtitreMatiere = $db->prepare($reqMatiere);
-            $reqtitreMatiere->execute(array($id));
-
-            //$messageD=$_SESSION['nomcomplet'].' vient de faire une livraison de piéces pour la DA00'.$_POST['idda'].' Veillez verifier svp! '.'<a href="http://localhost/GestionDemandePiece">Acceder ici.</a>';
-            /*$messageD = "
-            <html>
-            <head>
-            <meta http-equiv='Content-Type' content='text/html; charset=utf-8' />
-                <title>Nouveau compte</title>
-            </head>
-            <body>
-                <div id='email-wrap' style='background: #33ECFF;color: #FFF; border-radius: 10px;'>
-                    <p align='center'>
-                    <img src='https://bootstrapemail.com/img/icons/logo.png' alt='' width=72 height=72>
-                
-                    <h3 align='center'>METAL AFRIQUE EMAIL</h3>
-                
-                    <p align='center'>$_SESSION[nomcomplet] vient de rejeter la commande de piéces dans la DA00$_POST[idda] pour les motifs suivants :</p>
-                    <p align='center' style='color:red'>$_POST[motifrejet]</p>
-                    <p align='center'><a href='http://localhost/GestionDemandePiece'>Cliquez ici pour y acceder.</a></p>
-                    </p>
-                    <br>
-                </div>
-            </body>
-            </html>
-                ";
-            foreach($articlMails as $article){
-                if(($article['niveau'] == 'kemc') || ($article['niveau'] == 'admin')){
-                    envoie_mail($article['nomcomplet'],$article['email'],'Rejeter commande',$messageD);
-                }
-            }*/
-            
-            /*if(isset($_GET['id'])){
-                $id = $_GET['id'];
-                header("location:acueilAdmin1.php?id=$id");
-                exit;
-            }*/
-
-            //Pour éffacer les valeurs enregistrées dans le stockage
-                
-                //** Debut select des receptions
-                    $sql = "SELECT * FROM `matiere` where `actif`=1 and idreception=$id;";
-        
-                    // On prépare la requête
-                    $query = $db->prepare($sql);
-        
-                    // On exécute
-                    $query->execute();
-        
-                    // On récupère les valeurs dans un tableau associatif
-                    $Reception = $query->fetchAll();
-                //** Fin select des receptions
-                
-                foreach ($Reception as $key => $value) {
-                    $epaisseur = $value['epaisseur'];
-                    $nbbobine = $value['nbbobine'];
-                    $lieutransfert = $value['lieutransfert'];
-                    if(($lieutransfert == "Metal1")){ // Vérifie le type de transfert
-                        //Debut inserer le nombre de bobine par epaisseur
-                        $req ="UPDATE epaisseur SET `$epaisseur` = `$epaisseur` - ? where `id`=1;";  //Metal 1
-                        //$db->query($req); 
-                        $reqtitre = $db->prepare($req);
-                        $reqtitre->execute(array($nbbobine));
-                        //Fin inserer le nombre de bobine par epaisseur
-                    }elseif(($lieutransfert == "Metal3")){
-                        //Debut inserer le nombre de bobine par epaisseur
-                        $req ="UPDATE epaisseur SET `$epaisseur` = `$epaisseur` - ? where `id`=3;";  // Metal 3 dit Niambour
-                        //$db->query($req); 
-                        $reqtitre = $db->prepare($req);
-                        $reqtitre->execute(array($nbbobine));
-                        //Fin inserer le nombre de bobine par epaisseur
-                    }
-                }
-            //Fin pour éffacer les valeurs enregistrées 
-
-            header("location: reception.php?");
-            exit;
-        }else{
-        $mess2 = "error";
-        }    
-    }
-//** Fin debut  Validerectification 
 
 //** Debut select des receptions
-    $sql = "SELECT * FROM `reception` where `actif`=1 ORDER BY `idreception` DESC;";
+    $sql = "SELECT * FROM `receptionplanifiee` where `actif`=1 ORDER BY `idreception` DESC;";
 
     // On prépare la requête
     $query = $db->prepare($sql);
@@ -600,7 +502,7 @@ include "../connexion/conexiondb.php";
                        <div class="col-lg-12">
                             <div class="card position-relative">
                                 <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">Voici la liste des réceptions </h6>
+                                    <h6 class="m-0 font-weight-bold text-primary">Voici la liste des réceptions qui sont planifiées</h6>
                                 </div>
                                 <div class="row m-2">
                                     <div class="table-responsive">
@@ -609,7 +511,7 @@ include "../connexion/conexiondb.php";
                                                 <tr>       
                                                     <th>Code réception</th>                                                                                
                                                     <th>Status</th>
-                                                    <th>Créée par</th>
+                                                    <th>Créée par</th>r
                                                     <th>Date de création</th>
                                                     <th>Option</th>
                                                 </tr>
@@ -622,29 +524,20 @@ include "../connexion/conexiondb.php";
                                                         //if($article['status'] == 'termine'){<p><a class="" href="#">Underline opacity 0</a></p>
                                                 ?>
                                                     <tr>
-                                                        <td style="<?php if($reception['acceptereception'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FFBD6E"; ?><?php }?>;">
-                                                            <a href="detailsReception.php?idreception=<?= $reception['idreception'] ?>" class="link-offset-2 link-underline"><?php echo "REC00-".$reception['idreception'] ?></a>
+                                                        <td style="background-color:#91F3AD;">
+                                                            <a href="detailsReceptionPlanifie.php?idreception=<?= $reception['idreception'] ?>" class="link-offset-2 link-underline"><?php echo "REC00-".$reception['idreception'] ?></a>
                                                         </td>
-                                                            <td style="<?php if($reception['acceptereception'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FFBD6E"; ?><?php }?>;"><?= $reception['status'] ?>
+                                                            <td style="background-color:#91F3AD;"><?= $reception['status'] ?>
                                                         </td>
-                                                        <td style="<?php if($reception['acceptereception'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FFBD6E"; ?><?php }?>;">
+                                                        <td style="background-color:#91F3AD;">
                                                             <?= $reception['user'] ?>
                                                         </td>
-                                                        <td style="<?php if($reception['acceptereception'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FFBD6E"; ?><?php }?>;">
+                                                        <td style="background-color:#91F3AD;">
                                                             <?= $reception['datecreation'] ?>
                                                         </td>
-                                                        <td style="<?php if($reception['acceptereception'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FFBD6E"; ?><?php }?>; text-align: center;">
-                                                            <?php if($reception['actifapprouvreception'] == 0 && $_SESSION['niveau'] == 'pontbascule'){ ?>
-                                                                <a data-toggle="modal" data-target=".demandeRectifier<?= $i ?>" title="Demander une rectification à coté de l'administrateur" class="btn btn-warning w-lg bouton ml-3"><i class="fab fa-cloudversify mr-1"></i>Rectifier</a>
-                                                            <?php }?>
-                                                            <?php if($reception['acceptereception'] == 1 && $_SESSION['niveau'] == 'admin'){ ?>
-                                                                <a href="javascript:void(0);" class="autoriserReception<?= $i ?> btn btn-success w-lg bouton ml-3"><i class="fa fa-paper-plane mr-1"></i>Autoriser</a>
-                                                            <?php }?>
-                                                            <?php if($reception['actifapprouvreception'] == 1 && $reception['acceptereception'] == 0 && $_SESSION['niveau'] == 'pontbascule'){ ?>
-                                                                <a href="javascript:void(0);" class="approuverReception<?= $i ?> btn btn-success w-lg bouton ml-3"><i class="fa fa-paper-plane mr-1"></i>Approuver</a>
-                                                            <?php }?>
-                                                            <?php if($reception['actifapprouvreception'] == 1 && $reception['acceptereception'] == 0 && $_SESSION['niveau'] == 'pontbascule'){ ?>
-                                                                <a href="javascript:void(0);" title="Suprimer la réception" class="suprimerReception<?php echo $i; ?> btn btn-danger w-lg bouton ml-3"><i class="fa fa-cut mr-1"></i>Suprimer</a>
+                                                        <td style="background-color:#91F3AD;">
+                                                            <?php if($_SESSION['niveau'] == 'admin'){ ?>
+                                                                <a href="javascript:void(0);" title="Suprimer la réception" class="suprimerReceptionPlanifie<?php echo $i; ?> btn btn-danger w-lg bouton ml-3"><i class="fa fa-cut mr-1"></i>Suprimer</a>
                                                             <?php }?>
                                                         </td>
                                                     </tr>
@@ -653,11 +546,11 @@ include "../connexion/conexiondb.php";
                                                     <script>
                                                         console.log(<?= $i ?>);
                                                         $(document).ready( function(){
-                                                            $('.suprimerReception<?= $i ?>').click(function(e) {
+                                                            $('.suprimerReceptionPlanifie<?= $i ?>').click(function(e) {
                                                                 e.preventDefault();
                                                                 Swal.fire({
                                                                 title: 'En es-tu sure?',
-                                                                text: 'Voulez-vous vraiment suprimer cette réception ?',
+                                                                text: 'Voulez-vous vraiment suprimer la réception '+"<?php echo "REC00-".$reception['idreception'] ?>"+" ?",
                                                                 icon: 'warning',
                                                                 showCancelButton: true,
                                                                 confirmButtonColor: '#3085d6',
@@ -667,52 +560,11 @@ include "../connexion/conexiondb.php";
                                                                     if (result.isConfirmed) {                                                                                                                  
                                                                         $.ajax({
                                                                                 type: "POST",
-                                                                                url: 'supressionReception.php?idsupreception=<?= $reception['idreception'] ?>',
+                                                                                url: 'supressionReception.php?idsupreceptionPlanifie=<?= $reception['idreception'] ?>',
                                                                                 //data: str,
                                                                                 success: function( response ) {
                                                                                     Swal.fire({
                                                                                         text: 'Réception suprimée avec succes!',
-                                                                                        icon: 'success',
-                                                                                        timer: 3000,
-                                                                                        showConfirmButton: false,
-                                                                                    });
-                                                                                    location.reload();
-                                                                                },
-                                                                                error: function( response ) {
-                                                                                    $('#status').text('Impossible de supprimer cette réception : '+ response.status + " " + response.statusText);
-                                                                                    //console.log( response );
-                                                                                }						
-                                                                        });
-                                                                    }
-                                                                });
-                                                            });
-                                                        });
-                                                    </script>
-                                                    <!-- Pour le sweetAlert Suprimer transfert !--> 
-
-                                                    <!-- Pour le sweetAlert autoriser Reception !-->
-                                                    <script>
-                                                        console.log(<?= $i ?>);
-                                                        $(document).ready( function(){
-                                                            $('.autoriserReception<?= $i ?>').click(function(e) {
-                                                                e.preventDefault();
-                                                                Swal.fire({
-                                                                title: 'En es-tu sure?',
-                                                                text: 'Voulez-vous vraiment autoriser cette demande de rectification ?',
-                                                                icon: 'warning',
-                                                                showCancelButton: true,
-                                                                confirmButtonColor: '#3085d6',
-                                                                cancelButtonColor: '#d33',
-                                                                confirmButtonText: "Autoriser la demande",
-                                                                }).then((result) => {
-                                                                    if (result.isConfirmed) {                                                                                                                  
-                                                                        $.ajax({
-                                                                                type: "POST",
-                                                                                url: 'autoriserReception.php?idautoriserreception=<?= $reception['idreception'] ?>',
-                                                                                //data: str,
-                                                                                success: function( response ) {
-                                                                                    Swal.fire({
-                                                                                        text: 'Autorisation suprimée avec succes!',
                                                                                         icon: 'success',
                                                                                         timer: 3000,
                                                                                         showConfirmButton: false,
@@ -835,7 +687,7 @@ include "../connexion/conexiondb.php";
                                             <div class="col-md-8 align-items-center">
                                                 <div class="d-flex gap-2 pt-4">
                                                     <?php
-                                                        if($_SESSION['niveau']=='pontbascule'){
+                                                        if($_SESSION['niveau']=='admin'){
                                                     ?>
                                                         <a href="javascript:void(0);" class="ajouterReception btn btn-success w-lg bouton"><i class="fa fa-plus me-1"></i> Créer reception</a>
                                                     <?php
@@ -854,7 +706,7 @@ include "../connexion/conexiondb.php";
                                                         e.preventDefault();
                                                         Swal.fire({
                                                         title: 'En es-tu sure?',
-                                                        text: 'Voulez-vous vraiment créer une réception ?',
+                                                        text: 'Voulez-vous vraiment créer une nouvelle réception ?',
                                                         icon: 'warning',
                                                         showCancelButton: true,
                                                         confirmButtonColor: '#3085d6',
@@ -864,7 +716,7 @@ include "../connexion/conexiondb.php";
                                                             if (result.isConfirmed) {                                                                                                                  
                                                                 $.ajax({
                                                                         type: "POST",
-                                                                        url: 'creerRecTran.php?creerReception=true&user='+nomcomplet,
+                                                                        url: 'creerRecTran.php?creerReceptionPlanifie=true&user='+nomcomplet,
                                                                         //data: str,
                                                                         success: function( response ) {
                                                                             Swal.fire({
@@ -938,7 +790,7 @@ include "../connexion/conexiondb.php";
                                                         <input class="form-control designa" type="number" name="poidsdeclare" id="example"  placeholder="Taper le poids déclaré">
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6 mt-4">
+                                                <!--<div class="col-md-6 mt-4">
                                                     <div class="mb-6 text-start">
                                                         <label class="form-label fw-bold" for="priorites">Bobine</label>
                                                         <select class="form-control" name="idbobine" value="">
@@ -948,7 +800,7 @@ include "../connexion/conexiondb.php";
                                                             <option>B00945</option>
                                                         </select>
                                                     </div>
-                                                </div>
+                                                </div>!-->
                                                 <div class="col-md-6 mt-4 invisible">
                                                     <div class="mb-3 text-start">
                                                         <label class="form-label fw-bold" for="user" ></label>
@@ -1016,142 +868,6 @@ include "../connexion/conexiondb.php";
                                 </div><!-- /.modal-content -->
                         </div><!-- /.modal-dialog -->
                     </div><!-- /.modal -->
-                    <div class="card position-relative mb-4 col-lg-12 mt-5 ml-2 mr-4">
-                        <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Nombre de bobines par épaisseur</h6>
-                        </div>
-                        <div class="row m-2">
-                            <div class="table-responsive">
-                                <table class="table table-bordered" id="" cellspacing="0">
-                                    <thead>
-                                        <tr>    
-                                            <td>Epaisseurs</td> 
-                                            <th>3</th>
-                                            <th>3.5</th>
-                                            <th>4</th>
-                                            <th>4.5</th>
-                                            <th>5</th>
-                                            <th>5.5</th>
-                                            <th>6</th>
-                                            <th>6.5</th>
-                                            <th>7</th>
-                                            <th>7.5</th>
-                                            <th>8</th>
-                                            <th>8.5</th>
-                                            <th>9</th>
-                                            <th>9.5</th>
-                                            <th>10</th>
-                                            <th>10.5</th>
-                                            <th>11</th>
-                                            <th>11.5</th>
-                                            <th>12</th>
-                                            <th>12.5</th>
-                                            <th>13</th>
-                                            <th>13.5</th>
-                                            <th>14</th>
-                                            <th>14.5</th>
-                                            <th>15</th>
-                                            <th>15.5</th>
-                                            <th>16</th>
-                                            <th>16.5</th>
-                                            <th>17</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>METAL 1</td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['3'] == 0){echo "";}else{echo $EpaisseurM1['3'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['3.5'] == 0){echo "";}else{echo $EpaisseurM1['3.5'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['4'] == 0){echo "";}else{echo $EpaisseurM1['4'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['4.5'] == 0){echo "";}else{echo $EpaisseurM1['4.5'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['5'] == 0){echo "";}else{echo $EpaisseurM1['5'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['5.5'] == 0){echo "";}else{echo $EpaisseurM1['5.5'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['6'] == 0){echo "";}else{echo $EpaisseurM1['6'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['6.5'] == 0){echo "";}else{echo $EpaisseurM1['6.5'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['7'] == 0){echo "";}else{echo $EpaisseurM1['7'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['7.5'] == 0){echo "";}else{echo $EpaisseurM1['7.5'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['8'] == 0){echo "";}else{echo $EpaisseurM1['8'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['8.5'] == 0){echo "";}else{echo $EpaisseurM1['8.5'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['9'] == 0){echo "";}else{echo $EpaisseurM1['9'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['9.5'] == 0){echo "";}else{echo $EpaisseurM1['9.5'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['10'] == 0){echo "";}else{echo $EpaisseurM1['10'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['10.5'] == 0){echo "";}else{echo $EpaisseurM1['10.5'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['11'] == 0){echo "";}else{echo $EpaisseurM1['11'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['11.5'] == 0){echo "";}else{echo $EpaisseurM1['11.5'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['12'] == 0){echo "";}else{echo $EpaisseurM1['12'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['12.5'] == 0){echo "";}else{echo $EpaisseurM1['12.5'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['13'] == 0){echo "";}else{echo $EpaisseurM1['13'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['13.5'] == 0){echo "";}else{echo $EpaisseurM1['13.5'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['14'] == 0){echo "";}else{echo $EpaisseurM1['14'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['14.5'] == 0){echo "";}else{echo $EpaisseurM1['14.5'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['15'] == 0){echo "";}else{echo $EpaisseurM1['15'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['15.5'] == 0){echo "";}else{echo $EpaisseurM1['15.5'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['16'] == 0){echo "";}else{echo $EpaisseurM1['16'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['16.5'] == 0){echo "";}else{echo $EpaisseurM1['16.5'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['17'] == 0){echo "";}else{echo $EpaisseurM1['17'];} ?></td>
-                                        </tr>
-                                        <tr>
-                                            <td>METAL 3</td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['3'] == 0){echo "";}else{echo $EpaisseurM3['3'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['3.5'] == 0){echo "";}else{echo $EpaisseurM3['3.5'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['4'] == 0){echo "";}else{echo $EpaisseurM3['4'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['4.5'] == 0){echo "";}else{echo $EpaisseurM3['4.5'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['5'] == 0){echo "";}else{echo $EpaisseurM3['5'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['5.5'] == 0){echo "";}else{echo $EpaisseurM3['5.5'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['6'] == 0){echo "";}else{echo $EpaisseurM3['6'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['6.5'] == 0){echo "";}else{echo $EpaisseurM3['6.5'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['7'] == 0){echo "";}else{echo $EpaisseurM3['7'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['7.5'] == 0){echo "";}else{echo $EpaisseurM3['7.5'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['8'] == 0){echo "";}else{echo $EpaisseurM3['8'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['8.5'] == 0){echo "";}else{echo $EpaisseurM3['8.5'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['9'] == 0){echo "";}else{echo $EpaisseurM3['9'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['9.5'] == 0){echo "";}else{echo $EpaisseurM3['9.5'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['10'] == 0){echo "";}else{echo $EpaisseurM3['10'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['10.5'] == 0){echo "";}else{echo $EpaisseurM3['10.5'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['11'] == 0){echo "";}else{echo $EpaisseurM3['11'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['11.5'] == 0){echo "";}else{echo $EpaisseurM3['11.5'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['12'] == 0){echo "";}else{echo $EpaisseurM3['12'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['12.5'] == 0){echo "";}else{echo $EpaisseurM3['12.5'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['13'] == 0){echo "";}else{echo $EpaisseurM3['13'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['13.5'] == 0){echo "";}else{echo $EpaisseurM3['13.5'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['14'] == 0){echo "";}else{echo $EpaisseurM3['14'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['14.5'] == 0){echo "";}else{echo $EpaisseurM3['14.5'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['15'] == 0){echo "";}else{echo $EpaisseurM3['15'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['15.5'] == 0){echo "";}else{echo $EpaisseurM3['15.5'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['16'] == 0){echo "";}else{echo $EpaisseurM3['16'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['16.5'] == 0){echo "";}else{echo $EpaisseurM3['16.5'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['17'] == 0){echo "";}else{echo $EpaisseurM3['17'];} ?></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Tableau d'en bas -->
-                    <div class="card position-relative mb-4 col-lg-2 mt-3 ml-5 ">
-                        <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Nombre total de bobine</h6>
-                        </div>
-                        <div class="row m-2">
-                            <div class="table-responsive">
-                                <table class="table table-bordered" id="" cellspacing="0">
-                                    <thead>
-                                        <tr>    
-                                            <td></td>                                                                                   
-                                            <th rowspan="2">Bobines</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>Total</td>
-                                            <td class="text-center" style="background-color:#CFFEDA;" rowspan="2"><?= $nbReception ?></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Tableau d'en bas -->
                 </div> 
             </div><!-- div Content -->
 

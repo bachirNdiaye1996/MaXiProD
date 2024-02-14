@@ -5000,7 +5000,7 @@
 		{
 			start = 0;
 		}
-		else if ( action == "previous" )
+		else if ( action == "precedant" )
 		{
 			start = len >= 0 ?
 				start - len :
@@ -5011,7 +5011,7 @@
 			  start = 0;
 			}
 		}
-		else if ( action == "next" )
+		else if ( action == "suivant" )
 		{
 			if ( start + len < records )
 			{
@@ -10262,7 +10262,7 @@
 		 *      } );
 		 *    } );
 		 */
-		"aLengthMenu": [ 10, 25, 50, 100 ],
+		"aLengthMenu": [ 5, 10, 25, 50, 100 ],
 	
 	
 		/**
@@ -11540,7 +11540,7 @@
 			 *      } );
 			 *    } );
 			 */
-			"sInfo": "Showing _START_ to _END_ of _TOTAL_ entries",
+			"sInfo": "Voir _START_ à _END_ de _TOTAL_ valeurs",
 	
 	
 			/**
@@ -11561,7 +11561,7 @@
 			 *      } );
 			 *    } );
 			 */
-			"sInfoEmpty": "Showing 0 to 0 of 0 entries",
+			"sInfoEmpty": "Voir 0 à 0 de 0 valeurs",
 	
 	
 			/**
@@ -14560,11 +14560,11 @@
 	
 	$.extend( extPagination, {
 		simple: function ( page, pages ) {
-			return [ 'previous', 'next' ];
+			return [ 'precedant', 'suivant' ];
 		},
 	
 		full: function ( page, pages ) {
-			return [  'first', 'previous', 'next', 'last' ];
+			return [  'first', 'precedant', 'suivant', 'last' ];
 		},
 	
 		numbers: function ( page, pages ) {
@@ -14572,11 +14572,11 @@
 		},
 	
 		simple_numbers: function ( page, pages ) {
-			return [ 'previous', _numbers(page, pages), 'next' ];
+			return [ 'precedant', _numbers(page, pages), 'suivant' ];
 		},
 	
 		full_numbers: function ( page, pages ) {
-			return [ 'first', 'previous', _numbers(page, pages), 'next', 'last' ];
+			return [ 'first', 'precedant', _numbers(page, pages), 'suivant', 'last' ];
 		},
 		
 		first_last_numbers: function (page, pages) {
@@ -14633,7 +14633,7 @@
 									}
 									break;
 	
-								case 'previous':
+								case 'precedant':
 									btnDisplay = lang.sPrevious;
 	
 									if ( page === 0 ) {
@@ -14642,7 +14642,7 @@
 									}
 									break;
 	
-								case 'next':
+								case 'suivant':
 									btnDisplay = lang.sNext;
 	
 									if ( pages === 0 || page === pages-1 ) {

@@ -8,13 +8,82 @@ if(!$_SESSION['niveau']){
 
 include "../connexion/conexiondb.php";
 
-?>
+//Variables
+    $valideReception=0;
 
+// Pour insertion details reception
+    if(isset($_POST['CreerReception'])){
+        if(!empty($_POST['referenceusine']) && !empty($_POST['epaisseur'])){
+            $referenceusine=htmlspecialchars($_POST['referenceusine']);
+            $epaisseur=htmlspecialchars($_POST['epaisseur']);
+            $largeur=htmlspecialchars($_POST['largeur']);
+            $user=htmlspecialchars($_POST['user']);
+            $poidsdeclare=htmlspecialchars($_POST['poidsdeclare']);
+            $poidspese=htmlspecialchars($_POST['poidspese']);
+            $idLot=htmlspecialchars($_POST['idLot']);
+            $idbobine=htmlspecialchars($_POST['idbobine']);
+            $idreception=htmlspecialchars($_POST['idreception']);
+            $nbbobine=htmlspecialchars($_POST['nbbobine']);
+
+            //Debut inserer le nombre de bobine par epaisseur
+            $req ="UPDATE epaisseur SET `$epaisseur` = `$epaisseur` + ?;"; 
+            //$db->query($req); 
+            $reqtitre = $db->prepare($req);
+            $reqtitre->execute(array($nbbobine));
+            //Fin inserer le nombre de bobine par epaisseur
+
+
+            $insertUser=$db->prepare("INSERT INTO `matiere` (`idmatiere`, `referenceusine`, `epaisseur`, `largeur`, `poidsdeclare`, `laminage`, `poidspese`, `produitfini`,
+             `travaille`, `idlot`, `annee`, `numprod`, `dateajout`, `idbobine`, `idreception`,`user`,`nbbobine`) VALUES (NULL, ?, ?, ?, ?, '', ?, '', '', ?, '', '', current_timestamp(), '1', ?,?,?);");
+            $insertUser->execute(array($referenceusine,$epaisseur,$largeur,$poidsdeclare,$poidspese,$idLot,$idreception,$user,$nbbobine));
+
+            if(isset($_GET['idbobine'])){
+                $idbobine = $_GET['idbobine'];
+                header("location: detailreception.php?idbobine=$idbobine");
+                exit;
+            }
+            
+        }else{
+            $valideReception=1;
+        }
+    }
+//Fin insertion details reception
+
+//** Debut select des receptions
+    $sql = "SELECT * FROM `matiere` where `idreception`>0 ORDER BY `idmatiere` DESC;";
+
+    // On prépare la requête
+    $query = $db->prepare($sql);
+
+    // On exécute
+    $query->execute();
+
+    // On récupère les valeurs dans un tableau associatif
+    $Reception = $query->fetchAll();
+
+//** Fin select des receptions
+
+//** Debut select des epaisseurs
+    $sqlepaisseur = "SELECT * FROM `epaisseur` where `id`=1;";
+
+    // On prépare la requête
+    $queryepaisseur = $db->prepare($sqlepaisseur);
+
+    // On exécute
+    $queryepaisseur->execute();
+
+    // On récupère les valeurs dans un tableau associatif
+    $Epaisseur = $queryepaisseur->fetch();
+//** Fin select des epaisseurs
+
+
+?>
 
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
+
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -30,11 +99,6 @@ include "../connexion/conexiondb.php";
         href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
         rel="stylesheet">
 
-    <!-- Sweet Alert -->
-    <link href="../libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css"/>
-    <script src="../libs/sweetalert2/sweetalert2.min.js"></script>
-    <script src="../libs/sweetalert2/jquery-1.12.4.js"></script>
-
     <!-- Custom styles for this template -->
     <link href="../indexPage/css/sb-admin-2.min.css" rel="stylesheet">
 
@@ -47,10 +111,11 @@ include "../connexion/conexiondb.php";
 
     <!-- Page Wrapper -->
     <div id="wrapper">
+
         <!-- Sidebar -->
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
-            <!-- Sidebar - Brand -->
+             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="../indexPage/accueil.php">
                 <div class="sidebar-brand-icon rotate-n-15">
                     <i class="fas fa-laugh-wink"></i>
@@ -85,7 +150,7 @@ include "../connexion/conexiondb.php";
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Stockage :</h6>
                         <a class="collapse-item" href="../stockage/reception.php">Réception</a>
-                        <a class="collapse-item active" href="../stockage/transfert.php">Transfert</a>
+                        <a class="collapse-item active" href="../stockage/livraison.php">Transfert</a>
                         <a class="collapse-item" href="../stockage/stockage.php">Stockage</a>
                         <a class="collapse-item" href="../stockage/graphe.php">Graphique</a>
                     </div>
@@ -194,11 +259,13 @@ include "../connexion/conexiondb.php";
             <div id="content">
 
                 <!-- Topbar -->
-                <nav class="navbar navbar-expand navbar-light bg-white topbar static-top shadow">
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
                     <!-- Sidebar Toggle (Topbar) -->
                     <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
                         <i class="fa fa-bars"></i>
                     </button>
+
                     <!-- Topbar Search -->
                     <form
                         class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
@@ -399,26 +466,29 @@ include "../connexion/conexiondb.php";
                 <div class="container-fluid">
 
                     <!-- Page Heading -->
-                    <h1 class="h3 mb-4 text-gray-800">Blank Page</h1>
+                    <h1 class="h3 mb-1 text-gray-800">Details de la RECEPTION N°<?php echo $_GET['idbobine']; ?></h1>
+                    <p class="mb-4">Voila les details de la reception de la bobine.</p>
 
+                    <!-- Content Row -->
+                    <div class="row">
+
+
+                    </div>
+                    <!-- Fin modale pour ajouter reception -->
+                    <!-- /.container-fluid -->
                 </div>
-                <!-- /.container-fluid -->
-
+                <!-- End of Main Content -->
+                <!-- Footer -->
+                <footer class="sticky-footer bg-white">
+                    <div class="text-center text-dark p-3" style="background-color: rgba(0, 0, 0, 0.1);">
+                        METAL AFRIQUE © <script>document.write(new Date().getFullYear())</script> Copyright:
+                        <a class="text-dark" href="https://metalafrique.com//">METALAFRIQUE.COM BY @BACHIR</a>
+                    </div>
+                </footer>
+                <!-- End of Footer -->
             </div>
-            <!-- End of Main Content -->
-
-            <!-- Footer -->
-            <footer class="sticky-footer bg-white">
-                <div class="text-center text-dark p-3" style="background-color: rgba(0, 0, 0, 0.1);">
-                    METAL AFRIQUE © <script>document.write(new Date().getFullYear())</script> Copyright:
-                    <a class="text-dark" href="https://metalafrique.com//">METALAFRIQUE.COM BY @BACHIR</a>
-                </div>
-            </footer>
-            <!-- End of Footer -->
-
+            <!-- End of Content Wrapper -->
         </div>
-        <!-- End of Content Wrapper -->
-
     </div>
     <!-- End of Page Wrapper -->
 
@@ -448,14 +518,21 @@ include "../connexion/conexiondb.php";
     </div>
 
     <!-- Bootstrap core JavaScript-->
-    <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../indexPage/vendor/jquery/jquery.min.js"></script>
+    <script src="../indexPage/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
     <!-- Core plugin JavaScript-->
-    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="../indexPage/vendor/jquery-easing/jquery.easing.min.js"></script>
 
     <!-- Custom scripts for all pages-->
-    <script src="js/sb-admin-2.min.js"></script>
+    <script src="../indexPage/js/sb-admin-2.min.js"></script>
+
+    <!-- Page level plugins -->
+    <script src="../indexPage/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="../indexPage/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+    <!-- Page level custom scripts -->
+    <script src="../indexPage/js/demo/datatables-demo.js"></script>
 
 </body>
 

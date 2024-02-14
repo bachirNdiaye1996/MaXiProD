@@ -10,108 +10,46 @@ include "../connexion/conexiondb.php";
 
 
 //Variables
+// Il faut savoir que metal3 est remplacer par niambour
+$valideTransfert="";
+$idreception = $_GET['idreception'];  // On recupére l'ID de la réception par get
 
-//** Debut  Validerectification 
-    $mess2="";
-    if(isset($_POST['Validerectification'])){
-        //print_r($_POST);
-        if(!empty($_POST['motifRectifier'])){  
-            $id=htmlspecialchars($_POST['idreception']);
+// Pour insertion details reception
+    if(isset($_POST['CreerReception'])){
+        if(!empty($_POST['referenceusine']) && !empty($_POST['epaisseur'])  && !empty($_POST['lieutransfert'])  && !empty($_POST['poidsdeclare'])){
+            $referenceusine=htmlspecialchars($_POST['referenceusine']);
+            $epaisseur=htmlspecialchars($_POST['epaisseur']);
+            //$largeur=htmlspecialchars($_POST['largeur']);
+            $lieutransfert=htmlspecialchars($_POST['lieutransfert']);
+            $commentaire=htmlspecialchars($_POST['commentaire']);
             $user=htmlspecialchars($_POST['user']);
-            //$motifRectifier=htmlspecialchars($_POST['motifRectifier']);
-            $req ="UPDATE reception SET actifapprouvreception=1, `status` = 'En cours de rectification', acceptereception=1, user=? WHERE idreception=$id;"; 
-            //$db->query($req); 
-            $reqtitre = $db->prepare($req);
-            $reqtitre->execute(array($user));
+            $poidsdeclare=htmlspecialchars($_POST['poidsdeclare']);
+            //$poidspese=htmlspecialchars($_POST['poidspese']);
+            //$idLot=htmlspecialchars($_POST['idLot']);
+            $idbobine=htmlspecialchars($_POST['idbobine']);
+            //$idreception=htmlspecialchars($_POST['idreception']);
+            $nbbobine=htmlspecialchars($_POST['nbbobine']);
 
+            if($nbbobine == 0){
+                $valideTransfert="erreurEpaisseur";
+            }else{
+                $insertUser=$db->prepare("INSERT INTO `matiere` (`idmatiere`, `referenceusine`, `epaisseur`, `largeur`, `poidsdeclare`, `laminage`, `poidspese`, `produitfini`,
+                `travaille`, `idlot`, `annee`, `numprod`, `dateajout`, `idbobine`,`user`,`nbbobine`,`commentaire`,`lieutransfert`, `idreception`) VALUES (NULL, ?, ?, '', ?, '', '', '', '', '', '', '', current_timestamp(), '1',?,?,?,?,?);");
+               $insertUser->execute(array($referenceusine,$epaisseur,$poidsdeclare,$user,$nbbobine,$commentaire,$lieutransfert,$idreception));
 
-            $reqMatiere ="UPDATE matiere SET actifapprouvreception=0 WHERE idmatiere = ?;"; 
-            //$db->query($req); 
-            $reqtitreMatiere = $db->prepare($reqMatiere);
-            $reqtitreMatiere->execute(array($id));
-
-            //$messageD=$_SESSION['nomcomplet'].' vient de faire une livraison de piéces pour la DA00'.$_POST['idda'].' Veillez verifier svp! '.'<a href="http://localhost/GestionDemandePiece">Acceder ici.</a>';
-            /*$messageD = "
-            <html>
-            <head>
-            <meta http-equiv='Content-Type' content='text/html; charset=utf-8' />
-                <title>Nouveau compte</title>
-            </head>
-            <body>
-                <div id='email-wrap' style='background: #33ECFF;color: #FFF; border-radius: 10px;'>
-                    <p align='center'>
-                    <img src='https://bootstrapemail.com/img/icons/logo.png' alt='' width=72 height=72>
-                
-                    <h3 align='center'>METAL AFRIQUE EMAIL</h3>
-                
-                    <p align='center'>$_SESSION[nomcomplet] vient de rejeter la commande de piéces dans la DA00$_POST[idda] pour les motifs suivants :</p>
-                    <p align='center' style='color:red'>$_POST[motifrejet]</p>
-                    <p align='center'><a href='http://localhost/GestionDemandePiece'>Cliquez ici pour y acceder.</a></p>
-                    </p>
-                    <br>
-                </div>
-            </body>
-            </html>
-                ";
-            foreach($articlMails as $article){
-                if(($article['niveau'] == 'kemc') || ($article['niveau'] == 'admin')){
-                    envoie_mail($article['nomcomplet'],$article['email'],'Rejeter commande',$messageD);
-                }
-            }*/
+               header("location: detailsReception.php?idreception=$idreception");
+               exit;
+            }
             
-            /*if(isset($_GET['id'])){
-                $id = $_GET['id'];
-                header("location:acueilAdmin1.php?id=$id");
-                exit;
-            }*/
-
-            //Pour éffacer les valeurs enregistrées dans le stockage
-                
-                //** Debut select des receptions
-                    $sql = "SELECT * FROM `matiere` where `actif`=1 and idreception=$id;";
-        
-                    // On prépare la requête
-                    $query = $db->prepare($sql);
-        
-                    // On exécute
-                    $query->execute();
-        
-                    // On récupère les valeurs dans un tableau associatif
-                    $Reception = $query->fetchAll();
-                //** Fin select des receptions
-                
-                foreach ($Reception as $key => $value) {
-                    $epaisseur = $value['epaisseur'];
-                    $nbbobine = $value['nbbobine'];
-                    $lieutransfert = $value['lieutransfert'];
-                    if(($lieutransfert == "Metal1")){ // Vérifie le type de transfert
-                        //Debut inserer le nombre de bobine par epaisseur
-                        $req ="UPDATE epaisseur SET `$epaisseur` = `$epaisseur` - ? where `id`=1;";  //Metal 1
-                        //$db->query($req); 
-                        $reqtitre = $db->prepare($req);
-                        $reqtitre->execute(array($nbbobine));
-                        //Fin inserer le nombre de bobine par epaisseur
-                    }elseif(($lieutransfert == "Metal3")){
-                        //Debut inserer le nombre de bobine par epaisseur
-                        $req ="UPDATE epaisseur SET `$epaisseur` = `$epaisseur` - ? where `id`=3;";  // Metal 3 dit Niambour
-                        //$db->query($req); 
-                        $reqtitre = $db->prepare($req);
-                        $reqtitre->execute(array($nbbobine));
-                        //Fin inserer le nombre de bobine par epaisseur
-                    }
-                }
-            //Fin pour éffacer les valeurs enregistrées 
-
-            header("location: reception.php?");
-            exit;
         }else{
-        $mess2 = "error";
-        }    
+            $valideTransfert="erreurInsertion";
+        }
     }
-//** Fin debut  Validerectification 
+//Fin insertion details reception
+
 
 //** Debut select des receptions
-    $sql = "SELECT * FROM `reception` where `actif`=1 ORDER BY `idreception` DESC;";
+    $sql = "SELECT * FROM `matiere` where `actif`=1 and `idreception`=$idreception ORDER BY `idmatiere` DESC;";
 
     // On prépare la requête
     $query = $db->prepare($sql);
@@ -121,7 +59,6 @@ include "../connexion/conexiondb.php";
 
     // On récupère les valeurs dans un tableau associatif
     $Reception = $query->fetchAll();
-
 //** Fin select des receptions
 
 
@@ -228,6 +165,7 @@ include "../connexion/conexiondb.php";
 
     <!-- Custom styles for this page -->
     <link href="../indexPage/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+
 
 </head>
 
@@ -600,17 +538,21 @@ include "../connexion/conexiondb.php";
                        <div class="col-lg-12">
                             <div class="card position-relative">
                                 <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">Voici la liste des réceptions </h6>
+                                    <h6 class="m-0 font-weight-bold text-primary">Liste des bobines réceptionnées</h6>
                                 </div>
                                 <div class="row m-2">
                                     <div class="table-responsive">
                                         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                             <thead>
                                                 <tr>       
-                                                    <th>Code réception</th>                                                                                
-                                                    <th>Status</th>
+                                                    <th>Code bobine</th>                                                                                
+                                                    <th>Epaisseur</th>
+                                                    <th>Nombre bobine</th>
+                                                    <th>Poids déclaré</th>
+                                                    <th>Lieu de réception</th>
+                                                    <th>Référence usine</th>
                                                     <th>Créée par</th>
-                                                    <th>Date de création</th>
+                                                    <th>Date d'ajout</th>
                                                     <th>Option</th>
                                                 </tr>
                                             </thead>
@@ -619,39 +561,48 @@ include "../connexion/conexiondb.php";
                                                     $i=0;
                                                     foreach($Reception as $reception){
                                                         $i++;
-                                                        //if($article['status'] == 'termine'){<p><a class="" href="#">Underline opacity 0</a></p>
+                                                        //if($article['status'] == 'termine'){
                                                 ?>
                                                     <tr>
-                                                        <td style="<?php if($reception['acceptereception'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FFBD6E"; ?><?php }?>;">
-                                                            <a href="detailsReception.php?idreception=<?= $reception['idreception'] ?>" class="link-offset-2 link-underline"><?php echo "REC00-".$reception['idreception'] ?></a>
-                                                        </td>
-                                                            <td style="<?php if($reception['acceptereception'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FFBD6E"; ?><?php }?>;"><?= $reception['status'] ?>
-                                                        </td>
-                                                        <td style="<?php if($reception['acceptereception'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FFBD6E"; ?><?php }?>;">
-                                                            <?= $reception['user'] ?>
-                                                        </td>
-                                                        <td style="<?php if($reception['acceptereception'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FFBD6E"; ?><?php }?>;">
-                                                            <?= $reception['datecreation'] ?>
-                                                        </td>
-                                                        <td style="<?php if($reception['acceptereception'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FFBD6E"; ?><?php }?>; text-align: center;">
-                                                            <?php if($reception['actifapprouvreception'] == 0 && $_SESSION['niveau'] == 'pontbascule'){ ?>
-                                                                <a data-toggle="modal" data-target=".demandeRectifier<?= $i ?>" title="Demander une rectification à coté de l'administrateur" class="btn btn-warning w-lg bouton ml-3"><i class="fab fa-cloudversify mr-1"></i>Rectifier</a>
+                                                        <td style="background-color:#CFFEDA ;"><?php echo "REC-0".$reception['idreception']."-BOB-0".$reception['idmatiere']  ?></td>
+                                                        <td style="background-color:#CFFEDA ;"><?= $reception['epaisseur'] ?></td>
+                                                        <td style="background-color:#CFFEDA ;"><?= $reception['nbbobine'] ?></td>
+                                                        <td style="background-color:#CFFEDA ;"><?= $reception['poidsdeclare'] ?></td>
+                                                        <td style="background-color:#CFFEDA ;"><?= $reception['lieutransfert'] ?></td>
+                                                        <td style="background-color:#CFFEDA ;"><?= $reception['referenceusine'] ?></td>
+                                                        <td style="background-color:#CFFEDA ;"><?= $reception['user'] ?></td>
+                                                        <td style="background-color:#CFFEDA ;"><?= $reception['dateajout'] ?></td>
+                                                        <td style="background-color:#CFFEDA ;">
+                                                            <?php if($reception['commentaire'] != NULL){ ?>
+                                                                <a href="javascript:void(0);" data-toggle="modal" data-target="#fileModal<?php echo $i; ?>" title="Voir commentaire"><i class="bx bx-trash-alt font-size-18"><i class="far fa-eye"></i></a>
                                                             <?php }?>
-                                                            <?php if($reception['acceptereception'] == 1 && $_SESSION['niveau'] == 'admin'){ ?>
-                                                                <a href="javascript:void(0);" class="autoriserReception<?= $i ?> btn btn-success w-lg bouton ml-3"><i class="fa fa-paper-plane mr-1"></i>Autoriser</a>
+                                                            <?php if($reception['actifapprouvreception'] == 0){ ?>
+                                                                <a href="modifierReception.php?idreception=<?= $_GET['idreception'] ?>&idmatiereModifSimp=<?= $reception['idmatiere'] ?>&epaisseur=<?= $reception['epaisseur'] ?>&nombrebobine=<?= $reception['nbbobine'] ?>" class="px-2" title="Modifier la réception"><i class="far fa-edit"></i></a>
                                                             <?php }?>
-                                                            <?php if($reception['actifapprouvreception'] == 1 && $reception['acceptereception'] == 0 && $_SESSION['niveau'] == 'pontbascule'){ ?>
-                                                                <a href="javascript:void(0);" class="approuverReception<?= $i ?> btn btn-success w-lg bouton ml-3"><i class="fa fa-paper-plane mr-1"></i>Approuver</a>
-                                                            <?php }?>
-                                                            <?php if($reception['actifapprouvreception'] == 1 && $reception['acceptereception'] == 0 && $_SESSION['niveau'] == 'pontbascule'){ ?>
-                                                                <a href="javascript:void(0);" title="Suprimer la réception" class="suprimerReception<?php echo $i; ?> btn btn-danger w-lg bouton ml-3"><i class="fa fa-cut mr-1"></i>Suprimer</a>
+                                                            <?php if($reception['actifapprouvreception'] == 0){ ?>
+                                                                <a href="javascript:void(0);" class="suprimerReception<?= $i ?> px-2 text-danger" title="Suprimer la réception"><i class="fa fa-cut"></i></a>
                                                             <?php }?>
                                                         </td>
                                                     </tr>
-
+                                                    <div class="modal fade" id="fileModal<?php echo $i; ?>" tabindex="-1" aria-labelledby="fileModalLabel" aria-hidden="true">
+                                                        <div class="modal-dialog modal-xl modal-dialog-centered">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title" id="fileModalLabel">Description de la réception :</h5>
+                                                                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                                                        <span aria-hidden="true">&times;</span>
+                                                                    </button>
+                                                                </div>  
+                                                                <h6 class="form-label fw-bold" for="nom" style="margin-left:25px; margin-top:10px;">Commentaire :</h6>
+                                                                <div class="modal-body border border-warning" style="margin:70px; border-radius: 15px 30px; margin-top:20px; background-color: #fef1df;">
+                                                                    <h4><?php echo $reception['commentaire']; ?></h4>                                                                                                
+                                                                </div>                                                                                             
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                     <!-- Pour le sweetAlert Suprimer transfert !-->
                                                     <script>
-                                                        console.log(<?= $i ?>);
+                                                        //console.log(<?= $i ?>);
                                                         $(document).ready( function(){
                                                             $('.suprimerReception<?= $i ?>').click(function(e) {
                                                                 e.preventDefault();
@@ -667,7 +618,7 @@ include "../connexion/conexiondb.php";
                                                                     if (result.isConfirmed) {                                                                                                                  
                                                                         $.ajax({
                                                                                 type: "POST",
-                                                                                url: 'supressionReception.php?idsupreception=<?= $reception['idreception'] ?>',
+                                                                                url: 'supressionReception.php?idsupreceptionDetail=<?= $reception['idmatiere'] ?>',
                                                                                 //data: str,
                                                                                 success: function( response ) {
                                                                                     Swal.fire({
@@ -688,141 +639,48 @@ include "../connexion/conexiondb.php";
                                                             });
                                                         });
                                                     </script>
-                                                    <!-- Pour le sweetAlert Suprimer transfert !--> 
+                                                <!-- Pour le sweetAlert Suprimer transfert !--> 
 
-                                                    <!-- Pour le sweetAlert autoriser Reception !-->
-                                                    <script>
-                                                        console.log(<?= $i ?>);
-                                                        $(document).ready( function(){
-                                                            $('.autoriserReception<?= $i ?>').click(function(e) {
-                                                                e.preventDefault();
-                                                                Swal.fire({
-                                                                title: 'En es-tu sure?',
-                                                                text: 'Voulez-vous vraiment autoriser cette demande de rectification ?',
-                                                                icon: 'warning',
-                                                                showCancelButton: true,
-                                                                confirmButtonColor: '#3085d6',
-                                                                cancelButtonColor: '#d33',
-                                                                confirmButtonText: "Autoriser la demande",
-                                                                }).then((result) => {
-                                                                    if (result.isConfirmed) {                                                                                                                  
-                                                                        $.ajax({
-                                                                                type: "POST",
-                                                                                url: 'autoriserReception.php?idautoriserreception=<?= $reception['idreception'] ?>',
-                                                                                //data: str,
-                                                                                success: function( response ) {
-                                                                                    Swal.fire({
-                                                                                        text: 'Autorisation suprimée avec succes!',
-                                                                                        icon: 'success',
-                                                                                        timer: 3000,
-                                                                                        showConfirmButton: false,
-                                                                                    });
-                                                                                    location.reload();
-                                                                                },
-                                                                                error: function( response ) {
-                                                                                    $('#status').text('Impossible de supprimer cette réception : '+ response.status + " " + response.statusText);
-                                                                                    //console.log( response );
-                                                                                }						
-                                                                        });
-                                                                    }
-                                                                });
+                                                <!-- Pour le sweetAlert approuveTransfert !-->
+                                                <script>
+                                                    //console.log(<?= $i ?>);
+                                                    $(document).ready( function(){
+                                                        $('.approuverReception<?= $i ?>').click(function(e) {
+                                                            e.preventDefault();
+                                                            Swal.fire({
+                                                            title: 'En es-tu sure?',
+                                                            text: 'Voulez-vous vraiment approuver cette réception ?',
+                                                            icon: 'warning',
+                                                            showCancelButton: true,
+                                                            confirmButtonColor: '#3085d6',
+                                                            cancelButtonColor: '#d33',
+                                                            confirmButtonText: "Approuver la réception",
+                                                            }).then((result) => {
+                                                                if (result.isConfirmed) {                                                                                                                  
+                                                                    $.ajax({
+                                                                            type: "POST",
+                                                                            url: 'approuveReception.php?idappreception=<?= $reception['idmatiere']?>',
+                                                                            //data: str,
+                                                                            success: function( response ) {
+                                                                                Swal.fire({
+                                                                                    text: 'Réception approuvée avec succes!',
+                                                                                    icon: 'success',
+                                                                                    timer: 3000,
+                                                                                    showConfirmButton: false,
+                                                                                });
+                                                                                location.reload();
+                                                                            },
+                                                                            error: function( response ) {
+                                                                                $('#status').text('Impossible dapprouver ce réception : '+ response.status + " " + response.statusText);
+                                                                                //console.log( response );
+                                                                            }						
+                                                                    });
+                                                                }
                                                             });
                                                         });
-                                                    </script>
-                                                    <!-- Pour le sweetAlert Suprimer transfert !--> 
-
-                                                    <!-- Pour le sweetAlert approuveTransfert !-->
-                                                    <script>
-                                                        //console.log(<?= $i ?>);
-                                                        $(document).ready( function(){
-                                                            $('.approuverReception<?= $i ?>').click(function(e) {
-                                                                e.preventDefault();
-                                                                Swal.fire({
-                                                                title: 'En es-tu sure?',
-                                                                text: 'Voulez-vous vraiment approuver cette réception ?',
-                                                                icon: 'warning',
-                                                                showCancelButton: true,
-                                                                confirmButtonColor: '#3085d6',
-                                                                cancelButtonColor: '#d33',
-                                                                confirmButtonText: "Approuver cette réception",
-                                                                }).then((result) => {
-                                                                    if (result.isConfirmed) {                                                                                                                  
-                                                                        $.ajax({
-                                                                                type: "POST",
-                                                                                url: 'approuveReception.php?idappreception=<?= $reception['idreception']?>',
-                                                                                //data: str,
-                                                                                success: function( response ) {
-                                                                                    Swal.fire({
-                                                                                        text: 'Réception approuvée avec succes!',
-                                                                                        icon: 'success',
-                                                                                        timer: 3000,
-                                                                                        showConfirmButton: false,
-                                                                                    });
-                                                                                    location.reload();
-                                                                                },
-                                                                                error: function( response ) {
-                                                                                    $('#status').text('Impossible dapprouver ce réception : '+ response.status + " " + response.statusText);
-                                                                                    //console.log( response );
-                                                                                }						
-                                                                        });
-                                                                    }
-                                                                });
-                                                            });
-                                                        });
-                                                    </script>
-                                                    <!-- Pour la rectification des receptions !-->
-                                                    <div class="modal fade demandeRectifier<?php echo $i; ?>" id="" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
-                                                        <div class="modal-dialog modal-xl modal-dialog-centered">
-                                                            <div class="modal-content">
-                                                                <div class="modal-header">
-                                                                    <h5 class="modal-title" id="myExtraLargeModalLabel">Demander la rectification de cette reception au prét de l'administrateur</h5>
-                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                                </div>
-                                                                <div class="modal-body">
-                                                                    <form action="#" method="POST" enctype="multipart/form-data">
-                                                                        <div class="row">
-                                                                            <div class="mb-3 col-md-10">
-                                                                                <label class="form-label fw-bold" for="rectification"><h4>Motif de la rectification</h4></label>
-                                                                                <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="motifRectifier" placeholder="Mettez en quelques mots le motif de la rectification svp."></textarea>
-                                                                            </div>
-                                                                            <div class="col-md-6 invisible">
-                                                                                <div class="">
-                                                                                    <input class="form-control" type="text" value="<?= $reception['idreception'] ?>" name="idreception">
-                                                                                </div>
-                                                                            </div> 
-                                                                            <div class="col-md-6 invisible">
-                                                                                <div class="text-start">
-                                                                                    <input class="form-control " type="text" value="<?php echo $_SESSION['nomcomplet'];?>" name="user" id="example-date-input">
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="row mt-2">
-                                                                            <div class="col-md-12 text-end">
-                                                                                <?php 
-                                                                                    if($mess2 == "error"){ 
-                                                                                ?> 
-                                                                                    <script>    Swal.fire({
-                                                                                        text: 'Veillez entrer le motif de la rectification svp!',
-                                                                                        icon: 'error',
-                                                                                        timer: 3500,
-                                                                                        showConfirmButton: false,
-                                                                                        });
-                                                                                    </script> 
-                                                                                <?php
-                                                                                    } 
-                                                                                ?>
-                                                                                    <div class="d-flex gap-2 pt-4">                           
-                                                                                        <a href="#"><input class="btn btn-danger  w-lg bouton" name="" type="submit" value="Annuler"></a>
-                                                                                        <input class="btn btn-success  w-lg bouton ml-4" name="Validerectification" type="submit" value="Enregistrer">
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </form>                             
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div><!-- /.modal --> 
+                                                    });
+                                                </script>
+                                                <!-- Pour le sweetAlert approuveTransfert !--> 
                                                 <?php
                                                     }
                                                 ?> 
@@ -835,57 +693,19 @@ include "../connexion/conexiondb.php";
                                             <div class="col-md-8 align-items-center">
                                                 <div class="d-flex gap-2 pt-4">
                                                     <?php
-                                                        if($_SESSION['niveau']=='pontbascule'){
+                                                        $id = $_GET['idreception'];
+                                                        $sql = "select * from reception where idreception=$id";
+                                                        $result = $db->query($sql);
+                                                        $row = $result->fetch();
+                                                        if($row ['actifapprouvreception']== 1){
                                                     ?>
-                                                        <a href="javascript:void(0);" class="ajouterReception btn btn-success w-lg bouton"><i class="fa fa-plus me-1"></i> Créer reception</a>
+                                                        <a data-toggle="modal" data-target="#add-new" class="btn btn-success  w-lg bouton"><i class="fa fa-plus me-1"></i> Ajouter reception</a>
                                                     <?php
                                                         } 
                                                     ?>
-                                                    <a href="../indexPage/accueil.php" class="btn btn-danger w-lg bouton ml-3"><i class="fa fa-angle-double-left mr-2"></i>Retour</a>
+                                                        <a href="reception.php" class="btn btn-danger w-lg bouton ml-3"><i class="fa fa-angle-double-left mr-2"></i>Retour</a>
                                                 </div>
                                             </div>
-                                            <!-- Pour le sweetAlert approuveTransfert !-->
-                                            <script>
-                                                
-                                                nomcomplet = "<?= $_SESSION['nomcomplet'] ?>"
-                                                console.log("creerRecTran.php?creerReception=true&user="+nomcomplet)
-                                                $(document).ready( function(){
-                                                    $('.ajouterReception').click(function(e) {
-                                                        e.preventDefault();
-                                                        Swal.fire({
-                                                        title: 'En es-tu sure?',
-                                                        text: 'Voulez-vous vraiment créer une réception ?',
-                                                        icon: 'warning',
-                                                        showCancelButton: true,
-                                                        confirmButtonColor: '#3085d6',
-                                                        cancelButtonColor: '#d33',
-                                                        confirmButtonText: "Créer une réception",
-                                                        }).then((result) => {
-                                                            if (result.isConfirmed) {                                                                                                                  
-                                                                $.ajax({
-                                                                        type: "POST",
-                                                                        url: 'creerRecTran.php?creerReception=true&user='+nomcomplet,
-                                                                        //data: str,
-                                                                        success: function( response ) {
-                                                                            Swal.fire({
-                                                                                text: 'Réception créée avec succes!',
-                                                                                icon: 'success',
-                                                                                timer: 3000,
-                                                                                showConfirmButton: false,
-                                                                            });
-                                                                            location.reload();
-                                                                        },
-                                                                        error: function( response ) {
-                                                                            $('#status').text('Impossible de créer une réception : '+ response.status + " " + response.statusText);
-                                                                            //console.log( response );
-                                                                        }						
-                                                                });
-                                                            }
-                                                        });
-                                                    });
-                                                });
-                                            </script>
-                                            <!-- Pour le sweetAlert approuveTransfert !--> 
                                         <?php
                                             //}
                                         ?>
@@ -914,7 +734,37 @@ include "../connexion/conexiondb.php";
                                                 <div class="col-md-6">
                                                     <div class="mb-3 text-start">
                                                         <label class="form-label fw-bold" for="prenom" >Epaisseur</label>
-                                                        <input class="form-control designa" type="number"  step="0.01" name="epaisseur" id="example"  placeholder="Taper l'épaisseur de la bobine">
+                                                        <select class="form-control" name="epaisseur" placeholder="Taper l'épaisseur de la bobine" value="">
+                                                            <option>3</option>
+                                                            <option>3.5</option>
+                                                            <option>4</option>
+                                                            <option>4.5</option>
+                                                            <option>5</option>
+                                                            <option>5.5</option>
+                                                            <option>6</option>
+                                                            <option>6.5</option>
+                                                            <option>7</option>
+                                                            <option>7.5</option>
+                                                            <option>8</option>
+                                                            <option>8.5</option>
+                                                            <option>9</option>
+                                                            <option>9.5</option>
+                                                            <option>10</option>
+                                                            <option>10.5</option>
+                                                            <option>11</option>
+                                                            <option>11.5</option>
+                                                            <option>12</option>
+                                                            <option>12.5</option>
+                                                            <option>13</option>
+                                                            <option>13.5</option>
+                                                            <option>14</option>
+                                                            <option>14.5</option>
+                                                            <option>15</option>
+                                                            <option>15.5</option>
+                                                            <option>16</option>
+                                                            <option>16.5</option>
+                                                            <option>17</option>
+                                                        </select> 
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6">
@@ -928,7 +778,9 @@ include "../connexion/conexiondb.php";
                                                         <label class="form-label fw-bold" for="nom">Lieu de réception</label>
                                                         <select class="form-control" name="lieutransfert" value="">
                                                             <option>Metal1</option>
-                                                            <option>Metal3</option>
+                                                            <option>Niambour</option>
+                                                            <option>Metal Mbao</option>
+                                                            <option>Metal4 (ancien Metalco)</option>
                                                         </select>                                                  
                                                     </div>
                                                 </div>

@@ -1,4 +1,4 @@
-<?php   
+<?php
 
 session_start(); 
 
@@ -8,14 +8,123 @@ if(!$_SESSION['niveau']){
 
 include "../connexion/conexiondb.php";
 
-?>
+//La partie de recupe de l'id et script pour modifier
+    $referenceusine="";
+    $epaisseur="";
+    $largeur="";
+    $laminage="";
+    $poidspese="";
+    $produitfini="";
+    $travaille="";
+    $idlot="";
+    $annee="";
+    $numprod="";
+    $dateajout="";
+    $idbobine="";
+    $user="";
+    $nbbobine="";
 
+
+    $error="";
+    $success="";
+
+
+    if($_SERVER["REQUEST_METHOD"]=='GET'){
+        if(!isset($_GET['idmatiereModifSimp'])){
+            header("location: reception.php");
+            exit;
+        }
+        $id = $_GET['idmatiereModifSimp'];
+        $sql = "select * from matiere where idmatiere=$id";
+        $result = $db->query($sql);
+        $row = $result->fetch();
+        while(!$row){
+            header("location: reception.php");
+        exit;
+        }
+        $referenceusine=$row['referenceusine'];
+        $epaisseur=$row['epaisseur'];
+        $largeur=$row['largeur'];
+        $laminage=$row['laminage'];
+        $poidspese=$row['poidspese'];
+        $produitfini=$row['produitfini'];
+        $travaille=$row['travaille'];
+        $idlot=$row['idlot'];
+        $annee=$row['annee'];
+        $numprod=$row['numprod'];
+        $dateajout=$row['dateajout'];
+        $idbobine=$row['idbobine'];
+        $user=$row['user'];
+        $nbbobine=$row['nbbobine'];
+        //echo $EstDemande;
+    }else{    
+        if(isset($_POST['modifierReception'])){
+            $id = $_GET['idmatiereModifSimp'];
+            $referenceusine=$_POST['referenceusine'];
+            $epaisseur=$_POST['epaisseur'];
+            //$largeur=$_POST['largeur'];
+            $lieutransfert=$_POST['lieutransfert'];
+            $poidsdeclare=$_POST['poidsdeclare'];
+            //$produitfini=$_POST['produitfini'];
+            //$idlot=$_POST['idlot'];
+            //$annee=$_POST['annee'];
+            //$numprod=$_POST['numprod'];
+            $idbobine=$_POST['idbobine'];
+            //$user=$_POST['user'];
+            $nbbobine=$_POST['nbbobine'];
+
+            $sql = "UPDATE `matiere` SET `referenceusine` = '$referenceusine',`epaisseur` = '$epaisseur',`lieutransfert` = '$lieutransfert',`poidsdeclare` = '$poidsdeclare'
+            , `idbobine` = '$idbobine', `nbbobine` = '$nbbobine' WHERE `idmatiere` = ?;";
+            //$result = $db->query($sql); 
+            $sth = $db->prepare($sql);    
+            $sth->execute(array($id));
+
+            /*//Pour une modification avec aprobation
+            $id = $_GET['idmatiereModifSimp'];
+            $sql = "select * from matiere where idmatiere=$id";
+            $result = $db->query($sql);
+            $row = $result->fetch();
+            if($row['actifapprouvreception'] == 1){
+                if()
+                if($epaisseur == $_GET['epaisseur']){
+                    $oldnombrebobine = $_GET['nombrebobine'];
+                    //Debut inserer le nombre de bobine par epaisseur
+                    $req ="UPDATE epaisseur SET `$epaisseur` = `$epaisseur` - $oldnombrebobine + ? where `id`=;";
+                    $reqtitre = $db->prepare($req);
+                    $reqtitre->execute(array($nbbobine));
+                    //Fin inserer le nombre de bobine par epaisseur
+                }else{
+                    $oldepaisseur = $_GET['epaisseur'];
+                    $oldnombrebobine = $_GET['nombrebobine'];
+                    //Debut inserer le nombre de bobine par epaisseur
+                    $req ="UPDATE epaisseur SET `$oldepaisseur` = `$oldepaisseur` - ?;";
+                    $reqtitre = $db->prepare($req);
+                    $reqtitre->execute(array($oldnombrebobine));
+                    //Fin inserer le nombre de bobine par epaisseur
+    
+                    //Debut inserer le nombre de bobine par epaisseur
+                    $req ="UPDATE epaisseur SET `$epaisseur` = `$epaisseur` + ?;";
+                    $reqtitre = $db->prepare($req);
+                    $reqtitre->execute(array($nbbobine));
+                    //Fin inserer le nombre de bobine par epaisseur
+                }
+            }*/
+
+            header("location: detailsReception.php?idreception=$_GET[idreception]");
+            exit;
+        } 
+    }
+//Fin modif
+
+?>
 
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <meta charset="utf-8">
+
+<meta charset="utf-8">
+
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
@@ -30,11 +139,6 @@ include "../connexion/conexiondb.php";
         href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
         rel="stylesheet">
 
-    <!-- Sweet Alert -->
-    <link href="../libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css"/>
-    <script src="../libs/sweetalert2/sweetalert2.min.js"></script>
-    <script src="../libs/sweetalert2/jquery-1.12.4.js"></script>
-
     <!-- Custom styles for this template -->
     <link href="../indexPage/css/sb-admin-2.min.css" rel="stylesheet">
 
@@ -47,10 +151,11 @@ include "../connexion/conexiondb.php";
 
     <!-- Page Wrapper -->
     <div id="wrapper">
+
         <!-- Sidebar -->
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
-            <!-- Sidebar - Brand -->
+             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="../indexPage/accueil.php">
                 <div class="sidebar-brand-icon rotate-n-15">
                     <i class="fas fa-laugh-wink"></i>
@@ -194,11 +299,13 @@ include "../connexion/conexiondb.php";
             <div id="content">
 
                 <!-- Topbar -->
-                <nav class="navbar navbar-expand navbar-light bg-white topbar static-top shadow">
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
                     <!-- Sidebar Toggle (Topbar) -->
                     <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
                         <i class="fa fa-bars"></i>
                     </button>
+
                     <!-- Topbar Search -->
                     <form
                         class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
@@ -307,7 +414,7 @@ include "../connexion/conexiondb.php";
                                 </h6>
                                 <a class="dropdown-item d-flex align-items-center" href="#">
                                     <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="../indexPage/img/undraw_profile_1.svg"
+                                        <img class="rounded-circle" src="img/undraw_profile_1.svg"
                                             alt="...">
                                         <div class="status-indicator bg-success"></div>
                                     </div>
@@ -319,7 +426,7 @@ include "../connexion/conexiondb.php";
                                 </a>
                                 <a class="dropdown-item d-flex align-items-center" href="#">
                                     <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="../indexPage/img/undraw_profile_2.svg"
+                                        <img class="rounded-circle" src="img/undraw_profile_2.svg"
                                             alt="...">
                                         <div class="status-indicator"></div>
                                     </div>
@@ -331,7 +438,7 @@ include "../connexion/conexiondb.php";
                                 </a>
                                 <a class="dropdown-item d-flex align-items-center" href="#">
                                     <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="../indexPage/img/undraw_profile_3.svg"
+                                        <img class="rounded-circle" src="img/undraw_profile_3.svg"
                                             alt="...">
                                         <div class="status-indicator bg-warning"></div>
                                     </div>
@@ -397,15 +504,94 @@ include "../connexion/conexiondb.php";
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
-
-                    <!-- Page Heading -->
-                    <h1 class="h3 mb-4 text-gray-800">Blank Page</h1>
-
+                    <!-- Modale pour ajouter reception -->
+                    <div class="mt-5" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" >
+                        <div class="modal-dialog modal-xl modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="myExtraLargeModalLabel">Modifier la reception</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form action="#" method="POST" enctype="multipart/form-data">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="mb-6 text-start">
+                                                    <label class="form-label fw-bold" for="nom">Usine de provenance</label>
+                                                    <input class="form-control" type="text" name="referenceusine" value="<?php echo $row['referenceusine'];?>" id="example-date-input4" placeholder="Taper la référence de l'usine">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="mb-3 text-start">
+                                                    <label class="form-label fw-bold" for="prenom" >Epaisseur</label>
+                                                    <input class="form-control designa" type="number" value="<?php echo $row['epaisseur'];?>" step="0.01" name="epaisseur" id="example"  placeholder="Taper l'épaisseur de la bobine">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="mb-6 text-start">
+                                                    <label class="form-label fw-bold" for="nom">Nombre de bobine</label>
+                                                    <input class="form-control" type="number" name="nbbobine" value="<?php echo $row['nbbobine'];?>" id="example-date-input4" placeholder="Taper le nombre de bobine">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="mb-6 text-start">
+                                                    <label class="form-label fw-bold" for="nom">Lieu de réception</label>
+                                                    <select class="form-control" name="lieutransfert" value="<?php echo $row['lieutransfert'];?>">
+                                                        <option>Metal1</option>
+                                                        <option>Niambour</option>
+                                                        <option>Metal Mbao</option>
+                                                        <option>Metal4 (ancien Metalco)</option>
+                                                    </select>                                                  
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 mt-3">
+                                                <div class="mb-3 text-start">
+                                                    <label class="form-label fw-bold" for="prenom" >Poids déclare</label>
+                                                    <input class="form-control designa" type="number" value="<?php echo $row['poidsdeclare'];?>" name="poidsdeclare" id="example"  placeholder="Taper le poids déclaré">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 mt-3">
+                                                <div class="mb-3 text-start">
+                                                    <label class="form-label fw-bold" for="priorites">Bobine</label>
+                                                    <select class="form-control" name="idbobine" value="<?php echo $row['idbobine'];?>">
+                                                        <option>B0015</option>
+                                                        <option>B0014</option>
+                                                        <option>B006</option>
+                                                        <option>B00945</option>
+                                                    </select>
+                                                </div>
+                                            </div> 
+                                        </div>
+                                        <div class="row mt-2">
+                                            <div class="col-md-12 text-end">
+                                                <div class="col-md-8 align-items-center col-md-12 text-end">
+                                                    <?php //if($mess == "error"){ ?> <script>    Swal.fire({
+                                                        text: 'Veiller remplir tous les champs svp!',
+                                                        icon: 'error',
+                                                        timer: 2000,
+                                                        showConfirmButton: false,
+                                                        });</script> <?php //} ?>
+                                                    <?php //if(){?> <script>    Swal.fire({
+                                                        text: 'Commande enregistrée avec succès merci!',
+                                                        icon: 'success',
+                                                        timer: 2000,
+                                                        showConfirmButton: false,
+                                                        });</script> <?php //} ?>
+                                                    <div class="d-flex gap-2 pt-4">                           
+                                                        <a class="btn btn-danger  w-lg bouton mr-3" href="detailsReception.php?idreception=<?= $_GET['idreception'] ?>">Annuler</a>
+                                                        <input class="btn btn-success  w-lg bouton mr-3" name="modifierReception" type="submit" value="Modifier">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>  
+                                </div>
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div><!-- /.modal -->
+                    <!-- /.container-fluid -->
                 </div>
-                <!-- /.container-fluid -->
-
-            </div>
-            <!-- End of Main Content -->
+                <!-- End of Main Content -->
 
             <!-- Footer -->
             <footer class="sticky-footer bg-white">
@@ -448,14 +634,21 @@ include "../connexion/conexiondb.php";
     </div>
 
     <!-- Bootstrap core JavaScript-->
-    <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../indexPage/vendor/jquery/jquery.min.js"></script>
+    <script src="../indexPage/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
     <!-- Core plugin JavaScript-->
-    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="../indexPage/vendor/jquery-easing/jquery.easing.min.js"></script>
 
     <!-- Custom scripts for all pages-->
-    <script src="js/sb-admin-2.min.js"></script>
+    <script src="../indexPage/js/sb-admin-2.min.js"></script>
+
+    <!-- Page level plugins -->
+    <script src="../indexPage/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="../indexPage/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+    <!-- Page level custom scripts -->
+    <script src="../indexPage/js/demo/datatables-demo.js"></script>
 
 </body>
 

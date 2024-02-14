@@ -65,9 +65,10 @@
 
             <!-- Nav Item - Tables -->
 
-            <li class="nav-item">
+            <li class="nav-item active">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseReception"
-                    aria-expanded="true" aria-controls="collapseReception">
+                    aria-expanded="true" aria-controls="collapseUtilities">
+                    <i class="fa fa-book fa-fw"></i>
                     <span>Pont Bascule</span>
                 </a>
                 <div id="collapseReception" class="collapse" aria-labelledby="headingReception"
@@ -75,7 +76,8 @@
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Stockage :</h6>
                         <a class="collapse-item" href="../stockage/reception.php">Réception</a>
-                        <a class="collapse-item" href="../stockage/livraison.php">Livraison</a>
+                        <a class="collapse-item" href="../stockage/transfert.php">Transfert</a>
+                        <a class="collapse-item" href="../stockage/stockage.php">Stockage</a>
                         <a class="collapse-item" href="../stockage/graphe.php">Graphique</a>
                     </div>
                 </div>
@@ -370,6 +372,10 @@
                                 <a class="dropdown-item" href="#">
                                     <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Changer paramétres
+                                </a>
+                                <a class="dropdown-item" href="./Utilisateur/utilisateur.php">
+                                    <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Gestion des utilisateurs
                                 </a>
                                 <a class="dropdown-item" href="#">
                                     <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>

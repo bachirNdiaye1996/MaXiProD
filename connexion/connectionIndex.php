@@ -2,13 +2,9 @@
 
     session_start();   
 
-    #$servername = "mysql-boulangerie.alwaysdata.net";
-    $username = "root";
-    $password = "";
-    $db_name = "production";  
+    include "conexiondb.php";
     $mess1="";
 
-    $db = new PDO("mysql:host=localhost;dbname=$db_name;charset=utf8", $username, $password);
     if(isset($_POST['valide'])){
         if(!empty($_POST['username']) && !empty($_POST['password'])){
             $user=htmlspecialchars($_POST['username']);
@@ -28,10 +24,10 @@
                 if($Utilisateur['niveau'] == 'admin'){
                     header('Location: ./indexPage/accueil.php');
                     exit;
-                }/*elseif($Utilisateur['niveau'] == 'kemc' || $Utilisateur['niveau'] == 'mang'){
-                    header('Location: acueilAdmin.php');
+                }elseif($Utilisateur['niveau'] == 'pontbascule'){
+                    header('Location: ./indexPage/accueil.php');
                     exit;
-                }else{
+                }/*else{
                     header('Location: acueil.php');
                     exit;
                 }
