@@ -566,7 +566,7 @@ $idreception = $_GET['idreception'];  // On recupére l'ID de la réception par 
                                                         //if($article['status'] == 'termine'){
                                                 ?>
                                                     <tr>
-                                                        <td style="background-color:#CFFEDA ;"><?php echo "REC-0".$reception['idreception']."-BOB-0".$reception['idmatiereplanifie'] ?></td>
+                                                        <td style="background-color:#CFFEDA ; text-align: center;"><?php echo "REC-0".$reception['idreception']."-BOB-0".$reception['idmatiereplanifie'] ?></td>
                                                         <td style="background-color:#CFFEDA ;"><?= $reception['epaisseur'] ?></td>
                                                         <td style="background-color:#CFFEDA ;"><?= $reception['nbbobine'] ?></td>
                                                         <td style="background-color:#CFFEDA ;"><?= $reception['poidsdeclare'] ?></td>

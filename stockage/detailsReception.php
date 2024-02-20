@@ -201,8 +201,8 @@ $idreception = $_GET['idreception'];  // On recupére l'ID de la réception par 
 
             <!-- Nav Item - Tables -->
 
-            <li class="nav-item active">
-                <a class="nav-link" href="#" data-toggle="collapse" data-target="#collapseReception"
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseReception"
                     aria-expanded="true" aria-controls="collapseUtilities">
                     <i class="fa fa-book fa-fw"></i>
                     <span>Pont Bascule</span>
@@ -213,7 +213,7 @@ $idreception = $_GET['idreception'];  // On recupére l'ID de la réception par 
                         <h6 class="collapse-header">Stockage :</h6>
                         <a class="collapse-item" href="../stockage/reception.php">Réception</a>
                         <a class="collapse-item" href="../stockage/receptionPlanifie.php">Réception planifiée</a>
-                        <a class="collapse-item active" href="../stockage/transfert.php">Transfert</a>
+                        <a class="collapse-item" href="../stockage/transfert.php">Transfert</a>
                         <a class="collapse-item" href="../stockage/stockage.php">Stockage</a>
                         <a class="collapse-item" href="../stockage/graphe.php">Graphique</a>
                     </div>
@@ -576,10 +576,10 @@ $idreception = $_GET['idreception'];  // On recupére l'ID de la réception par 
                                                             <?php if($reception['commentaire'] != NULL){ ?>
                                                                 <a href="javascript:void(0);" data-toggle="modal" data-target="#fileModal<?php echo $i; ?>" title="Voir commentaire"><i class="bx bx-trash-alt font-size-18"><i class="far fa-eye"></i></a>
                                                             <?php }?>
-                                                            <?php if($reception['actifapprouvreception'] == 0){ ?>
+                                                            <?php if($reception['actifapprouvreception'] == 0 && $_SESSION['niveau']=='pontbascule'){ ?>
                                                                 <a href="modifierReception.php?idreception=<?= $_GET['idreception'] ?>&idmatiereModifSimp=<?= $reception['idmatiere'] ?>&epaisseur=<?= $reception['epaisseur'] ?>&nombrebobine=<?= $reception['nbbobine'] ?>" class="px-2" title="Modifier la réception"><i class="far fa-edit"></i></a>
                                                             <?php }?>
-                                                            <?php if($reception['actifapprouvreception'] == 0){ ?>
+                                                            <?php if($reception['actifapprouvreception'] == 0 && $_SESSION['niveau']=='pontbascule'){ ?>
                                                                 <a href="javascript:void(0);" class="suprimerReception<?= $i ?> px-2 text-danger" title="Suprimer la réception"><i class="fa fa-cut"></i></a>
                                                             <?php }?>
                                                         </td>
@@ -693,15 +693,17 @@ $idreception = $_GET['idreception'];  // On recupére l'ID de la réception par 
                                             <div class="col-md-8 align-items-center">
                                                 <div class="d-flex gap-2 pt-4">
                                                     <?php
-                                                        $id = $_GET['idreception'];
-                                                        $sql = "select * from reception where idreception=$id";
-                                                        $result = $db->query($sql);
-                                                        $row = $result->fetch();
-                                                        if($row ['actifapprouvreception']== 1){
+                                                        if($_SESSION['niveau']=='pontbascule'){
+                                                            $id = $_GET['idreception'];
+                                                            $sql = "select * from reception where idreception=$id";
+                                                            $result = $db->query($sql);
+                                                            $row = $result->fetch();
+                                                            if($row ['actifapprouvreception']== 1){
                                                     ?>
                                                         <a data-toggle="modal" data-target="#add-new" class="btn btn-success  w-lg bouton"><i class="fa fa-plus me-1"></i> Ajouter reception</a>
                                                     <?php
-                                                        } 
+                                                            } 
+                                                        }
                                                     ?>
                                                         <a href="reception.php" class="btn btn-danger w-lg bouton ml-3"><i class="fa fa-angle-double-left mr-2"></i>Retour</a>
                                                 </div>

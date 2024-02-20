@@ -622,8 +622,8 @@ include "../connexion/conexiondb.php";
                                                         //if($article['status'] == 'termine'){<p><a class="" href="#">Underline opacity 0</a></p>
                                                 ?>
                                                     <tr>
-                                                        <td style="<?php if($reception['acceptereception'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FFBD6E"; ?><?php }?>;">
-                                                            <a href="detailsReception.php?idreception=<?= $reception['idreception'] ?>" class="link-offset-2 link-underline"><?php echo "REC00-".$reception['idreception'] ?></a>
+                                                        <td style="<?php if($reception['acceptereception'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FFBD6E"; ?><?php }?>; text-align: center;" class="codeReception">
+                                                            <a style="text-decoration: none; font-family: arial; font-size: 20px;" href="detailsReception.php?idreception=<?= $reception['idreception'] ?>" class="link-offset-2 link-underline"><?php echo "REC00-".$reception['idreception'] ?></a>
                                                         </td>
                                                             <td style="<?php if($reception['acceptereception'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FFBD6E"; ?><?php }?>;"><?= $reception['status'] ?>
                                                         </td>
@@ -1172,7 +1172,23 @@ include "../connexion/conexiondb.php";
     <a class="scroll-to-top rounded" href="#page-top">
         <i class="fas fa-angle-up"></i>
     </a>
+    
+    <script>
+        //const test = document.getElementById("codeReception");
 
+        // Briefly make the list purple when the mouse moves off the
+        // <ul> element
+    
+        $(".codeReception").mouseenter(function(event){
+            event.target.style.backgroundColor = "#3333";
+        });
+
+        $(".codeReception").mouseleave(function(event){
+            event.target.style.backgroundColor = "#CFFEDA";
+        });
+
+        
+    </script>
 
     <!-- Bootstrap core JavaScript-->
     <script src="../indexPage/vendor/jquery/jquery.min.js"></script>
