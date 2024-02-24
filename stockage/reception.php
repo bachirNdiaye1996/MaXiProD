@@ -263,7 +263,7 @@ include "../connexion/conexiondb.php";
 
             <!-- Nav Item - Tables -->
 
-            <li class="nav-item active">
+            <li class="nav-item">
                 <a class="nav-link" href="#" data-toggle="collapse" data-target="#collapseReception"
                     aria-expanded="true" aria-controls="collapseUtilities">
                     <i class="fa fa-book fa-fw"></i>
@@ -275,7 +275,7 @@ include "../connexion/conexiondb.php";
                         <h6 class="collapse-header">Stockage :</h6>
                         <a class="collapse-item" href="../stockage/reception.php">Réception</a>
                         <a class="collapse-item" href="../stockage/receptionPlanifie.php">Réception planifiée</a>
-                        <a class="collapse-item active" href="../stockage/transfert.php">Transfert</a>
+                        <a class="collapse-item" href="../stockage/transfert.php">Transfert</a>
                         <a class="collapse-item" href="../stockage/stockage.php">Stockage</a>
                         <a class="collapse-item" href="../stockage/graphe.php">Graphique</a>
                     </div>
