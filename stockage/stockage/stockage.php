@@ -1,11 +1,113 @@
 <?php   
-    session_start(); 
 
-    if(!$_SESSION['niveau']){
-        header('Location: 404.php');
-    }
+session_start(); 
+
+if(!$_SESSION['niveau']){
+    header('Location: 404.php');
+}
+
+include "../../connexion/conexiondb.php";
+
+
+//Variables
+
+//** Nombre des bobines total
+    $sql = "SELECT SUM(`3`) + SUM(`3.5`) + SUM(`4`) + SUM(`4.5`) + SUM(`5`) + SUM(`5.5`) + SUM(`6`) + SUM(`6.5`) + SUM(`7`) + SUM(`7.5`)
+    + SUM(`8`) + SUM(`8.5`) + SUM(`9`) + SUM(`9.5`) + SUM(`10`) + SUM(`10.5`) + SUM(`11`) + SUM(`11.5`) + SUM(`12`) + SUM(`12.5`) + SUM(`13`) + SUM(`13.5`) + 
+    SUM(`14`) + SUM(`14.5`) + SUM(`15`) + SUM(`15.5`) + SUM(`16`) + SUM(`16.5`) + SUM(`17`) AS nb_reception_total FROM `epaisseur` where `lieu`='Metal1';";
+    // On prépare la requête
+    $query = $db->prepare($sql);
+
+    // On exécute
+    $query->execute();
+
+    // On récupère le nombre d'articles
+    $result = $query->fetch();
+
+    $nbReception = (int) $result['nb_reception_total'];
+//** Fin nombre des bobines total 
+
+//** Debut select des epaisseurs pour Metal1
+$sqlepaisseur = "SELECT * FROM `matiere` where MONTH(dateajout)=4;";
+
+// On prépare la requête
+$queryepaisseur = $db->prepare($sqlepaisseur);
+
+// On exécute
+$queryepaisseur->execute();
+
+// On récupère les valeurs dans un tableau associatif
+$Epai = $queryepaisseur->fetchAll();
+//** Fin select des epaisseurs pour Metal1
+
+
+//** Debut select des epaisseurs pour Metal1
+$sqlepaisseur = "SELECT * FROM `epaisseur` where `id`=1;";
+
+// On prépare la requête
+$queryepaisseur = $db->prepare($sqlepaisseur);
+
+// On exécute
+$queryepaisseur->execute();
+
+// On récupère les valeurs dans un tableau associatif
+$EpaisseurM1 = $queryepaisseur->fetch();
+//** Fin select des epaisseurs pour Metal1
+
+//** Debut select des epaisseurs pour Metal3
+$sqlepaisseur = "SELECT * FROM `epaisseur` where `id`=3;";
+
+// On prépare la requête
+$queryepaisseur = $db->prepare($sqlepaisseur);
+
+// On exécute
+$queryepaisseur->execute();
+
+// On récupère les valeurs dans un tableau associatif
+$EpaisseurM3 = $queryepaisseur->fetch();
+//** Fin select des epaisseurs pour Metal3
+
+//** Debut select des epaisseurs pour Cranteuse
+$sqlepaisseur = "SELECT * FROM `epaisseur` where `id`=4;";
+
+// On prépare la requête
+$queryepaisseur = $db->prepare($sqlepaisseur);
+
+// On exécute
+$queryepaisseur->execute();
+
+// On récupère les valeurs dans un tableau associatif
+$EpaisseurCrant = $queryepaisseur->fetch();
+//** Fin select des epaisseurs pour Cranteuse
+
+//** Debut select des epaisseurs pour Tref
+$sqlepaisseur = "SELECT * FROM `epaisseur` where `id`=5;";
+
+// On prépare la requête
+$queryepaisseur = $db->prepare($sqlepaisseur);
+
+// On exécute
+$queryepaisseur->execute();
+
+// On récupère les valeurs dans un tableau associatif
+$EpaisseurTref = $queryepaisseur->fetch();
+//** Fin select des epaisseurs pour Tref
+
+//** Debut select des epaisseurs pour Metal Mbao
+$sqlepaisseur = "SELECT * FROM `epaisseur` where `id`=6;";
+
+// On prépare la requête
+$queryepaisseur = $db->prepare($sqlepaisseur);
+
+// On exécute
+$queryepaisseur->execute();
+
+// On récupère les valeurs dans un tableau associatif
+$EpaisseurMB = $queryepaisseur->fetch();
+//** Fin select des epaisseurs pour Metal Mbao
 
 ?>
+
 
 
 <!DOCTYPE html>
@@ -19,17 +121,26 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <link rel="shortcut icon" href="../image/iconOnglet.png" />
+    <link rel="shortcut icon" href="../../image/iconOnglet.png" />
     <title>METAL AFRIQUE</title>
 
-    <!-- Custom fonts for this template-->
-    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <!-- Custom fonts for this template -->
+    <link href="../../indexPage/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link
         href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
         rel="stylesheet">
 
-    <!-- Custom styles for this template-->
-    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+    <!-- Sweet Alert -->
+    <link href="../../libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css"/>
+    <script src="../../libs/sweetalert2/sweetalert2.min.js"></script>
+    <script src="../../libs/sweetalert2/jquery-1.12.4.js"></script>
+
+    <!-- Custom styles for this template -->
+    <link href="../../indexPage/css/sb-admin-2.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this page -->
+    <link href="../../indexPage/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+
 
 </head>
 
@@ -41,8 +152,8 @@
         <!-- Sidebar -->
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
-            <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="accueil.php">
+             <!-- Sidebar - Brand -->
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="../../indexPage/accueil.php">
                 <div class="sidebar-brand-icon rotate-n-15">
                     <i class="fas fa-laugh-wink"></i>
                 </div>
@@ -54,7 +165,7 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item">
-                <a class="nav-link" href="accueil.php">
+                <a class="nav-link" href="../../indexPage/accueil.php">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Accueil Dashboard</span></a>
             </li>
@@ -66,30 +177,28 @@
             <!-- Nav Item - Tables -->
 
             <li class="nav-item active">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseReception"
+                <a class="nav-link" href="#" data-toggle="collapse" data-target="#collapseReception"
                     aria-expanded="true" aria-controls="collapseUtilities">
                     <i class="fa fa-book fa-fw"></i>
                     <span>Pont Bascule</span>
                 </a>
-                <div id="collapseReception" class="collapse" aria-labelledby="headingReception"
-                    data-parent="#collapseReception">
+                <div id="collapseReception" class="collapse show" aria-labelledby="headingUtilities"
+                    data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Stockage :</h6>
-                        <a class="collapse-item" href="../stockage/reception.php">Réception</a>
-                        <a class="collapse-item" href="../stockage/receptionPlanifie.php">Réception planifiée</a>
-                        <a class="collapse-item" href="../stockage/transfert/transfert.php">Transfert</a>
-                        <a class="collapse-item" href="../stockage/stockage/stockage.php">Stockage</a>
-                        <a class="collapse-item" href="../stockage/graphe.php">Graphique</a>
+                        <a class="collapse-item" href="../../stockage/reception.php">Réception</a>
+                        <a class="collapse-item" href="../../stockage/receptionPlanifie.php">Réception planifiée</a>
+                        <a class="collapse-item" href="../../stockage/transfert/transfert.php">Transfert</a>
+                        <a class="collapse-item active" href="../../stockage/stockage/stockage.php">Stockage</a>
+                        <a class="collapse-item" href="../../stockage/graphe.php">Graphique</a>
                     </div>
                 </div>
             </li>
 
-
-
             <!-- Divider -->
             <hr class="sidebar-divider">
 
-            
+
             <!-- Nav Item - Tables -->
 
             <li class="nav-item">
@@ -122,7 +231,7 @@
             <!-- Divider -->
             <hr class="sidebar-divider">
 
-            
+
             <!-- Nav Item - Tables -->
             <li class="nav-item">
                 <a class="nav-link" href="tables.php">
@@ -187,14 +296,12 @@
             <!-- Main Content -->
             <div id="content">
 
-                <!-- Topbar -->
-                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
-
+                 <!-- Topbar -->
+                 <nav class="navbar navbar-expand navbar-light bg-white topbar static-top shadow">
                     <!-- Sidebar Toggle (Topbar) -->
                     <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
                         <i class="fa fa-bars"></i>
                     </button>
-
                     <!-- Topbar Search -->
                     <form
                         class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
@@ -303,7 +410,7 @@
                                 </h6>
                                 <a class="dropdown-item d-flex align-items-center" href="#">
                                     <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="img/undraw_profile_1.svg"
+                                        <img class="rounded-circle" src="../../indexPage/img/undraw_profile_1.svg"
                                             alt="...">
                                         <div class="status-indicator bg-success"></div>
                                     </div>
@@ -315,7 +422,7 @@
                                 </a>
                                 <a class="dropdown-item d-flex align-items-center" href="#">
                                     <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="img/undraw_profile_2.svg"
+                                        <img class="rounded-circle" src="../../indexPage/img/undraw_profile_2.svg"
                                             alt="...">
                                         <div class="status-indicator"></div>
                                     </div>
@@ -327,7 +434,7 @@
                                 </a>
                                 <a class="dropdown-item d-flex align-items-center" href="#">
                                     <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="img/undraw_profile_3.svg"
+                                        <img class="rounded-circle" src="../../indexPage/img/undraw_profile_3.svg"
                                             alt="...">
                                         <div class="status-indicator bg-warning"></div>
                                     </div>
@@ -361,7 +468,7 @@
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo $_SESSION['nomcomplet']; ?></span>
                                 <img class="img-profile rounded-circle"
-                                    src="img/undraw_profile.svg">
+                                    src="../../indexPage/img/undraw_profile.svg">
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
@@ -374,16 +481,12 @@
                                     <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Changer paramétres
                                 </a>
-                                <a class="dropdown-item" href="./Utilisateur/utilisateur.php">
-                                    <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Gestion des utilisateurs
-                                </a>
                                 <a class="dropdown-item" href="#">
                                     <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Activités
                                 </a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="../index.php">
+                                <a class="dropdown-item" href="../../index.php">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Déconnexion
                                 </a>
@@ -396,115 +499,120 @@
                 <!-- End of Topbar -->
 
                 <!-- Begin Page Content -->
-                <div class="container-fluid">
-
-                    <!-- Page Heading -->
-                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Page d'accueil</h1>
-                        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
-                                class="fas fa-download fa-sm text-white-50"></i> Génerer en PDF</a>
+                <div class="row mt-5 ml-5">
+                    <div class="col-lg-3 mt-3 mr-5">
+                        <div class="">
+                            <div class="list-group">
+                                <a href="stockageMetal1.php" class="list-group-item list-group-item-action active" aria-current="true">METAL 1</a>
+                                <a href="stockageMetalMbao.php" class="list-group-item list-group-item-action">METAL MBAO</a>
+                                <a href="stockageNiambour.php" class="list-group-item list-group-item-action">NIAMBOUR</a>
+                                <a href="stockageCranteuse.php" class="list-group-item list-group-item-action">MACHINE CRANTEUSE</a>
+                                <a href="stockageTrefilage.php" class="list-group-item list-group-item-action">MACHINE TREFILAGE</a>
+                            </div>
+                                <!-- End of Sidebar -->
+                            <!-- Page Heading -->
+                            <!-- <div class="row">
+                                <div class="col-xl-3 col-md-6 mb-1">
+                                    <img src="../../image/stockage/ferabeton.jpg" class="img-fluid" alt="" style="border-radius: 50%; margin:20px; opacity: 0.7;" width="200">
+                                </div>
+                            </div> -->
+                        </div> 
                     </div>
 
-                    <!-- Content Row -->
-                    <div class="row">
-
-                        <!-- Earnings (Monthly) Card Example -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <a href="404.php">
-                                <div class="card border-left-primary shadow h-100 py-2">
-                                    <div class="card-body">
-                                        <div class="row no-gutters align-items-center">
-                                            <div class="col mr-2">
-                                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                                    Earnings (Monthly)</div>
-                                                <div class="h5 mb-0 font-weight-bold text-gray-800">$40,000</div>
-                                            </div>
-                                            <div class="col-auto">
-                                                <i class="fas fa-calendar fa-2x text-gray-300"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-
-                        <!-- Earnings (Monthly) Card Example -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-success shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                                Earnings (Annual)</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">$215,000</div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
+                    <!-- DataTales Example -->
+                    <!-- Fade In Utility -->
+                    <div class="col-lg-8 mt-5">
+                        <div class="card position-relative">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Nombre de bobine stocké à Métal 1 : <?php echo $nbReception; ?></h6>
+                                <input type="hidden" id="passvar" name="passvar"  value= <?php print_r(json_encode($Epai)); ?> />
+                            </div>
+                            <div class="row m-2">
+                                <div class="table-responsive">
+                                <?php print_r(json_encode($Epai)); ?>
+                                    <table class="table table-bordered" id="" width="100%" cellspacing="0">
+                                        <thead>
+                                            <tr>    
+                                                <th>3</th>
+                                                <th>3.5</th>
+                                                <th>4</th>
+                                                <th>4.5</th>
+                                                <th>5</th>
+                                                <th>5.5</th>
+                                                <th>6</th>
+                                                <th>6.5</th>
+                                                <th>7</th>
+                                                <th>7.5</th>
+                                                <th>8</th>
+                                                <th>8.5</th>
+                                                <th>9</th>
+                                                <th>9.5</th>
+                                                <th>10</th>
+                                                <th>10.5</th>
+                                                <th>11</th>
+                                                <th>11.5</th>
+                                                <th>12</th>
+                                                <th>12.5</th>
+                                                <th>13</th>
+                                                <th>13.5</th>
+                                                <th>14</th>
+                                                <th>14.5</th>
+                                                <th>15</th>
+                                                <th>15.5</th>
+                                                <th>16</th>
+                                                <th>16.5</th>
+                                                <th>17</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['3'] == 0){echo "";}else{echo $EpaisseurM1['3'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['3.5'] == 0){echo "";}else{echo $EpaisseurM1['3.5'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['4'] == 0){echo "";}else{echo $EpaisseurM1['4'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['4.5'] == 0){echo "";}else{echo $EpaisseurM1['4.5'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['5'] == 0){echo "";}else{echo $EpaisseurM1['5'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['5.5'] == 0){echo "";}else{echo $EpaisseurM1['5.5'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['6'] == 0){echo "";}else{echo $EpaisseurM1['6'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['6.5'] == 0){echo "";}else{echo $EpaisseurM1['6.5'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['7'] == 0){echo "";}else{echo $EpaisseurM1['7'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['7.5'] == 0){echo "";}else{echo $EpaisseurM1['7.5'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['8'] == 0){echo "";}else{echo $EpaisseurM1['8'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['8.5'] == 0){echo "";}else{echo $EpaisseurM1['8.5'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['9'] == 0){echo "";}else{echo $EpaisseurM1['9'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['9.5'] == 0){echo "";}else{echo $EpaisseurM1['9.5'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['10'] == 0){echo "";}else{echo $EpaisseurM1['10'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['10.5'] == 0){echo "";}else{echo $EpaisseurM1['10.5'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['11'] == 0){echo "";}else{echo $EpaisseurM1['11'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['11.5'] == 0){echo "";}else{echo $EpaisseurM1['11.5'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['12'] == 0){echo "";}else{echo $EpaisseurM1['12'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['12.5'] == 0){echo "";}else{echo $EpaisseurM1['12.5'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['13'] == 0){echo "";}else{echo $EpaisseurM1['13'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['13.5'] == 0){echo "";}else{echo $EpaisseurM1['13.5'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['14'] == 0){echo "";}else{echo $EpaisseurM1['14'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['14.5'] == 0){echo "";}else{echo $EpaisseurM1['14.5'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['15'] == 0){echo "";}else{echo $EpaisseurM1['15'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['15.5'] == 0){echo "";}else{echo $EpaisseurM1['15.5'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['16'] == 0){echo "";}else{echo $EpaisseurM1['16'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['16.5'] == 0){echo "";}else{echo $EpaisseurM1['16.5'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['17'] == 0){echo "";}else{echo $EpaisseurM1['17'];} ?></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
-                        </div>
-
-                        <!-- Earnings (Monthly) Card Example -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-info shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Taux de remplissage
-                                            </div>
-                                            <div class="row no-gutters align-items-center">
-                                                <div class="col-auto">
-                                                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">50%</div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="progress progress-sm mr-2">
-                                                        <div class="progress-bar bg-info" role="progressbar"
-                                                            style="width: 50%" aria-valuenow="50" aria-valuemin="0"
-                                                            aria-valuemax="100"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Pending Requests Card Example -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-warning shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                                Utilisateurs</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-comments fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <!-- Tableau d'en bas -->
                         </div>
                     </div>
+                </div>
 
-                    <!-- Content Row -->
-
-                    <div class="row">
-
+                    <div class="row m-5">
                         <!-- Area Chart -->
-                        <div class="col-xl-12 col-lg-12">
+                        <div class="col-xl-8 col-lg-7 ">
                             <div class="card shadow mb-4">
                                 <!-- Card Header - Dropdown -->
                                 <div
                                     class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <h6 class="m-0 font-weight-bold text-primary">Section 1</h6>
+                                    <h6 class="m-0 font-weight-bold text-primary">Earnings Overview</h6>
                                     <div class="dropdown no-arrow">
                                         <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
                                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -523,77 +631,14 @@
                                 <!-- Card Body -->
                                 <div class="card-body">
                                     <div class="chart-area">
-                                        <canvas id="myAreaChart1" height="65"></canvas>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Area Chart -->
-                        <div class="col-xl-12 col-lg-12">
-                            <div class="card shadow mb-4">
-                                <!-- Card Header - Dropdown -->
-                                <div
-                                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <h6 class="m-0 font-weight-bold text-primary">Section 2</h6>
-                                    <div class="dropdown no-arrow">
-                                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-                                        </a>
-                                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
-                                            aria-labelledby="dropdownMenuLink">
-                                            <div class="dropdown-header">Dropdown Header:</div>
-                                            <a class="dropdown-item" href="#">Action</a>
-                                            <a class="dropdown-item" href="#">Another action</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#">Something else here</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Card Body -->
-                                <div class="card-body">
-                                    <div class="chart-area">
-                                        <canvas id="myAreaChart2" height="65"></canvas>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-
-                        <!-- Area Chart -->
-                        <div class="col-xl-12 col-lg-12">
-                            <div class="card shadow mb-4">
-                                <!-- Card Header - Dropdown -->
-                                <div
-                                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <h6 class="m-0 font-weight-bold text-primary">Section 3</h6>
-                                    <div class="dropdown no-arrow">
-                                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-                                        </a>
-                                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
-                                            aria-labelledby="dropdownMenuLink">
-                                            <div class="dropdown-header">Dropdown Header:</div>
-                                            <a class="dropdown-item" href="#">Action</a>
-                                            <a class="dropdown-item" href="#">Another action</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#">Something else here</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Card Body -->
-                                <div class="card-body">
-                                    <div class="chart-area">
-                                        <canvas id="myAreaChart3" height="65"></canvas>
+                                        <canvas id="myAreaChart"></canvas>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Pie Chart -->
-                        <div class="col-xl-8 col-lg-5">
+                        <div class="col-xl-4 col-lg-5">
                             <div class="card shadow mb-4">
                                 <!-- Card Header - Dropdown -->
                                 <div
@@ -634,12 +679,7 @@
                             </div>
                         </div>
                     </div>
-
-                </div>
-                <!-- /.container-fluid -->
-
-            </div>
-            <!-- End of Main Content -->
+            </div><!-- div Content -->
 
             <!-- Footer -->
             <footer class="sticky-footer bg-white">
@@ -650,35 +690,39 @@
             </footer>
             <!-- End of Footer -->
 
-        </div>
-        <!-- End of Content Wrapper -->
+        </div><!-- End of Content Wrapper -->
 
-    </div>
-    <!-- End of Page Wrapper -->
+    </div><!-- End of Content Wrapper -->
 
     <!-- Scroll to Top Button-->
     <a class="scroll-to-top rounded" href="#page-top">
         <i class="fas fa-angle-up"></i>
     </a>
 
-    
 
-    <!-- Bootstrap core JavaScript-->
-    <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <script src="../../indexPage/vendor/jquery/jquery.min.js"></script>
+    <script src="../../indexPage/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
     <!-- Core plugin JavaScript-->
-    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="../../indexPage/vendor/jquery-easing/jquery.easing.min.js"></script>
 
     <!-- Custom scripts for all pages-->
-    <script src="js/sb-admin-2.min.js"></script>
+    <script src="./../indexPage/js/sb-admin-2.min.js"></script>
 
     <!-- Page level plugins -->
-    <script src="vendor/chart.js/Chart.min.js"></script>
+    <script src="../../indexPage/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="./../indexPage/vendor/datatables/dataTables.bootstrap4.min.js"></script>
 
     <!-- Page level custom scripts -->
+    <script src="../../indexPage/js/demo/datatables-demo.js"></script>
 
-    <script src="js/demo/diagrammes.js"></script>
+    <!-- Page level custom scripts -->
+    <script src="../../indexPage/vendor/chart.js/Chart.min.js"></script>
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="./courbe.js"></script>
+    <script src="./circulaire.js"></script>
 
 </body>
 

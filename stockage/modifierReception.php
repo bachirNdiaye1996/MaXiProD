@@ -42,73 +42,89 @@ include "../connexion/conexiondb.php";
             header("location: reception.php");
         exit;
         }
-        $referenceusine=$row['referenceusine'];
         $epaisseur=$row['epaisseur'];
-        $largeur=$row['largeur'];
-        $laminage=$row['laminage'];
         $poidspese=$row['poidspese'];
-        $produitfini=$row['produitfini'];
-        $travaille=$row['travaille'];
-        $idlot=$row['idlot'];
-        $annee=$row['annee'];
-        $numprod=$row['numprod'];
         $dateajout=$row['dateajout'];
-        $idbobine=$row['idbobine'];
         $user=$row['user'];
         $nbbobine=$row['nbbobine'];
         //echo $EstDemande;
     }else{    
         if(isset($_POST['modifierReception'])){
             $id = $_GET['idmatiereModifSimp'];
-            $referenceusine=$_POST['referenceusine'];
+            //$referenceusine=$_POST['referenceusine'];
             $epaisseur=$_POST['epaisseur'];
-            //$largeur=$_POST['largeur'];
+            $poidspese=$_POST['poidspese'];
+            $etatbobine=$_POST['etatbobine'];
             $lieutransfert=$_POST['lieutransfert'];
             $poidsdeclare=$_POST['poidsdeclare'];
             //$produitfini=$_POST['produitfini'];
             //$idlot=$_POST['idlot'];
             //$annee=$_POST['annee'];
             //$numprod=$_POST['numprod'];
-            $idbobine=$_POST['idbobine'];
+            //$idbobine=$_POST['idbobine'];
             //$user=$_POST['user'];
             $nbbobine=$_POST['nbbobine'];
 
-            $sql = "UPDATE `matiere` SET `referenceusine` = '$referenceusine',`epaisseur` = '$epaisseur',`lieutransfert` = '$lieutransfert',`poidsdeclare` = '$poidsdeclare'
-            , `idbobine` = '$idbobine', `nbbobine` = '$nbbobine' WHERE `idmatiere` = ?;";
+            $sql = "UPDATE `matiere` SET `poidspese` = '$poidspese', `etatbobine` = '$etatbobine', `epaisseur` = '$epaisseur',`lieutransfert` = '$lieutransfert',`poidsdeclare` = '$poidsdeclare'
+            , `nbbobine` = '$nbbobine' WHERE `idmatiere` = ?;";
             //$result = $db->query($sql); 
             $sth = $db->prepare($sql);    
             $sth->execute(array($id));
 
-            /*//Pour une modification avec aprobation
-            $id = $_GET['idmatiereModifSimp'];
+            //Pour une modification avec aprobation
+            /*$id = $_GET['idmatiereModifSimp'];
             $sql = "select * from matiere where idmatiere=$id";
             $result = $db->query($sql);
-            $row = $result->fetch();
-            if($row['actifapprouvreception'] == 1){
-                if()
-                if($epaisseur == $_GET['epaisseur']){
+            $row = $result->fetch();*/
+
+
+            //if($row['actifapprouvreception'] == 1){
+                //if($epaisseur == $_GET['epaisseur']){
                     $oldnombrebobine = $_GET['nombrebobine'];
+                    $lieutransfertGet = $_GET['lieutransfert'];
                     //Debut inserer le nombre de bobine par epaisseur
-                    $req ="UPDATE epaisseur SET `$epaisseur` = `$epaisseur` - $oldnombrebobine + ? where `id`=;";
-                    $reqtitre = $db->prepare($req);
-                    $reqtitre->execute(array($nbbobine));
+                        $req ="UPDATE epaisseur SET `$epaisseur` = `$epaisseur` + ? where `lieu`='$lieutransfert';";
+                        $reqtitre = $db->prepare($req);
+                        $reqtitre->execute(array($nbbobine));
                     //Fin inserer le nombre de bobine par epaisseur
-                }else{
+
+                    /*//Debut inserer le nombre de bobine par epaisseur
+                        if($oldnombrebobine < $nbbobine){ //Le cas ou le nombre entrant est superieur au nombre existant
+                            $req ="UPDATE epaisseur SET `$epaisseur` = `$epaisseur` - ? where `lieu`='$lieutransfertGet';";
+                            $reqtitre = $db->prepare($req);
+                            $reqtitre->execute(array($nbbobine));
+                        }else{
+                            $req ="UPDATE epaisseur SET `$epaisseur` = `$epaisseur` - ? where `lieu`='$lieutransfertGet';";
+                            $reqtitre = $db->prepare($req);
+                            $reqtitre->execute(array($oldnombrebobine));
+                        }
+                    //Fin inserer le nombre de bobine par epaisseur*/
+
+                    $sql1 = "UPDATE `matiere` set `actifapprouvreception`=0 where idmatiere=$_GET[idmatiereModifSimp]";
+                    $db->query($sql1);
+                /*}else{
                     $oldepaisseur = $_GET['epaisseur'];
                     $oldnombrebobine = $_GET['nombrebobine'];
+                    $lieutransfertGet = $_GET['lieutransfert'];
                     //Debut inserer le nombre de bobine par epaisseur
-                    $req ="UPDATE epaisseur SET `$oldepaisseur` = `$oldepaisseur` - ?;";
-                    $reqtitre = $db->prepare($req);
-                    $reqtitre->execute(array($oldnombrebobine));
+                        if($oldnombrebobine < $nbbobine){ //Le cas ou le nombre entrant est superieur au nombre existant
+                            $req ="UPDATE epaisseur SET `$oldepaisseur` = `$oldepaisseur` - ? where `lieu`='$lieutransfertGet';";
+                            $reqtitre = $db->prepare($req);
+                            $reqtitre->execute(array($nbbobine));
+                        }else{
+                            $req ="UPDATE epaisseur SET `$oldepaisseur` = `$oldepaisseur` - ? where `lieu`='$lieutransfertGet';";
+                            $reqtitre = $db->prepare($req);
+                            $reqtitre->execute(array($oldnombrebobine));
+                        }
                     //Fin inserer le nombre de bobine par epaisseur
     
                     //Debut inserer le nombre de bobine par epaisseur
-                    $req ="UPDATE epaisseur SET `$epaisseur` = `$epaisseur` + ?;";
-                    $reqtitre = $db->prepare($req);
-                    $reqtitre->execute(array($nbbobine));
+                        $req ="UPDATE epaisseur SET `$epaisseur` = `$epaisseur` + ? where `lieu`='$lieutransfert';";
+                        $reqtitre = $db->prepare($req);
+                        $reqtitre->execute(array($nbbobine));
                     //Fin inserer le nombre de bobine par epaisseur
-                }
-            }*/
+                }*/
+            //}
 
             header("location: detailsReception.php?idreception=$_GET[idreception]");
             exit;
@@ -191,7 +207,7 @@ include "../connexion/conexiondb.php";
                         <h6 class="collapse-header">Stockage :</h6>
                         <a class="collapse-item" href="../stockage/reception.php">Réception</a>
                         <a class="collapse-item active" href="../stockage/transfert.php">Transfert</a>
-                        <a class="collapse-item" href="../stockage/stockage.php">Stockage</a>
+                        <a class="collapse-item" href="../../stockage/stockage/stockage.php">Stockage</a>
                         <a class="collapse-item" href="../stockage/graphe.php">Graphique</a>
                     </div>
                 </div>
@@ -517,14 +533,38 @@ include "../connexion/conexiondb.php";
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <div class="mb-6 text-start">
-                                                    <label class="form-label fw-bold" for="nom">Usine de provenance</label>
-                                                    <input class="form-control" type="text" name="referenceusine" value="<?php echo $row['referenceusine'];?>" id="example-date-input4" placeholder="Taper la référence de l'usine">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="mb-3 text-start">
                                                     <label class="form-label fw-bold" for="prenom" >Epaisseur</label>
-                                                    <input class="form-control designa" type="number" value="<?php echo $row['epaisseur'];?>" step="0.01" name="epaisseur" id="example"  placeholder="Taper l'épaisseur de la bobine">
+                                                    <select class="form-control" name="epaisseur" placeholder="Taper l'épaisseur de la bobine" value="">
+                                                        <option <?php if ( $row['epaisseur']=='3') {echo "selected='selected'";} ?> >3</option>
+                                                        <option  <?php if ( $row['epaisseur']=='3.5') {echo "selected='selected'";} ?> >3.5</option>
+                                                        <option <?php if ( $row['epaisseur']=='4') {echo "selected='selected'";} ?> >4</option>
+                                                        <option <?php if ( $row['epaisseur']=='4.5') {echo "selected='selected'";} ?> >4.5</option>
+                                                        <option <?php if ( $row['epaisseur']=='5') {echo "selected='selected'";} ?> >5</option>
+                                                        <option <?php if ( $row['epaisseur']=='5.5') {echo "selected='selected'";} ?> >5.5</option>
+                                                        <option <?php if ( $row['epaisseur']=='6') {echo "selected='selected'";} ?> >6</option>
+                                                        <option <?php if ( $row['epaisseur']=='6.5') {echo "selected='selected'";} ?> >6.5</option>
+                                                        <option <?php if ( $row['epaisseur']=='7') {echo "selected='selected'";} ?> >7</option>
+                                                        <option <?php if ( $row['epaisseur']=='7.5') {echo "selected='selected'";} ?> >7.5</option>
+                                                        <option <?php if ( $row['epaisseur']=='8') {echo "selected='selected'";} ?> >8</option>
+                                                        <option <?php if ( $row['epaisseur']=='8.5') {echo "selected='selected'";} ?> >8.5</option>
+                                                        <option <?php if ( $row['epaisseur']=='9') {echo "selected='selected'";} ?> >9</option>
+                                                        <option <?php if ( $row['epaisseur']=='9.5') {echo "selected='selected'";} ?> >9.5</option>
+                                                        <option <?php if ( $row['epaisseur']=='10') {echo "selected='selected'";} ?> >10</option>
+                                                        <option <?php if ( $row['epaisseur']=='10.5') {echo "selected='selected'";} ?> >10.5</option>
+                                                        <option <?php if ( $row['epaisseur']=='11') {echo "selected='selected'";} ?> >11</option>
+                                                        <option <?php if ( $row['epaisseur']=='11.5') {echo "selected='selected'";} ?> >11.5</option>
+                                                        <option <?php if ( $row['epaisseur']=='12') {echo "selected='selected'";} ?> >12</option>
+                                                        <option <?php if ( $row['epaisseur']=='12.5') {echo "selected='selected'";} ?> >12.5</option>
+                                                        <option <?php if ( $row['epaisseur']=='13') {echo "selected='selected'";} ?> >13</option>
+                                                        <option <?php if ( $row['epaisseur']=='13.5') {echo "selected='selected'";} ?> >13.5</option>
+                                                        <option <?php if ( $row['epaisseur']=='14') {echo "selected='selected'";} ?> >14</option>
+                                                        <option <?php if ( $row['epaisseur']=='14.5') {echo "selected='selected'";} ?> >14.5</option>
+                                                        <option <?php if ( $row['epaisseur']=='15') {echo "selected='selected'";} ?> >15</option>
+                                                        <option <?php if ( $row['epaisseur']=='15.5') {echo "selected='selected'";} ?> >15.5</option>
+                                                        <option <?php if ( $row['epaisseur']=='16') {echo "selected='selected'";} ?> >16</option>
+                                                        <option <?php if ( $row['epaisseur']=='16.5') {echo "selected='selected'";} ?>>16.5</option>
+                                                        <option <?php if ( $row['epaisseur']=='17') {echo "selected='selected'";} ?> >17</option>
+                                                    </select> 
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
@@ -534,33 +574,37 @@ include "../connexion/conexiondb.php";
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
-                                                <div class="mb-6 text-start">
+                                                <div class="mb-6 mt-3 text-start">
                                                     <label class="form-label fw-bold" for="nom">Lieu de réception</label>
                                                     <select class="form-control" name="lieutransfert" value="<?php echo $row['lieutransfert'];?>">
-                                                        <option>Metal1</option>
-                                                        <option>Niambour</option>
-                                                        <option>Metal Mbao</option>
-                                                        <option>Metal4 (ancien Metalco)</option>
+                                                        <option <?php if ( $row['lieutransfert']=='Metal1') {echo "selected='selected'";} ?> >Metal1</option>
+                                                        <option <?php if ( $row['lieutransfert']=='Niambour') {echo "selected='selected'";} ?> >Niambour</option>
+                                                        <option <?php if ( $row['lieutransfert']=='Metal Mbao') {echo "selected='selected'";} ?> >Metal Mbao</option>
                                                     </select>                                                  
                                                 </div>
                                             </div>
                                             <div class="col-md-6 mt-3">
-                                                <div class="mb-3 text-start">
+                                                <div class="mb-6 text-start">
                                                     <label class="form-label fw-bold" for="prenom" >Poids déclare</label>
                                                     <input class="form-control designa" type="number" value="<?php echo $row['poidsdeclare'];?>" name="poidsdeclare" id="example"  placeholder="Taper le poids déclaré">
                                                 </div>
                                             </div>
-                                            <div class="col-md-6 mt-3">
-                                                <div class="mb-3 text-start">
-                                                    <label class="form-label fw-bold" for="priorites">Bobine</label>
-                                                    <select class="form-control" name="idbobine" value="<?php echo $row['idbobine'];?>">
-                                                        <option>B0015</option>
-                                                        <option>B0014</option>
-                                                        <option>B006</option>
-                                                        <option>B00945</option>
-                                                    </select>
+                                            <div class="col-md-6 ">
+                                                <div class="mb-6 mt-3 text-start">
+                                                    <label class="form-label fw-bold" for="nom">Poids pesé</label>
+                                                    <input class="form-control" type="number" name="poidspese" value="<?php echo $row['poidspese'];?>" id="example-date-input4" placeholder="Taper le poids pesé">
                                                 </div>
                                             </div> 
+                                            <div class="col-md-6">
+                                                <div class="mb-6 mt-3 text-start">
+                                                    <label class="form-label fw-bold" for="nom">Etat bobine</label>
+                                                    <select class="form-control" name="etatbobine" value="">
+                                                        <option <?php if ( $row['etatbobine']=='Normale') {echo "selected='selected'";} ?> >Normale</option>
+                                                        <option <?php if ( $row['etatbobine']=='Disloquée') {echo "selected='selected'";} ?> >Disloquée</option>
+                                                        <option <?php if ( $row['etatbobine']=='Autres') {echo "selected='selected'";} ?> >Autres</option>
+                                                    </select>                                                    
+                                                </div>
+                                            </div>
                                         </div>
                                         <div class="row mt-2">
                                             <div class="col-md-12 text-end">

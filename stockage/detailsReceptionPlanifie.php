@@ -17,7 +17,7 @@ $idreception = $_GET['idreception'];  // On recupére l'ID de la réception par 
 // Pour insertion details reception
     if(isset($_POST['CreerReception'])){
         if(!empty($_POST['referenceusine']) && !empty($_POST['epaisseur'])  && !empty($_POST['lieutransfert'])  && !empty($_POST['poidsdeclare'])){
-            $referenceusine=htmlspecialchars($_POST['referenceusine']);
+            //$referenceusine=htmlspecialchars($_POST['referenceusine']);
             $dateplanifie=htmlspecialchars($_POST['dateplanifie']);
             $epaisseur=htmlspecialchars($_POST['epaisseur']);
             //$largeur=htmlspecialchars($_POST['largeur']);
@@ -190,7 +190,7 @@ $idreception = $_GET['idreception'];  // On recupére l'ID de la réception par 
             <hr class="sidebar-divider my-0">
 
             <!-- Nav Item - Dashboard -->
-            <li class="nav-item active">
+            <li class="nav-item">
                 <a class="nav-link" href="../indexPage/accueil.php">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Accueil Dashboard</span></a>
@@ -213,9 +213,9 @@ $idreception = $_GET['idreception'];  // On recupére l'ID de la réception par 
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Stockage :</h6>
                         <a class="collapse-item" href="../stockage/reception.php">Réception</a>
-                        <a class="collapse-item" href="../stockage/receptionPlanifie.php">Réception planifiée</a>
-                        <a class="collapse-item active" href="../stockage/transfert.php">Transfert</a>
-                        <a class="collapse-item" href="../stockage/stockage.php">Stockage</a>
+                        <a class="collapse-item active" href="../stockage/receptionPlanifie.php">Réception planifiée</a>
+                        <a class="collapse-item " href="../stockage/transfert/transfert.php">Transfert</a>
+                        <a class="collapse-item" href="../stockage/stockage/stockage.php">Stockage</a>
                         <a class="collapse-item" href="../stockage/graphe.php">Graphique</a>
                     </div>
                 </div>
@@ -547,15 +547,14 @@ $idreception = $_GET['idreception'];  // On recupére l'ID de la réception par 
                                             <thead>
                                                 <tr>       
                                                     <th>Code bobine</th>                                                                                
-                                                    <th>Epaisseur</th>
+                                                    <th>Dimensions (en millimètre)</th>
                                                     <th>Nombre bobine</th>
-                                                    <th>Poids déclaré</th>
-                                                    <th>Lieu de réception</th>
-                                                    <th>Référence usine</th>
-                                                    <th>Créée par</th>
-                                                    <th>Date d'ajout</th>
-                                                    <th>Date de planification</th>
-                                                    <th>Option</th>
+                                                    <th>Poids Net (MT)</th>
+                                                    <th>Poids Bruit (Mt)</th>
+                                                    <th>Date de derniére modification</th>
+                                                    <?php if($_SESSION['niveau'] == 'admin'){ ?>
+                                                        <th>Option</th>
+                                                    <?php }?>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -566,26 +565,24 @@ $idreception = $_GET['idreception'];  // On recupére l'ID de la réception par 
                                                         //if($article['status'] == 'termine'){
                                                 ?>
                                                     <tr>
-                                                        <td style="background-color:#CFFEDA ; text-align: center;"><?php echo "REC-0".$reception['idreception']."-BOB-0".$reception['idmatiereplanifie'] ?></td>
-                                                        <td style="background-color:#CFFEDA ;"><?= $reception['epaisseur'] ?></td>
+                                                        <td style="background-color:#CFFEDA ; text-align: center;">
+                                                            <a style="text-decoration: none; font-family: arial; font-size: 20px;" title="Allez vers la reception correspondante" href="detailsReception.php?idreception=<?= $reception['idreception'] ?>" class="link-offset-2 link-underline"><?php echo "REC-0".$reception['idreception']."-BOB-0".$reception['idmatiereplanifie'] ?></a>
+                                                        </td>
+                                                        <td style="background-color:#CFFEDA ;"><?php echo "DIA ".$reception['epaisseur']." MM" ?></td>
                                                         <td style="background-color:#CFFEDA ;"><?= $reception['nbbobine'] ?></td>
                                                         <td style="background-color:#CFFEDA ;"><?= $reception['poidsdeclare'] ?></td>
-                                                        <td style="background-color:#CFFEDA ;"><?= $reception['lieutransfert'] ?></td>
-                                                        <td style="background-color:#CFFEDA ;"><?= $reception['referenceusine'] ?></td>
-                                                        <td style="background-color:#CFFEDA ;"><?= $reception['user'] ?></td>
+                                                        <td style="background-color:#CFFEDA ;"><?= $reception['poidsbrut'] ?></td>
                                                         <td style="background-color:#CFFEDA ;"><?= $reception['dateajout'] ?></td>
-                                                        <td style="background-color:#CFFEDA ;"><?= $reception['dateplanifie'] ?></td>
-                                                        <td style="background-color:#CFFEDA ;">
-                                                            <?php if($reception['commentaire'] != NULL){ ?>
-                                                                <a href="javascript:void(0);" data-toggle="modal" data-target="#fileModal<?php echo $i; ?>" title="Voir commentaire"><i class="bx bx-trash-alt font-size-18"><i class="far fa-eye"></i></a>
-                                                            <?php }?>
-                                                            <?php if($reception['actifapprouvreception'] == 0){ ?>
-                                                                <a href="modifierReceptionPlanifie.php?idreception=<?= $_GET['idreception'] ?>&idmatiereModifSimp=<?= $reception['idmatiereplanifie'] ?>&epaisseur=<?= $reception['epaisseur'] ?>&nombrebobine=<?= $reception['nbbobine'] ?>" class="px-2" title="Modifier la réception"><i class="far fa-edit"></i></a>
-                                                            <?php }?>
-                                                            <?php if($reception['actifapprouvreception'] == 0){ ?>
-                                                                <a href="javascript:void(0);" class="suprimerReception<?= $i ?> px-2 text-danger" title="Suprimer la réception"><i class="fa fa-cut"></i></a>
-                                                            <?php }?>
-                                                        </td>
+                                                        <?php if($_SESSION['niveau'] == 'admin'){ ?>
+                                                            <td style="background-color:#CFFEDA ;">
+                                                                <?php //if($reception['actifapprouvreception'] == 0){ ?>
+                                                                    <a href="modifierReceptionPlanifie.php?idreception=<?= $_GET['idreception'] ?>&idmatiereModifSimp=<?= $reception['idmatiereplanifie'] ?>&epaisseur=<?= $reception['epaisseur'] ?>&nombrebobine=<?= $reception['nbbobine'] ?>" class="px-2" title="Modifier la réception"><i class="far fa-edit"></i></a>
+                                                                <?php //}?>
+                                                                <?php //if($reception['actifapprouvreception'] == 0){ ?>
+                                                                    <a href="javascript:void(0);" class="suprimerReception<?= $i ?> px-2 text-danger" title="Suprimer la réception"><i class="fa fa-cut"></i></a>
+                                                                <?php //}?>
+                                                            </td>
+                                                        <?php }?>
                                                     </tr>
                                                     <div class="modal fade" id="fileModal<?php echo $i; ?>" tabindex="-1" aria-labelledby="fileModalLabel" aria-hidden="true">
                                                         <div class="modal-dialog modal-xl modal-dialog-centered">
@@ -701,10 +698,11 @@ $idreception = $_GET['idreception'];  // On recupére l'ID de la réception par 
                                                         $result = $db->query($sql);
                                                         $row = $result->fetch();
                                                         if($row ['actifapprouvreception']== 1){*/
+                                                        if($_SESSION['niveau']=='admin'){
                                                     ?>
-                                                        <a data-toggle="modal" data-target="#add-new" class="btn btn-success  w-lg bouton"><i class="fa fa-plus me-1"></i>Ajouter reception</a>
+                                                        <a href="ajouterReceptionFormulairePlanifie.php?idreception=<?= $_GET['idreception']?>&NombreLigne=0" class="btn btn-success w-lg bouton"><i class="fa fa-plus me-1"></i>Ajouter reception</a>
                                                     <?php
-                                                        //} 
+                                                        } 
                                                     ?>
                                                         <a href="receptionPlanifie.php" class="btn btn-danger w-lg bouton ml-3"><i class="fa fa-angle-double-left mr-2"></i>Retour</a>
                                                 </div>
@@ -717,155 +715,6 @@ $idreception = $_GET['idreception'];  // On recupére l'ID de la réception par 
                                 <!-- Tableau d'en bas -->
                             </div>
                         </div>
-                        <!-- Modale pour ajouter reception -->
-                        <div class="modal fade add-new" id="add-new" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-xl modal-dialog-centered">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="myExtraLargeModalLabel">Ajouter une réception</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <form action="#" method="POST" enctype="multipart/form-data">
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <div class="mb-6 text-start">
-                                                        <label class="form-label fw-bold" for="nom">Usine de provenance</label>
-                                                        <input class="form-control" type="text" name="referenceusine" value="" id="example-date-input4" placeholder="Taper la référence de l'usine">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="mb-3 text-start">
-                                                        <label class="form-label fw-bold" for="prenom" >Epaisseur</label>
-                                                        <select class="form-control" name="epaisseur" placeholder="Taper l'épaisseur de la bobine" value="">
-                                                            <option>3</option>
-                                                            <option>3.5</option>
-                                                            <option>4</option>
-                                                            <option>4.5</option>
-                                                            <option>5</option>
-                                                            <option>5.5</option>
-                                                            <option>6</option>
-                                                            <option>6.5</option>
-                                                            <option>7</option>
-                                                            <option>7.5</option>
-                                                            <option>8</option>
-                                                            <option>8.5</option>
-                                                            <option>9</option>
-                                                            <option>9.5</option>
-                                                            <option>10</option>
-                                                            <option>10.5</option>
-                                                            <option>11</option>
-                                                            <option>11.5</option>
-                                                            <option>12</option>
-                                                            <option>12.5</option>
-                                                            <option>13</option>
-                                                            <option>13.5</option>
-                                                            <option>14</option>
-                                                            <option>14.5</option>
-                                                            <option>15</option>
-                                                            <option>15.5</option>
-                                                            <option>16</option>
-                                                            <option>16.5</option>
-                                                            <option>17</option>
-                                                        </select> 
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="mb-6 text-start">
-                                                        <label class="form-label fw-bold" for="nom">Nombre de bobine</label>
-                                                        <input class="form-control" type="number" name="nbbobine" value="" id="example-date-input4" placeholder="Taper le nombre de bobine">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="mb-6 text-start">
-                                                        <label class="form-label fw-bold" for="nom">Lieu de réception</label>
-                                                        <select class="form-control" name="lieutransfert" value="">
-                                                            <option>Metal1</option>
-                                                            <option>Niambour</option>
-                                                            <option>Metal Mbao</option>
-                                                            <option>Metal4 (ancien Metalco)</option>
-                                                        </select>                                                  
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6 mt-4">
-                                                    <div class="mb-6 text-start">
-                                                        <label class="form-label fw-bold" for="nom">Date de la réception planifiée</label>
-                                                        <input class="form-control" type="date" name="dateplanifie" value="" id="example-date-input4">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6 mt-4">
-                                                    <div class="mb-3 text-start">
-                                                        <label class="form-label fw-bold" for="prenom" >Poids déclare</label>
-                                                        <input class="form-control designa" type="number" name="poidsdeclare" id="example"  placeholder="Taper le poids déclaré">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6 mt-4 invisible">
-                                                    <div class="mb-3 text-start">
-                                                        <label class="form-label fw-bold" for="user" ></label>
-                                                        <input class="form-control " type="text" value="<?php
-                                                            $array = explode(' ', $_SESSION['nomcomplet']);
-                                                            echo $array[0]; 
-                                                        ?>" name="user" id="example-date-input2">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-8">
-                                                    <div class="mb-3 text-start">
-                                                        <label class="form-label fw-bold" for="commentaire" >Commentaire</label>
-                                                        <textarea class="form-control"  name="commentaire" rows="4" cols="50"  placeholder="Commentaire en quelques mots ( pas obligatoire... )"></textarea>
-                                                    </div>
-                                                </div> 
-                                            </div>
-                                            <div class="row mt-2">
-                                                <div class="col-md-12 text-end">
-                                                    <div class="col-md-8 align-items-center col-md-12 text-end">
-                                                        <?php if($valideTransfert == "erreurInsertion"){ ?> 
-                                                            <script>    
-                                                                Swal.fire({
-                                                                    text: 'Veiller remplir tous les champs svp!',
-                                                                    icon: 'error',
-                                                                    timer: 2500,
-                                                                    showConfirmButton: false,
-                                                                },
-                                                                function(){ 
-                                                                    location.reload();
-                                                                });
-                                                            </script> 
-                                                        <?php } ?>
-                                                        <?php if($valideTransfert == "erreurEpaisseur"){ ?> 
-                                                            <script>    
-                                                                Swal.fire({
-                                                                    text: 'Vérifiez le nombre de bobine svp!',
-                                                                    icon: 'error',
-                                                                    timer: 2500,
-                                                                    showConfirmButton: false,
-                                                                },
-                                                                function(){ 
-                                                                    location.reload();
-                                                                });
-                                                            </script> 
-                                                        <?php } ?>
-                                                        <?php if($valideTransfert == "ValideInsertion"){?> 
-                                                            <script>    
-                                                                Swal.fire({
-                                                                    text: 'Réception enregistrée avec succès merci!',
-                                                                    icon: 'success',
-                                                                    timer: 3000,
-                                                                    showConfirmButton: false,
-                                                                    });
-                                                            </script> 
-                                                        <?php } ?>
-                                                        <div class="d-flex gap-2 pt-4">                           
-                                                            <a href="#"><input class="btn btn-danger  w-lg bouton mr-3" name="" type="submit" value="Annuler"></a>
-                                                            <input class="btn btn-success  w-lg bouton mr-3" name="CreerReception" type="submit" value="Enregistrer">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </form>  
-                                    </div>
-                                </div><!-- /.modal-content -->
-                        </div><!-- /.modal-dialog -->
-                    </div><!-- /.modal -->
                 </div> 
             </div><!-- div Content -->
 

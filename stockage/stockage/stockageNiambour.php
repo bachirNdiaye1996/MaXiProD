@@ -1,4 +1,4 @@
-<?php
+<?php   
 
 session_start(); 
 
@@ -6,115 +6,128 @@ if(!$_SESSION['niveau']){
     header('Location: 404.php');
 }
 
-include "../connexion/conexiondb.php";
-
-//La partie de recupe de l'id et script pour modifier
-    $referenceusine="";
-    $epaisseur="";
-    $largeur="";
-    $laminage="";
-    $poidspese="";
-    $produitfini="";
-    $travaille="";
-    $idlot="";
-    $annee="";
-    $numprod="";
-    $dateajout="";
-    $idbobine="";
-    $user="";
-    $nbbobine="";
+include "../../connexion/conexiondb.php";
 
 
-    $error="";
-    $success="";
+//Variables
+
+//** Nombre des bobines total
+    $sql = "SELECT SUM(`3`) + SUM(`3.5`) + SUM(`4`) + SUM(`4.5`) + SUM(`5`) + SUM(`5.5`) + SUM(`6`) + SUM(`6.5`) + SUM(`7`) + SUM(`7.5`)
+    + SUM(`8`) + SUM(`8.5`) + SUM(`9`) + SUM(`9.5`) + SUM(`10`) + SUM(`10.5`) + SUM(`11`) + SUM(`11.5`) + SUM(`12`) + SUM(`12.5`) + SUM(`13`) + SUM(`13.5`) + 
+    SUM(`14`) + SUM(`14.5`) + SUM(`15`) + SUM(`15.5`) + SUM(`16`) + SUM(`16.5`) + SUM(`17`) AS nb_reception_total FROM `epaisseur` where `lieu`='Niambour';";
+    // On prépare la requête
+    $query = $db->prepare($sql);
+
+    // On exécute
+    $query->execute();
+
+    // On récupère le nombre d'articles
+    $result = $query->fetch();
+
+    $nbReception = (int) $result['nb_reception_total'];
+//** Fin nombre des bobines total
 
 
-    if($_SERVER["REQUEST_METHOD"]=='GET'){
-        if(!isset($_GET['idmatiereModifSimp'])){
-            header("location: receptionPlanifie.php");
-            exit;
-        }
-        $id = $_GET['idmatiereModifSimp'];
-        $sql = "select * from matiereplanifie where idmatiereplanifie=$id";
-        $result = $db->query($sql);
-        $row = $result->fetch();
-        while(!$row){
-            header("location: receptionPlanifie.php");
-        exit;
-        }
-        //$referenceusine=$row['referenceusine'];
-        $epaisseur=$row['epaisseur'];
-        /*$largeur=$row['largeur'];
-        $laminage=$row['laminage'];
-        $poidspese=$row['poidspese'];
-        $produitfini=$row['produitfini'];
-        $travaille=$row['travaille'];
-        $idlot=$row['idlot'];
-        $annee=$row['annee'];
-        $numprod=$row['numprod'];*/
-        $dateajout=$row['dateajout'];
-        //$idbobine=$row['idbobine'];
-        //$user=$row['user'];
-        $nbbobine=$row['nbbobine'];
-        //echo $EstDemande;
-    }else{    
-        if(isset($_POST['modifierReception'])){
-            $id = $_GET['idmatiereModifSimp'];
-            //$referenceusine=$_POST['referenceusine'];
-            $epaisseur=$_POST['epaisseur'];
-            //$largeur=$_POST['largeur'];
-            //$lieutransfert=$_POST['lieutransfert'];
-            //$dateplanifie=$_POST['dateplanifie'];
-            $poidsdeclare=$_POST['poidsdeclare'];
-            $poidsbrut=$_POST['poidsbrut'];
-            //$produitfini=$_POST['produitfini'];
-            //$idlot=$_POST['idlot'];
-            //$annee=$_POST['annee'];
-            //$numprod=$_POST['numprod'];
-            $idbobine=$_POST['idbobine'];
-            //$user=$_POST['user'];
-            $nbbobine=$_POST['nbbobine'];
+//** Debut select des epaisseurs pour Metal1
+$sqlepaisseur = "SELECT * FROM `epaisseur` where `id`=1;";
 
-            $sql = "UPDATE `matiereplanifie` SET `referenceusine` = '$referenceusine',`epaisseur` = '$epaisseur',`poidsbrut` = '$poidsbrut',`poidsdeclare` = '$poidsdeclare'
-            , `idbobine` = '$idbobine', `nbbobine` = '$nbbobine' WHERE `idmatiereplanifie` = ?;";
-            //$result = $db->query($sql); 
-            $sth = $db->prepare($sql);    
-            $sth->execute(array($id));
+// On prépare la requête
+$queryepaisseur = $db->prepare($sqlepaisseur);
 
-            header("location: detailsReceptionPlanifie.php?idreception=$_GET[idreception]");
-            exit;
-        } 
-    }
-//Fin modif
+// On exécute
+$queryepaisseur->execute();
+
+// On récupère les valeurs dans un tableau associatif
+$EpaisseurM1 = $queryepaisseur->fetch();
+//** Fin select des epaisseurs pour Metal1
+
+//** Debut select des epaisseurs pour Metal3
+$sqlepaisseur = "SELECT * FROM `epaisseur` where `id`=3;";
+
+// On prépare la requête
+$queryepaisseur = $db->prepare($sqlepaisseur);
+
+// On exécute
+$queryepaisseur->execute();
+
+// On récupère les valeurs dans un tableau associatif
+$EpaisseurM3 = $queryepaisseur->fetch();
+//** Fin select des epaisseurs pour Metal3
+
+//** Debut select des epaisseurs pour Cranteuse
+$sqlepaisseur = "SELECT * FROM `epaisseur` where `id`=4;";
+
+// On prépare la requête
+$queryepaisseur = $db->prepare($sqlepaisseur);
+
+// On exécute
+$queryepaisseur->execute();
+
+// On récupère les valeurs dans un tableau associatif
+$EpaisseurCrant = $queryepaisseur->fetch();
+//** Fin select des epaisseurs pour Cranteuse
+
+//** Debut select des epaisseurs pour Tref
+$sqlepaisseur = "SELECT * FROM `epaisseur` where `id`=5;";
+
+// On prépare la requête
+$queryepaisseur = $db->prepare($sqlepaisseur);
+
+// On exécute
+$queryepaisseur->execute();
+
+// On récupère les valeurs dans un tableau associatif
+$EpaisseurTref = $queryepaisseur->fetch();
+//** Fin select des epaisseurs pour Tref
+
+//** Debut select des epaisseurs pour Metal Mbao
+$sqlepaisseur = "SELECT * FROM `epaisseur` where `id`=6;";
+
+// On prépare la requête
+$queryepaisseur = $db->prepare($sqlepaisseur);
+
+// On exécute
+$queryepaisseur->execute();
+
+// On récupère les valeurs dans un tableau associatif
+$EpaisseurMB = $queryepaisseur->fetch();
+//** Fin select des epaisseurs pour Metal Mbao
 
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
 
-<meta charset="utf-8">
-
+    <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <link rel="shortcut icon" href="../image/iconOnglet.png" />
+    <link rel="shortcut icon" href="../../image/iconOnglet.png" />
     <title>METAL AFRIQUE</title>
 
     <!-- Custom fonts for this template -->
-    <link href="../indexPage/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="../../indexPage/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link
         href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
         rel="stylesheet">
 
+    <!-- Sweet Alert -->
+    <link href="../../libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css"/>
+    <script src="../../libs/sweetalert2/sweetalert2.min.js"></script>
+    <script src="../../libs/sweetalert2/jquery-1.12.4.js"></script>
+
     <!-- Custom styles for this template -->
-    <link href="../indexPage/css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="../../indexPage/css/sb-admin-2.min.css" rel="stylesheet">
 
     <!-- Custom styles for this page -->
-    <link href="../indexPage/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <link href="../../indexPage/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+
 
 </head>
 
@@ -127,7 +140,7 @@ include "../connexion/conexiondb.php";
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
              <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="../indexPage/accueil.php">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="../../indexPage/accueil.php">
                 <div class="sidebar-brand-icon rotate-n-15">
                     <i class="fas fa-laugh-wink"></i>
                 </div>
@@ -138,8 +151,8 @@ include "../connexion/conexiondb.php";
             <hr class="sidebar-divider my-0">
 
             <!-- Nav Item - Dashboard -->
-            <li class="nav-item active">
-                <a class="nav-link" href="../indexPage/accueil.php">
+            <li class="nav-item">
+                <a class="nav-link" href="../../indexPage/accueil.php">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Accueil Dashboard</span></a>
             </li>
@@ -160,10 +173,11 @@ include "../connexion/conexiondb.php";
                     data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Stockage :</h6>
-                        <a class="collapse-item" href="../stockage/reception.php">Réception</a>
-                        <a class="collapse-item active" href="../stockage/transfert.php">Transfert</a>
-                        <a class="collapse-item" href="../stockage/stockage.php">Stockage</a>
-                        <a class="collapse-item" href="../stockage/graphe.php">Graphique</a>
+                        <a class="collapse-item" href="../../stockage/reception.php">Réception</a>
+                        <a class="collapse-item" href="../../stockage/receptionPlanifie.php">Réception planifiée</a>
+                        <a class="collapse-item" href="../../stockage/transfert/transfert.php">Transfert</a>
+                        <a class="collapse-item active" href="../../stockage/stockage/stockage.php">Stockage</a>
+                        <a class="collapse-item" href="../../stockage/graphe.php">Graphique</a>
                     </div>
                 </div>
             </li>
@@ -269,14 +283,12 @@ include "../connexion/conexiondb.php";
             <!-- Main Content -->
             <div id="content">
 
-                <!-- Topbar -->
-                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
-
+                 <!-- Topbar -->
+                 <nav class="navbar navbar-expand navbar-light bg-white topbar static-top shadow">
                     <!-- Sidebar Toggle (Topbar) -->
                     <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
                         <i class="fa fa-bars"></i>
                     </button>
-
                     <!-- Topbar Search -->
                     <form
                         class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
@@ -385,7 +397,7 @@ include "../connexion/conexiondb.php";
                                 </h6>
                                 <a class="dropdown-item d-flex align-items-center" href="#">
                                     <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="img/undraw_profile_1.svg"
+                                        <img class="rounded-circle" src="../../indexPage/img/undraw_profile_1.svg"
                                             alt="...">
                                         <div class="status-indicator bg-success"></div>
                                     </div>
@@ -397,7 +409,7 @@ include "../connexion/conexiondb.php";
                                 </a>
                                 <a class="dropdown-item d-flex align-items-center" href="#">
                                     <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="img/undraw_profile_2.svg"
+                                        <img class="rounded-circle" src="../../indexPage/img/undraw_profile_2.svg"
                                             alt="...">
                                         <div class="status-indicator"></div>
                                     </div>
@@ -409,7 +421,7 @@ include "../connexion/conexiondb.php";
                                 </a>
                                 <a class="dropdown-item d-flex align-items-center" href="#">
                                     <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="img/undraw_profile_3.svg"
+                                        <img class="rounded-circle" src="../../indexPage/img/undraw_profile_3.svg"
                                             alt="...">
                                         <div class="status-indicator bg-warning"></div>
                                     </div>
@@ -443,7 +455,7 @@ include "../connexion/conexiondb.php";
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo $_SESSION['nomcomplet']; ?></span>
                                 <img class="img-profile rounded-circle"
-                                    src="../indexPage/img/undraw_profile.svg">
+                                    src="../../indexPage/img/undraw_profile.svg">
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
@@ -461,7 +473,7 @@ include "../connexion/conexiondb.php";
                                     Activités
                                 </a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="../index.php">
+                                <a class="dropdown-item" href="../../index.php">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Déconnexion
                                 </a>
@@ -474,103 +486,110 @@ include "../connexion/conexiondb.php";
                 <!-- End of Topbar -->
 
                 <!-- Begin Page Content -->
-                <div class="container-fluid">
-                    <!-- Modale pour ajouter reception -->
-                    <div class="mt-5" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" >
-                        <div class="modal-dialog modal-xl modal-dialog-centered">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="myExtraLargeModalLabel">Modifier la reception</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="row mt-5 ml-5">
+                    <div class="col-lg-3 mt-5 mr-5">
+                        <div class="">
+                            <div class="list-group">
+                                <a href="stockage.php" class="list-group-item list-group-item-action" aria-current="true">METAL 1</a>
+                                <a href="stockageMetalMbao.php" class="list-group-item list-group-item-action">METAL MBAO</a>
+                                <a href="stockageNiambour.php" class="list-group-item list-group-item-action active">NIAMBOUR</a>
+                                <a href="stockageCranteuse.php" class="list-group-item list-group-item-action">MACHINE CRANTEUSE</a>
+                                <a href="stockageTrefilage.php" class="list-group-item list-group-item-action">MACHINE TREFILAGE</a>
+                            </div>
+                                <!-- End of Sidebar -->
+                            <!-- Page Heading -->
+                            <!-- <div class="row">
+                                <div class="col-xl-3 col-md-6 mb-1">
+                                    <img src="../../image/stockage/ferabeton.jpg" class="img-fluid" alt="" style="border-radius: 50%; margin:20px; opacity: 0.7;" width="200">
                                 </div>
-                                <div class="modal-body">
-                                    <form action="#" method="POST" enctype="multipart/form-data">
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="mb-3 text-start">
-                                                    <label class="form-label fw-bold" for="prenom" >Epaisseur</label>
-                                                    <select class="form-control" name="epaisseur" placeholder="Taper l'épaisseur de la bobine" value="">
-                                                        <option <?php if ( $row['epaisseur']=='3') {echo "selected='selected'";} ?> >3</option>
-                                                        <option  <?php if ( $row['epaisseur']=='3.5') {echo "selected='selected'";} ?> >3.5</option>
-                                                        <option <?php if ( $row['epaisseur']=='4') {echo "selected='selected'";} ?> >4</option>
-                                                        <option <?php if ( $row['epaisseur']=='4.5') {echo "selected='selected'";} ?> >4.5</option>
-                                                        <option <?php if ( $row['epaisseur']=='5') {echo "selected='selected'";} ?> >5</option>
-                                                        <option <?php if ( $row['epaisseur']=='5.5') {echo "selected='selected'";} ?> >5.5</option>
-                                                        <option <?php if ( $row['epaisseur']=='6') {echo "selected='selected'";} ?> >6</option>
-                                                        <option <?php if ( $row['epaisseur']=='6.5') {echo "selected='selected'";} ?> >6.5</option>
-                                                        <option <?php if ( $row['epaisseur']=='7') {echo "selected='selected'";} ?> >7</option>
-                                                        <option <?php if ( $row['epaisseur']=='7.5') {echo "selected='selected'";} ?> >7.5</option>
-                                                        <option <?php if ( $row['epaisseur']=='8') {echo "selected='selected'";} ?> >8</option>
-                                                        <option <?php if ( $row['epaisseur']=='8.5') {echo "selected='selected'";} ?> >8.5</option>
-                                                        <option <?php if ( $row['epaisseur']=='9') {echo "selected='selected'";} ?> >9</option>
-                                                        <option <?php if ( $row['epaisseur']=='9.5') {echo "selected='selected'";} ?> >9.5</option>
-                                                        <option <?php if ( $row['epaisseur']=='10') {echo "selected='selected'";} ?> >10</option>
-                                                        <option <?php if ( $row['epaisseur']=='10.5') {echo "selected='selected'";} ?> >10.5</option>
-                                                        <option <?php if ( $row['epaisseur']=='11') {echo "selected='selected'";} ?> >11</option>
-                                                        <option <?php if ( $row['epaisseur']=='11.5') {echo "selected='selected'";} ?> >11.5</option>
-                                                        <option <?php if ( $row['epaisseur']=='12') {echo "selected='selected'";} ?> >12</option>
-                                                        <option <?php if ( $row['epaisseur']=='12.5') {echo "selected='selected'";} ?> >12.5</option>
-                                                        <option <?php if ( $row['epaisseur']=='13') {echo "selected='selected'";} ?> >13</option>
-                                                        <option <?php if ( $row['epaisseur']=='13.5') {echo "selected='selected'";} ?> >13.5</option>
-                                                        <option <?php if ( $row['epaisseur']=='14') {echo "selected='selected'";} ?> >14</option>
-                                                        <option <?php if ( $row['epaisseur']=='14.5') {echo "selected='selected'";} ?> >14.5</option>
-                                                        <option <?php if ( $row['epaisseur']=='15') {echo "selected='selected'";} ?> >15</option>
-                                                        <option <?php if ( $row['epaisseur']=='15.5') {echo "selected='selected'";} ?> >15.5</option>
-                                                        <option <?php if ( $row['epaisseur']=='16') {echo "selected='selected'";} ?> >16</option>
-                                                        <option <?php if ( $row['epaisseur']=='16.5') {echo "selected='selected'";} ?>>16.5</option>
-                                                        <option <?php if ( $row['epaisseur']=='17') {echo "selected='selected'";} ?> >17</option>
-                                                    </select> 
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="mb-6 text-start">
-                                                    <label class="form-label fw-bold" for="nom">Nombre de bobine</label>
-                                                    <input class="form-control" type="number" name="nbbobine" value="<?php echo $row['nbbobine'];?>" id="example-date-input4" placeholder="Taper le nombre de bobine">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 mt-3">
-                                                <div class="mb-3 text-start">
-                                                    <label class="form-label fw-bold" for="prenom" >Poids déclare</label>
-                                                    <input class="form-control designa" type="number" value="<?php echo $row['poidsdeclare'];?>" name="poidsdeclare" id="example"  placeholder="Taper le poids déclaré">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 mt-3">
-                                                <div class="mb-3 text-start">
-                                                    <label class="form-label fw-bold" for="prenom" >Poids brut</label>
-                                                    <input class="form-control designa" type="number" value="<?php echo $row['poidsbrut'];?>" name="poidsbrut" id="example"  placeholder="Taper le poids brut">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row mt-2">
-                                            <div class="col-md-12 text-end">
-                                                <div class="col-md-8 align-items-center col-md-12 text-end">
-                                                    <?php //if($mess == "error"){ ?> <script>    Swal.fire({
-                                                        text: 'Veiller remplir tous les champs svp!',
-                                                        icon: 'error',
-                                                        timer: 2000,
-                                                        showConfirmButton: false,
-                                                        });</script> <?php //} ?>
-                                                    <?php //if(){?> <script>    Swal.fire({
-                                                        text: 'Commande enregistrée avec succès merci!',
-                                                        icon: 'success',
-                                                        timer: 2000,
-                                                        showConfirmButton: false,
-                                                        });</script> <?php //} ?>
-                                                    <div class="d-flex gap-2 pt-4">                           
-                                                        <a class="btn btn-danger  w-lg bouton mr-3" href="detailsReceptionPlanifie.php?idreception=<?= $_GET['idreception'] ?>">Annuler</a>
-                                                        <input class="btn btn-success  w-lg bouton mr-3" name="modifierReception" type="submit" value="Modifier">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </form>  
+                            </div> -->
+                        </div> 
+                    </div>
+
+                    <!-- DataTales Example -->
+                    <!-- Fade In Utility -->
+                    <div class="col-lg-8 mt-5">
+                        <div class="card position-relative">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Nombre de bobine stocké à Niambour : <?php echo $nbReception; ?></h6>
+                            </div>
+                            <div class="row m-2">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" id="" width="100%" cellspacing="0">
+                                        <thead>
+                                            <tr>    
+                                                <th>3</th>
+                                                <th>3.5</th>
+                                                <th>4</th>
+                                                <th>4.5</th>
+                                                <th>5</th>
+                                                <th>5.5</th>
+                                                <th>6</th>
+                                                <th>6.5</th>
+                                                <th>7</th>
+                                                <th>7.5</th>
+                                                <th>8</th>
+                                                <th>8.5</th>
+                                                <th>9</th>
+                                                <th>9.5</th>
+                                                <th>10</th>
+                                                <th>10.5</th>
+                                                <th>11</th>
+                                                <th>11.5</th>
+                                                <th>12</th>
+                                                <th>12.5</th>
+                                                <th>13</th>
+                                                <th>13.5</th>
+                                                <th>14</th>
+                                                <th>14.5</th>
+                                                <th>15</th>
+                                                <th>15.5</th>
+                                                <th>16</th>
+                                                <th>16.5</th>
+                                                <th>17</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['3'] == 0){echo "";}else{echo $EpaisseurM3['3'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['3.5'] == 0){echo "";}else{echo $EpaisseurM3['3.5'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['4'] == 0){echo "";}else{echo $EpaisseurM3['4'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['4.5'] == 0){echo "";}else{echo $EpaisseurM3['4.5'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['5'] == 0){echo "";}else{echo $EpaisseurM3['5'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['5.5'] == 0){echo "";}else{echo $EpaisseurM3['5.5'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['6'] == 0){echo "";}else{echo $EpaisseurM3['6'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['6.5'] == 0){echo "";}else{echo $EpaisseurM3['6.5'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['7'] == 0){echo "";}else{echo $EpaisseurM3['7'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['7.5'] == 0){echo "";}else{echo $EpaisseurM3['7.5'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['8'] == 0){echo "";}else{echo $EpaisseurM3['8'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['8.5'] == 0){echo "";}else{echo $EpaisseurM3['8.5'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['9'] == 0){echo "";}else{echo $EpaisseurM3['9'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['9.5'] == 0){echo "";}else{echo $EpaisseurM3['9.5'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['10'] == 0){echo "";}else{echo $EpaisseurM3['10'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['10.5'] == 0){echo "";}else{echo $EpaisseurM3['10.5'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['11'] == 0){echo "";}else{echo $EpaisseurM3['11'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['11.5'] == 0){echo "";}else{echo $EpaisseurM3['11.5'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['12'] == 0){echo "";}else{echo $EpaisseurM3['12'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['12.5'] == 0){echo "";}else{echo $EpaisseurM3['12.5'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['13'] == 0){echo "";}else{echo $EpaisseurM3['13'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['13.5'] == 0){echo "";}else{echo $EpaisseurM3['13.5'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['14'] == 0){echo "";}else{echo $EpaisseurM3['14'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['14.5'] == 0){echo "";}else{echo $EpaisseurM3['14.5'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['15'] == 0){echo "";}else{echo $EpaisseurM3['15'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['15.5'] == 0){echo "";}else{echo $EpaisseurM3['15.5'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['16'] == 0){echo "";}else{echo $EpaisseurM3['16'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['16.5'] == 0){echo "";}else{echo $EpaisseurM3['16.5'];} ?></td>
+                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM3['17'] == 0){echo "";}else{echo $EpaisseurM3['17'];} ?></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
-                            </div><!-- /.modal-content -->
-                        </div><!-- /.modal-dialog -->
-                    </div><!-- /.modal -->
-                    <!-- /.container-fluid -->
+                            </div>
+                            <!-- Tableau d'en bas -->
+                        </div>
+                    </div>
                 </div>
-                <!-- End of Main Content -->
+            </div><!-- div Content -->
 
             <!-- Footer -->
             <footer class="sticky-footer bg-white">
@@ -581,53 +600,32 @@ include "../connexion/conexiondb.php";
             </footer>
             <!-- End of Footer -->
 
-        </div>
-        <!-- End of Content Wrapper -->
+        </div><!-- End of Content Wrapper -->
 
-    </div>
-    <!-- End of Page Wrapper -->
+    </div><!-- End of Content Wrapper -->
 
     <!-- Scroll to Top Button-->
     <a class="scroll-to-top rounded" href="#page-top">
         <i class="fas fa-angle-up"></i>
     </a>
 
-    <!-- Logout Modal-->
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="login.html">Logout</a>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- Bootstrap core JavaScript-->
-    <script src="../indexPage/vendor/jquery/jquery.min.js"></script>
-    <script src="../indexPage/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../../indexPage/vendor/jquery/jquery.min.js"></script>
+    <script src="../../indexPage/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
     <!-- Core plugin JavaScript-->
-    <script src="../indexPage/vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="../../indexPage/vendor/jquery-easing/jquery.easing.min.js"></script>
 
     <!-- Custom scripts for all pages-->
-    <script src="../indexPage/js/sb-admin-2.min.js"></script>
+    <script src="./../indexPage/js/sb-admin-2.min.js"></script>
 
     <!-- Page level plugins -->
-    <script src="../indexPage/vendor/datatables/jquery.dataTables.min.js"></script>
-    <script src="../indexPage/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="../../indexPage/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="./../indexPage/vendor/datatables/dataTables.bootstrap4.min.js"></script>
 
     <!-- Page level custom scripts -->
-    <script src="../indexPage/js/demo/datatables-demo.js"></script>
+    <script src="../../indexPage/js/demo/datatables-demo.js"></script>
 
 </body>
 

@@ -1,0 +1,106 @@
+<?php
+    include "../../connexion/conexiondb.php";
+
+    // L'admin permet de donner la main au responsable du pont bascule
+        if(isset($_GET['idmatiereDemandeAccepter'])){
+            $id = $_GET['idmatiereDemandeAccepter'];
+            //$sql = "UPDATE `reception` set `actifapprouvreception`=0, `status` = 'Approuvée'  where idreception=$id";
+            //$db->query($sql);
+
+            $sql1 = "UPDATE `transfertdetails` set `acceptereceptionmodif`=0 where idtransfertdetail=$id";
+            $db->query($sql1);
+
+
+            //foreach ($Reception as $key => $value) {
+            //C'est pour faire les update des points de départ
+                $epaisseur = $_GET['epaisseur'];
+                $nbbobine = $_GET['nombrebobine'];
+                $pointdepart = $_GET['pointdepart'];
+                $pointarrive = $_GET['pointarrive'];
+                if(($pointdepart == "Metal1")){ // Vérifie le type de transfert
+                    //Debut inserer le nombre de bobine par epaisseur
+                    $req ="UPDATE epaisseur SET `$epaisseur` = `$epaisseur` + ? where `id`=1;";  //Metal 1
+                    //$db->query($req); 
+                    $reqtitre = $db->prepare($req);
+                    $reqtitre->execute($nbbobine);
+                    //Fin inserer le nombre de bobine par epaisseur
+                }elseif(($pointdepart == "Niambour")){
+                    //Debut inserer le nombre de bobine par epaisseur
+                    $req ="UPDATE epaisseur SET `$epaisseur` = `$epaisseur` + ? where `id`=3;";  // Metal 3 dit Niambour
+                    //$db->query($req); 
+                    $reqtitre = $db->prepare($req);
+                    $reqtitre->execute(array($nbbobine));
+                    //Fin inserer le nombre de bobine par epaisseur
+                }
+                elseif(($pointdepart == "Metal Mbao")){
+                    //Debut inserer le nombre de bobine par epaisseur
+                    $req ="UPDATE epaisseur SET `$epaisseur` = `$epaisseur` + ? where `id`=6;";  // Metal Mbao 
+                    //$db->query($req); 
+                    $reqtitre = $db->prepare($req);
+                    $reqtitre->execute(array($nbbobine));
+                    //Fin inserer le nombre de bobine par epaisseur
+                }elseif(($pointdepart == "Cranteuse")){
+                    //Debut inserer le nombre de bobine par epaisseur
+                    $req ="UPDATE epaisseur SET `$epaisseur` = `$epaisseur` + ? where `id`=4;";  // Cranteuse
+                    //$db->query($req); 
+                    $reqtitre = $db->prepare($req);
+                    $reqtitre->execute(array($nbbobine));
+                    //Fin inserer le nombre de bobine par epaisseur
+                }
+                elseif(($pointdepart == "Tréfilage")){
+                    //Debut inserer le nombre de bobine par epaisseur
+                    $req ="UPDATE epaisseur SET `$epaisseur` = `$epaisseur` + ? where `id`=5;";  // Tréfilage
+                    //$db->query($req);
+                    $reqtitre = $db->prepare($req);
+                    $reqtitre->execute(array($nbbobine));
+                    //Fin inserer le nombre de bobine par epaisseur
+                }
+            // Fin pour faire les update des points depart
+
+            // C'est pour faire les update des points d'arrive
+                if(($pointarrive == "Metal1")){ // Vérifie le type de transfert
+                    //Debut inserer le nombre de bobine par epaisseur
+                    $req ="UPDATE epaisseur SET `$epaisseur` = `$epaisseur` - ? where `id`=1;";  //Metal 1
+                    //$db->query($req); 
+                    $reqtitre = $db->prepare($req);
+                    $reqtitre->execute(array($nbbobine));
+                    //Fin inserer le nombre de bobine par epaisseur
+                }elseif(($pointarrive == "Niambour")){
+                    //Debut inserer le nombre de bobine par epaisseur
+                    $req ="UPDATE epaisseur SET `$epaisseur` = `$epaisseur` - ? where `id`=3;";  // Metal 3 dit Niambour
+                    //$db->query($req); 
+                    $reqtitre = $db->prepare($req);
+                    $reqtitre->execute(array($nbbobine));
+                    //Fin inserer le nombre de bobine par epaisseur
+                }
+                elseif(($pointarrive == "Metal Mbao")){
+                    //Debut inserer le nombre de bobine par epaisseur
+                    $req ="UPDATE epaisseur SET `$epaisseur` = `$epaisseur` - ? where `id`=6;";  // Metal Mbao dit Niambour
+                    //$db->query($req); 
+                    $reqtitre = $db->prepare($req);
+                    $reqtitre->execute(array($nbbobine));
+                    //Fin inserer le nombre de bobine par epaisseur
+                }elseif(($pointarrive == "Cranteuse")){
+                    //Debut inserer le nombre de bobine par epaisseur
+                    $req ="UPDATE epaisseur SET `$epaisseur` = `$epaisseur` - ? where `id`=4;";  // Cranteuse
+                    //$db->query($req); 
+                    $reqtitre = $db->prepare($req);
+                    $reqtitre->execute(array($nbbobine));
+                    //Fin inserer le nombre de bobine par epaisseur
+                }
+                elseif(($pointarrive == "Tréfilage")){
+                    //Debut inserer le nombre de bobine par epaisseur
+                    $req ="UPDATE epaisseur SET `$epaisseur` = `$epaisseur` - ? where `id`=5;";  // Tréfilage
+                    //$db->query($req); 
+                    $reqtitre = $db->prepare($req);
+                    $reqtitre->execute(array($nbbobine));
+                    //Fin inserer le nombre de bobine par epaisseur
+                }
+            // Fin pour faire les update des points d'arrive
+            //}
+
+            header("location: detailTransfert.php?idtransfert=$_GET[idtransfertDemandeAccepter]");
+            exit;
+        }
+    // Fin admin permet de donner la main au responsable du pont bascule
+?>

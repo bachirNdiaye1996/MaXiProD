@@ -6,119 +6,95 @@ if(!$_SESSION['niveau']){
     header('Location: 404.php');
 }
 
-include "../connexion/conexiondb.php";
+include "../../connexion/conexiondb.php";
 
 
 //Variables
+$valideTransfert="";
 
-//** Debut  Validerectification 
-    $mess2="";
-    if(isset($_POST['Validerectification'])){
-        //print_r($_POST);
-        if(!empty($_POST['motifRectifier'])){  
-            $id=htmlspecialchars($_POST['idreception']);
+// Pour insertion details reception
+    if(isset($_POST['CreerTransfert'])){
+        if(!empty($_POST['lieutransfert']) && !empty($_POST['epaisseur']) && !empty($_POST['nbbobine'])){
+            $lieutransfert=htmlspecialchars($_POST['lieutransfert']);
+            $epaisseur=htmlspecialchars($_POST['epaisseur']);
+            //$largeur=htmlspecialchars($_POST['largeur']);
+            $commentaire=htmlspecialchars($_POST['commentaire']);
             $user=htmlspecialchars($_POST['user']);
-            //$motifRectifier=htmlspecialchars($_POST['motifRectifier']);
-            $req ="UPDATE reception SET actifapprouvreception=1, `status` = 'En cours de rectification', acceptereception=1, user=? WHERE idreception=$id;"; 
-            //$db->query($req); 
-            $reqtitre = $db->prepare($req);
-            $reqtitre->execute(array($user));
+            //$poidsdeclare=htmlspecialchars($_POST['poidsroulaux']);
+            //$idLot=htmlspecialchars($_POST['idLot']);
+            $idbobine=htmlspecialchars($_POST['idbobine']);
+            //$idreception=htmlspecialchars($_POST['idreception']);
+            $nbbobine=htmlspecialchars($_POST['nbbobine']);
 
-
-            $reqMatiere ="UPDATE matiere SET actifapprouvreception=0 WHERE idmatiere = ?;"; 
-            //$db->query($req); 
-            $reqtitreMatiere = $db->prepare($reqMatiere);
-            $reqtitreMatiere->execute(array($id));
-
-            //$messageD=$_SESSION['nomcomplet'].' vient de faire une livraison de piéces pour la DA00'.$_POST['idda'].' Veillez verifier svp! '.'<a href="http://localhost/GestionDemandePiece">Acceder ici.</a>';
-            /*$messageD = "
-            <html>
-            <head>
-            <meta http-equiv='Content-Type' content='text/html; charset=utf-8' />
-                <title>Nouveau compte</title>
-            </head>
-            <body>
-                <div id='email-wrap' style='background: #33ECFF;color: #FFF; border-radius: 10px;'>
-                    <p align='center'>
-                    <img src='https://bootstrapemail.com/img/icons/logo.png' alt='' width=72 height=72>
-                
-                    <h3 align='center'>METAL AFRIQUE EMAIL</h3>
-                
-                    <p align='center'>$_SESSION[nomcomplet] vient de rejeter la commande de piéces dans la DA00$_POST[idda] pour les motifs suivants :</p>
-                    <p align='center' style='color:red'>$_POST[motifrejet]</p>
-                    <p align='center'><a href='http://localhost/GestionDemandePiece'>Cliquez ici pour y acceder.</a></p>
-                    </p>
-                    <br>
-                </div>
-            </body>
-            </html>
-                ";
-            foreach($articlMails as $article){
-                if(($article['niveau'] == 'kemc') || ($article['niveau'] == 'admin')){
-                    envoie_mail($article['nomcomplet'],$article['email'],'Rejeter commande',$messageD);
-                }
-            }*/
-            
-            /*if(isset($_GET['id'])){
-                $id = $_GET['id'];
-                header("location:acueilAdmin1.php?id=$id");
-                exit;
-            }*/
-
-            //Pour éffacer les valeurs enregistrées dans le stockage
-                
-                //** Debut select des receptions
-                    $sql = "SELECT * FROM `matiere` where `actif`=1 and idreception=$id;";
-        
-                    // On prépare la requête
-                    $query = $db->prepare($sql);
-        
-                    // On exécute
-                    $query->execute();
-        
-                    // On récupère les valeurs dans un tableau associatif
-                    $Reception = $query->fetchAll();
-                //** Fin select des receptions
-                
-                foreach ($Reception as $key => $value) {
-                    $epaisseur = $value['epaisseur'];
-                    $nbbobine = $value['nbbobine'];
-                    $lieutransfert = $value['lieutransfert'];
-                    if(($lieutransfert == "Metal1")){ // Vérifie le type de transfert
-                        //Debut inserer le nombre de bobine par epaisseur
-                        $req ="UPDATE epaisseur SET `$epaisseur` = `$epaisseur` - ? where `id`=1;";  //Metal 1
-                        //$db->query($req); 
-                        $reqtitre = $db->prepare($req);
-                        $reqtitre->execute(array($nbbobine));
-                        //Fin inserer le nombre de bobine par epaisseur
-                    }elseif(($lieutransfert == "Niambour")){
-                        //Debut inserer le nombre de bobine par epaisseur
-                        $req ="UPDATE epaisseur SET `$epaisseur` = `$epaisseur` - ? where `id`=3;";  // Metal 3 dit Niambour
-                        //$db->query($req); 
-                        $reqtitre = $db->prepare($req);
-                        $reqtitre->execute(array($nbbobine));
-                        //Fin inserer le nombre de bobine par epaisseur
-                    }elseif(($lieutransfert == "Metal Mbao")){
-                        //Debut inserer le nombre de bobine par epaisseur
-                        $req ="UPDATE epaisseur SET `$epaisseur` = `$epaisseur` - ? where `id`=3;";  // Metal 3 dit Niambour
-                        //$db->query($req); 
-                        $reqtitre = $db->prepare($req);
-                        $reqtitre->execute(array($nbbobine));
-                        //Fin inserer le nombre de bobine par epaisseur
+            //** On vérifie si le nombre est exact
+                $idepais = 0;
+                //** On vérifie en fonction du lieu de transfert
+                    if(($lieutransfert == "Metal1 vers Tréfilage") || ($lieutransfert == "Metal1 vers Cranteuse") || ($lieutransfert == "Metal1 vers Metal3")){
+                        $idepais = 1;
+                    }elseif($lieutransfert == "Metal3 vers Metal1"){
+                        $idepais = 3;
+                    }elseif($lieutransfert == "Cranteuse vers Metal1"){
+                        $idepais = 4;
+                    }elseif($lieutransfert == "Tréfilage vers Metal1"){
+                        $idepais = 5;
                     }
-                }
-            //Fin pour éffacer les valeurs enregistrées 
+                //**Fin vérification en fonction du lieu de transfert
+                $sqlEpaisseur = "SELECT `$epaisseur` AS epaisseurVerifier FROM `epaisseur` where `id`=$idepais;";
+                // On prépare la requête
+                $queryEpaisseur = $db->prepare($sqlEpaisseur);
 
-            header("location: reception.php?");
-            exit;
+                // On exécute
+                $queryEpaisseur->execute();
+
+                // On récupère le nombre d'articles
+                $resultEpaisseur = $queryEpaisseur->fetch();
+
+                $nbEpaisseur = (int) $resultEpaisseur['epaisseurVerifier'];
+
+                if(($nbEpaisseur < $nbbobine) || ($nbbobine == 0)){
+                    $valideTransfert="erreurEpaisseur";
+                }else{
+                    if(($lieutransfert == "Cranteuse vers Metal1")){ // Vérifie le type de transfert
+                        //Debut inserer le nombre de bobine par epaisseur
+                        $req ="UPDATE epaisseur SET `$epaisseur` = `$epaisseur` + ? where `id`=4;";
+                        //$db->query($req); 
+                        $reqtitre = $db->prepare($req);
+                        $reqtitre->execute(array($nbbobine));
+
+                        //Fin inserer le nombre de bobine par epaisseur
+                        $insertUser=$db->prepare("INSERT INTO `transfert` (`idtransfert`, `lieutransfert`, `epaisseur`, `poidsroulaux`, `idlot`, `dateajout`,
+                        `idbobine`, `user`, `nbbobine`, `commentaire`) VALUES (NULL, ?, ?, '', '', current_timestamp(), '1',?,?,?);");
+                        $insertUser->execute(array($lieutransfert,$epaisseur,$user,$nbbobine,$commentaire));
+                        //** Fin nombre des bobines total
+                        $valideTransfert="ValideInsertion";
+                    }elseif(($lieutransfert == "Tréfilage vers Metal1")){
+                        //Debut inserer le nombre de bobine par epaisseur
+                        $req ="UPDATE epaisseur SET `$epaisseur` = `$epaisseur` + ? where `id`=5;";
+                        //$db->query($req); 
+                        $reqtitre = $db->prepare($req);
+                        $reqtitre->execute(array($nbbobine));
+
+                        //Fin inserer le nombre de bobine par epaisseur
+                        $insertUser=$db->prepare("INSERT INTO `transfert` (`idtransfert`, `lieutransfert`, `epaisseur`, `poidsroulaux`, `idlot`, `dateajout`,
+                        `idbobine`, `user`, `nbbobine`, `commentaire`) VALUES (NULL, ?, ?, '', '', current_timestamp(), '1',?,?,?);");
+                        $insertUser->execute(array($lieutransfert,$epaisseur,$poidsdeclare,$user,$nbbobine,$commentaire));
+                        //** Fin nombre des bobines total
+                        $valideTransfert="ValideInsertion";
+                    }
+
+                    header("location: transfert.php");
+                    exit;
+                }
+            //** Fin verification
+            
         }else{
-        $mess2 = "error";
-        }    
+            $valideTransfert="erreurInsertion";
+        }
     }
-//** Fin debut  Validerectification 
+//Fin insertion details reception
 
 //** Debut select des receptions
-    $sql = "SELECT * FROM `reception` where `actif`=1 ORDER BY `idreception` DESC;";
+    $sql = "SELECT * FROM `transfert` where `actif`=1 ORDER BY `idtransfert` DESC;";
 
     // On prépare la requête
     $query = $db->prepare($sql);
@@ -128,7 +104,6 @@ include "../connexion/conexiondb.php";
 
     // On récupère les valeurs dans un tableau associatif
     $Reception = $query->fetchAll();
-
 //** Fin select des receptions
 
 
@@ -147,6 +122,7 @@ include "../connexion/conexiondb.php";
 
     $nbReception = (int) $result['nb_reception_total'];
 //** Fin nombre des bobines total
+
 
 //** Debut select des epaisseurs pour Metal1
     $sqlepaisseur = "SELECT * FROM `epaisseur` where `id`=1;";
@@ -200,7 +176,7 @@ include "../connexion/conexiondb.php";
     $EpaisseurTref = $queryepaisseur->fetch();
 //** Fin select des epaisseurs pour Tref
 
-//** Debut select des epaisseurs pour Tref
+//** Debut select des epaisseurs pour Metal Mbao
 $sqlepaisseur = "SELECT * FROM `epaisseur` where `id`=6;";
 
 // On prépare la requête
@@ -210,7 +186,7 @@ $queryepaisseur = $db->prepare($sqlepaisseur);
 $queryepaisseur->execute();
 
 // On récupère les valeurs dans un tableau associatif
-$EpaisseurMB = $queryepaisseur->fetch();
+$EpaisseurMb = $queryepaisseur->fetch();
 //** Fin select des epaisseurs pour Tref
 
 
@@ -229,25 +205,27 @@ $EpaisseurMB = $queryepaisseur->fetch();
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <link rel="shortcut icon" href="../image/iconOnglet.png" />
+    <link rel="shortcut icon" href="../../image/iconOnglet.png" />
     <title>METAL AFRIQUE</title>
 
     <!-- Custom fonts for this template -->
-    <link href="../indexPage/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="../../indexPage/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link
-        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
-        rel="stylesheet">
+    href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+    rel="stylesheet">
 
     <!-- Sweet Alert -->
-    <link href="../libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css"/>
-    <script src="../libs/sweetalert2/sweetalert2.min.js"></script>
-    <script src="../libs/sweetalert2/jquery-1.12.4.js"></script>
+    <link href="../../libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css"/>
+    <script src="../../libs/sweetalert2/sweetalert2.min.js"></script>
+    <script src="../../libs/sweetalert2/jquery-1.12.4.js"></script>
+
 
     <!-- Custom styles for this template -->
-    <link href="../indexPage/css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="../../indexPage/css/sb-admin-2.min.css" rel="stylesheet">
 
     <!-- Custom styles for this page -->
-    <link href="../indexPage/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <link href="../../indexPage/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+
 
 </head>
 
@@ -260,7 +238,7 @@ $EpaisseurMB = $queryepaisseur->fetch();
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
              <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="../indexPage/accueil.php">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="../../indexPage/accueil.php">
                 <div class="sidebar-brand-icon rotate-n-15">
                     <i class="fas fa-laugh-wink"></i>
                 </div>
@@ -272,7 +250,7 @@ $EpaisseurMB = $queryepaisseur->fetch();
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
-                <a class="nav-link" href="../indexPage/accueil.php">
+                <a class="nav-link" href="../../indexPage/accueil.php">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Accueil Dashboard</span></a>
             </li>
@@ -283,7 +261,7 @@ $EpaisseurMB = $queryepaisseur->fetch();
 
             <!-- Nav Item - Tables -->
 
-            <li class="nav-item">
+            <li class="nav-item active">
                 <a class="nav-link" href="#" data-toggle="collapse" data-target="#collapseReception"
                     aria-expanded="true" aria-controls="collapseUtilities">
                     <i class="fa fa-book fa-fw"></i>
@@ -293,11 +271,11 @@ $EpaisseurMB = $queryepaisseur->fetch();
                     data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Stockage :</h6>
-                        <a class="collapse-item active" href="../stockage/reception.php">Réception</a>
-                        <a class="collapse-item" href="../stockage/receptionPlanifie.php">Réception planifiée</a>
-                        <a class="collapse-item" href="../stockage/transfert/transfert.php">Transfert</a>
-                        <a class="collapse-item" href="../stockage/stockage/stockage.php">Stockage</a>
-                        <a class="collapse-item" href="../stockage/graphe.php">Graphique</a>
+                        <a class="collapse-item" href="../../stockage/reception.php">Réception</a>
+                        <a class="collapse-item" href="../../stockage/receptionPlanifie.php">Réception planifiée</a>
+                        <a class="collapse-item active" href="../../stockage/transfert.php">Transfert</a>
+                        <a class="collapse-item" href="../../stockage/stockage/stockage.php">Stockage</a>
+                        <a class="collapse-item" href="../../stockage/graphe.php">Graphique</a>
                     </div>
                 </div>
             </li>
@@ -517,7 +495,7 @@ $EpaisseurMB = $queryepaisseur->fetch();
                                 </h6>
                                 <a class="dropdown-item d-flex align-items-center" href="#">
                                     <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="../indexPage/img/undraw_profile_1.svg"
+                                        <img class="rounded-circle" src="../../indexPage/img/undraw_profile_1.svg"
                                             alt="...">
                                         <div class="status-indicator bg-success"></div>
                                     </div>
@@ -529,7 +507,7 @@ $EpaisseurMB = $queryepaisseur->fetch();
                                 </a>
                                 <a class="dropdown-item d-flex align-items-center" href="#">
                                     <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="../indexPage/img/undraw_profile_2.svg"
+                                        <img class="rounded-circle" src="../../indexPage/img/undraw_profile_2.svg"
                                             alt="...">
                                         <div class="status-indicator"></div>
                                     </div>
@@ -541,7 +519,7 @@ $EpaisseurMB = $queryepaisseur->fetch();
                                 </a>
                                 <a class="dropdown-item d-flex align-items-center" href="#">
                                     <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="../indexPage/img/undraw_profile_3.svg"
+                                        <img class="rounded-circle" src="../../indexPage/img/undraw_profile_3.svg"
                                             alt="...">
                                         <div class="status-indicator bg-warning"></div>
                                     </div>
@@ -575,7 +553,7 @@ $EpaisseurMB = $queryepaisseur->fetch();
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo $_SESSION['nomcomplet']; ?></span>
                                 <img class="img-profile rounded-circle"
-                                    src="../indexPage/img/undraw_profile.svg">
+                                    src="../../indexPage/img/undraw_profile.svg">
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
@@ -593,7 +571,7 @@ $EpaisseurMB = $queryepaisseur->fetch();
                                     Activités
                                 </a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="../index.php">
+                                <a class="dropdown-item" href="../../index.php">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Déconnexion
                                 </a>
@@ -612,7 +590,7 @@ $EpaisseurMB = $queryepaisseur->fetch();
                     <!-- Page Heading -->
                     <div class="row">
                         <div class="col-xl-3 col-md-6 mb-1">
-                            <img src="../image/stockage/ferabeton.jpg" class="img-fluid" alt="" style="border-radius: 50%; margin:20px; opacity: 0.7;" width="200">
+                            <img src="../../image/stockage/ferabeton.jpg" class="img-fluid" alt="" style="border-radius: 50%; margin:20px; opacity: 0.7;" width="200">
                         </div>
                     </div>
                     <!-- DataTales Example -->
@@ -620,24 +598,20 @@ $EpaisseurMB = $queryepaisseur->fetch();
                        <div class="col-lg-12">
                             <div class="card position-relative">
                                 <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">Voici la liste des réceptions </h6>
+                                    <h6 class="m-0 font-weight-bold text-primary">Liste des bobines réceptionnées</h6>
                                 </div>
                                 <div class="row m-2">
                                     <div class="table-responsive">
                                         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                             <thead>
-                                                <tr>       
-                                                    <th>Code réception</th>   
-                                                    <th>Nom de la DF</th> 
-                                                    <th>Status de la reception</th>                                                                             
-                                                    <th>Compte utilisateur</th>
-                                                    <th>Nom du recepteur</th>
-                                                    <th>Numéro camion</th>
-                                                    <th>Poids pont bascule</th>
-                                                    <th>Date de reception</th>
-                                                    <th>Date d'enregistrement</th>
+                                                <tr>     
+                                                    <th>Code transfert</th> 
+                                                    <th>Compte utiliseur</th>
+                                                    <th>Nom du saisisseur</th>
+                                                    <th>Date de transfert</th>
+                                                    <th>Date de création</th>
                                                     <th>Commentaire</th>
-                                                    <?php if($_SESSION['niveau'] == 'admin'){ ?>
+                                                    <?php if($_SESSION['niveau'] == 'pontbascule'){ ?>
                                                         <th>Option</th>
                                                     <?php }?>
                                                 </tr>
@@ -645,57 +619,28 @@ $EpaisseurMB = $queryepaisseur->fetch();
                                             <tbody>
                                                 <?php
                                                     $i=0;
-                                                    foreach($Reception as $reception){
+                                                    foreach($Reception as $transfert){
                                                         $i++;
-                                                        //if($article['status'] == 'termine'){<p><a class="" href="#">Underline opacity 0</a></p>
+                                                        //if($article['status'] == 'termine'){
                                                 ?>
                                                     <tr>
-                                                        <td style="<?php if($reception['acceptereception'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FFBD6E"; ?><?php }?>; text-align: center;" class="codeReception">
-                                                            <a style="text-decoration: none; font-family: arial; font-size: 20px;" href="detailsReception.php?idreception=<?= $reception['idreception'] ?>" class="link-offset-2 link-underline"><?php echo "REC00-".$reception['idreception'] ?></a>
+                                                        <td style="background-color:#CFFEDA ;">
+                                                            <a style="text-decoration: none; font-family: arial; font-size: 20px;" href="detailTransfert.php?idtransfert=<?= $transfert['idtransfert'] ?>" class="link-offset-2 link-underline"><?php echo "TRAN00-".$transfert['idtransfert'] ?></a>
                                                         </td>
-                                                        <td style="<?php if($reception['acceptereception'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FFBD6E"; ?><?php }?>;">
-                                                            <?= $reception['entetedf'] ?>
-                                                        </td>
-                                                        <td style="font-size:20px; text-align: center; background-color:#CFFEDA; <?php if($reception['status'] == "Nouvelle reception"){ echo "color:#FB9324"; ?> <?php }elseif($reception['status'] == "Terminée"){ echo "color:#E52503";}else{ echo "color:#7EB003"; ?><?php }?>;">
-                                                            <?= $reception['status'] ?>
-                                                        </td>
-                                                        <td style="<?php if($reception['acceptereception'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FFBD6E"; ?><?php }?>;">
-                                                            <?= $reception['user'] ?>
-                                                        </td>
-                                                        <td style="<?php if($reception['acceptereception'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FFBD6E"; ?><?php }?>;">
-                                                            <?= $reception['nomrecepteur'] ?>
-                                                        </td>
-                                                        <td style="<?php if($reception['acceptereception'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FFBD6E"; ?><?php }?>;">
-                                                            <?= $reception['matriculecamion'] ?>
-                                                        </td>
-                                                        <td style="<?php if($reception['acceptereception'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FFBD6E"; ?><?php }?>;">
-                                                            <?= $reception['poidscamion'] ?>
-                                                        </td>
-                                                        <td style="<?php if($reception['acceptereception'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FFBD6E"; ?><?php }?>;">
-                                                            <?= $reception['datereception'] ?>
-                                                        </td>
-                                                        <td style="<?php if($reception['acceptereception'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FFBD6E"; ?><?php }?>;">
-                                                            <?= $reception['datecreation'] ?>
-                                                        </td>
-                                                        <td style="<?php if($reception['acceptereception'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FFBD6E"; ?><?php }?>; text-align: center;">
-                                                            <?php if($reception['commentaire'] != NULL){ ?>
+                                                        <td style="background-color:#CFFEDA ;"><?= $transfert['user'] ?></td>
+                                                        <td style="background-color:#CFFEDA ;"><?= $transfert['saisisseur'] ?></td>
+                                                        <td style="background-color:#CFFEDA ;"><?= $transfert['datetransfert'] ?></td>
+                                                        <td style="background-color:#CFFEDA ;"><?= $transfert['dateajout'] ?></td>
+                                                        <td style="background-color:#CFFEDA ; text-align: center;">
+                                                            <?php if($transfert['commentaire'] != NULL){ ?>
                                                                 <a href="javascript:void(0);" data-toggle="modal" data-target="#fileModal<?php echo $i; ?>" title="Voir commentaire"><i class="bx bx-trash-alt font-size-18"><i class="far fa-eye"></i></a>
                                                             <?php }?>
                                                         </td>
-                                                        <?php if($_SESSION['niveau'] == 'admin'){ ?>
-                                                            <td style="<?php if($reception['acceptereception'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FFBD6E"; ?><?php }?>; text-align: center;">
-                                                                <?php if($reception['actifapprouvreception'] == 0 && $_SESSION['niveau'] == ''){ ?>
-                                                                    <a data-toggle="modal" data-target=".demandeRectifier<?= $i ?>" title="Demander une rectification à coté de l'administrateur" class="btn btn-warning w-lg bouton ml-3"><i class="fab fa-cloudversify mr-1"></i>Rectifier</a>
-                                                                <?php }?>
-                                                                <?php if($reception['acceptereception'] == 1 && $_SESSION['niveau'] == 'admin'){ ?>
-                                                                    <a href="javascript:void(0);" class="autoriserReception<?= $i ?> btn btn-success w-lg bouton ml-3" title="Permétre au responsable pont bascule de rectifier la reception"><i class="fa fa-paper-plane mr-1"></i>Autoriser</a>
-                                                                <?php }?>
-                                                                <?php if($reception['actifapprouvreception'] == 1 && $reception['acceptereception'] == 0 && $_SESSION['niveau'] == ''){ ?>
-                                                                    <a href="javascript:void(0);" class="approuverReception<?= $i ?> btn btn-success w-lg bouton ml-3"><i class="fa fa-paper-plane mr-1"></i>Approuver</a>
-                                                                <?php }?>
-                                                                <?php if($_SESSION['niveau'] == 'admin'){ ?>
-                                                                    <a href="javascript:void(0);" title="Suprimer la réception" class="suprimerReception<?php echo $i; ?> btn btn-danger w-lg bouton ml-3"><i class="fa fa-cut mr-1"></i>Suprimer</a>
-                                                                <?php }?>
+                                                        <?php if($_SESSION['niveau'] == 'pontbascule'){ ?>
+                                                            <td style="background-color:#CFFEDA ;">
+                                                                <?php //if($transfert['actifapprouvreception'] == 0){ ?>
+                                                                    <a href="javascript:void(0);" class="suprimerTransfert<?= $i ?> px-2 text-danger" title="Suprimer le transfert"><i class="fa fa-cut"></i></a>
+                                                                <?php //}?>
                                                             </td>
                                                         <?php }?>
                                                     </tr>
@@ -703,124 +648,82 @@ $EpaisseurMB = $queryepaisseur->fetch();
                                                         <div class="modal-dialog modal-xl modal-dialog-centered">
                                                             <div class="modal-content">
                                                                 <div class="modal-header">
-                                                                    <h5 class="modal-title" id="fileModalLabel">Description de la réception :</h5>
+                                                                    <h5 class="modal-title" id="fileModalLabel">Description du transfert :</h5>
                                                                     <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                                                         <span aria-hidden="true">&times;</span>
                                                                     </button>
                                                                 </div>  
                                                                 <h6 class="form-label fw-bold" for="nom" style="margin-left:25px; margin-top:10px;">Commentaire :</h6>
                                                                 <div class="modal-body border border-warning" style="margin:70px; border-radius: 15px 30px; margin-top:20px; background-color: #fef1df;">
-                                                                    <h4><?php echo $reception['commentaire']; ?></h4>                                                                                                
+                                                                    <h4><?php echo $transfert['commentaire']; ?></h4>                                                                                                
                                                                 </div>                                                                                             
                                                             </div>
                                                         </div>
                                                     </div>
-
                                                     <!-- Pour le sweetAlert Suprimer transfert !-->
-                                                    <script>
-                                                        console.log(<?= $i ?>);
-                                                        $(document).ready( function(){
-                                                            $('.suprimerReception<?= $i ?>').click(function(e) {
-                                                                e.preventDefault();
-                                                                Swal.fire({
-                                                                title: 'En es-tu sure?',
-                                                                text: 'Voulez-vous vraiment suprimer cette réception ?',
-                                                                icon: 'warning',
-                                                                showCancelButton: true,
-                                                                confirmButtonColor: '#3085d6',
-                                                                cancelButtonColor: '#d33',
-                                                                confirmButtonText: "Suprimer la réception",
-                                                                }).then((result) => {
-                                                                    if (result.isConfirmed) {                                                                                                                  
-                                                                        $.ajax({
-                                                                                type: "POST",
-                                                                                url: 'supressionReception.php?idsupreception=<?= $reception['idreception'] ?>',
-                                                                                //data: str,
-                                                                                success: function( response ) {
-                                                                                    Swal.fire({
-                                                                                        text: 'Réception suprimée avec succes!',
-                                                                                        icon: 'success',
-                                                                                        timer: 3000,
-                                                                                        showConfirmButton: false,
-                                                                                    });
-                                                                                    location.reload();
-                                                                                },
-                                                                                error: function( response ) {
-                                                                                    $('#status').text('Impossible de supprimer cette réception : '+ response.status + " " + response.statusText);
-                                                                                    //console.log( response );
-                                                                                }						
-                                                                        });
-                                                                    }
+                                                        <script>
+                                                            //console.log(<?= $i ?>);
+                                                            $(document).ready( function(){
+                                                                $('.suprimerTransfert<?= $i ?>').click(function(e) {
+                                                                    e.preventDefault();
+                                                                    Swal.fire({
+                                                                    title: 'En es-tu sure?',
+                                                                    text: 'Voulez-vous vraiment suprimer ce transfert ?',
+                                                                    icon: 'warning',
+                                                                    showCancelButton: true,
+                                                                    confirmButtonColor: '#3085d6',
+                                                                    cancelButtonColor: '#d33',
+                                                                    confirmButtonText: "Suprimer le transfert",
+                                                                    }).then((result) => {
+                                                                        if (result.isConfirmed) {                                                                                                                  
+                                                                            $.ajax({
+                                                                                    type: "POST",
+                                                                                    url: 'suprimerTransfert.php?idtransfertreel=<?= $transfert['idtransfert'] ?>',
+                                                                                    //data: str,
+                                                                                    success: function( response ) {
+                                                                                        Swal.fire({
+                                                                                            text: 'Transfert suprimé avec succes!',
+                                                                                            icon: 'success',
+                                                                                            timer: 3000,
+                                                                                            showConfirmButton: false,
+                                                                                        });
+                                                                                        location.reload();
+                                                                                    },
+                                                                                    error: function( response ) {
+                                                                                        $('#status').text('Impossible de supprimer ce transfert : '+ response.status + " " + response.statusText);
+                                                                                        //console.log( response );
+                                                                                    }						
+                                                                            });
+                                                                        }
+                                                                    });
                                                                 });
                                                             });
-                                                        });
-                                                    </script>
-                                                    <!-- Pour le sweetAlert Suprimer transfert !--> 
-
-                                                    <!-- Pour le sweetAlert autoriser Reception !-->
-                                                    <script>
-                                                        console.log(<?= $i ?>);
-                                                        $(document).ready( function(){
-                                                            $('.autoriserReception<?= $i ?>').click(function(e) {
-                                                                e.preventDefault();
-                                                                Swal.fire({
-                                                                title: 'En es-tu sure?',
-                                                                text: 'Voulez-vous vraiment autoriser cette demande de rectification ?',
-                                                                icon: 'warning',
-                                                                showCancelButton: true,
-                                                                confirmButtonColor: '#3085d6',
-                                                                cancelButtonColor: '#d33',
-                                                                confirmButtonText: "Autoriser la demande",
-                                                                }).then((result) => {
-                                                                    if (result.isConfirmed) {                                                                                                                  
-                                                                        $.ajax({
-                                                                                type: "POST",
-                                                                                url: 'autoriserReception.php?idautoriserreception=<?= $reception['idreception'] ?>',
-                                                                                //data: str,
-                                                                                success: function( response ) {
-                                                                                    Swal.fire({
-                                                                                        text: 'Autorisation suprimée avec succes!',
-                                                                                        icon: 'success',
-                                                                                        timer: 3000,
-                                                                                        showConfirmButton: false,
-                                                                                    });
-                                                                                    location.reload();
-                                                                                },
-                                                                                error: function( response ) {
-                                                                                    $('#status').text('Impossible de supprimer cette réception : '+ response.status + " " + response.statusText);
-                                                                                    //console.log( response );
-                                                                                }						
-                                                                        });
-                                                                    }
-                                                                });
-                                                            });
-                                                        });
-                                                    </script>
-                                                    <!-- Pour le sweetAlert Suprimer transfert !--> 
-
+                                                        </script>
+                                                    <!-- Pour le sweetAlert Suprimer transfert !-->  
+                                                    
                                                     <!-- Pour le sweetAlert approuveTransfert !-->
                                                     <script>
                                                         //console.log(<?= $i ?>);
                                                         $(document).ready( function(){
-                                                            $('.approuverReception<?= $i ?>').click(function(e) {
+                                                            $('.approuverTransfert<?= $i ?>').click(function(e) {
                                                                 e.preventDefault();
                                                                 Swal.fire({
                                                                 title: 'En es-tu sure?',
-                                                                text: 'Voulez-vous vraiment approuver cette réception ?',
+                                                                text: 'Voulez-vous vraiment approuver ce transfert ?',
                                                                 icon: 'warning',
                                                                 showCancelButton: true,
                                                                 confirmButtonColor: '#3085d6',
                                                                 cancelButtonColor: '#d33',
-                                                                confirmButtonText: "Approuver cette réception",
+                                                                confirmButtonText: "Approuver le transfert",
                                                                 }).then((result) => {
                                                                     if (result.isConfirmed) {                                                                                                                  
                                                                         $.ajax({
                                                                                 type: "POST",
-                                                                                url: 'approuveReception.php?idappreception=<?= $reception['idreception']?>',
+                                                                                url: 'approuveTransfert.php?idapptransfert=<?= $reception['idtransfert']?>',
                                                                                 //data: str,
                                                                                 success: function( response ) {
                                                                                     Swal.fire({
-                                                                                        text: 'Réception approuvée avec succes!',
+                                                                                        text: 'Transfert approuvée avec succes!',
                                                                                         icon: 'success',
                                                                                         timer: 3000,
                                                                                         showConfirmButton: false,
@@ -828,7 +731,7 @@ $EpaisseurMB = $queryepaisseur->fetch();
                                                                                     location.reload();
                                                                                 },
                                                                                 error: function( response ) {
-                                                                                    $('#status').text('Impossible dapprouver ce réception : '+ response.status + " " + response.statusText);
+                                                                                    $('#status').text('Impossible dapprouver ce transfert : '+ response.status + " " + response.statusText);
                                                                                     //console.log( response );
                                                                                 }						
                                                                         });
@@ -837,59 +740,7 @@ $EpaisseurMB = $queryepaisseur->fetch();
                                                             });
                                                         });
                                                     </script>
-                                                    <!-- Pour la rectification des receptions !-->
-                                                    <div class="modal fade demandeRectifier<?php echo $i; ?>" id="" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
-                                                        <div class="modal-dialog modal-xl modal-dialog-centered">
-                                                            <div class="modal-content">
-                                                                <div class="modal-header">
-                                                                    <h5 class="modal-title" id="myExtraLargeModalLabel">Demander la rectification de cette reception au prét de l'administrateur</h5>
-                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                                </div>
-                                                                <div class="modal-body">
-                                                                    <form action="#" method="POST" enctype="multipart/form-data">
-                                                                        <div class="row">
-                                                                            <div class="mb-3 col-md-10">
-                                                                                <label class="form-label fw-bold" for="rectification"><h4>Motif de la rectification</h4></label>
-                                                                                <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="motifRectifier" placeholder="Mettez en quelques mots le motif de la rectification svp."></textarea>
-                                                                            </div>
-                                                                            <div class="col-md-6 invisible">
-                                                                                <div class="">
-                                                                                    <input class="form-control" type="text" value="<?= $reception['idreception'] ?>" name="idreception">
-                                                                                </div>
-                                                                            </div> 
-                                                                            <div class="col-md-6 invisible">
-                                                                                <div class="text-start">
-                                                                                    <input class="form-control " type="text" value="<?php echo $_SESSION['nomcomplet'];?>" name="user" id="example-date-input">
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="row mt-2">
-                                                                            <div class="col-md-12 text-end">
-                                                                                <?php 
-                                                                                    if($mess2 == "error"){ 
-                                                                                ?> 
-                                                                                    <script>    Swal.fire({
-                                                                                        text: 'Veillez entrer le motif de la rectification svp!',
-                                                                                        icon: 'error',
-                                                                                        timer: 3500,
-                                                                                        showConfirmButton: false,
-                                                                                        });
-                                                                                    </script> 
-                                                                                <?php
-                                                                                    } 
-                                                                                ?>
-                                                                                    <div class="d-flex gap-2 pt-4">                           
-                                                                                        <a href="#"><input class="btn btn-danger  w-lg bouton" name="" type="submit" value="Annuler"></a>
-                                                                                        <input class="btn btn-success  w-lg bouton ml-4" name="Validerectification" type="submit" value="Enregistrer">
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </form>                             
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div><!-- /.modal --> 
+                                                    <!-- Pour le sweetAlert approuveTransfert !--> 
                                                 <?php
                                                     }
                                                 ?> 
@@ -902,40 +753,41 @@ $EpaisseurMB = $queryepaisseur->fetch();
                                             <div class="col-md-8 align-items-center">
                                                 <div class="d-flex gap-2 pt-4">
                                                     <?php
-                                                        if($_SESSION['niveau']==''){
+                                                        //if($_SESSION['niveau']=='kemc' && $result2['actifda'] == 0){
                                                     ?>
-                                                        <a href="javascript:void(0);" class="ajouterReception btn btn-success w-lg bouton"><i class="fa fa-plus me-1"></i> Créer reception</a>
+                                                        <a href="javascript:void(0);" class="ajouterTransfert btn btn-success w-lg bouton"><i class="fa fa-plus me-1"></i> Ajouter transfert</a>
+                                                        <a href="../../indexPage/accueil.php" class="btn btn-danger w-lg bouton ml-3"><i class="fa fa-angle-double-left mr-2"></i>Retour</a>
                                                     <?php
-                                                        } 
+                                                        //} 
                                                     ?>
-                                                    <a href="../indexPage/accueil.php" class="btn btn-danger w-lg bouton ml-3"><i class="fa fa-angle-double-left mr-2"></i>Retour</a>
                                                 </div>
                                             </div>
+
                                             <!-- Pour le sweetAlert approuveTransfert !-->
                                             <script>
                                                 
                                                 nomcomplet = "<?= $_SESSION['nomcomplet'] ?>"
-                                                console.log("creerRecTran.php?creerReception=true&user="+nomcomplet)
+                                                //console.log("creerRecTran.php?creerReception=true&user="+nomcomplet)
                                                 $(document).ready( function(){
-                                                    $('.ajouterReception').click(function(e) {
+                                                    $('.ajouterTransfert').click(function(e) {
                                                         e.preventDefault();
                                                         Swal.fire({
                                                         title: 'En es-tu sure?',
-                                                        text: 'Voulez-vous vraiment créer une réception ?',
+                                                        text: 'Voulez-vous vraiment créer un nouveau transfert ?',
                                                         icon: 'warning',
                                                         showCancelButton: true,
                                                         confirmButtonColor: '#3085d6',
                                                         cancelButtonColor: '#d33',
-                                                        confirmButtonText: "Créer une réception",
+                                                        confirmButtonText: "Créer un transfert",
                                                         }).then((result) => {
                                                             if (result.isConfirmed) {                                                                                                                  
                                                                 $.ajax({
                                                                         type: "POST",
-                                                                        url: 'creerRecTran.php?creerReception=true&user='+nomcomplet,
+                                                                        url: 'creerTransfert.php?creerTransfert=true&user='+nomcomplet,
                                                                         //data: str,
                                                                         success: function( response ) {
                                                                             Swal.fire({
-                                                                                text: 'Réception créée avec succes!',
+                                                                                text: 'Transfert créé avec succes!',
                                                                                 icon: 'success',
                                                                                 timer: 3000,
                                                                                 showConfirmButton: false,
@@ -943,7 +795,7 @@ $EpaisseurMB = $queryepaisseur->fetch();
                                                                             location.reload();
                                                                         },
                                                                         error: function( response ) {
-                                                                            $('#status').text('Impossible de créer une réception : '+ response.status + " " + response.statusText);
+                                                                            $('#status').text('Impossible de créer un transfert : '+ response.status + " " + response.statusText);
                                                                             //console.log( response );
                                                                         }						
                                                                 });
@@ -966,16 +818,23 @@ $EpaisseurMB = $queryepaisseur->fetch();
                             <div class="modal-dialog modal-xl modal-dialog-centered">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h5 class="modal-title" id="myExtraLargeModalLabel">Ajouter une réception</h5>
+                                        <h5 class="modal-title" id="myExtraLargeModalLabel">Ajouter un transfert</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
-                                        <form action="#" method="POST" enctype="multipart/form-data">
+                                        <form action="transfert.php" method="POST" enctype="multipart/form-data">
                                             <div class="row">
                                                 <div class="col-md-6">
                                                     <div class="mb-6 text-start">
-                                                        <label class="form-label fw-bold" for="nom">Usine de provenance</label>
-                                                        <input class="form-control" type="text" name="referenceusine" value="" id="example-date-input4" placeholder="Taper la référence de l'usine">
+                                                        <label class="form-label fw-bold" for="nom">Lieu de transfert</label>
+                                                        <select class="form-control" name="lieutransfert" value="">
+                                                            <option>Metal1 vers Metal3</option>
+                                                            <option>Metal3 vers Metal1</option>
+                                                            <option>Metal1 vers Cranteuse</option>
+                                                            <option>Metal1 vers Tréfilage</option>
+                                                            <option>Cranteuse vers Metal1</option>
+                                                            <option>Tréfilage vers Metal1</option>
+                                                        </select>                                                  
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6">
@@ -984,25 +843,16 @@ $EpaisseurMB = $queryepaisseur->fetch();
                                                         <input class="form-control designa" type="number"  step="0.01" name="epaisseur" id="example"  placeholder="Taper l'épaisseur de la bobine">
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6">
-                                                    <div class="mb-6 text-start">
-                                                        <label class="form-label fw-bold" for="nom">Nombre de bobine</label>
+                                                <div class="col-md-6 mt-4">
+                                                    <div class="mb-3 text-start">
+                                                        <label class="form-label fw-bold" for="nom">Nombre de roulaux</label>
                                                         <input class="form-control" type="number" name="nbbobine" value="" id="example-date-input4" placeholder="Taper le nombre de bobine">
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6">
-                                                    <div class="mb-6 text-start">
-                                                        <label class="form-label fw-bold" for="nom">Lieu de réception</label>
-                                                        <select class="form-control" name="lieutransfert" value="">
-                                                            <option>Metal1</option>
-                                                            <option>Metal3</option>
-                                                        </select>                                                  
-                                                    </div>
-                                                </div>
                                                 <div class="col-md-6 mt-4">
-                                                    <div class="mb-3 text-start">
-                                                        <label class="form-label fw-bold" for="prenom" >Poids déclare</label>
-                                                        <input class="form-control designa" type="number" name="poidsdeclare" id="example"  placeholder="Taper le poids déclaré">
+                                                    <div class="mb-6 text-start">
+                                                        <label class="form-label fw-bold" for="prenom" >Poids Roulaux</label>
+                                                        <input class="form-control designa" type="number" name="poidsroulaux" id="example"  placeholder="Taper le poids des roulaux">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6 mt-4">
@@ -1025,8 +875,8 @@ $EpaisseurMB = $queryepaisseur->fetch();
                                                         ?>" name="user" id="example-date-input2">
                                                     </div>
                                                 </div>
-                                                <div class="col-md-8">
-                                                    <div class="mb-3 text-start">
+                                                <div class="col-md-8 mt-4">
+                                                    <div class="mb-6 text-start">
                                                         <label class="form-label fw-bold" for="commentaire" >Commentaire</label>
                                                         <textarea class="form-control"  name="commentaire" rows="4" cols="50"  placeholder="Commentaire en quelques mots ( pas obligatoire... )"></textarea>
                                                     </div>
@@ -1051,7 +901,7 @@ $EpaisseurMB = $queryepaisseur->fetch();
                                                         <?php if($valideTransfert == "erreurEpaisseur"){ ?> 
                                                             <script>    
                                                                 Swal.fire({
-                                                                    text: 'Vérifiez le nombre de bobine svp!',
+                                                                    text: "Veillez verifier l'épaisseur de la bobine svp!",
                                                                     icon: 'error',
                                                                     timer: 2500,
                                                                     showConfirmButton: false,
@@ -1064,7 +914,7 @@ $EpaisseurMB = $queryepaisseur->fetch();
                                                         <?php if($valideTransfert == "ValideInsertion"){?> 
                                                             <script>    
                                                                 Swal.fire({
-                                                                    text: 'Réception enregistrée avec succès merci!',
+                                                                    text: 'Transfert enregistré avec succès merci!',
                                                                     icon: 'success',
                                                                     timer: 3000,
                                                                     showConfirmButton: false,
@@ -1073,7 +923,7 @@ $EpaisseurMB = $queryepaisseur->fetch();
                                                         <?php } ?>
                                                         <div class="d-flex gap-2 pt-4">                           
                                                             <a href="#"><input class="btn btn-danger  w-lg bouton mr-3" name="" type="submit" value="Annuler"></a>
-                                                            <input class="btn btn-success  w-lg bouton mr-3" name="CreerReception" type="submit" value="Enregistrer">
+                                                            <input class="btn btn-success  w-lg bouton mr-3" name="CreerTransfert" type="submit" value="Enregistrer">
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1191,35 +1041,99 @@ $EpaisseurMB = $queryepaisseur->fetch();
                                         </tr>
                                         <tr>
                                             <td>METAL MBAO</td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMB['3'] == 0){echo "";}else{echo $EpaisseurMB['3'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMB['3.5'] == 0){echo "";}else{echo $EpaisseurMB['3.5'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMB['4'] == 0){echo "";}else{echo $EpaisseurMB['4'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMB['4.5'] == 0){echo "";}else{echo $EpaisseurMB['4.5'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMB['5'] == 0){echo "";}else{echo $EpaisseurMB['5'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMB['5.5'] == 0){echo "";}else{echo $EpaisseurMB['5.5'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMB['6'] == 0){echo "";}else{echo $EpaisseurMB['6'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMB['6.5'] == 0){echo "";}else{echo $EpaisseurMB['6.5'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMB['7'] == 0){echo "";}else{echo $EpaisseurMB['7'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMB['7.5'] == 0){echo "";}else{echo $EpaisseurMB['7.5'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMB['8'] == 0){echo "";}else{echo $EpaisseurMB['8'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMB['8.5'] == 0){echo "";}else{echo $EpaisseurMB['8.5'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMB['9'] == 0){echo "";}else{echo $EpaisseurMB['9'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMB['9.5'] == 0){echo "";}else{echo $EpaisseurMB['9.5'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMB['10'] == 0){echo "";}else{echo $EpaisseurMB['10'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMB['10.5'] == 0){echo "";}else{echo $EpaisseurMB['10.5'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMB['11'] == 0){echo "";}else{echo $EpaisseurMB['11'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMB['11.5'] == 0){echo "";}else{echo $EpaisseurMB['11.5'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMB['12'] == 0){echo "";}else{echo $EpaisseurMB['12'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMB['12.5'] == 0){echo "";}else{echo $EpaisseurMB['12.5'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMB['13'] == 0){echo "";}else{echo $EpaisseurMB['13'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMB['13.5'] == 0){echo "";}else{echo $EpaisseurMB['13.5'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMB['14'] == 0){echo "";}else{echo $EpaisseurMB['14'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMB['14.5'] == 0){echo "";}else{echo $EpaisseurMB['14.5'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMB['15'] == 0){echo "";}else{echo $EpaisseurMB['15'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMB['15.5'] == 0){echo "";}else{echo $EpaisseurMB['15.5'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMB['16'] == 0){echo "";}else{echo $EpaisseurMB['16'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMB['16.5'] == 0){echo "";}else{echo $EpaisseurMB['16.5'];} ?></td>
-                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMB['17'] == 0){echo "";}else{echo $EpaisseurMB['17'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMb['3'] == 0){echo "";}else{echo $EpaisseurMb['3'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMb['3.5'] == 0){echo "";}else{echo $EpaisseurMb['3.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMb['4'] == 0){echo "";}else{echo $EpaisseurMb['4'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMb['4.5'] == 0){echo "";}else{echo $EpaisseurMb['4.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMb['5'] == 0){echo "";}else{echo $EpaisseurMb['5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMb['5.5'] == 0){echo "";}else{echo $EpaisseurMb['5.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMb['6'] == 0){echo "";}else{echo $EpaisseurMb['6'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMb['6.5'] == 0){echo "";}else{echo $EpaisseurMb['6.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMb['7'] == 0){echo "";}else{echo $EpaisseurMb['7'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMb['7.5'] == 0){echo "";}else{echo $EpaisseurMb['7.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMb['8'] == 0){echo "";}else{echo $EpaisseurMb['8'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMb['8.5'] == 0){echo "";}else{echo $EpaisseurMb['8.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMb['9'] == 0){echo "";}else{echo $EpaisseurMb['9'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMb['9.5'] == 0){echo "";}else{echo $EpaisseurMb['9.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMb['10'] == 0){echo "";}else{echo $EpaisseurMb['10'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMb['10.5'] == 0){echo "";}else{echo $EpaisseurMb['10.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMb['11'] == 0){echo "";}else{echo $EpaisseurMb['11'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMb['11.5'] == 0){echo "";}else{echo $EpaisseurMb['11.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMb['12'] == 0){echo "";}else{echo $EpaisseurMb['12'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMb['12.5'] == 0){echo "";}else{echo $EpaisseurMb['12.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMb['13'] == 0){echo "";}else{echo $EpaisseurMb['13'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMb['13.5'] == 0){echo "";}else{echo $EpaisseurMb['13.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMb['14'] == 0){echo "";}else{echo $EpaisseurMb['14'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMb['14.5'] == 0){echo "";}else{echo $EpaisseurMb['14.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMb['15'] == 0){echo "";}else{echo $EpaisseurMb['15'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMb['15.5'] == 0){echo "";}else{echo $EpaisseurMb['15.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMb['16'] == 0){echo "";}else{echo $EpaisseurMb['16'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMb['16.5'] == 0){echo "";}else{echo $EpaisseurMb['16.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMb['17'] == 0){echo "";}else{echo $EpaisseurMb['17'];} ?></td>
+                                        </tr>
+                                        <tr> 
+                                            <td>Cranteuse</td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['3'] == 0){echo "";}else{echo $EpaisseurCrant['3'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['3.5'] == 0){echo "";}else{echo $EpaisseurCrant['3.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['4'] == 0){echo "";}else{echo $EpaisseurCrant['4'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['4.5'] == 0){echo "";}else{echo $EpaisseurCrant['4.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['5'] == 0){echo "";}else{echo $EpaisseurCrant['5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['5.5'] == 0){echo "";}else{echo $EpaisseurCrant['5.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['6'] == 0){echo "";}else{echo $EpaisseurCrant['6'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['6.5'] == 0){echo "";}else{echo $EpaisseurCrant['6.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['7'] == 0){echo "";}else{echo $EpaisseurCrant['7'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['7.5'] == 0){echo "";}else{echo $EpaisseurCrant['7.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['8'] == 0){echo "";}else{echo $EpaisseurCrant['8'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['8.5'] == 0){echo "";}else{echo $EpaisseurCrant['8.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['9'] == 0){echo "";}else{echo $EpaisseurCrant['9'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['9.5'] == 0){echo "";}else{echo $EpaisseurCrant['9.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['10'] == 0){echo "";}else{echo $EpaisseurCrant['10'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['10.5'] == 0){echo "";}else{echo $EpaisseurCrant['10.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['11'] == 0){echo "";}else{echo $EpaisseurCrant['11'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['11.5'] == 0){echo "";}else{echo $EpaisseurCrant['11.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['12'] == 0){echo "";}else{echo $EpaisseurCrant['12'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['12.5'] == 0){echo "";}else{echo $EpaisseurCrant['12.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['13'] == 0){echo "";}else{echo $EpaisseurCrant['13'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['13.5'] == 0){echo "";}else{echo $EpaisseurCrant['13.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['14'] == 0){echo "";}else{echo $EpaisseurCrant['14'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['14.5'] == 0){echo "";}else{echo $EpaisseurCrant['14.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['15'] == 0){echo "";}else{echo $EpaisseurCrant['15'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['15.5'] == 0){echo "";}else{echo $EpaisseurCrant['15.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['16'] == 0){echo "";}else{echo $EpaisseurCrant['16'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['16.5'] == 0){echo "";}else{echo $EpaisseurCrant['16.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['17'] == 0){echo "";}else{echo $EpaisseurCrant['17'];} ?></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Tréfilage</td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['3'] == 0){echo "";}else{echo $EpaisseurTref['3'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['3.5'] == 0){echo "";}else{echo $EpaisseurTref['3.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['4'] == 0){echo "";}else{echo $EpaisseurTref['4'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['4.5'] == 0){echo "";}else{echo $EpaisseurTref['4.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['5'] == 0){echo "";}else{echo $EpaisseurTref['5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['5.5'] == 0){echo "";}else{echo $EpaisseurTref['5.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['6'] == 0){echo "";}else{echo $EpaisseurTref['6'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['6.5'] == 0){echo "";}else{echo $EpaisseurTref['6.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['7'] == 0){echo "";}else{echo $EpaisseurTref['7'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['7.5'] == 0){echo "";}else{echo $EpaisseurTref['7.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['8'] == 0){echo "";}else{echo $EpaisseurTref['8'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['8.5'] == 0){echo "";}else{echo $EpaisseurTref['8.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['9'] == 0){echo "";}else{echo $EpaisseurTref['9'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['9.5'] == 0){echo "";}else{echo $EpaisseurTref['9.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['10'] == 0){echo "";}else{echo $EpaisseurTref['10'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['10.5'] == 0){echo "";}else{echo $EpaisseurTref['10.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['11'] == 0){echo "";}else{echo $EpaisseurTref['11'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['11.5'] == 0){echo "";}else{echo $EpaisseurTref['11.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['12'] == 0){echo "";}else{echo $EpaisseurTref['12'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['12.5'] == 0){echo "";}else{echo $EpaisseurTref['12.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['13'] == 0){echo "";}else{echo $EpaisseurTref['13'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['13.5'] == 0){echo "";}else{echo $EpaisseurTref['13.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['14'] == 0){echo "";}else{echo $EpaisseurTref['14'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['14.5'] == 0){echo "";}else{echo $EpaisseurTref['14.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['15'] == 0){echo "";}else{echo $EpaisseurTref['15'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['15.5'] == 0){echo "";}else{echo $EpaisseurTref['15.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['16'] == 0){echo "";}else{echo $EpaisseurTref['16'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['16.5'] == 0){echo "";}else{echo $EpaisseurTref['16.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['17'] == 0){echo "";}else{echo $EpaisseurTref['17'];} ?></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -1271,40 +1185,24 @@ $EpaisseurMB = $queryepaisseur->fetch();
     <a class="scroll-to-top rounded" href="#page-top">
         <i class="fas fa-angle-up"></i>
     </a>
-    
-    <script>
-        //const test = document.getElementById("codeReception");
 
-        // Briefly make the list purple when the mouse moves off the
-        // <ul> element
-    
-        $(".codeReception").mouseenter(function(event){
-            event.target.style.backgroundColor = "#3333";
-        });
-
-        $(".codeReception").mouseleave(function(event){
-            event.target.style.backgroundColor = "#CFFEDA";
-        });
-
-        
-    </script>
 
     <!-- Bootstrap core JavaScript-->
-    <script src="../indexPage/vendor/jquery/jquery.min.js"></script>
-    <script src="../indexPage/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../../indexPage/vendor/jquery/jquery.min.js"></script>
+    <script src="../../indexPage/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
     <!-- Core plugin JavaScript-->
-    <script src="../indexPage/vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="../../indexPage/vendor/jquery-easing/jquery.easing.min.js"></script>
 
     <!-- Custom scripts for all pages-->
-    <script src="../indexPage/js/sb-admin-2.min.js"></script>
+    <script src="../../indexPage/js/sb-admin-2.min.js"></script>
 
     <!-- Page level plugins -->
-    <script src="../indexPage/vendor/datatables/jquery.dataTables.min.js"></script>
-    <script src="../indexPage/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="../../indexPage/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="../../indexPage/vendor/datatables/dataTables.bootstrap4.min.js"></script>
 
     <!-- Page level custom scripts -->
-    <script src="../indexPage/js/demo/datatables-demo.js"></script>
+    <script src="../../indexPage/js/demo/datatables-demo.js"></script>
 
 </body>
 

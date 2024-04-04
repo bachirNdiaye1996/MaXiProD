@@ -176,9 +176,9 @@ include "../connexion/conexiondb.php";
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Stockage :</h6>
                         <a class="collapse-item" href="../stockage/reception.php">Réception</a>
-                        <a class="collapse-item" href="../stockage/receptionPlanifie.php">Réception planifiée</a>
-                        <a class="collapse-item" href="../stockage/transfert.php">Transfert</a>
-                        <a class="collapse-item" href="../stockage/stockage.php">Stockage</a>
+                        <a class="collapse-item active" href="../stockage/receptionPlanifie.php">Réception planifiée</a>
+                        <a class="collapse-item" href="../stockage/transfert/transfert.php">Transfert</a>
+                        <a class="collapse-item" href="../stockage/stockage/stockage.php">Stockage</a>
                         <a class="collapse-item" href="../stockage/graphe.php">Graphique</a>
                     </div>
                 </div>
@@ -509,11 +509,15 @@ include "../connexion/conexiondb.php";
                                         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                             <thead>
                                                 <tr>       
-                                                    <th>Code réception</th>                                                                                
-                                                    <th>Status</th>
-                                                    <th>Créée par</th>r
-                                                    <th>Date de création</th>
-                                                    <th>Option</th>
+                                                    <th>Code réception planifiée</th>  
+                                                    <th>Nom de la DF</th> 
+                                                    <th>Compte utilisateur</th>
+                                                    <th>Date de la réception planifiée</th>
+                                                    <th>Date d'enregistrement</th>
+                                                    <th>Commentaire</th>
+                                                    <?php if($_SESSION['niveau'] == 'admin'){ ?>
+                                                        <th>Option</th>
+                                                    <?php }?>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -524,23 +528,48 @@ include "../connexion/conexiondb.php";
                                                         //if($article['status'] == 'termine'){<p><a class="" href="#">Underline opacity 0</a></p>
                                                 ?>
                                                     <tr>
-                                                        <td style="background-color:#91F3AD; text-align: center;" class="codeReception">
-                                                            <a style="text-decoration: none; font-family: arial; font-size: 20px;" href="detailsReceptionPlanifie.php?idreception=<?= $reception['idreception'] ?>" class="link-offset-2 link-underline"><?php echo "REC00-".$reception['idreception'] ?></a>
+                                                        <td style="background-color:#CFFEDA; text-align: center;" class="codeReception">
+                                                            <a style="text-decoration: none; font-family: arial; font-size: 20px;" href="detailsReceptionPlanifie.php?idreception=<?= $reception['idreception'] ?>" class="link-offset-2 link-underline"><?php echo "REC00-".$reception['idreception']; ?></a>
                                                         </td>
-                                                            <td style="background-color:#91F3AD;"><?= $reception['status'] ?>
-                                                        </td>
-                                                        <td style="background-color:#91F3AD;">
+                                                        <td style="background-color:#CFFEDA;">
+                                                            <?= $reception['entetedf'] ?>
+                                                        </td>  
+                                                        <td style="background-color:#CFFEDA;">
                                                             <?= $reception['user'] ?>
                                                         </td>
-                                                        <td style="background-color:#91F3AD;">
+                                                        <td style="background-color:#CFFEDA;">
+                                                            <?= $reception['datereception'] ?>
+                                                        </td>
+                                                        <td style="background-color:#CFFEDA;">
                                                             <?= $reception['datecreation'] ?>
                                                         </td>
-                                                        <td style="background-color:#91F3AD;">
-                                                            <?php if($_SESSION['niveau'] == 'admin'){ ?>
-                                                                <a href="javascript:void(0);" title="Suprimer la réception" class="suprimerReceptionPlanifie<?php echo $i; ?> btn btn-danger w-lg bouton ml-3"><i class="fa fa-cut mr-1"></i>Suprimer</a>
+                                                        <td style="background-color:#CFFEDA; text-align: center;">
+                                                            <?php if($reception['commentaire'] != NULL){ ?>
+                                                                <a href="javascript:void(0);" data-toggle="modal" data-target="#fileModal<?php echo $i; ?>" title="Voir commentaire"><i class="bx bx-trash-alt font-size-18"><i class="far fa-eye"></i></a>
                                                             <?php }?>
                                                         </td>
+                                                        <?php if($_SESSION['niveau'] == 'admin'){ ?>
+                                                            <td style="background-color:#CFFEDA;">
+                                                                <a href="javascript:void(0);" title="Suprimer la réception" class="suprimerReceptionPlanifie<?php echo $i; ?> btn btn-danger w-lg bouton ml-3"><i class="fa fa-cut mr-1"></i>Suprimer</a>
+                                                            </td>
+                                                        <?php }?>
                                                     </tr>
+                                                    <div class="modal fade" id="fileModal<?php echo $i; ?>" tabindex="-1" aria-labelledby="fileModalLabel" aria-hidden="true">
+                                                        <div class="modal-dialog modal-xl modal-dialog-centered">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title" id="fileModalLabel">Description de la réception :</h5>
+                                                                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                                                        <span aria-hidden="true">&times;</span>
+                                                                    </button>
+                                                                </div>  
+                                                                <h6 class="form-label fw-bold" for="nom" style="margin-left:25px; margin-top:10px;">Commentaire :</h6>
+                                                                <div class="modal-body border border-warning" style="margin:70px; border-radius: 15px 30px; margin-top:20px; background-color: #fef1df;">
+                                                                    <h4><?php echo $reception['commentaire']; ?></h4>                                                                                                
+                                                                </div>                                                                                             
+                                                            </div>
+                                                        </div>
+                                                    </div>
 
                                                     <!-- Pour le sweetAlert Suprimer transfert !-->
                                                     <script>
@@ -689,7 +718,7 @@ include "../connexion/conexiondb.php";
                                                     <?php
                                                         if($_SESSION['niveau']=='admin'){
                                                     ?>
-                                                        <a href="javascript:void(0);" class="ajouterReception btn btn-success w-lg bouton"><i class="fa fa-plus me-1"></i> Créer reception</a>
+                                                        <a href="javascript:void(0);" class="ajouterReception btn btn-success w-lg bouton"><i class="fa fa-plus me-1"></i> Créer reception planifiée</a>
                                                     <?php
                                                         } 
                                                     ?>
@@ -901,7 +930,7 @@ include "../connexion/conexiondb.php";
         });
 
         $(".codeReception").mouseleave(function(event){
-            event.target.style.backgroundColor = "#91F3AD";
+            event.target.style.backgroundColor = "#CFFEDA";
         });
 
         

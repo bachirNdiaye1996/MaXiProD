@@ -20,8 +20,14 @@
 
             $user=htmlspecialchars($_GET['user']);
 
+            // Pour insertion une nouvelle reception planifiée
             $insertUser=$db->prepare("INSERT INTO `receptionplanifiee` (`idreception`, `status`, `datecreation`, `user`, `actif`) 
                 VALUES (NULL, 'Réception planifiée', current_timestamp(), ?, '1');");
+            $insertUser->execute(array($user));
+
+            //Pour insertion une nouvelle reception en meme temps
+            $insertUser=$db->prepare("INSERT INTO `reception` (`idreception`, `status`, `datecreation`, `user`, `actif`, `actifapprouvreception`) 
+            VALUES (NULL, 'Nouvelle reception', current_timestamp(), ?, '1', '1');");
             $insertUser->execute(array($user));
 
             header("location: receptionPlanifie.php");
