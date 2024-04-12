@@ -2,7 +2,7 @@
 
 session_start(); 
 
-if(!$_SESSION['niveau']){
+if($_SESSION['niveau'] != "admin"){
     header('Location: 404.php');
 }
 
@@ -443,6 +443,8 @@ include "../../connexion/conexiondb.php";
                                             <tr>       
                                                 <th>Nom complet</th>                                                                                
                                                 <th>Email</th>
+                                                <th>Numéro Téléphone</th>
+                                                <th>Séction</th>
                                                 <th>Niveau utilisateur</th>
                                                 <th>Matricule</th>
                                                 <th>Date de création</th>
@@ -459,53 +461,56 @@ include "../../connexion/conexiondb.php";
                                                 <tr>
                                                     <td style="background-color:#CFFEDA ;"><?= $utilisateur['nomcomplet'] ?></td>
                                                     <td style="background-color:#CFFEDA ;"><?= $utilisateur['email'] ?></td>
+                                                    <td style="background-color:#CFFEDA ;"><?= $utilisateur['numTelephone'] ?></td>
+                                                    <td style="background-color:#CFFEDA ;"><?= $utilisateur['section'] ?></td>
                                                     <td style="background-color:#CFFEDA ;"><?= $utilisateur['niveau'] ?></td>
                                                     <td style="background-color:#CFFEDA ;"><?= $utilisateur['matricule'] ?></td>
                                                     <td style="background-color:#CFFEDA ;"><?= $utilisateur['datecreation'] ?></td>
                                                     <td style="background-color:#CFFEDA ; text-align: center;">
-                                                        <a href="javascript:void(0);" class="suprimerUtilisateur<?= $i ?> px-2 text-danger" title="Suprimer l'utilisateur"><i class="fa fa-cut"></i></a>
+                                                        <a href="javascript:void(0);" class="suprimerUtilisateur<?= $i ?> px-2 text-danger" title="Supprimer l'utilisateur"><i class="fa fa-cut"></i></a>
+                                                        <a href="modifierUtilisateur.php?idutilisateur=<?= $utilisateur['id'] ?>" class="px-2" title="Modifier l'utlisateur"><i class="far fa-edit"></i></a>
                                                     </td>
                                                 </tr>
-                                                <!-- Pour le sweetAlert Suprimer transfert !-->
-                                                <script>
-                                                    console.log(<?= $i ?>);
-                                                    $(document).ready( function(){
-                                                        $('.suprimerUtilisateur<?= $i ?>').click(function(e) {
-                                                            e.preventDefault();
-                                                            Swal.fire({
-                                                            title: 'En es-tu sure?',
-                                                            text: 'Voulez-vous vraiment suprimer cette réception ?',
-                                                            icon: 'warning',
-                                                            showCancelButton: true,
-                                                            confirmButtonColor: '#3085d6',
-                                                            cancelButtonColor: '#d33',
-                                                            confirmButtonText: "Suprimer la réception",
-                                                            }).then((result) => {
-                                                                if (result.isConfirmed) {                                                                                                                  
-                                                                    $.ajax({
-                                                                            type: "POST",
-                                                                            url: 'supressionReception.php?idsupreception=<?= $reception['idreception'] ?>',
-                                                                            //data: str,
-                                                                            success: function( response ) {
-                                                                                Swal.fire({
-                                                                                    text: 'Réception suprimée avec succes!',
-                                                                                    icon: 'success',
-                                                                                    timer: 3000,
-                                                                                    showConfirmButton: false,
-                                                                                });
-                                                                                location.reload();
-                                                                            },
-                                                                            error: function( response ) {
-                                                                                $('#status').text('Impossible de supprimer cette réception : '+ response.status + " " + response.statusText);
-                                                                                //console.log( response );
-                                                                            }						
-                                                                    });
-                                                                }
+                                                <!-- Pour le sweetAlert Suprimer Utilisateur !-->
+                                                    <script>
+                                                        console.log(<?= $i ?>);
+                                                        $(document).ready( function(){
+                                                            $('.suprimerUtilisateur<?= $i ?>').click(function(e) {
+                                                                e.preventDefault();
+                                                                Swal.fire({
+                                                                title: 'En es-tu sure?',
+                                                                text: 'Voulez-vous vraiment supprimer cet utilisateur ?',
+                                                                icon: 'warning',
+                                                                showCancelButton: true,
+                                                                confirmButtonColor: '#3085d6',
+                                                                cancelButtonColor: '#d33',
+                                                                confirmButtonText: "Supprimer",
+                                                                }).then((result) => {
+                                                                    if (result.isConfirmed) {                                                                                                                  
+                                                                        $.ajax({
+                                                                                type: "POST",
+                                                                                url: 'supressionUtilisateur.php?idutilisateur=<?= $utilisateur['id'] ?>',
+                                                                                //data: str,
+                                                                                success: function( response ) {
+                                                                                    Swal.fire({
+                                                                                        text: 'Utilisateur suprimé avec succes!',
+                                                                                        icon: 'success',
+                                                                                        timer: 3000,
+                                                                                        showConfirmButton: false,
+                                                                                    });
+                                                                                    location.reload();
+                                                                                },
+                                                                                error: function( response ) {
+                                                                                    $('#status').text('Impossible de supprimer cette réception : '+ response.status + " " + response.statusText);
+                                                                                    //console.log( response );
+                                                                                }						
+                                                                        });
+                                                                    }
+                                                                });
                                                             });
                                                         });
-                                                    });
-                                                </script>
-                                                <!-- Pour le sweetAlert Suprimer transfert !--> 
+                                                    </script>
+                                                <!-- Pour le sweetAlert Suprimer utilisateur !--> 
                                             <?php
                                                 }
                                             ?> 

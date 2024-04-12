@@ -1,4 +1,11 @@
 <?php
+
+    session_start(); 
+
+    if(!$_SESSION['niveau']){
+        header('Location: ../../../../404.php');
+    }
+    
     include "../../connexion/conexiondb.php";
 
     // Pour insertion une nouvelle reception

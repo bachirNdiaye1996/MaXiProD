@@ -3,7 +3,7 @@
 session_start(); 
 
 if(!$_SESSION['niveau']){
-    header('Location: 404.php');
+    header('Location: ../../../404.php');
 }
 
 include "../connexion/conexiondb.php";
@@ -484,7 +484,7 @@ include "../connexion/conexiondb.php";
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <form action="#" method="POST" enctype="multipart/form-data">
+                                    <form action="#" method="POST" enctype="multipart/form-data" class="row g-3">
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <div class="mb-3 text-start">
@@ -525,19 +525,19 @@ include "../connexion/conexiondb.php";
                                             <div class="col-md-6">
                                                 <div class="mb-6 text-start">
                                                     <label class="form-label fw-bold" for="nom">Nombre de bobine</label>
-                                                    <input class="form-control" type="number" name="nbbobine" value="<?php echo $row['nbbobine'];?>" id="example-date-input4" placeholder="Taper le nombre de bobine">
+                                                    <input class="form-control" type="number" name="nbbobine" value="<?php echo $row['nbbobine'];?>" placeholder="Taper le nombre de bobine" id="validationDefault01" required>
                                                 </div>
                                             </div>
                                             <div class="col-md-6 mt-3">
                                                 <div class="mb-3 text-start">
                                                     <label class="form-label fw-bold" for="prenom" >Poids déclare</label>
-                                                    <input class="form-control designa" type="number" value="<?php echo $row['poidsdeclare'];?>" name="poidsdeclare" id="example"  placeholder="Taper le poids déclaré">
+                                                    <input class="form-control designa" type="number" value="<?php echo $row['poidsdeclare'];?>" name="poidsdeclare" placeholder="Taper le poids déclaré" id="validationDefault02" required >
                                                 </div>
                                             </div>
                                             <div class="col-md-6 mt-3">
                                                 <div class="mb-3 text-start">
                                                     <label class="form-label fw-bold" for="prenom" >Poids brut</label>
-                                                    <input class="form-control designa" type="number" value="<?php echo $row['poidsbrut'];?>" name="poidsbrut" id="example"  placeholder="Taper le poids brut">
+                                                    <input class="form-control designa" type="number" value="<?php echo $row['poidsbrut'];?>" name="poidsbrut" placeholder="Taper le poids brut" id="validationDefault03" required>
                                                 </div>
                                             </div>
                                         </div>

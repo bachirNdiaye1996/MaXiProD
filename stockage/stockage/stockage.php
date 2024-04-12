@@ -3,7 +3,7 @@
 session_start(); 
 
 if(!$_SESSION['niveau']){
-    header('Location: 404.php');
+    header('Location: ../../../../404.php');
 }
 
 include "../../connexion/conexiondb.php";
@@ -17,7 +17,7 @@ include "../../connexion/conexiondb.php";
     SUM(`14`) + SUM(`14.5`) + SUM(`15`) + SUM(`15.5`) + SUM(`16`) + SUM(`16.5`) + SUM(`17`) AS nb_reception_total FROM `epaisseur` where `lieu`='Metal1';";
     // On prépare la requête
     $query = $db->prepare($sql);
-
+    
     // On exécute
     $query->execute();
 
@@ -27,84 +27,105 @@ include "../../connexion/conexiondb.php";
     $nbReception = (int) $result['nb_reception_total'];
 //** Fin nombre des bobines total 
 
-//** Debut select des epaisseurs pour Metal1
-$sqlepaisseur = "SELECT * FROM `matiere` where MONTH(dateajout)=4;";
-
-// On prépare la requête
-$queryepaisseur = $db->prepare($sqlepaisseur);
-
-// On exécute
-$queryepaisseur->execute();
-
-// On récupère les valeurs dans un tableau associatif
-$Epai = $queryepaisseur->fetchAll();
-//** Fin select des epaisseurs pour Metal1
+//** Nombre des bobines total à Metal 1 
+    $sql = "SELECT SUM(`3`) + SUM(`3.5`) + SUM(`4`) + SUM(`4.5`) + SUM(`5`) + SUM(`5.5`) + SUM(`6`) + SUM(`6.5`) + SUM(`7`) + SUM(`7.5`)
+    + SUM(`8`) + SUM(`8.5`) + SUM(`9`) + SUM(`9.5`) + SUM(`10`) + SUM(`10.5`) + SUM(`11`) + SUM(`11.5`) + SUM(`12`) + SUM(`12.5`) + SUM(`13`) + SUM(`13.5`) + 
+    SUM(`14`) + SUM(`14.5`) + SUM(`15`) + SUM(`15.5`) + SUM(`16`) + SUM(`16.5`) + SUM(`17`) AS nb_reception_total FROM `epaisseur` where `lieu`='Metal1';";
+    // On prépare la requête
+    $query = $db->prepare($sql);
 
 
-//** Debut select des epaisseurs pour Metal1
-$sqlepaisseur = "SELECT * FROM `epaisseur` where `id`=1;";
+    // On exécute
+    $query->execute();
 
-// On prépare la requête
-$queryepaisseur = $db->prepare($sqlepaisseur);
+    // On récupère le nombre d'artic les
+    $result = $query->fetch();
 
-// On exécute
-$queryepaisseur->execute();
+    $nombreMetal1 = (int) $result['nb_reception_total'];
+//** Fin nombre des bobines total Metal 1  
 
-// On récupère les valeurs dans un tableau associatif
-$EpaisseurM1 = $queryepaisseur->fetch();
-//** Fin select des epaisseurs pour Metal1
+//** Nombre des bobines total à Cranteuse
+    $sql = "SELECT SUM(`3`) + SUM(`3.5`) + SUM(`4`) + SUM(`4.5`) + SUM(`5`) + SUM(`5.5`) + SUM(`6`) + SUM(`6.5`) + SUM(`7`) + SUM(`7.5`)
+    + SUM(`8`) + SUM(`8.5`) + SUM(`9`) + SUM(`9.5`) + SUM(`10`) + SUM(`10.5`) + SUM(`11`) + SUM(`11.5`) + SUM(`12`) + SUM(`12.5`) + SUM(`13`) + SUM(`13.5`) + 
+    SUM(`14`) + SUM(`14.5`) + SUM(`15`) + SUM(`15.5`) + SUM(`16`) + SUM(`16.5`) + SUM(`17`) AS nb_reception_total FROM `epaisseur` where `lieu`='Cranteuse';";
+    // On prépare la requête
+    $query = $db->prepare($sql);
 
-//** Debut select des epaisseurs pour Metal3
-$sqlepaisseur = "SELECT * FROM `epaisseur` where `id`=3;";
 
-// On prépare la requête
-$queryepaisseur = $db->prepare($sqlepaisseur);
+    // On exécute
+    $query->execute();
 
-// On exécute
-$queryepaisseur->execute();
+    // On récupère le nombre d'artic les
+    $result = $query->fetch();
 
-// On récupère les valeurs dans un tableau associatif
-$EpaisseurM3 = $queryepaisseur->fetch();
-//** Fin select des epaisseurs pour Metal3
+    $nombreCranteuse = (int) $result['nb_reception_total'];
+//** Fin nombre des bobines total Cranteuse  
 
-//** Debut select des epaisseurs pour Cranteuse
-$sqlepaisseur = "SELECT * FROM `epaisseur` where `id`=4;";
+//** Nombre des bobines total à Mbao
+    $sql = "SELECT SUM(`3`) + SUM(`3.5`) + SUM(`4`) + SUM(`4.5`) + SUM(`5`) + SUM(`5.5`) + SUM(`6`) + SUM(`6.5`) + SUM(`7`) + SUM(`7.5`)
+    + SUM(`8`) + SUM(`8.5`) + SUM(`9`) + SUM(`9.5`) + SUM(`10`) + SUM(`10.5`) + SUM(`11`) + SUM(`11.5`) + SUM(`12`) + SUM(`12.5`) + SUM(`13`) + SUM(`13.5`) + 
+    SUM(`14`) + SUM(`14.5`) + SUM(`15`) + SUM(`15.5`) + SUM(`16`) + SUM(`16.5`) + SUM(`17`) AS nb_reception_total FROM `epaisseur` where `lieu`='Metal Mbao';";
+    // On prépare la requête
+    $query = $db->prepare($sql);
 
-// On prépare la requête
-$queryepaisseur = $db->prepare($sqlepaisseur);
 
-// On exécute
-$queryepaisseur->execute();
+    // On exécute
+    $query->execute();
 
-// On récupère les valeurs dans un tableau associatif
-$EpaisseurCrant = $queryepaisseur->fetch();
-//** Fin select des epaisseurs pour Cranteuse
+    // On récupère le nombre d'artic les
+    $result = $query->fetch();
 
-//** Debut select des epaisseurs pour Tref
-$sqlepaisseur = "SELECT * FROM `epaisseur` where `id`=5;";
+    $nombreMbao = (int) $result['nb_reception_total'];
+//** Fin nombre des bobines total Mbao  
 
-// On prépare la requête
-$queryepaisseur = $db->prepare($sqlepaisseur);
+//** Nombre des bobines total à Trefilage
+    $sql = "SELECT SUM(`3`) + SUM(`3.5`) + SUM(`4`) + SUM(`4.5`) + SUM(`5`) + SUM(`5.5`) + SUM(`6`) + SUM(`6.5`) + SUM(`7`) + SUM(`7.5`)
+    + SUM(`8`) + SUM(`8.5`) + SUM(`9`) + SUM(`9.5`) + SUM(`10`) + SUM(`10.5`) + SUM(`11`) + SUM(`11.5`) + SUM(`12`) + SUM(`12.5`) + SUM(`13`) + SUM(`13.5`) + 
+    SUM(`14`) + SUM(`14.5`) + SUM(`15`) + SUM(`15.5`) + SUM(`16`) + SUM(`16.5`) + SUM(`17`) AS nb_reception_total FROM `epaisseur` where `lieu`='Trefilage';";
+    // On prépare la requête
+    $query = $db->prepare($sql);
 
-// On exécute
-$queryepaisseur->execute();
 
-// On récupère les valeurs dans un tableau associatif
-$EpaisseurTref = $queryepaisseur->fetch();
-//** Fin select des epaisseurs pour Tref
+    // On exécute
+    $query->execute();
 
-//** Debut select des epaisseurs pour Metal Mbao
-$sqlepaisseur = "SELECT * FROM `epaisseur` where `id`=6;";
+    // On récupère le nombre d'artic les
+    $result = $query->fetch();
 
-// On prépare la requête
-$queryepaisseur = $db->prepare($sqlepaisseur);
+    $nombreTrefilage = (int) $result['nb_reception_total'];
+//** Fin nombre des bobines total Trefilage  
 
-// On exécute
-$queryepaisseur->execute();
+//** Nombre des bobines total à Niambour
+    $sql = "SELECT SUM(`3`) + SUM(`3.5`) + SUM(`4`) + SUM(`4.5`) + SUM(`5`) + SUM(`5.5`) + SUM(`6`) + SUM(`6.5`) + SUM(`7`) + SUM(`7.5`)
+    + SUM(`8`) + SUM(`8.5`) + SUM(`9`) + SUM(`9.5`) + SUM(`10`) + SUM(`10.5`) + SUM(`11`) + SUM(`11.5`) + SUM(`12`) + SUM(`12.5`) + SUM(`13`) + SUM(`13.5`) + 
+    SUM(`14`) + SUM(`14.5`) + SUM(`15`) + SUM(`15.5`) + SUM(`16`) + SUM(`16.5`) + SUM(`17`) AS nb_reception_total FROM `epaisseur` where `lieu`='Niambour';";
+    // On prépare la requête
+    $query = $db->prepare($sql);
 
-// On récupère les valeurs dans un tableau associatif
-$EpaisseurMB = $queryepaisseur->fetch();
-//** Fin select des epaisseurs pour Metal Mbao
+
+    // On exécute
+    $query->execute();
+
+    // On récupère le nombre d'artic les
+    $result = $query->fetch();
+
+    $nombreNiambour = (int) $result['nb_reception_total'];
+//** Fin nombre des bobines total Niambour  
+
+
+//** Debut select de stockage pour Metal1
+    $sqlepaisseur = "SELECT * FROM `matiere` where `nbbobineactuel`>0 and `lieutransfert`='Metal1';";
+
+    // On prépare la requête
+    $queryepaisseur = $db->prepare($sqlepaisseur);
+
+    // On exécute
+    $queryepaisseur->execute();
+
+    // On récupère les valeurs dans un tableau associatif
+    $stockMetal1 = $queryepaisseur->fetchAll();
+//** Fin select de stockage pour Metal1
+
 
 ?>
 
@@ -141,6 +162,21 @@ $EpaisseurMB = $queryepaisseur->fetch();
     <!-- Custom styles for this page -->
     <link href="../../indexPage/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 
+    <link href="../../StyleLoad.css" rel="stylesheet">
+
+    <script>
+        // Pour le loading
+            //const loader = document.querySelector('.loader');
+
+            document.addEventListener('DOMContentLoaded', () => {
+                //console.log(loader);
+                //document.getElementById('loader').className = "fondu-out";
+                document.getElementById("loader").remove();
+                //loader.classList.add('fondu-out');
+
+            })
+        //Pour le loading
+    </script>
 
 </head>
 
@@ -521,81 +557,71 @@ $EpaisseurMB = $queryepaisseur->fetch();
 
                     <!-- DataTales Example -->
                     <!-- Fade In Utility -->
-                    <div class="col-lg-8 mt-5">
+                    <div class="col-lg-8 mt-3">
                         <div class="card position-relative">
                             <div class="card-header py-3">
                                 <h6 class="m-0 font-weight-bold text-primary">Nombre de bobine stocké à Métal 1 : <?php echo $nbReception; ?></h6>
-                                <input type="hidden" id="passvar" name="passvar"  value= <?php print_r(json_encode($Epai)); ?> />
+                                <input type="hidden" id="nombreMetal1" name="nombreMetal1"  value="<?php echo (($nombreMetal1)); ?>" />
+                                <input type="hidden" id="nombreNiambour" name="nombreNiambour"  value="<?php echo ($nombreNiambour); ?>" />
+                                <input type="hidden" id="nombreCranteuse" name="nombreCranteuse"  value="<?php echo (($nombreCranteuse)); ?>" />
+                                <input type="hidden" id="nombreTrefilage" name="nombreTrefilage"  value="<?php echo (($nombreTrefilage)); ?>" />
+                                <input type="hidden" id="nombreMbao" name="nombreMbao"  value="<?php echo (($nombreMbao)); ?>" />
                             </div>
                             <div class="row m-2">
                                 <div class="table-responsive">
-                                <?php print_r(json_encode($Epai)); ?>
-                                    <table class="table table-bordered" id="" width="100%" cellspacing="0">
+                                    <!-- Page Loader -->
+                                        <div id="loader">
+                                            <span class="lettre">M</span>
+                                            <span class="lettre">E</span>
+                                            <span class="lettre">T</span>
+                                            <span class="lettre">A</span>
+                                            <span class="lettre">L</span>
+                                            <span class="lettre">*</span>
+                                            <span class="lettre">*</span>
+                                            <span class="lettre">*</span>
+                                            <span class="lettre">A</span>
+                                            <span class="lettre">F</span>
+                                            <span class="lettre">R</span>
+                                            <span class="lettre">I</span>
+                                            <span class="lettre">Q</span>
+                                            <span class="lettre">U</span>
+                                            <span class="lettre">E</span>
+                                        </div>
+                                    <!-- Page Loader -->
+                                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                         <thead>
-                                            <tr>    
-                                                <th>3</th>
-                                                <th>3.5</th>
-                                                <th>4</th>
-                                                <th>4.5</th>
-                                                <th>5</th>
-                                                <th>5.5</th>
-                                                <th>6</th>
-                                                <th>6.5</th>
-                                                <th>7</th>
-                                                <th>7.5</th>
-                                                <th>8</th>
-                                                <th>8.5</th>
-                                                <th>9</th>
-                                                <th>9.5</th>
-                                                <th>10</th>
-                                                <th>10.5</th>
-                                                <th>11</th>
-                                                <th>11.5</th>
-                                                <th>12</th>
-                                                <th>12.5</th>
-                                                <th>13</th>
-                                                <th>13.5</th>
-                                                <th>14</th>
-                                                <th>14.5</th>
-                                                <th>15</th>
-                                                <th>15.5</th>
-                                                <th>16</th>
-                                                <th>16.5</th>
-                                                <th>17</th>
+                                            <tr>       
+                                                <th>Code stockage</th>                                                                                
+                                                <th>Epaisseur</th>
+                                                <th>Nombre bobine</th>
+                                                <th>Poids déclaré</th>
+                                                <th>Poids pesé</th>
+                                                <th>Etat bobine</th>
+                                                <th>Derniére modification</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['3'] == 0){echo "";}else{echo $EpaisseurM1['3'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['3.5'] == 0){echo "";}else{echo $EpaisseurM1['3.5'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['4'] == 0){echo "";}else{echo $EpaisseurM1['4'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['4.5'] == 0){echo "";}else{echo $EpaisseurM1['4.5'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['5'] == 0){echo "";}else{echo $EpaisseurM1['5'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['5.5'] == 0){echo "";}else{echo $EpaisseurM1['5.5'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['6'] == 0){echo "";}else{echo $EpaisseurM1['6'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['6.5'] == 0){echo "";}else{echo $EpaisseurM1['6.5'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['7'] == 0){echo "";}else{echo $EpaisseurM1['7'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['7.5'] == 0){echo "";}else{echo $EpaisseurM1['7.5'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['8'] == 0){echo "";}else{echo $EpaisseurM1['8'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['8.5'] == 0){echo "";}else{echo $EpaisseurM1['8.5'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['9'] == 0){echo "";}else{echo $EpaisseurM1['9'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['9.5'] == 0){echo "";}else{echo $EpaisseurM1['9.5'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['10'] == 0){echo "";}else{echo $EpaisseurM1['10'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['10.5'] == 0){echo "";}else{echo $EpaisseurM1['10.5'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['11'] == 0){echo "";}else{echo $EpaisseurM1['11'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['11.5'] == 0){echo "";}else{echo $EpaisseurM1['11.5'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['12'] == 0){echo "";}else{echo $EpaisseurM1['12'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['12.5'] == 0){echo "";}else{echo $EpaisseurM1['12.5'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['13'] == 0){echo "";}else{echo $EpaisseurM1['13'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['13.5'] == 0){echo "";}else{echo $EpaisseurM1['13.5'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['14'] == 0){echo "";}else{echo $EpaisseurM1['14'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['14.5'] == 0){echo "";}else{echo $EpaisseurM1['14.5'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['15'] == 0){echo "";}else{echo $EpaisseurM1['15'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['15.5'] == 0){echo "";}else{echo $EpaisseurM1['15.5'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['16'] == 0){echo "";}else{echo $EpaisseurM1['16'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['16.5'] == 0){echo "";}else{echo $EpaisseurM1['16.5'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurM1['17'] == 0){echo "";}else{echo $EpaisseurM1['17'];} ?></td>
-                                            </tr>
+                                            <?php
+                                                $i=0;
+                                                foreach($stockMetal1 as $stock){
+                                                    $i++;
+                                                    //if($article['status'] == 'termine'){
+                                            ?>
+                                                <tr>
+                                                    <td style="background-color:#4e73df ; color:white;">
+                                                        <a style="text-decoration: none; font-family: arial; font-size: 20px; color:white;" href="javascript:void(0);" data-toggle="modal" data-target="#Information" title="Voir commentaire" class="link-offset-2 link-underline"><?php echo "STOCK-BOB-0".$stock['idmatiere'] ?></a>
+                                                        <!--<a style="text-decoration: none; font-family: arial; font-size: 20px; color:white;" title="Allez vers la reception planifiée correspondante" href="detailsReceptionPlanifie.php?idreception=<?= $stock['idreception'] ?>" class="link-offset-2 link-underline"><?php echo "REC-0".$stock['idreception']."-BOB-0".$stock['idmatiere'] ?></a>!-->
+                                                    </td>
+                                                    <td style="background-color:#4e73df ; color:white;"> <?= $stock['epaisseur'] ?> </td>
+                                                    <td style="background-color:#4e73df ; color:white;"><?= $stock['nbbobineactuel'] ?></td>
+                                                    <td style="background-color:#4e73df ; color:white;"><?= $stock['poidsdeclare'] ?></td>
+                                                    <td style="background-color:#4e73df ; color:white;"><?= $stock['poidspese'] ?></td>
+                                                    <td style="background-color:#4e73df ; color:white;"><?= $stock['etatbobine'] ?></td>
+                                                    <td style="background-color:#4e73df ; color:white;"><?= $stock['dateajout'] ?></td>
+                                                </tr>
+                                            <?php
+                                                }
+                                            ?>
                                         </tbody>
                                     </table>
                                 </div>
@@ -604,81 +630,6 @@ $EpaisseurMB = $queryepaisseur->fetch();
                         </div>
                     </div>
                 </div>
-
-                    <div class="row m-5">
-                        <!-- Area Chart -->
-                        <div class="col-xl-8 col-lg-7 ">
-                            <div class="card shadow mb-4">
-                                <!-- Card Header - Dropdown -->
-                                <div
-                                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <h6 class="m-0 font-weight-bold text-primary">Earnings Overview</h6>
-                                    <div class="dropdown no-arrow">
-                                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-                                        </a>
-                                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
-                                            aria-labelledby="dropdownMenuLink">
-                                            <div class="dropdown-header">Dropdown Header:</div>
-                                            <a class="dropdown-item" href="#">Action</a>
-                                            <a class="dropdown-item" href="#">Another action</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#">Something else here</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Card Body -->
-                                <div class="card-body">
-                                    <div class="chart-area">
-                                        <canvas id="myAreaChart"></canvas>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Pie Chart -->
-                        <div class="col-xl-4 col-lg-5">
-                            <div class="card shadow mb-4">
-                                <!-- Card Header - Dropdown -->
-                                <div
-                                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <h6 class="m-0 font-weight-bold text-primary">Revenue Sources</h6>
-                                    <div class="dropdown no-arrow">
-                                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-                                        </a>
-                                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
-                                            aria-labelledby="dropdownMenuLink">
-                                            <div class="dropdown-header">Dropdown Header:</div>
-                                            <a class="dropdown-item" href="#">Action</a>
-                                            <a class="dropdown-item" href="#">Another action</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#">Something else here</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Card Body -->
-                                <div class="card-body">
-                                    <div class="chart-pie pt-4 pb-2">
-                                        <canvas id="myPieChart"></canvas>
-                                    </div>
-                                    <div class="mt-4 text-center small">
-                                        <span class="mr-2">
-                                            <i class="fas fa-circle text-primary"></i> Direct
-                                        </span>
-                                        <span class="mr-2">
-                                            <i class="fas fa-circle text-success"></i> Social
-                                        </span>
-                                        <span class="mr-2">
-                                            <i class="fas fa-circle text-info"></i> Referral
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
             </div><!-- div Content -->
 
             <!-- Footer -->
@@ -718,12 +669,6 @@ $EpaisseurMB = $queryepaisseur->fetch();
     <script src="../../indexPage/js/demo/datatables-demo.js"></script>
 
     <!-- Page level custom scripts -->
-    <script src="../../indexPage/vendor/chart.js/Chart.min.js"></script>
-
-    <!-- Bootstrap core JavaScript-->
-    <script src="./courbe.js"></script>
-    <script src="./circulaire.js"></script>
-
 </body>
 
 </html>

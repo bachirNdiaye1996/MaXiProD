@@ -3,7 +3,7 @@
 session_start(); 
 
 if(!$_SESSION['niveau']){
-    header('Location: 404.php');
+    header('Location: ../../../../404.php');
 }
 
 include "../../connexion/conexiondb.php";
@@ -226,6 +226,21 @@ $EpaisseurMb = $queryepaisseur->fetch();
     <!-- Custom styles for this page -->
     <link href="../../indexPage/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 
+    <link href="../../StyleLoad.css" rel="stylesheet">
+
+    <script>
+        // Pour le loading
+            //const loader = document.querySelector('.loader');
+
+            document.addEventListener('DOMContentLoaded', () => {
+                //console.log(loader);
+                //document.getElementById('loader').className = "fondu-out";
+                document.getElementById("loader").remove();
+                //loader.classList.add('fondu-out');
+
+            })
+        //Pour le loading
+    </script>
 
 </head>
 
@@ -602,6 +617,25 @@ $EpaisseurMb = $queryepaisseur->fetch();
                                 </div>
                                 <div class="row m-2">
                                     <div class="table-responsive">
+                                        <!-- Page Loader -->
+                                            <div id="loader">
+                                                <span class="lettre">M</span>
+                                                <span class="lettre">E</span>
+                                                <span class="lettre">T</span>
+                                                <span class="lettre">A</span>
+                                                <span class="lettre">L</span>
+                                                <span class="lettre">*</span>
+                                                <span class="lettre">*</span>
+                                                <span class="lettre">*</span>
+                                                <span class="lettre">A</span>
+                                                <span class="lettre">F</span>
+                                                <span class="lettre">R</span>
+                                                <span class="lettre">I</span>
+                                                <span class="lettre">Q</span>
+                                                <span class="lettre">U</span>
+                                                <span class="lettre">E</span>
+                                            </div>
+                                        <!-- Page Loader -->
                                         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                             <thead>
                                                 <tr>     

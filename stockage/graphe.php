@@ -3,10 +3,105 @@
 session_start(); 
 
 if(!$_SESSION['niveau']){
-    header('Location: 404.php');
+    header('Location: ../../../404.php');
 }
 
 include "../connexion/conexiondb.php";
+
+
+//** Nombre des bobines total à Metal 1 
+$sql = "SELECT SUM(`3`) + SUM(`3.5`) + SUM(`4`) + SUM(`4.5`) + SUM(`5`) + SUM(`5.5`) + SUM(`6`) + SUM(`6.5`) + SUM(`7`) + SUM(`7.5`)
++ SUM(`8`) + SUM(`8.5`) + SUM(`9`) + SUM(`9.5`) + SUM(`10`) + SUM(`10.5`) + SUM(`11`) + SUM(`11.5`) + SUM(`12`) + SUM(`12.5`) + SUM(`13`) + SUM(`13.5`) + 
+SUM(`14`) + SUM(`14.5`) + SUM(`15`) + SUM(`15.5`) + SUM(`16`) + SUM(`16.5`) + SUM(`17`) AS nb_reception_total FROM `epaisseur` where `lieu`='Metal1';";
+// On prépare la requête
+$query = $db->prepare($sql);
+
+
+// On exécute
+$query->execute();
+
+// On récupère le nombre d'artic les
+$result = $query->fetch();
+
+$nombreMetal1 = (int) $result['nb_reception_total'];
+//** Fin nombre des bobines total Metal 1  
+
+//** Nombre des bobines total à Cranteuse
+$sql = "SELECT SUM(`3`) + SUM(`3.5`) + SUM(`4`) + SUM(`4.5`) + SUM(`5`) + SUM(`5.5`) + SUM(`6`) + SUM(`6.5`) + SUM(`7`) + SUM(`7.5`)
++ SUM(`8`) + SUM(`8.5`) + SUM(`9`) + SUM(`9.5`) + SUM(`10`) + SUM(`10.5`) + SUM(`11`) + SUM(`11.5`) + SUM(`12`) + SUM(`12.5`) + SUM(`13`) + SUM(`13.5`) + 
+SUM(`14`) + SUM(`14.5`) + SUM(`15`) + SUM(`15.5`) + SUM(`16`) + SUM(`16.5`) + SUM(`17`) AS nb_reception_total FROM `epaisseur` where `lieu`='Cranteuse';";
+// On prépare la requête
+$query = $db->prepare($sql);
+
+
+// On exécute
+$query->execute();
+
+// On récupère le nombre d'artic les
+$result = $query->fetch();
+
+$nombreCranteuse = (int) $result['nb_reception_total'];
+//** Fin nombre des bobines total Cranteuse  
+
+//** Nombre des bobines total à Mbao
+$sql = "SELECT SUM(`3`) + SUM(`3.5`) + SUM(`4`) + SUM(`4.5`) + SUM(`5`) + SUM(`5.5`) + SUM(`6`) + SUM(`6.5`) + SUM(`7`) + SUM(`7.5`)
++ SUM(`8`) + SUM(`8.5`) + SUM(`9`) + SUM(`9.5`) + SUM(`10`) + SUM(`10.5`) + SUM(`11`) + SUM(`11.5`) + SUM(`12`) + SUM(`12.5`) + SUM(`13`) + SUM(`13.5`) + 
+SUM(`14`) + SUM(`14.5`) + SUM(`15`) + SUM(`15.5`) + SUM(`16`) + SUM(`16.5`) + SUM(`17`) AS nb_reception_total FROM `epaisseur` where `lieu`='Metal Mbao';";
+// On prépare la requête
+$query = $db->prepare($sql);
+
+
+// On exécute
+$query->execute();
+
+// On récupère le nombre d'artic les
+$result = $query->fetch();
+
+$nombreMbao = (int) $result['nb_reception_total'];
+//** Fin nombre des bobines total Mbao  
+
+//** Nombre des bobines total à Trefilage
+$sql = "SELECT SUM(`3`) + SUM(`3.5`) + SUM(`4`) + SUM(`4.5`) + SUM(`5`) + SUM(`5.5`) + SUM(`6`) + SUM(`6.5`) + SUM(`7`) + SUM(`7.5`)
++ SUM(`8`) + SUM(`8.5`) + SUM(`9`) + SUM(`9.5`) + SUM(`10`) + SUM(`10.5`) + SUM(`11`) + SUM(`11.5`) + SUM(`12`) + SUM(`12.5`) + SUM(`13`) + SUM(`13.5`) + 
+SUM(`14`) + SUM(`14.5`) + SUM(`15`) + SUM(`15.5`) + SUM(`16`) + SUM(`16.5`) + SUM(`17`) AS nb_reception_total FROM `epaisseur` where `lieu`='Trefilage';";
+// On prépare la requête
+$query = $db->prepare($sql);
+
+
+// On exécute
+$query->execute();
+
+// On récupère le nombre d'artic les
+$result = $query->fetch();
+
+$nombreTrefilage = (int) $result['nb_reception_total'];
+//** Fin nombre des bobines total Trefilage  
+
+//** Nombre des bobines total à Niambour
+$sql = "SELECT SUM(`3`) + SUM(`3.5`) + SUM(`4`) + SUM(`4.5`) + SUM(`5`) + SUM(`5.5`) + SUM(`6`) + SUM(`6.5`) + SUM(`7`) + SUM(`7.5`)
++ SUM(`8`) + SUM(`8.5`) + SUM(`9`) + SUM(`9.5`) + SUM(`10`) + SUM(`10.5`) + SUM(`11`) + SUM(`11.5`) + SUM(`12`) + SUM(`12.5`) + SUM(`13`) + SUM(`13.5`) + 
+SUM(`14`) + SUM(`14.5`) + SUM(`15`) + SUM(`15.5`) + SUM(`16`) + SUM(`16.5`) + SUM(`17`) AS nb_reception_total FROM `epaisseur` where `lieu`='Niambour';";
+// On prépare la requête
+$query = $db->prepare($sql);
+
+
+// On exécute
+$query->execute();
+
+// On récupère le nombre d'artic les
+$result = $query->fetch();
+
+$nombreNiambour = (int) $result['nb_reception_total'];
+//** Fin nombre des bobines total Niambour  
+
+ 
+$dataPoints = array( 
+    array("label"=>"METAL 1", "symbol" => "M1","y"=>$nombreMetal1),
+    array("label"=>"NIAMBOUR", "symbol" => "Niam","y"=>$nombreNiambour),
+    array("label"=>"METAL MBAO", "symbol" => "Mbao","y"=>$nombreMbao),
+    array("label"=>"CRANTEUSE", "symbol" => "Cran","y"=>$nombreCranteuse),
+    array("label"=>"TREFILAGE", "symbol" => "Tréf","y"=>$nombreTrefilage),
+);
 
 ?>
 
@@ -41,9 +136,65 @@ include "../connexion/conexiondb.php";
     <!-- Custom styles for this page -->
     <link href="../indexPage/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 
+    <link href="../StyleLoad.css" rel="stylesheet">
+
+    <script>
+
+        // Pour le loading
+            const loader = document.querySelector('.loader');
+
+            document.addEventListener('load', () => {
+
+                loader.classList.add('fondu-out');
+
+            })
+        //Pour le loading
+
+        window.onload = function() {
+        
+        var chart = new CanvasJS.Chart("chartContainer", {
+            theme: "light2",
+            animationEnabled: true,
+            title: {
+                text: "La composition des stocks de bobines des differents dépots de Metal Afrique"
+            },
+            data: [{
+                type: "doughnut",
+                indexLabel: "{symbol} - {y}",
+                yValueFormatString: "#,##0.0\"%\"",
+                showInLegend: true,
+                legendText: "{label} : {y}",
+                dataPoints: <?php echo json_encode($dataPoints, JSON_NUMERIC_CHECK); ?>
+            }]
+        });
+        chart.render();
+        }
+
+    </script>
+
 </head>
 
 <body id="page-top">
+    
+    <!-- Page Loader -->
+        <div class="loader">
+            <span class="lettre">M</span>
+            <span class="lettre">E</span>
+            <span class="lettre">T</span>
+            <span class="lettre">A</span>
+            <span class="lettre">L</span>
+            <span class="lettre">*</span>
+            <span class="lettre">*</span>
+            <span class="lettre">*</span>
+            <span class="lettre">A</span>
+            <span class="lettre">F</span>
+            <span class="lettre">R</span>
+            <span class="lettre">I</span>
+            <span class="lettre">Q</span>
+            <span class="lettre">U</span>
+            <span class="lettre">E</span>
+        </div>
+    <!-- Page Loader -->
 
     <!-- Page Wrapper -->
     <div id="wrapper">
@@ -85,9 +236,10 @@ include "../connexion/conexiondb.php";
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Stockage :</h6>
                         <a class="collapse-item" href="../stockage/reception.php">Réception</a>
-                        <a class="collapse-item active" href="../stockage/transfert.php">Transfert</a>
-                        <a class="collapse-item" href="../stockage/stockage.php">Stockage</a>
-                        <a class="collapse-item" href="../stockage/graphe.php">Graphique</a>
+                        <a class="collapse-item" href="../stockage/receptionPlanifie.php">Réception planifiée</a>
+                        <a class="collapse-item" href="../stockage/transfert/transfert.php">Transfert</a>
+                        <a class="collapse-item" href="../stockage/stockage/stockage.php">Stockage</a>
+                        <a class="collapse-item active" href="../stockage/graphe.php">Graphique</a>
                     </div>
                 </div>
             </li>
@@ -398,8 +550,7 @@ include "../connexion/conexiondb.php";
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 
-                    <!-- Page Heading -->
-                    <h1 class="h3 mb-4 text-gray-800">Blank Page</h1>
+                    <div id="chartContainer" style="height: 620px; width: 100%; margin-top:60px"></div>
 
                 </div>
                 <!-- /.container-fluid -->
@@ -448,6 +599,7 @@ include "../connexion/conexiondb.php";
     </div>
 
     <!-- Bootstrap core JavaScript-->
+    <script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 

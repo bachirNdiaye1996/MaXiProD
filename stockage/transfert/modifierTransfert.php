@@ -3,10 +3,13 @@
 session_start(); 
 
 if(!$_SESSION['niveau']){
-    header('Location: 404.php');
+    header('Location: ../../../../404.php');
 }
 
 include "../../connexion/conexiondb.php";
+
+// Variables 
+$ProblemeNbBobineDepart="";
 
 //La partie de recupe de l'id et script pour modifier
     $lieutransfert="";
@@ -121,8 +124,66 @@ include "../../connexion/conexiondb.php";
                     $db->query($sql1);
                 // Pour revenir à l'etat initial.
 
-                header("location: detailTransfert.php?idtransfert=$idTransfert");
-                exit;
+                // |--> Pour le update des nombres de bobines dans matiere
+                    $idPointdepart = $_GET['idPointdepart'];
+                    $idPointarrive = $_GET['idPointarrive'];
+
+                    //Rechercher le nombre de piéces sur le lieu de depart
+                        $sqlEpaisseur = "SELECT * FROM `matiere` where `lieutransfert`='$pointdepart' and `poidspese`='$poidspese' and `epaisseur`='$epaisseur' and `nbbobineactuel` != 0 and `nbbobineactuel`>=$nbbobine LIMIT 1;";
+                        // On prépare la requête
+                        $queryEpaisseur = $db->prepare($sqlEpaisseur);
+
+                        // On exécute
+                        $queryEpaisseur->execute();
+
+                        // On récupère le nombre d'articles
+                        $resultEpaisseur = $queryEpaisseur->fetch();
+
+                        if($resultEpaisseur){
+                            $Iddepart = $resultEpaisseur['idmatiere'];
+                        }
+                    //Fin Rechercher le nombre de piéces 
+
+                    //Rechercher le nombre de piéces sur le lieu d'arrive
+                        $sqlEpaisseur = "SELECT * FROM `matiere` where `lieutransfert`='$pointarrive' and `poidspese`='$poidspese' and `epaisseur`='$epaisseur' LIMIT 1;";
+                        // On prépare la requête
+                        $queryEpaisseur = $db->prepare($sqlEpaisseur);
+
+                        // On exécute
+                        $queryEpaisseur->execute();
+
+                        // On récupère le nombre d'articles
+                        $resultMatiereArrive = $queryEpaisseur->fetch();
+                    //Fin Rechercher le nombre de piéces d'arrive
+
+                    if($resultEpaisseur){
+                        // Enlever le nombre de bobine dans le lieu de depart
+                            $req ="UPDATE matiere SET `nbbobineactuel` = `nbbobineactuel` - ? where `idmatiere`='$resultEpaisseur[idmatiere]';";
+                            $reqtitre = $db->prepare($req);
+                            $reqtitre->execute(array($nbbobine));
+                        // Fin enlever le nombre de bobine dans le lieu de depart
+                        if($resultMatiereArrive){
+                            // ajouter le nombre de bobine dans le lieu de depart
+                                $req ="UPDATE matiere SET `nbbobineactuel` = `nbbobineactuel` + ? where `idmatiere`='$resultMatiereArrive[idmatiere]';";
+                                $reqtitre = $db->prepare($req);
+                                $reqtitre->execute(array($nbbobine));
+                            // Fin ajouter le nombre de bobine dans le lieu de depart
+                        }else{
+                            // Ajouter le nombre de bobine dans le lieu d'arrive
+                                $insertUser=$db->prepare("INSERT INTO `matiere` (`idmatiere`, `epaisseur`, `poidsdeclare`, `poidspese`, `dateajout`,`nbbobine`,`lieutransfert`, `etatbobine`,`nbbobineactuel`) 
+                                VALUES (NULL, ?, ?, ?, current_timestamp(), ?, ?, ?, ?);");
+                                $insertUser->execute(array($epaisseur,$poidsdeclare, $poidspese,$nbbobine,$pointarrive, $etatbobine, $nbbobine));  
+                            // Fin ajouter le nombre de bobine dans le lieu d'arrive
+                        }
+                    }else{
+                        $ProblemeNbBobineDepart="erreurProblemeNbDepart";
+                    }
+                // |--> Fin pour le update des nombres de bobines dans matiere
+                
+                if($ProblemeNbBobineDepart != "erreurProblemeNbDepart" && $error != "erreurEpaisseur"){
+                    header("location: detailTransfert.php?idtransfert=$idTransfert");
+                    exit;
+                }
             }
         } 
     }
@@ -628,14 +689,30 @@ include "../../connexion/conexiondb.php";
                                                     <?php if($error == "erreurEpaisseur"){ ?> 
                                                         <script>    
                                                             Swal.fire({
-                                                            text: 'Le transfert est impossible, veillez revoir le nombre de bobine svp!',
-                                                            icon: 'error',
-                                                            timer: 2000,
-                                                            showConfirmButton: false,
-                                                            });
+                                                                    text: 'Veiller revoir votre stockage (nombre de bobine, epaisseur ou les lieus de transfert) svp!',
+                                                                    icon: 'error',
+                                                                    timer: 5000,
+                                                                    showConfirmButton: false,
+                                                                },
+                                                                function(){ 
+                                                                    location.reload();
+                                                                });
                                                         </script> 
                                                     <?php } ?>
-                                                    
+                                                    <?php if($ProblemeNbBobineDepart == "erreurProblemeNbDepart"){ ?> 
+                                                            <script>    
+                                                                Swal.fire({
+                                                                    text: 'Veiller revoir votre stockage (nombre de bobine, epaisseur ou les lieus de transfert) svp!',
+                                                                    icon: 'error',
+                                                                    timer: 5000,
+                                                                    showConfirmButton: false,
+                                                                },
+                                                                function(){ 
+                                                                    location.reload();
+                                                                });
+                                                            </script> 
+                                                    <?php } ?>
+
                                                     <div class="d-flex gap-2 pt-4">                           
                                                         <a class="btn btn-danger  w-lg bouton mr-3" href="detailTransfert.php?idtransfert=<?= $_GET['idtransfert'] ?>">Annuler</a>
                                                         <input class="btn btn-success  w-lg bouton mr-3" name="modifierTransfert" type="submit" value="Modifier">

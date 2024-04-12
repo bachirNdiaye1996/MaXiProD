@@ -1,4 +1,11 @@
 <?php
+
+    session_start(); 
+
+    if(!$_SESSION['niveau']){
+        header('Location: ../../../../404.php');
+    }
+    
     include "../../connexion/conexiondb.php";
 
     // L'admin permet de donner la main au responsable du pont bascule
@@ -17,6 +24,22 @@
                 $nbbobine = $_GET['nombrebobine'];
                 $pointdepart = $_GET['pointdepart'];
                 $pointarrive = $_GET['pointarrive'];
+                $idPointdepart = $_GET['idPointdepart'];
+                $idPointarrive = $_GET['idPointarrive'];
+
+                // ajouter le nombre de bobine dans le lieu de depart
+                    $req ="UPDATE matiere SET `nbbobineactuel` = `nbbobineactuel` + ? where `idmatiere`='$idPointdepart';";
+                    $reqtitre = $db->prepare($req);
+                    $reqtitre->execute(array($nbbobine));
+                // Fin ajouter le nombre de bobine dans le lieu de depart
+
+                // Retrancher le nombre de bobine dans le lieu de depart
+                    $req ="UPDATE matiere SET `nbbobineactuel` = `nbbobineactuel` - ? where `idmatiere`='$idPointarrive';";
+                    $reqtitre = $db->prepare($req);
+                    $reqtitre->execute(array($nbbobine));
+                // Fin ajouter le nombre de bobine dans le lieu de depart
+
+
                 if(($pointdepart == "Metal1")){ // Vérifie le type de transfert
                     //Debut inserer le nombre de bobine par epaisseur
                     $req ="UPDATE epaisseur SET `$epaisseur` = `$epaisseur` + ? where `id`=1;";  //Metal 1

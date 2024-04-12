@@ -1,4 +1,11 @@
 <?php
+
+    session_start(); 
+
+    if(!$_SESSION['niveau']){
+        header('Location: ../../../../404.php');
+    }
+    
     // Pour la supression d'une reception avec un get de idsupreception
     include "../../connexion/conexiondb.php";
 

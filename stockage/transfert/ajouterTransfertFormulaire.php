@@ -3,7 +3,7 @@
     session_start(); 
 
     if(!$_SESSION['niveau']){
-        header('Location: 404.php');
+        header('Location: ../../../../404.php');
     }
 
     include "../../connexion/conexiondb.php";
@@ -12,6 +12,8 @@
     //Variables
     // Il faut savoir que metal3 est remplacer par niambour
     $valideTransfert="";
+    $ProblemeNbBobineDepart="";
+    $Iddepart=null;                       // Variable qui nous permet d'optenir l'Id de la matiere de départ
     $idtransfert = $_GET['idtransfert'];  // On recupére l'ID du transfert par get
     $Reception[]=null;
     $NombreLigne = $_GET['NombreLigne'];
@@ -31,7 +33,6 @@
         $saisisseur=$row['saisisseur'];
         $transporteur=$row['transporteur'];
         $datetransfert=$row['datetransfert'];
-    //Fin revoir si on a ajouter une ligne
 
     //Changer valeur NombreLigne   
         if(isset($_POST['ChangerNombreLigne'])){
@@ -39,8 +40,7 @@
             header("location: ajouterReceptionFormulaire.php?idreception=$_GET[idreception]&NombreLigne=$NombreLignes");
             exit;
         }
-    //Fin changer valeur NombreLigne 
-    
+    // Fin changer valeur NombreLigne 
 
     //Insertion des réceptions
     if(isset($_POST['CreerTransfert'])){
@@ -81,8 +81,8 @@
                             6 -> Metal Mbao
                         */
 
-                        //Depart epaisseur
-                            $sqlEpaisseur = "SELECT `$epaisseur` AS epaisseurVeriDepart FROM `epaisseur` where `lieu`='$pointdepart';";
+                        //Rechercher le nombre de piéces sur le lieu de depart
+                            $sqlEpaisseur = "SELECT * FROM `matiere` where `lieutransfert`='$pointdepart' and `poidspese`='$poidspese' and `epaisseur`='$epaisseur' and `nbbobineactuel` != 0 and `nbbobineactuel`>=$nbbobine LIMIT 1;";
                             // On prépare la requête
                             $queryEpaisseur = $db->prepare($sqlEpaisseur);
 
@@ -92,15 +92,73 @@
                             // On récupère le nombre d'articles
                             $resultEpaisseur = $queryEpaisseur->fetch();
 
-                            $nbEpaisseurDepart = (int) $resultEpaisseur['epaisseurVeriDepart'];
-                        //Fin Depart epaisseur
-                            if(($nbEpaisseurDepart < $nbbobine) || ($nbbobine == 0)){
-                                $valideTransfert="erreurEpaisseur";
+                            if($resultEpaisseur){
+                                $Iddepart = $resultEpaisseur['idmatiere'];
+                            }
+                        //Fin Rechercher le nombre de piéces 
+
+                        //Rechercher le nombre de piéces sur le lieu d'arrive
+                            $sqlEpaisseur = "SELECT * FROM `matiere` where `lieutransfert`='$pointarrive' and `poidspese`='$poidspese' and `epaisseur`='$epaisseur' LIMIT 1;";
+                            // On prépare la requête
+                            $queryEpaisseur = $db->prepare($sqlEpaisseur);
+
+                            // On exécute
+                            $queryEpaisseur->execute();
+
+                            // On récupère le nombre d'articles
+                            $resultMatiereArrive = $queryEpaisseur->fetch();
+                        //Fin Rechercher le nombre de piéces d'arrive
+
+                        if($resultEpaisseur){
+                            // Enlever le nombre de bobine dans le lieu de depart
+                                $req ="UPDATE matiere SET `nbbobineactuel` = `nbbobineactuel` - ? where `idmatiere`='$resultEpaisseur[idmatiere]';";
+                                $reqtitre = $db->prepare($req);
+                                $reqtitre->execute(array($nbbobine));
+                            // Fin enlever le nombre de bobine dans le lieu de depart
+                            if($resultMatiereArrive){
+                                // ajouter le nombre de bobine dans le lieu de depart
+                                    $req ="UPDATE matiere SET `nbbobineactuel` = `nbbobineactuel` + ? where `idmatiere`='$resultMatiereArrive[idmatiere]';";
+                                    $reqtitre = $db->prepare($req);
+                                    $reqtitre->execute(array($nbbobine));
+                                // Fin ajouter le nombre de bobine dans le lieu de depart
+                            }else{
+                                // Ajouter le nombre de bobine dans le lieu d'arrive
+                                    $insertUser=$db->prepare("INSERT INTO `matiere` (`idmatiere`, `epaisseur`, `poidsdeclare`, `poidspese`, `dateajout`,`nbbobine`,`lieutransfert`, `etatbobine`,`nbbobineactuel`) 
+                                    VALUES (NULL, ?, ?, ?, current_timestamp(), ?, ?, ?, ?);");
+                                    $insertUser->execute(array($epaisseur,$poidsdeclare, $poidspese,$nbbobine,$pointarrive, $etatbobine, $nbbobine));  
+                                // Fin ajouter le nombre de bobine dans le lieu d'arrive
+                            }
+                            
+                            // Récuperer le dernier id de la matiére
+                                $sqlEpaisseur = "SELECT MAX( idmatiere )  AS idMax FROM `matiere`";
+                                // On prépare la requête
+                                $queryEpaisseur = $db->prepare($sqlEpaisseur);
+                                $queryEpaisseur->execute();
+                                $resultEpaisseur = $queryEpaisseur->fetch();
+                                $idMax = (int) $resultEpaisseur['idMax'];
+                            // Fin
+
+                            //Depart epaisseur
+                                $sqlEpaisseur = "SELECT `$epaisseur` AS epaisseurVeriDepart FROM `epaisseur` where `lieu`='$pointdepart';";
+                                // On prépare la requête
+                                $queryEpaisseur = $db->prepare($sqlEpaisseur);
+
+                                // On exécute
+                                $queryEpaisseur->execute();
+
+                                // On récupère le nombre d'articles
+                                $resultEpaisseur = $queryEpaisseur->fetch();
+
+                                $nbEpaisseurDepart = (int) $resultEpaisseur['epaisseurVeriDepart'];
+                            //Fin Depart epaisseur
+
+                            //if(($nbEpaisseurDepart < $nbbobine) || ($nbbobine == 0)){
+                            //    $valideTransfert="erreurEpaisseur";
                                 /*echo"<script language=\"javascript\">";
                                     echo"alert('bonjour')";
                                     echo"return false";
                                 echo"</script>";*/
-                            }else{
+                            //}else{
                                 //if(($pointdepart == "Cranteuse vers Metal1")){ // Vérifie le type de transfert
                                     //Debut inserer le nombre de bobine par epaisseur
                                     $req ="UPDATE epaisseur SET `$epaisseur` = `$epaisseur` - ? where `lieu`='$pointdepart';";
@@ -117,10 +175,14 @@
 
                                 //}
 
-                                $insertUser=$db->prepare("INSERT INTO `transfertdetails` (`idtransfertdetail`, `poidspese`, `dateajout`, `user`, `nbbobine`, `actif`, `pointdepart`, `idtransfert`, `epaisseur`, `etatbobine`, `poidsdeclare`, `commentaire`, `pointarrive`)
-                                VALUES (NULL, ?, current_timestamp(), NULL, ?, '1', ?, ?, ?, ?, ?, ?, ?);");
-                                $insertUser->execute(array($poidspese,$nbbobine,$pointdepart,$idtransfert,$epaisseur,$etatbobine,$poidsdeclare,$commentaire,$pointarrive));
-                            }
+                                $insertUser=$db->prepare("INSERT INTO `transfertdetails` (`idtransfertdetail`, `poidspese`, `dateajout`, `user`, `nbbobine`, `actif`, `pointdepart`, `idtransfert`, `epaisseur`, `etatbobine`, `poidsdeclare`, `commentaire`, `pointarrive`,`idmatieredepart`,`idmatierearrive`)
+                                VALUES (NULL, ?, current_timestamp(), NULL, ?, '1', ?, ?, ?, ?, ?, ?, ?, ?, ?);");
+                                $insertUser->execute(array($poidspese,$nbbobine,$pointdepart,$idtransfert,$epaisseur,$etatbobine,$poidsdeclare,$commentaire,$pointarrive,$Iddepart,$idMax));
+                            //}
+                        }else{
+                            $ProblemeNbBobineDepart="erreurProblemeNbDepart";
+                        }
+
                         //** Fin verification
 
 
@@ -195,7 +257,7 @@
                 }
             // Fin ajouter le nombre d'epaisseur */
 
-            if($valideTransfert != "erreurInsertion" && $valideTransfert != "erreurEpaisseur"){
+            if($valideTransfert != "erreurInsertion" && $valideTransfert != "erreurEpaisseur" && $ProblemeNbBobineDepart != "erreurProblemeNbDepart"){
                 header("location: detailTransfert.php?idtransfert=$idtransfert");
                 exit;
             }
@@ -436,22 +498,22 @@
                                                 <div class="col-md-2 mr-2 mt-3 mb-5">
                                                     <div class="mb-1 text-start">
                                                         <label class="form-label fw-bold" for="nom">Nom complet du saisisseur</label>
-                                                        <input class="form-control" id="validationDefault01" type="text" name="saisisseur" value="<?= $row['saisisseur'] ?>" id="example-date-input4" placeholder="Mettez le nom complet du saisisseur" required>
+                                                        <input class="form-control" id="validationDefault01" type="text" name="saisisseur" value="<?= $row['saisisseur'] ?>" placeholder="Mettez le nom complet du saisisseur" required>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-2 ml-5 mt-3">
                                                     <div class="mb-1 text-start">
                                                         <label class="form-label fw-bold" for="nom">Transporteur</label>
-                                                        <input class="form-control" id="validationDefault02" type="text" name="transporteur" value="<?= $row['transporteur'] ?>" id="example-date-input4" placeholder="Mettez le nom complet du transporteur" required>
+                                                        <input class="form-control" id="validationDefault02" type="text" name="transporteur" value="<?= $row['transporteur'] ?>" placeholder="Mettez le nom complet du transporteur" required>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-2 mt-3 ml-5">
                                                     <div class="mb-1 text-start">
                                                         <label class="form-label fw-bold" for="nom">Date du transfert</label>
-                                                        <input class="form-control" id="validationDefault03" type="date" name="datetransfert" value="<?= $row['datetransfert'] ?>" id="example-date-input4" required>
+                                                        <input class="form-control" id="validationDefault03" type="date" name="datetransfert" value="<?= $row['datetransfert'] ?>" required>
                                                     </div>
                                                 </div>
-                                                <?php if($valideTransfert != "erreurEpaisseur"){ // Lorsqu'il y'a une erreur ?> 
+                                                <?php if($valideTransfert != "erreurEpaisseur" && $ProblemeNbBobineDepart != "erreurProblemeNbDepart"){ // Lorsqu'il y'a une erreur ?> 
                                                     <table class="table table-bordered" id="" width="100%" cellspacing="0">
                                                         <thead>
                                                             <tr>       
@@ -512,21 +574,21 @@
                                                                     <td style="background-color:#CFFEDA ;">
                                                                         <div class="col-md-10">
                                                                             <div class="mb-1 text-start">
-                                                                                <input class="form-control" id="validationDefault04" type="number" name="nbbobine[]" id="example-date-input4" required>
+                                                                                <input class="form-control" id="validationDefault04" type="number" name="nbbobine[]" required>
                                                                             </div>
                                                                         </div>
                                                                     </td>
                                                                     <td style="background-color:#CFFEDA ;">
                                                                         <div class="col-md-10">
                                                                             <div class="mb-1 text-start">
-                                                                                <input class="form-control designa" id="validationDefault05" type="number" step="0.01" name="poidspese[]" id="example" value="" required>
+                                                                                <input class="form-control designa" id="validationDefault05" type="number" step="0.01" name="poidspese[]" value="" required>
                                                                             </div>
                                                                         </div>
                                                                     </td>
                                                                     <td style="background-color:#CFFEDA ;">
                                                                         <div class="col-md-10">
                                                                             <div class="mb-1 text-start">
-                                                                                <input class="form-control designa" id="validationDefault06" type="number" step="0.01" name="poidsdeclare[]" id="exam" value="" required>
+                                                                                <input class="form-control designa" id="validationDefault06" type="number" step="0.01" name="poidsdeclare[]" value="" required>
                                                                             </div>
                                                                         </div>
                                                                     </td>
@@ -725,13 +787,26 @@
                                             </div>
                                             <div class="row">
                                                 <div class="col-md-12 text-end">
-                                                    <div class="col-md-8 align-items-center col-md-12 text-end">
+                                                    <div class="col-md-8 align-items-center col-md-12 text-end"> 
                                                         <?php if($valideTransfert == "erreurInsertion"){ ?> 
                                                             <script>    
                                                                 Swal.fire({
                                                                     text: 'Veiller remplir tous les champs svp!',
                                                                     icon: 'error',
                                                                     timer: 2500,
+                                                                    showConfirmButton: false,
+                                                                },
+                                                                function(){ 
+                                                                    location.reload();
+                                                                });
+                                                            </script> 
+                                                        <?php } ?>
+                                                        <?php if($ProblemeNbBobineDepart == "erreurProblemeNbDepart"){ ?> 
+                                                            <script>    
+                                                                Swal.fire({
+                                                                    text: 'Veiller revoir votre stockage (nombre de bobine, epaisseur ou les lieus de transfert) svp!',
+                                                                    icon: 'error',
+                                                                    timer: 5000,
                                                                     showConfirmButton: false,
                                                                 },
                                                                 function(){ 

@@ -20,11 +20,11 @@
 </head>
     <body>
         <div class="container">
-            <form action="" method="POST">
+            <form action="#" method="POST" enctype="multipart/form-data" class="row g-3">
                 <?php if($mess1 === "error"){?> <p id="clignoter1" style="color:red;">Mot de passe ou nom d'utilisateur incorrect</p> <?php } ?>
                 <?php if($mess1 != "error"){?> <p>GESTION DE PRODUCTION DE METAL AFRIQUE</p> <?php } ?>
-                <input type="text" name="username" placeholder="Nom d'utilisateur"><br>
-                <input type="password" name="password" placeholder="Mot de passe"><br>
+                <input type="text" name="username" placeholder="Nom d'utilisateur" id="validationDefault01" required value="<?php if($_POST){echo $_POST['username'] ;}?>"><br>
+                <input type="password" name="password" placeholder="Mot de passe" value="<?php if($_POST){ echo $_POST['password']; }?>" id="validationDefault02" required><br>
                 <input type="submit" value="Connexion" name="valide"><br>
                 <a href="#">Mot de passe oublié</a>
             </form>

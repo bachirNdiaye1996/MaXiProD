@@ -1,4 +1,11 @@
 <?php
+
+    session_start(); 
+
+    if(!$_SESSION['niveau']){
+        header('Location: ../../../404.php');
+    }
+    
     // Pour l'autorisation des demandes de rectifications 
     include "../connexion/conexiondb.php";
 

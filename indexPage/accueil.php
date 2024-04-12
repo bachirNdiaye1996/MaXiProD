@@ -2,7 +2,7 @@
     session_start(); 
 
     if(!$_SESSION['niveau']){
-        header('Location: 404.php');
+        header('Location: ../../../404.php');
     }
 
 ?>
@@ -370,7 +370,7 @@
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Profile
                                 </a>
-                                <a class="dropdown-item" href="#">
+                                <a class="dropdown-item" href="./Utilisateur/ParametreUtilisateur.php?idUser<?php echo $_SESSION['id']; ?>">
                                     <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Changer paramétres
                                 </a>

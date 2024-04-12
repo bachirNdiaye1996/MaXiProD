@@ -3,7 +3,7 @@
 session_start(); 
 
 if(!$_SESSION['niveau']){
-    header('Location: ../../indexPage/404.php');
+    header('Location: ../../../../404.php');
 }
 
 include "../../connexion/conexiondb.php";
@@ -12,6 +12,7 @@ include "../../connexion/conexiondb.php";
 //Variables
 // Il faut savoir que metal3 est remplacer par niambour
 $valideTransfert="";
+$idmatierearrive="";
 $idtransfert = $_GET['idtransfert'];  // On recupére l'ID de la réception par get
 
 // Pour insertion details reception
@@ -55,21 +56,37 @@ $idtransfert = $_GET['idtransfert'];  // On recupére l'ID de la réception par 
             $epaisseur=htmlspecialchars($_POST['epaisseur']);
             $nombrebobine=htmlspecialchars($_POST['nombrebobine']);
             $user=htmlspecialchars($_POST['user']);
-            $lieutransfert=htmlspecialchars($_POST['pointdepart']);
-            $lieutransfert=htmlspecialchars($_POST['pointarrive']);
+            $pointdepart=htmlspecialchars($_POST['pointdepart']);
+            $poidspese=htmlspecialchars($_POST['poidspese']);
+            $pointarrive=htmlspecialchars($_POST['pointarrive']);
             $motifRectifier=htmlspecialchars($_POST['motifRectifier']);
+            $idmatierearrive=htmlspecialchars($_POST['idmatierearrive']);
 
+            //Rechercher le nombre de piéces sur le lieu d'arrive
+                $sqlEpaisseur = "SELECT * FROM `matiere` where `lieutransfert`='$pointarrive' and `poidspese`='$poidspese' and `epaisseur`='$epaisseur' and `nbbobineactuel` != 0 and `nbbobineactuel`>=$nombrebobine LIMIT 1;";
+                // On prépare la requête
+                $queryEpaisseur = $db->prepare($sqlEpaisseur);
 
-            $sql1 = "UPDATE `transfertdetails` set `actifapprouvtransfert`=1 where idtransfertdetail=$idtransfertDemandeRectifier";
-            $db->query($sql1);
+                // On exécute
+                $queryEpaisseur->execute();
 
-            //Pour enlever la couleur rouge
-            $sql1 = "UPDATE `transfertdetails` set `acceptereceptionmodif`=1 where idtransfertdetail=$idtransfertDemandeRectifier";
-            $db->query($sql1);
-            
+                // On récupère le nombre d'articles
+                $resultMatiereArrive = $queryEpaisseur->fetch();
+            //Fin Rechercher le nombre de piéces d'arrive
 
-            header("location: detailTransfert.php?idtransfert=$idmatiereDemandeRectifier");
-            exit;
+            if($resultMatiereArrive){
+                $sql1 = "UPDATE `transfertdetails` set `actifapprouvtransfert`=1 where idtransfertdetail=$idtransfertDemandeRectifier";
+                $db->query($sql1);
+    
+                //Pour enlever la couleur rouge
+                $sql1 = "UPDATE `transfertdetails` set `acceptereceptionmodif`=1 where idtransfertdetail=$idtransfertDemandeRectifier";
+                $db->query($sql1);
+                
+                header("location: detailTransfert.php?idtransfert=$idmatiereDemandeRectifier");
+                exit;
+            }else{
+                $idmatierearrive="erreurIdmatierearrive";
+            }
 
         }else{
             $valideTransfert="erreurInsertion";
@@ -336,6 +353,21 @@ $ReceptionStock = $query->fetchAll();
     <!-- Custom styles for this page -->
     <link href="../../indexPage/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 
+    <link href="../../StyleLoad.css" rel="stylesheet">
+
+    <script>
+        // Pour le loading
+            //const loader = document.querySelector('.loader');
+
+            document.addEventListener('DOMContentLoaded', () => {
+                //console.log(loader);
+                //document.getElementById('loader').className = "fondu-out";
+                document.getElementById("loader").remove();
+                //loader.classList.add('fondu-out');
+
+            })
+        //Pour le loading
+    </script>
 
 </head>
 
@@ -712,6 +744,25 @@ $ReceptionStock = $query->fetchAll();
                                 </div>
                                 <div class="row m-2">
                                     <div class="table-responsive">
+                                        <!-- Page Loader -->
+                                            <div id="loader">
+                                                <span class="lettre">M</span>
+                                                <span class="lettre">E</span>
+                                                <span class="lettre">T</span>
+                                                <span class="lettre">A</span>
+                                                <span class="lettre">L</span>
+                                                <span class="lettre">*</span>
+                                                <span class="lettre">*</span>
+                                                <span class="lettre">*</span>
+                                                <span class="lettre">A</span>
+                                                <span class="lettre">F</span>
+                                                <span class="lettre">R</span>
+                                                <span class="lettre">I</span>
+                                                <span class="lettre">Q</span>
+                                                <span class="lettre">U</span>
+                                                <span class="lettre">E</span>
+                                            </div>
+                                        <!-- Page Loader -->
                                         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                             <thead>
                                                 <tr>       
@@ -748,20 +799,20 @@ $ReceptionStock = $query->fetchAll();
                                                         <td style="<?php if($transfert['actifapprouvtransfert'] == 1){ echo 'background-color:#D72708 ; color:white;';}else{echo 'background-color:#4e73df ; color:white;';}?>"><?= $transfert['dateajout'] ?></td>
                                                         <td >
                                                             <?php if($transfert['actifapprouvtransfert'] == 0 && $_SESSION['niveau']=='pontbascule'){ ?>
-                                                                <a href="javascript:void(0);" data-toggle="modal" data-target=".approuveReceptionRectifie<?= $i ?>" class="px-2" title="Demander l'autorisation de modifier au pret du DSI">
+                                                                <a href="javascript:void(0);" data-toggle="modal" data-target=".approuveReceptionRectifie<?= $i ?>" class="px-2" title="Demander l'autorisation de modifier ou suprimer ce transfert au prêt du DSI">
                                                                 <i class="fas fa-file-signature"></i></a>
                                                             <?php }?>
                                                             <?php if($transfert['acceptereceptionmodif'] == 1 && $_SESSION['niveau']=='admin'){ ?>
                                                                 <a href="javascript:void(0);" class="accepteTransfertmod<?= $i ?> px-2" class="px-2" title="Permettre au responsable du pont bascule de modifier ou suprimer ce transfert">
                                                                 <i class="fas fa-paper-plane"></i></a>
                                                             <?php }?>
-                                                                <?php if(($transfert['acceptereceptionmodif'] == 0) && ($transfert['actifapprouvtransfert'] == 1) && $_SESSION['niveau']=='pontbascule'){ ?>
-                                                                    <a href="modifierTransfert.php?idtransfert=<?= $_GET['idtransfert'] ?>&idtransfertModifSimp=<?= $transfert['idtransfertdetail'] ?>&epaisseur=<?= $transfert['epaisseur'] ?>&nombrebobine=<?= $transfert['nbbobine'] ?>" class="px-2" title="Modifier le transfert"><i class="far fa-edit"></i></a>
-                                                                <?php }?>
-                                                                <?php if(($transfert['acceptereceptionmodif'] == 0) && ($transfert['actifapprouvtransfert'] == 1) && $_SESSION['niveau']=='pontbascule'){ ?>
-                                                                    <a href="javascript:void(0);" id="suprimerTransfert<?= $i ?>" class=" px-2 text-danger" title="Suprimer le transfert"><i class="fa fa-cut"></i></a>
-                                                                <?php }?>
-                                                            </td>
+                                                            <?php if(($transfert['acceptereceptionmodif'] == 0) && ($transfert['actifapprouvtransfert'] == 1) && $_SESSION['niveau']=='pontbascule'){ ?>
+                                                                <a href="modifierTransfert.php?idtransfert=<?= $_GET['idtransfert'] ?>&idtransfertModifSimp=<?= $transfert['idtransfertdetail'] ?>&epaisseur=<?= $transfert['epaisseur'] ?>&nombrebobine=<?= $transfert['nbbobine'] ?>&idPointdepart=<?= $transfert['idmatieredepart'] ?>&idPointarrive=<?= $transfert['idmatierearrive'] ?>" class="px-2" title="Modifier le transfert"><i class="far fa-edit"></i></a>
+                                                            <?php }?>
+                                                            <?php if(($transfert['acceptereceptionmodif'] == 0) && ($transfert['actifapprouvtransfert'] == 1) && $_SESSION['niveau']=='pontbascule'){ ?>
+                                                                <a href="javascript:void(0);" id="suprimerTransfert<?= $i ?>" class=" px-2 text-danger" title="Suprimer le transfert"><i class="fa fa-cut"></i></a>
+                                                            <?php }?>
+                                                        </td>
                                                     </tr>
 
                                                     
@@ -776,48 +827,57 @@ $ReceptionStock = $query->fetchAll();
                                                                 <div class="modal-body">
                                                                     <form action="#" method="POST" enctype="multipart/form-data" class="row g-3">
                                                                         <div class="row">
-                                                                            <div class=" invisible">
+                                                                            <div class="invisible">
                                                                                 <div class="">
-                                                                                    <input class="form-control" type="text" value="<?= $transfert['idtransfertdetail'] ?>" name="idtransfertDemandeRectifier">
+                                                                                    <input class="" type="text" value="<?= $transfert['idtransfertdetail'] ?>" name="idtransfertDemandeRectifier">
                                                                                 </div>
                                                                             </div> 
-                                                                            <div class=" invisible">
+                                                                            <div class="col-md-10 mb-5">
+                                                                                <label class="form-label fw-bold" for="rectification"><h4>Motif de la rectification</h4></label>
+                                                                                <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="motifRectifier" placeholder="Mettez en quelques mots le motif de la rectification qui sera recu par le DSI par MAIL svp."></textarea>
+                                                                            </div>
+                                                                            <div class="invisible">
                                                                                 <div class="">
-                                                                                    <input class="form-control" type="text" value="<?= $transfert['idtransfert'] ?>" name="idmatiereDemandeRectifier">
+                                                                                    <input class="" type="text" value="<?= $transfert['idtransfert'] ?>" name="idmatiereDemandeRectifier">
                                                                                 </div>
                                                                             </div> 
-                                                                            <div class=" invisible">
+                                                                            <div class="invisible">
                                                                                 <div class="">
-                                                                                    <input class="form-control" type="text" value="<?= $transfert['epaisseur'] ?>" name="epaisseur">
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class=" invisible">
-                                                                                <div class="">
-                                                                                    <input class="form-control" type="text" value="<?= $transfert['nombrebobine'] ?>" name="nombrebobine">
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class=" invisible">
-                                                                                <div class="">
-                                                                                    <input class="form-control" type="text" value="<?= $transfert['pointarrive'] ?>" name="pointarrive">
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class=" invisible">
-                                                                                <div class="">
-                                                                                    <input class="form-control" type="text" value="<?= $transfert['pointdepart'] ?>" name="pointdepart">
+                                                                                    <input class="" type="text" value="<?= $transfert['epaisseur'] ?>" name="epaisseur">
                                                                                 </div>
                                                                             </div>
                                                                             <div class="invisible">
-                                                                                <div class="text-start">
-                                                                                    <input class="form-control " type="text" value="<?php echo $_SESSION['nomcomplet'];?>" name="user" id="example-date-input">
+                                                                                <div class="">
+                                                                                    <input class="" type="text" value="<?= $transfert['idmatierearrive'] ?>" name="idmatierearrive">
+                                                                                </div>
+                                                                            <div class="invisible">
+                                                                                <div class="">
+                                                                                    <input class="" type="text" value="<?= $transfert['nbbobine'] ?>" name="nombrebobine">
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-md-10">
-                                                                                <label class="form-label fw-bold" for="rectification"><h4>Motif de la rectification</h4></label>
-                                                                                <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="motifRectifier" placeholder="Mettez en quelques mots le motif de la rectification svp."></textarea>
+                                                                            <div class="invisible">
+                                                                                <div class="">
+                                                                                    <input class="" type="text" value="<?= $transfert['pointarrive'] ?>" name="pointarrive">
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="invisible">
+                                                                                <div class="">
+                                                                                    <input class="" type="text" value="<?= $transfert['pointdepart'] ?>" name="pointdepart">
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="invisible">
+                                                                                <div class="">
+                                                                                    <input class="" type="text" value="<?= $transfert['poidspese'] ?>" name="poidspese">
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="invisible">
+                                                                                <div class="">
+                                                                                    <input class="" type="text" value="<?php echo $_SESSION['nomcomplet'];?>" name="user" id="example-date-input">
+                                                                                </div>
                                                                             </div>
                                                                         </div>
-                                                                        <div class="row mt-2">
-                                                                            <div class="col-md-12 text-end">
+                                                                        <div class="">
+                                                                            <div class="">
                                                                                 <?php 
                                                                                     if($valideTransfert == "erreurInsertion"){ 
                                                                                 ?> 
@@ -831,7 +891,20 @@ $ReceptionStock = $query->fetchAll();
                                                                                 <?php
                                                                                     } 
                                                                                 ?>
-                                                                                    <div class="d-flex gap-2 pt-4">                           
+                                                                                <?php 
+                                                                                    if($idmatierearrive == "erreurIdmatierearrive"){ 
+                                                                                ?> 
+                                                                                    <script>    Swal.fire({
+                                                                                        text: 'Vous ne pouvez pas modifier le transfert car le nombre de bobine en stock pour cette épaisseur est insuffisant!',
+                                                                                        icon: 'error',
+                                                                                        timer: 6000,
+                                                                                        showConfirmButton: false,
+                                                                                        });
+                                                                                    </script> 
+                                                                                <?php
+                                                                                    } 
+                                                                                ?>
+                                                                                    <div class="d-flex gap-2 pt-5">                           
                                                                                         <a href="#"><input class="btn btn-danger  w-lg bouton" name="" type="submit" value="Annuler"></a>
                                                                                         <input class="btn btn-success  w-lg bouton ml-4" name="approuveTransfertRectifie" type="submit" value="Enregistrer">
                                                                                     </div>
@@ -846,7 +919,7 @@ $ReceptionStock = $query->fetchAll();
 
                                                     <!-- Pour le sweetAlert Suprimer transfert !-->
                                                     <script>
-                                                        console.log("approuveTransfert.php?idtransfertDemandeAccepter=<?= $_GET['idtransfert'] ?>&idmatiereDemandeAccepter=<?= $transfert['idtransfertdetail'] ?>&epaisseur=<?= $transfert['epaisseur'] ?>&nombrebobine=<?= $transfert['nbbobine'] ?>&pointdepart=<?= $transfert['pointdepart'] ?>&pointarrive=<?= $transfert['pointarrive'] ?>",);
+                                                        //console.log("approuveTransfert.php?idtransfertDemandeAccepter=<?= $_GET['idtransfert'] ?>&idmatiereDemandeAccepter=<?= $transfert['idtransfertdetail'] ?>&epaisseur=<?= $transfert['epaisseur'] ?>&nombrebobine=<?= $transfert['nbbobine'] ?>&pointdepart=<?= $transfert['pointdepart'] ?>&pointarrive=<?= $transfert['pointarrive'] ?>",);
                                                         $(document).ready( function(){
                                                             $('.accepteTransfertmod<?= $i ?>').click(function(e) {
                                                                 e.preventDefault();
@@ -862,7 +935,7 @@ $ReceptionStock = $query->fetchAll();
                                                                     if (result.isConfirmed) {                                                                                                                  
                                                                         $.ajax({
                                                                                 type: "POST",
-                                                                                url: "approuveTransfert.php?idtransfertDemandeAccepter=<?= $_GET['idtransfert'] ?>&idmatiereDemandeAccepter=<?= $transfert['idtransfertdetail'] ?>&epaisseur=<?= $transfert['epaisseur'] ?>&nombrebobine=<?= $transfert['nbbobine'] ?>&pointdepart=<?= $transfert['pointdepart'] ?>&pointarrive=<?= $transfert['pointarrive'] ?>",
+                                                                                url: "approuveTransfert.php?idtransfertDemandeAccepter=<?= $_GET['idtransfert'] ?>&idmatiereDemandeAccepter=<?= $transfert['idtransfertdetail'] ?>&epaisseur=<?= $transfert['epaisseur'] ?>&nombrebobine=<?= $transfert['nbbobine'] ?>&pointdepart=<?= $transfert['pointdepart'] ?>&pointarrive=<?= $transfert['pointarrive'] ?>&idPointdepart=<?= $transfert['idmatieredepart'] ?>&idPointarrive=<?= $transfert['idmatierearrive'] ?>",
                                                                                 //data: str,
                                                                                 success: function( response ) {
                                                                                     Swal.fire({

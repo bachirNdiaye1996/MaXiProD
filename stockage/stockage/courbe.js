@@ -27,8 +27,6 @@ function number_format(number, decimals, dec_point, thousands_sep) {
   return s.join(dec);
 }
 
-var mavariable=document.getElementById("passvar");
-console.log(mavariable);
 
 // Area Chart Example
 var ctx = document.getElementById("myAreaChart");

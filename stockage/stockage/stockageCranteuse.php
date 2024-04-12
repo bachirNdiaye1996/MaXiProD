@@ -3,7 +3,7 @@
 session_start(); 
 
 if(!$_SESSION['niveau']){
-    header('Location: 404.php');
+    header('Location: ../../../../404.php');
 }
 
 include "../../connexion/conexiondb.php";
@@ -27,22 +27,8 @@ include "../../connexion/conexiondb.php";
     $nbReception = (int) $result['nb_reception_total'];
 //** Fin nombre des bobines total
 
-
-//** Debut select des epaisseurs pour Metal1
-$sqlepaisseur = "SELECT * FROM `epaisseur` where `id`=1;";
-
-// On prépare la requête
-$queryepaisseur = $db->prepare($sqlepaisseur);
-
-// On exécute
-$queryepaisseur->execute();
-
-// On récupère les valeurs dans un tableau associatif
-$EpaisseurM1 = $queryepaisseur->fetch();
-//** Fin select des epaisseurs pour Metal1
-
-//** Debut select des epaisseurs pour Metal3
-$sqlepaisseur = "SELECT * FROM `epaisseur` where `id`=3;";
+//** Debut select de stockage pour Metal1
+$sqlepaisseur = "SELECT * FROM `matiere` where `nbbobineactuel`>0 and `lieutransfert`='Cranteuse';";
 
 // On prépare la requête
 $queryepaisseur = $db->prepare($sqlepaisseur);
@@ -51,47 +37,8 @@ $queryepaisseur = $db->prepare($sqlepaisseur);
 $queryepaisseur->execute();
 
 // On récupère les valeurs dans un tableau associatif
-$EpaisseurM3 = $queryepaisseur->fetch();
-//** Fin select des epaisseurs pour Metal3
-
-//** Debut select des epaisseurs pour Cranteuse
-$sqlepaisseur = "SELECT * FROM `epaisseur` where `id`=4;";
-
-// On prépare la requête
-$queryepaisseur = $db->prepare($sqlepaisseur);
-
-// On exécute
-$queryepaisseur->execute();
-
-// On récupère les valeurs dans un tableau associatif
-$EpaisseurCrant = $queryepaisseur->fetch();
-//** Fin select des epaisseurs pour Cranteuse
-
-//** Debut select des epaisseurs pour Tref
-$sqlepaisseur = "SELECT * FROM `epaisseur` where `id`=5;";
-
-// On prépare la requête
-$queryepaisseur = $db->prepare($sqlepaisseur);
-
-// On exécute
-$queryepaisseur->execute();
-
-// On récupère les valeurs dans un tableau associatif
-$EpaisseurTref = $queryepaisseur->fetch();
-//** Fin select des epaisseurs pour Tref
-
-//** Debut select des epaisseurs pour Metal Mbao
-$sqlepaisseur = "SELECT * FROM `epaisseur` where `id`=6;";
-
-// On prépare la requête
-$queryepaisseur = $db->prepare($sqlepaisseur);
-
-// On exécute
-$queryepaisseur->execute();
-
-// On récupère les valeurs dans un tableau associatif
-$EpaisseurMB = $queryepaisseur->fetch();
-//** Fin select des epaisseurs pour Metal Mbao
+$stockCranteuse = $queryepaisseur->fetchAll();
+//** Fin select de stockage pour Metal1
 
 ?>
 
@@ -128,6 +75,21 @@ $EpaisseurMB = $queryepaisseur->fetch();
     <!-- Custom styles for this page -->
     <link href="../../indexPage/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 
+    <link href="../../StyleLoad.css" rel="stylesheet">
+
+    <script>
+        // Pour le loading
+            //const loader = document.querySelector('.loader');
+
+            document.addEventListener('DOMContentLoaded', () => {
+                //console.log(loader);
+                //document.getElementById('loader').className = "fondu-out";
+                document.getElementById("loader").remove();
+                //loader.classList.add('fondu-out');
+
+            })
+        //Pour le loading
+    </script>
 
 </head>
 
@@ -487,7 +449,7 @@ $EpaisseurMB = $queryepaisseur->fetch();
 
                 <!-- Begin Page Content -->
                 <div class="row mt-5 ml-5">
-                    <div class="col-lg-3 mt-5 mr-5">
+                    <div class="col-lg-3 mt-3 mr-5">
                         <div class="">
                             <div class="list-group">
                                 <a href="stockage.php" class="list-group-item list-group-item-action" aria-current="true">METAL 1</a>
@@ -508,79 +470,66 @@ $EpaisseurMB = $queryepaisseur->fetch();
 
                     <!-- DataTales Example -->
                     <!-- Fade In Utility -->
-                    <div class="col-lg-8 mt-5">
+                    <div class="col-lg-8 mt-3">
                         <div class="card position-relative">
                             <div class="card-header py-3">
                                 <h6 class="m-0 font-weight-bold text-primary">Nombre de bobine stocké à la machine Cranteuse : <?php echo $nbReception; ?></h6>
                             </div>
                             <div class="row m-2">
                                 <div class="table-responsive">
-                                    <table class="table table-bordered" id="" width="100%" cellspacing="0">
+                                    <!-- Page Loader -->
+                                        <div id="loader">
+                                            <span class="lettre">M</span>
+                                            <span class="lettre">E</span>
+                                            <span class="lettre">T</span>
+                                            <span class="lettre">A</span>
+                                            <span class="lettre">L</span>
+                                            <span class="lettre">*</span>
+                                            <span class="lettre">*</span>
+                                            <span class="lettre">*</span>
+                                            <span class="lettre">A</span>
+                                            <span class="lettre">F</span>
+                                            <span class="lettre">R</span>
+                                            <span class="lettre">I</span>
+                                            <span class="lettre">Q</span>
+                                            <span class="lettre">U</span>
+                                            <span class="lettre">E</span>
+                                        </div>
+                                    <!-- Page Loader -->
+                                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                         <thead>
-                                            <tr>    
-                                                <th>3</th>
-                                                <th>3.5</th>
-                                                <th>4</th>
-                                                <th>4.5</th>
-                                                <th>5</th>
-                                                <th>5.5</th>
-                                                <th>6</th>
-                                                <th>6.5</th>
-                                                <th>7</th>
-                                                <th>7.5</th>
-                                                <th>8</th>
-                                                <th>8.5</th>
-                                                <th>9</th>
-                                                <th>9.5</th>
-                                                <th>10</th>
-                                                <th>10.5</th>
-                                                <th>11</th>
-                                                <th>11.5</th>
-                                                <th>12</th>
-                                                <th>12.5</th>
-                                                <th>13</th>
-                                                <th>13.5</th>
-                                                <th>14</th>
-                                                <th>14.5</th>
-                                                <th>15</th>
-                                                <th>15.5</th>
-                                                <th>16</th>
-                                                <th>16.5</th>
-                                                <th>17</th>
+                                            <tr>       
+                                                <th>Code stockage</th>                                                                                
+                                                <th>Epaisseur</th>
+                                                <th>Nombre bobine</th>
+                                                <th>Poids déclaré</th>
+                                                <th>Poids pesé</th>
+                                                <th>Etat bobine</th>
+                                                <th>Derniére modification</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['3'] == 0){echo "";}else{echo $EpaisseurCrant['3'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['3.5'] == 0){echo "";}else{echo $EpaisseurCrant['3.5'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['4'] == 0){echo "";}else{echo $EpaisseurCrant['4'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['4.5'] == 0){echo "";}else{echo $EpaisseurCrant['4.5'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['5'] == 0){echo "";}else{echo $EpaisseurCrant['5'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['5.5'] == 0){echo "";}else{echo $EpaisseurCrant['5.5'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['6'] == 0){echo "";}else{echo $EpaisseurCrant['6'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['6.5'] == 0){echo "";}else{echo $EpaisseurCrant['6.5'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['7'] == 0){echo "";}else{echo $EpaisseurCrant['7'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['7.5'] == 0){echo "";}else{echo $EpaisseurCrant['7.5'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['8'] == 0){echo "";}else{echo $EpaisseurCrant['8'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['8.5'] == 0){echo "";}else{echo $EpaisseurCrant['8.5'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['9'] == 0){echo "";}else{echo $EpaisseurCrant['9'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['9.5'] == 0){echo "";}else{echo $EpaisseurCrant['9.5'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['10'] == 0){echo "";}else{echo $EpaisseurCrant['10'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['10.5'] == 0){echo "";}else{echo $EpaisseurCrant['10.5'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['11'] == 0){echo "";}else{echo $EpaisseurCrant['11'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['11.5'] == 0){echo "";}else{echo $EpaisseurCrant['11.5'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['12'] == 0){echo "";}else{echo $EpaisseurCrant['12'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['12.5'] == 0){echo "";}else{echo $EpaisseurCrant['12.5'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['13'] == 0){echo "";}else{echo $EpaisseurCrant['13'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['13.5'] == 0){echo "";}else{echo $EpaisseurCrant['13.5'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['14'] == 0){echo "";}else{echo $EpaisseurCrant['14'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['14.5'] == 0){echo "";}else{echo $EpaisseurCrant['14.5'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['15'] == 0){echo "";}else{echo $EpaisseurCrant['15'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['15.5'] == 0){echo "";}else{echo $EpaisseurCrant['15.5'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['16'] == 0){echo "";}else{echo $EpaisseurCrant['16'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['16.5'] == 0){echo "";}else{echo $EpaisseurCrant['16.5'];} ?></td>
-                                                <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['17'] == 0){echo "";}else{echo $EpaisseurCrant['17'];} ?></td>
-                                            </tr>
+                                            <?php
+                                                $i=0;
+                                                foreach($stockCranteuse as $stock){
+                                                    $i++;
+                                                    //if($article['status'] == 'termine'){
+                                            ?>
+                                                <tr>
+                                                    <td style="background-color:#4e73df ; color:white;">
+                                                        <a style="text-decoration: none; font-family: arial; font-size: 20px; color:white;" href="javascript:void(0);" data-toggle="modal" data-target="#Information" title="Voir commentaire" class="link-offset-2 link-underline"><?php echo "STOCK-BOB-0".$stock['idmatiere'] ?></a>
+                                                        <!--<a style="text-decoration: none; font-family: arial; font-size: 20px; color:white;" title="Allez vers la reception planifiée correspondante" href="detailsReceptionPlanifie.php?idreception=<?= $stock['idreception'] ?>" class="link-offset-2 link-underline"><?php echo "REC-0".$stock['idreception']."-BOB-0".$stock['idmatiere'] ?></a>!-->
+                                                    </td>
+                                                    <td style="background-color:#4e73df ; color:white;"> <?= $stock['epaisseur'] ?> </td>
+                                                    <td style="background-color:#4e73df ; color:white;"><?= $stock['nbbobineactuel'] ?></td>
+                                                    <td style="background-color:#4e73df ; color:white;"><?= $stock['poidsdeclare'] ?></td>
+                                                    <td style="background-color:#4e73df ; color:white;"><?= $stock['poidspese'] ?></td>
+                                                    <td style="background-color:#4e73df ; color:white;"><?= $stock['etatbobine'] ?></td>
+                                                    <td style="background-color:#4e73df ; color:white;"><?= $stock['dateajout'] ?></td>
+                                                </tr>
+                                            <?php
+                                                }
+                                            ?>
                                         </tbody>
                                     </table>
                                 </div>
