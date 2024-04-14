@@ -160,10 +160,11 @@ include "../connexion/conexiondb.php";
                     data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Stockage :</h6>
-                        <a class="collapse-item" href="../stockage/reception.php">Réception</a>
-                        <a class="collapse-item active" href="../stockage/transfert.php">Transfert</a>
-                        <a class="collapse-item" href="../stockage/stockage.php">Stockage</a>
-                        <a class="collapse-item" href="../stockage/graphe.php">Graphique</a>
+                        <a class="collapse-item" href="./reception.php">Réception</a>
+                        <a class="collapse-item active" href="./receptionPlanifie.php">Réception planifiée</a>
+                        <a class="collapse-item" href="./transfert/transfert.php">Transfert</a>
+                        <a class="collapse-item" href="./stockage/stockage.php">Stockage</a>
+                        <a class="collapse-item" href="./graphe.php">Graphique</a>
                     </div>
                 </div>
             </li>

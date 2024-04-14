@@ -976,7 +976,7 @@ $ReceptionStock = $query->fetchAll();
                                                                     if (result.isConfirmed) {                                                                                                                  
                                                                         $.ajax({
                                                                                 type: "POST",
-                                                                                url: "suprimerTransfert.php?idsuptransfert=<?=  $_GET['idtransfert'] ?>&idtransfertsup=<?= $transfert['idtransfertdetail'] ?>&epaisseur=<?= $transfert['epaisseur'] ?>&nombrebobine=<?= $transfert['nbbobine'] ?>",
+                                                                                url: "suprimerTransfert.php?idsuptransfert=<?=  $_GET['idtransfert'] ?>&idtransfertsup=<?= $transfert['idtransfertdetail'] ?>&epaisseur=<?= $transfert['epaisseur'] ?>&lieuDepart=<?= $transfert['pointdepart'] ?>&nombrebobine=<?= $transfert['nbbobine'] ?>",
                                                                                 //data: str,
                                                                                 success: function( response ) {
                                                                                     Swal.fire({

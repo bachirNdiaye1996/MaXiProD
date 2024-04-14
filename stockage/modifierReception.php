@@ -206,8 +206,9 @@ include "../connexion/conexiondb.php";
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Stockage :</h6>
                         <a class="collapse-item active" href="../stockage/reception.php">Réception</a>
-                        <a class="collapse-item" href="../">Transfert</a>
-                        <a class="collapse-item" href="../../stockage/stockage/stockage.php">Stockage</a>
+                        <a class="collapse-item" href="../stockage/receptionPlanifie.php">Réception planifiée</a>
+                        <a class="collapse-item" href="./transfert/transfert.php">Transfert</a>
+                        <a class="collapse-item" href="../stockage/stockage/stockage.php">Stockage</a>
                         <a class="collapse-item" href="../stockage/graphe.php">Graphique</a>
                     </div>
                 </div>
