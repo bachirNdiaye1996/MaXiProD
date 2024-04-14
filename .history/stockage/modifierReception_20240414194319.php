@@ -59,7 +59,7 @@ include "../connexion/conexiondb.php";
             $poidsdeclare=$_POST['poidsdeclare'];
             //$produitfini=$_POST['produitfini'];
             //$idlot=$_POST['idlot'];
-            //$annee=$_POST['annee'];trans
+            //$annee=$_POST['annee'];
             //$numprod=$_POST['numprod'];
             //$idbobine=$_POST['idbobine'];
             //$user=$_POST['user'];
@@ -205,8 +205,8 @@ include "../connexion/conexiondb.php";
                     data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Stockage :</h6>
-                        <a class="collapse-item active" href="../stockage/reception.php">Réception</a>
-                        <a class="collapse-item" href="../">Transfert</a>
+                        <a class="collapse-item" href="../stockage/reception.php">Réception</a>
+                        <a class="collapse-item active" href="../stockage/transfert.php">Transfert</a>
                         <a class="collapse-item" href="../../stockage/stockage/stockage.php">Stockage</a>
                         <a class="collapse-item" href="../stockage/graphe.php">Graphique</a>
                     </div>
@@ -638,7 +638,7 @@ include "../connexion/conexiondb.php";
                 <!-- End of Main Content -->
 
             <!-- Footer -->
-            <footer class="sticky-footer bg-white" style="position: absolute; width: 100%; bottom: 0;">
+            <footer class="sticky-footer bg-white" style="position: absolute; width: 100%; bottom: 0;>
                 <div class="text-center text-dark p-3" style="background-color: rgba(0, 0, 0, 0.1);">
                     METAL AFRIQUE © <script>document.write(new Date().getFullYear())</script> Copyright:
                     <a class="text-dark" href="https://metalafrique.com//">METALAFRIQUE.COM BY @BACHIR</a>

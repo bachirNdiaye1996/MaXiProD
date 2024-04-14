@@ -183,7 +183,7 @@ if($_SERVER["REQUEST_METHOD"]=='GET'){
     
     
     <!-- Footer -->
-    <footer class="sticky-footer bg-white" style="position: absolute; width: 100%; bottom: 0;">
+    <footer class="sticky-footer bg-white" style="position: absolute; bottom: 0;">
         <div class="text-center text-dark p-3" style="background-color: rgba(0, 0, 0, 0.1);">
             METAL AFRIQUE © <script>document.write(new Date().getFullYear())</script> Copyright:
             <a class="text-dark" href="https://metalafrique.com//">METALAFRIQUE.COM BY @BACHIR</a>

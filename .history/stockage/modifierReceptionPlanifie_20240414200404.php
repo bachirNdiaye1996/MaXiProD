@@ -31,21 +31,30 @@ include "../connexion/conexiondb.php";
 
     if($_SERVER["REQUEST_METHOD"]=='GET'){
         if(!isset($_GET['idmatiereModifSimp'])){
-            header("location: reception.php");
+            header("location: receptionPlanifie.php");
             exit;
         }
         $id = $_GET['idmatiereModifSimp'];
-        $sql = "select * from matiere where idmatiere=$id";
+        $sql = "select * from matiereplanifie where idmatiereplanifie=$id";
         $result = $db->query($sql);
         $row = $result->fetch();
         while(!$row){
-            header("location: reception.php");
+            header("location: receptionPlanifie.php");
         exit;
         }
+        //$referenceusine=$row['referenceusine'];
         $epaisseur=$row['epaisseur'];
+        /*$largeur=$row['largeur'];
+        $laminage=$row['laminage'];
         $poidspese=$row['poidspese'];
+        $produitfini=$row['produitfini'];
+        $travaille=$row['travaille'];
+        $idlot=$row['idlot'];
+        $annee=$row['annee'];
+        $numprod=$row['numprod'];*/
         $dateajout=$row['dateajout'];
-        $user=$row['user'];
+        //$idbobine=$row['idbobine'];
+        //$user=$row['user'];
         $nbbobine=$row['nbbobine'];
         //echo $EstDemande;
     }else{    
@@ -53,80 +62,25 @@ include "../connexion/conexiondb.php";
             $id = $_GET['idmatiereModifSimp'];
             //$referenceusine=$_POST['referenceusine'];
             $epaisseur=$_POST['epaisseur'];
-            $poidspese=$_POST['poidspese'];
-            $etatbobine=$_POST['etatbobine'];
-            $lieutransfert=$_POST['lieutransfert'];
+            //$largeur=$_POST['largeur'];
+            //$lieutransfert=$_POST['lieutransfert'];
+            //$dateplanifie=$_POST['dateplanifie'];
             $poidsdeclare=$_POST['poidsdeclare'];
+            $poidsbrut=$_POST['poidsbrut'];
             //$produitfini=$_POST['produitfini'];
             //$idlot=$_POST['idlot'];
-            //$annee=$_POST['annee'];trans
+            //$annee=$_POST['annee'];
             //$numprod=$_POST['numprod'];
             //$idbobine=$_POST['idbobine'];
             //$user=$_POST['user'];
             $nbbobine=$_POST['nbbobine'];
 
-            $sql = "UPDATE `matiere` SET `poidspese` = '$poidspese', `etatbobine` = '$etatbobine', `epaisseur` = '$epaisseur',`lieutransfert` = '$lieutransfert',`poidsdeclare` = '$poidsdeclare'
-            , `nbbobine` = '$nbbobine' WHERE `idmatiere` = ?;";
+            $sql = "UPDATE `matiereplanifie` SET epaisseur` = '$epaisseur',`poidsbrut` = '$poidsbrut',`poidsdeclare` = '$poidsdeclare', `nbbobine` = '$nbbobine' WHERE `idmatiereplanifie` = ?;";
             //$result = $db->query($sql); 
             $sth = $db->prepare($sql);    
             $sth->execute(array($id));
 
-            //Pour une modification avec aprobation
-            /*$id = $_GET['idmatiereModifSimp'];
-            $sql = "select * from matiere where idmatiere=$id";
-            $result = $db->query($sql);
-            $row = $result->fetch();*/
-
-
-            //if($row['actifapprouvreception'] == 1){
-                //if($epaisseur == $_GET['epaisseur']){
-                    $oldnombrebobine = $_GET['nombrebobine'];
-                    $lieutransfertGet = $_GET['lieutransfert'];
-                    //Debut inserer le nombre de bobine par epaisseur
-                        $req ="UPDATE epaisseur SET `$epaisseur` = `$epaisseur` + ? where `lieu`='$lieutransfert';";
-                        $reqtitre = $db->prepare($req);
-                        $reqtitre->execute(array($nbbobine));
-                    //Fin inserer le nombre de bobine par epaisseur
-
-                    /*//Debut inserer le nombre de bobine par epaisseur
-                        if($oldnombrebobine < $nbbobine){ //Le cas ou le nombre entrant est superieur au nombre existant
-                            $req ="UPDATE epaisseur SET `$epaisseur` = `$epaisseur` - ? where `lieu`='$lieutransfertGet';";
-                            $reqtitre = $db->prepare($req);
-                            $reqtitre->execute(array($nbbobine));
-                        }else{
-                            $req ="UPDATE epaisseur SET `$epaisseur` = `$epaisseur` - ? where `lieu`='$lieutransfertGet';";
-                            $reqtitre = $db->prepare($req);
-                            $reqtitre->execute(array($oldnombrebobine));
-                        }
-                    //Fin inserer le nombre de bobine par epaisseur*/
-
-                    $sql1 = "UPDATE `matiere` set `actifapprouvreception`=0 where idmatiere=$_GET[idmatiereModifSimp]";
-                    $db->query($sql1);
-                /*}else{
-                    $oldepaisseur = $_GET['epaisseur'];
-                    $oldnombrebobine = $_GET['nombrebobine'];
-                    $lieutransfertGet = $_GET['lieutransfert'];
-                    //Debut inserer le nombre de bobine par epaisseur
-                        if($oldnombrebobine < $nbbobine){ //Le cas ou le nombre entrant est superieur au nombre existant
-                            $req ="UPDATE epaisseur SET `$oldepaisseur` = `$oldepaisseur` - ? where `lieu`='$lieutransfertGet';";
-                            $reqtitre = $db->prepare($req);
-                            $reqtitre->execute(array($nbbobine));
-                        }else{
-                            $req ="UPDATE epaisseur SET `$oldepaisseur` = `$oldepaisseur` - ? where `lieu`='$lieutransfertGet';";
-                            $reqtitre = $db->prepare($req);
-                            $reqtitre->execute(array($oldnombrebobine));
-                        }
-                    //Fin inserer le nombre de bobine par epaisseur
-    
-                    //Debut inserer le nombre de bobine par epaisseur
-                        $req ="UPDATE epaisseur SET `$epaisseur` = `$epaisseur` + ? where `lieu`='$lieutransfert';";
-                        $reqtitre = $db->prepare($req);
-                        $reqtitre->execute(array($nbbobine));
-                    //Fin inserer le nombre de bobine par epaisseur
-                }*/
-            //}
-
-            header("location: detailsReception.php?idreception=$_GET[idreception]");
+            header("location: detailsReceptionPlanifie.php?idreception=$_GET[idreception]");
             exit;
         } 
     }
@@ -205,9 +159,9 @@ include "../connexion/conexiondb.php";
                     data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Stockage :</h6>
-                        <a class="collapse-item active" href="../stockage/reception.php">Réception</a>
-                        <a class="collapse-item" href="../">Transfert</a>
-                        <a class="collapse-item" href="../../stockage/stockage/stockage.php">Stockage</a>
+                        <a class="collapse-item" href="../stockage/reception.php">Réception</a>
+                        <a class="collapse-item active" href="../stockage/transfert.php">Transfert</a>
+                        <a class="collapse-item" href="../stockage/stockage.php">Stockage</a>
                         <a class="collapse-item" href="../stockage/graphe.php">Graphique</a>
                     </div>
                 </div>
@@ -529,10 +483,10 @@ include "../connexion/conexiondb.php";
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <form action="#" method="POST" enctype="multipart/form-data">
+                                    <form action="#" method="POST" enctype="multipart/form-data" class="">
                                         <div class="row">
                                             <div class="col-md-6">
-                                                <div class="mb-6 text-start">
+                                                <div class="mb-3 text-start">
                                                     <label class="form-label fw-bold" for="prenom" >Epaisseur</label>
                                                     <select class="form-control" name="epaisseur" placeholder="Taper l'épaisseur de la bobine" value="">
                                                         <option <?php if ( $row['epaisseur']=='3') {echo "selected='selected'";} ?> >3</option>
@@ -570,45 +524,25 @@ include "../connexion/conexiondb.php";
                                             <div class="col-md-6">
                                                 <div class="mb-6 text-start">
                                                     <label class="form-label fw-bold" for="nom">Nombre de bobine</label>
-                                                    <input class="form-control" type="number" name="nbbobine" value="<?php echo $row['nbbobine'];?>" id="example-date-input4" placeholder="Taper le nombre de bobine">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="mb-6 mt-3 text-start">
-                                                    <label class="form-label fw-bold" for="nom">Lieu de réception</label>
-                                                    <select class="form-control" name="lieutransfert" value="<?php echo $row['lieutransfert'];?>">
-                                                        <option <?php if ( $row['lieutransfert']=='Metal1') {echo "selected='selected'";} ?> >Metal1</option>
-                                                        <option <?php if ( $row['lieutransfert']=='Niambour') {echo "selected='selected'";} ?> >Niambour</option>
-                                                        <option <?php if ( $row['lieutransfert']=='Metal Mbao') {echo "selected='selected'";} ?> >Metal Mbao</option>
-                                                    </select>                                                  
+                                                    <input class="form-control" type="number" name="nbbobine" value="<?php echo $row['nbbobine'];?>" placeholder="Taper le nombre de bobine" id="validationDefault01" required>
                                                 </div>
                                             </div>
                                             <div class="col-md-6 mt-3">
-                                                <div class="mb-6 text-start">
+                                                <div class="mb-3 text-start">
                                                     <label class="form-label fw-bold" for="prenom" >Poids déclare</label>
-                                                    <input class="form-control designa" type="number" value="<?php echo $row['poidsdeclare'];?>" name="poidsdeclare" id="example"  placeholder="Taper le poids déclaré">
+                                                    <input class="form-control designa" type="number" value="<?php echo $row['poidsdeclare'];?>" name="poidsdeclare" placeholder="Taper le poids déclaré" id="validationDefault02" required >
                                                 </div>
                                             </div>
-                                            <div class="col-md-6 ">
-                                                <div class="mb-6 mt-3 text-start">
-                                                    <label class="form-label fw-bold" for="nom">Poids pesé</label>
-                                                    <input class="form-control" type="number" name="poidspese" value="<?php echo $row['poidspese'];?>" id="example-date-input4" placeholder="Taper le poids pesé">
-                                                </div>
-                                            </div> 
-                                            <div class="col-md-6">
-                                                <div class="mb-6 mt-3 text-start">
-                                                    <label class="form-label fw-bold" for="nom">Etat bobine</label>
-                                                    <select class="form-control" name="etatbobine" value="">
-                                                        <option <?php if ( $row['etatbobine']=='Normale') {echo "selected='selected'";} ?> >Normale</option>
-                                                        <option <?php if ( $row['etatbobine']=='Disloquée') {echo "selected='selected'";} ?> >Disloquée</option>
-                                                        <option <?php if ( $row['etatbobine']=='Autres') {echo "selected='selected'";} ?> >Autres</option>
-                                                    </select>                                                    
+                                            <div class="col-md-6 mt-3">
+                                                <div class="mb-3 text-start">
+                                                    <label class="form-label fw-bold" for="prenom" >Poids brut</label>
+                                                    <input class="form-control designa" type="number" value="<?php echo $row['poidsbrut'];?>" name="poidsbrut" placeholder="Taper le poids brut" id="validationDefault03" required>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="row mt-2">
-                                            <div class="col-md-12 text-end">
-                                                <div class="col-md-8 align-items-center col-md-12 text-end">
+                                            <div class="col-md-6 text-end">
+                                                <div class="col-md-6 align-items-center text-end">
                                                     <?php //if($mess == "error"){ ?> <script>    Swal.fire({
                                                         text: 'Veiller remplir tous les champs svp!',
                                                         icon: 'error',
@@ -622,7 +556,7 @@ include "../connexion/conexiondb.php";
                                                         showConfirmButton: false,
                                                         });</script> <?php //} ?>
                                                     <div class="d-flex gap-2 pt-4">                           
-                                                        <a class="btn btn-danger  w-lg bouton mr-3" href="detailsReception.php?idreception=<?= $_GET['idreception'] ?>">Annuler</a>
+                                                        <a class="btn btn-danger  w-lg bouton mr-3" href="detailsReceptionPlanifie.php?idreception=<?= $_GET['idreception'] ?>">Annuler</a>
                                                         <input class="btn btn-success  w-lg bouton mr-3" name="modifierReception" type="submit" value="Modifier">
                                                     </div>
                                                 </div>
@@ -638,7 +572,7 @@ include "../connexion/conexiondb.php";
                 <!-- End of Main Content -->
 
             <!-- Footer -->
-            <footer class="sticky-footer bg-white" style="position: absolute; width: 100%; bottom: 0;">
+            <footer class="sticky-footer bg-white"  style="position: absolute; width: 100%; bottom: 0;">
                 <div class="text-center text-dark p-3" style="background-color: rgba(0, 0, 0, 0.1);">
                     METAL AFRIQUE © <script>document.write(new Date().getFullYear())</script> Copyright:
                     <a class="text-dark" href="https://metalafrique.com//">METALAFRIQUE.COM BY @BACHIR</a>

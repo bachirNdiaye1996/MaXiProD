@@ -124,10 +124,6 @@
                                     <input class="form-check-input mr-2" type="radio" name="niveau" id="inlineRadio2" value="respoproduction" required>
                                     <label class="form-check-label mr-5" for="inlineRadio2">Responsable production</label>
                                 </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input mr-2" type="radio" name="niveau" id="inlineRadio2" value="maintenance" required>
-                                    <label class="form-check-label mr-5" for="inlineRadio2">Maintenance</label>
-                                </div>
                                 <div>
                                     <?php if($ProblemeSurInput == "erreurProblemeSurInput"){ ?> 
                                         <script>    
@@ -158,7 +154,7 @@
     </div>
 
                 <!-- Footer -->
-                <footer class="sticky-footer bg-white" style="position: absolute; width: 100%; bottom: 0;">
+                <footer class="sticky-footer bg-white">
                 <div class="text-center text-dark p-3" style="background-color: rgba(0, 0, 0, 0.1);">
                     METAL AFRIQUE © <script>document.write(new Date().getFullYear())</script> Copyright:
                     <a class="text-dark" href="https://metalafrique.com//">METALAFRIQUE.COM BY @BACHIR</a>

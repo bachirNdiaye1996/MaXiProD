@@ -19,12 +19,8 @@
                 $_SESSION['matricule'] = $Utilisateur['matricule'];
                 $_SESSION['id'] = $Utilisateur['id'];
                 $_SESSION['nomcomplet'] = $Utilisateur['nomcomplet'];
-                $_SESSION['numTelephone'] = $Utilisateur['numTelephone'];
-                $_SESSION['username'] = $Utilisateur['username'];
                 $_SESSION['niveau'] = $Utilisateur['niveau'];
                 $_SESSION['email'] = $Utilisateur['email'];
-                $_SESSION['section'] = $Utilisateur['section'];
-
                 //$_SESSION['user'] = $Utilisateur['user'];
                 if($Utilisateur['niveau'] == 'admin'){
                     header('Location: ./indexPage/accueil.php');

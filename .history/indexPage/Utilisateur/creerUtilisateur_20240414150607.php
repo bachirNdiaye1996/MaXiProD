@@ -125,7 +125,7 @@
                                     <label class="form-check-label mr-5" for="inlineRadio2">Responsable production</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input mr-2" type="radio" name="niveau" id="inlineRadio2" value="maintenance" required>
+                                    <input class="form-check-input mr-2" type="radio" name="niveau" id="inlineRadio2" value="respoproduction" required>
                                     <label class="form-check-label mr-5" for="inlineRadio2">Maintenance</label>
                                 </div>
                                 <div>

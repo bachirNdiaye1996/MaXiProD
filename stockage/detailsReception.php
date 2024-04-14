@@ -1107,8 +1107,8 @@ $ReceptionStock = $query->fetchAll();
                                 });
                             });
                         </script>
+                        
                         <!-- Pour le status !--> 
-
                         <div class="modal fade " id="Information" tabindex="-1" aria-labelledby="fileModalLabel" aria-hidden="true" >
                             <div class="modal-dialog modal-xl modal-dialog-centered" style="width=750px">
                                 <div class="modal-content">

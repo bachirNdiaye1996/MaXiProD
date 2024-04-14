@@ -19,7 +19,6 @@
                 $_SESSION['matricule'] = $Utilisateur['matricule'];
                 $_SESSION['id'] = $Utilisateur['id'];
                 $_SESSION['nomcomplet'] = $Utilisateur['nomcomplet'];
-                $_SESSION['numTelephone'] = $Utilisateur['numTelephone'];
                 $_SESSION['username'] = $Utilisateur['username'];
                 $_SESSION['niveau'] = $Utilisateur['niveau'];
                 $_SESSION['email'] = $Utilisateur['email'];

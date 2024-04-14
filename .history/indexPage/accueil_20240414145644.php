@@ -410,7 +410,7 @@
                                         <p class="card-text"><h6 class="d-inline mr-3">Nom d'utilisateur :</h6> <?php echo $_SESSION['username']; ?></p>
                                         <p class="card-text"><h6 class="d-inline mr-3">Numéro téléphone :</h6> <?php echo $_SESSION['numTelephone']; ?></p>
                                         <div class="col text-center">
-                                            <a href="" class="btn btn-primary text-center">Retour</a>
+                                            <a href="#" class="btn btn-primary text-center">Retour</a>
                                         </div>
                                     </div>
                                     <div class="card-footer bg-primary text-muted text-center">

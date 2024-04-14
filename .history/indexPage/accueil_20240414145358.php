@@ -409,9 +409,8 @@
                                         <p class="card-text"><h6 class="d-inline mr-3">Matricule :</h6> <?php echo $_SESSION['matricule']; ?></p>
                                         <p class="card-text"><h6 class="d-inline mr-3">Nom d'utilisateur :</h6> <?php echo $_SESSION['username']; ?></p>
                                         <p class="card-text"><h6 class="d-inline mr-3">Numéro téléphone :</h6> <?php echo $_SESSION['numTelephone']; ?></p>
-                                        <div class="col text-center">
-                                            <a href="" class="btn btn-primary text-center">Retour</a>
-                                        </div>
+
+                                        <a href="#" class="btn btn-primary text-center">Retour</a>
                                     </div>
                                     <div class="card-footer bg-primary text-muted text-center">
                                         <h5 style="color:white">METAL *** AFRIQUE</h5>

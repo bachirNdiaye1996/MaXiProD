@@ -35,7 +35,7 @@
                 <input type="password" name="password" placeholder="Mot de passe" value="<?php if($_POST){ echo $_POST['password']; }?>" id="validationDefault02" required><br>
                 <!-- An element to toggle between password visibility -->
                 <div>
-                    <input type="checkbox" style="width:unset; margin-right:10px;" onclick="myFunction()"><span style="font-size: 13px; color: #ddd;">Voir mot de passe</span>
+                    <input type="checkbox" style="width:unset; margin-right:10px;" onclick="myFunction()"><span style="font-size: 13px; color: #ddd;">Voir Mot de passe</span>
                 </div>
                 <script>
                     function myFunction() {

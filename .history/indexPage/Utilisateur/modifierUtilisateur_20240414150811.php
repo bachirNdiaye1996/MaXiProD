@@ -13,11 +13,26 @@
     //Variables
     $ProblemeSurInput="";
 
+if($_SERVER["REQUEST_METHOD"]=='GET'){
+    if(!isset($_GET['idutilisateur'])){
+        header("location: utilisateur.php");
+        exit;
+    }
+    $id = $_GET['idutilisateur'];
+    $sql = "select * from utilisateur where id=$id";
+    $result = $db->query($sql);
+    $row = $result->fetch();
+    while(!$row){
+        header("location: utilisateur.php");
+    exit;
+    }
+}else{ }
+
     //Insertion des utilisateur
-    if(isset($_POST['CreerUtilisateur'])){
+    if(isset($_POST['modifierUtilisateur'])){
+        $id = $_GET['idutilisateur'];
 
         $username=htmlspecialchars($_POST['username']);
-        $password=sha1("Passer@123");
         $email=htmlspecialchars( $_POST['email']);
         $nomcomplet=htmlspecialchars( $_POST['nomcomplet']);
         $niveau=htmlspecialchars($_POST['niveau']);
@@ -26,9 +41,14 @@
         $section=htmlspecialchars( $_POST['section']);
 
         if(!empty($_POST['username']) && !empty($_POST['email']) && !empty($_POST['nomcomplet']) && !empty($_POST['niveau']) && !empty($_POST['matricule']) && !empty($_POST['section'])){
-            $insertUser=$db->prepare("INSERT INTO `utilisateur` (`id`, `username`, `password`, `email`, `nomcomplet`, `niveau`, `matricule`, `datecreation`, `actif`, `numTelephone`, `section`)
-            VALUES (NULL, ?, ?, ?, ?, ?, ?, current_timestamp(), '1', ?, ?);");
-            $insertUser->execute(array($username,$password,$email,$nomcomplet,$niveau,$matricule,$numTelephone,$section));
+
+            // |--> Pour update user
+                $sql = "UPDATE `utilisateur` SET `username` = '$username',`email` = '$email',`nomcomplet` = '$nomcomplet', `niveau` = '$niveau'
+                , `matricule` = '$matricule', `numTelephone` = '$numTelephone', `section` = '$section' WHERE `id` = ?;";
+                //$result = $db->query($sql); 
+                $sth = $db->prepare($sql);    
+                $sth->execute(array($id));
+            // |--> Fin update user
 
             header("location: utilisateur.php");
             exit;
@@ -74,58 +94,58 @@
                     <div class="col-lg-12">
                         <div class="p-5">
                             <div class="text-center">
-                                <h1 class="h4 text-gray-900 mb-4">Création d'un compte utilisateur !</h1>
+                                <h1 class="h4 text-gray-900 mb-4">Modification du compte de <?= $row['nomcomplet'] ?> !</h1>
                             </div>
                             <form class="user" action="#" method="POST" enctype="multipart/form-data">
                                 <div class="form-group row">
                                     <div class="col-sm-6 mb-3 mb-sm-0">
-                                        <input type="text" class="form-control form-control-user" name="nomcomplet" id="example-date-input1" required
+                                        <input type="text" class="form-control form-control-user" name="nomcomplet" value="<?php echo $row['nomcomplet'];?>" id="example-date-input1" required
                                             placeholder="Nom complet">
                                     </div>
                                     <div class="col-sm-6">
-                                        <input type="text" class="form-control form-control-user" name="username" id="example-date-input2" required
+                                        <input type="text" class="form-control form-control-user" name="username" value="<?php echo $row['username'];?>" id="example-date-input2" required
                                             placeholder="Username Exemple: hdiop">
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <input type="email" class="form-control form-control-user" name="email" id="example-date-input3" required
+                                    <input type="email" class="form-control form-control-user" name="email" value="<?php echo $row['email'];?>" id="example-date-input3" required
                                         placeholder="Adresse email">
                                 </div>
                                 <div class="form-group row">
                                     <div class="col-sm-6 mb-3 mb-sm-0">
-                                        <input type="text" class="form-control form-control-user" name="matricule" id="example-date-input4" required
+                                        <input type="text" class="form-control form-control-user" value="<?php echo $row['matricule'];?>" name="matricule" id="example-date-input4" required
                                             placeholder="Matricule">
                                     </div>
                                     <div class="col-sm-6">
-                                        <input type="text" class="form-control form-control-user" name="numTelephone"
+                                        <input type="text" class="form-control form-control-user" name="numTelephone" value="<?php echo $row['numTelephone'];?>"
                                             placeholder="Numéro Téléphone MAF Exemple: 70 xxx xx xx">
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <div class="col-sm-6 mb-3 mb-sm-0">
-                                        <input type="text" class="form-control form-control-user" name="section" id="example-date-input5" required
+                                        <input type="text" class="form-control form-control-user" name="section" id="example-date-input5" required value="<?php echo $row['section'];?>"
                                             placeholder="Séction">
                                     </div>
                                 </div>
                                 <p class="mt-5">Choisissez le niveau de l'utilisateur :</p>
                                 <div class="form-check form-check-inline checkbox-xl">
-                                    <input class="form-check-input mr-2" type="radio" name="niveau" id="inlineRadio1" value="admin" required>
+                                    <input class="form-check-input mr-2" type="radio" name="niveau" id="inlineRadio1" value="admin" required <?php if($row['niveau'] == 'admin'){echo 'checked';}?>>
                                     <label class="form-check-label mr-5" for="inlineRadio1">Admin</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input mr-2" type="radio" name="niveau" id="inlineRadio2" value="pontbascule" required>
+                                    <input class="form-check-input mr-2" type="radio" name="niveau" id="inlineRadio2" value="pontbascule" required <?php if($row['niveau'] == 'pontbascule'){echo 'checked';}?>>
                                     <label class="form-check-label mr-5" for="inlineRadio2">Pont bascule</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input mr-2" type="radio" name="niveau" id="inlineRadio3" value="chefquart" required>
+                                    <input class="form-check-input mr-2" type="radio" name="niveau" id="inlineRadio3" value="chefquart" required <?php if($row['niveau'] == 'chefquart'){echo 'checked';}?>>
                                     <label class="form-check-label mr-5" for="inlineRadio3">Chef de quart</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input mr-2" type="radio" name="niveau" id="inlineRadio2" value="respoproduction" required>
+                                    <input class="form-check-input mr-2" type="radio" name="niveau" id="inlineRadio2" value="respoproduction" required <?php if($row['niveau'] == 'respoproduction'){echo 'checked';}?>>
                                     <label class="form-check-label mr-5" for="inlineRadio2">Responsable production</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input mr-2" type="radio" name="niveau" id="inlineRadio2" value="maintenance" required>
+                                    <input class="form-check-input mr-2" type="radio" name="niveau" id="inlineRadio2" value="respoproduction" required <?php if($row['niveau'] == 'maintenance'){echo 'checked';}?>>
                                     <label class="form-check-label mr-5" for="inlineRadio2">Maintenance</label>
                                 </div>
                                 <div>
@@ -142,7 +162,7 @@
                                             });
                                         </script> 
                                     <?php } ?>
-                                    <input class="btn btn-success  w-lg bouton mr-3 mt-5" name="CreerUtilisateur" type="submit" value="ENREGISTRER">
+                                    <input class="btn btn-success  w-lg bouton mr-3 mt-5" name="modifierUtilisateur" type="submit" value="ENREGISTRER">
                                     <a href="./utilisateur.php" class="btn btn-google mt-5">
                                         <i class=""></i> Annuler
                                     </a>
@@ -156,15 +176,14 @@
         </div>
 
     </div>
-
-                <!-- Footer -->
-                <footer class="sticky-footer bg-white" style="position: absolute; width: 100%; bottom: 0;">
-                <div class="text-center text-dark p-3" style="background-color: rgba(0, 0, 0, 0.1);">
-                    METAL AFRIQUE © <script>document.write(new Date().getFullYear())</script> Copyright:
-                    <a class="text-dark" href="https://metalafrique.com//">METALAFRIQUE.COM BY @BACHIR</a>
-                </div>
-            </footer>
-            <!-- End of Footer -->
+    <!-- Footer -->
+    <footer class="sticky-footer bg-white" style="position: absolute; width: 100%; bottom: 0;">
+        <div class="text-center text-dark p-3" style="background-color: rgba(0, 0, 0, 0.1);">
+            METAL AFRIQUE © <script>document.write(new Date().getFullYear())</script> Copyright:
+            <a class="text-dark" href="https://metalafrique.com//">METALAFRIQUE.COM BY @BACHIR</a>
+        </div>
+    </footer>
+    <!-- End of Footer -->
 
     <!-- Bootstrap core JavaScript-->
     <script src="../vendor/jquery/jquery.min.js"></script>

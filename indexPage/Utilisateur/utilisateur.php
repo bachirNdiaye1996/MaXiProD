@@ -445,6 +445,7 @@ include "../../connexion/conexiondb.php";
                                                 <th>Email</th>
                                                 <th>Numéro Téléphone</th>
                                                 <th>Séction</th>
+                                                <th>Nom d'utilisateur</th>
                                                 <th>Niveau utilisateur</th>
                                                 <th>Matricule</th>
                                                 <th>Date de création</th>
@@ -463,6 +464,7 @@ include "../../connexion/conexiondb.php";
                                                     <td style="background-color:#CFFEDA ;"><?= $utilisateur['email'] ?></td>
                                                     <td style="background-color:#CFFEDA ;"><?= $utilisateur['numTelephone'] ?></td>
                                                     <td style="background-color:#CFFEDA ;"><?= $utilisateur['section'] ?></td>
+                                                    <td style="background-color:#CFFEDA ;"><?= $utilisateur['username'] ?></td>
                                                     <td style="background-color:#CFFEDA ;"><?= $utilisateur['niveau'] ?></td>
                                                     <td style="background-color:#CFFEDA ;"><?= $utilisateur['matricule'] ?></td>
                                                     <td style="background-color:#CFFEDA ;"><?= $utilisateur['datecreation'] ?></td>
