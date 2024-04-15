@@ -3,7 +3,7 @@
 session_start(); 
 
 if($_SESSION['niveau'] != "admin"){
-    header('Location: 404.php');
+    header('Location: ../../../../404.php');
 }
 
 include "../../connexion/conexiondb.php";

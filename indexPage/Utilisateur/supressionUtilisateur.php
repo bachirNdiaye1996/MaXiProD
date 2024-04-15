@@ -3,7 +3,7 @@
     session_start(); 
 
     if($_SESSION['niveau'] != 'admin'){
-        header('Location: ../../../404.php');
+        header('Location: ../../../../404.php');
     }
 
     // Pour la supression d'une reception avec un get de idsupreception pour reception detail
