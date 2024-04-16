@@ -423,13 +423,17 @@ include "../../connexion/conexiondb.php";
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                                <a href="javascript:void(0);" data-toggle="modal" data-target="#InformationProfile" title="Voir votre profile" class="dropdown-item">
+                                <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Profile
                                 </a>
-                                <a class="dropdown-item" href="#">
+                                <a class="dropdown-item" href="../../indexPage/Utilisateur/ParametreUtilisateur.php?idUser=<?php echo $_SESSION['id']; ?>">
                                     <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Changer paramétres
+                                </a>
+                                <a class="dropdown-item" href="../../indexPage/Utilisateur/utilisateur.php">
+                                    <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Gestion des utilisateurs
                                 </a>
                                 <a class="dropdown-item" href="#">
                                     <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
@@ -444,6 +448,32 @@ include "../../connexion/conexiondb.php";
                         </li>
 
                     </ul>
+                    <!-- Pour le status !--> 
+                    <div class="modal fade " id="InformationProfile" tabindex="-1" aria-labelledby="fileModalLabel" aria-hidden="true" >
+                        <div class="modal-dialog modal-xl modal-dialog-centered" style="width=750px">
+                            <div class="modal-content">
+                                <div class="card">
+                                    <div class="card-header bg-primary">
+                                    </div>
+                                    <div class="card-body">
+                                        <img src="../../image/avatar.jpg" class="img-fluid mx-auto d-block text-center" alt="" style="border-radius: 45%; margin-top:-3%; opacity: 0.9;" width="150">
+                                        <h5 class="card-title mt-2 mb-5 text-center"><?php echo $_SESSION['nomcomplet']; ?></h5>
+                                        <p class="card-text"><h6 class="d-inline mr-3">Email :</h6><?php echo $_SESSION['email']; ?></p>
+                                        <p class="card-text"><h6 class="d-inline mr-3">Section :</h6> <?php echo $_SESSION['section']; ?></p>
+                                        <p class="card-text"><h6 class="d-inline mr-3">Matricule :</h6> <?php echo $_SESSION['matricule']; ?></p>
+                                        <p class="card-text"><h6 class="d-inline mr-3">Nom d'utilisateur :</h6> <?php echo $_SESSION['username']; ?></p>
+                                        <p class="card-text"><h6 class="d-inline mr-3">Numéro téléphone :</h6> <?php echo $_SESSION['numTelephone']; ?></p>
+                                        <div class="col text-center">
+                                            <a href="" class="btn btn-primary text-center">Retour</a>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer bg-primary text-muted text-center">
+                                        <h5 style="color:white">METAL *** AFRIQUE</h5>
+                                    </div>
+                                </div>
+                            </div>    
+                        </div>
+                    </div>
 
                 </nav>
                 <!-- End of Topbar -->
