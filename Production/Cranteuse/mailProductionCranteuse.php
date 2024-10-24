@@ -10,7 +10,7 @@ require '../../PHPMailer/src/SMTP.php';
 function envoie_mail($from_name,$from_email,$subject,$message){
     $mail = new PHPMailer();
     $mail->isSMTP();
-    $mail->SMTPDebug = 2;
+    $mail->SMTPDebug = 0;
     $mail->SMTPSecure = 'ssl';
     $mail->Host       = 'smtp.gmail.com';
     $mail->SMTPAuth   = true;  
