@@ -154,9 +154,9 @@ include " ../../../connexion/conexiondb.php";
     <!-- Page Wrapper -->
     <div id="wrapper">
 
-        <!-- Contient la nav bar gauche -->
-            <?php include "./navGaucheReception.php" ?>
-        <!-- End  --> 
+        <!-- Sidebar -->
+        
+        <!-- End of Sidebar -->
 
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">

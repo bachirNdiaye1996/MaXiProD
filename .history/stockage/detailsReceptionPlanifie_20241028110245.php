@@ -190,9 +190,9 @@ $idreception = $_GET['idreception'];  // On recupére l'ID de la réception par 
     <!-- Page Wrapper -->
     <div id="wrapper">
 
-        <!-- Contient la nav bar gauche -->
-            <?php include "./navGaucheReception.php" ?>
-        <!-- End  --> 
+        <!-- Sidebar -->
+            <?php include "./navGaucheReceptionPlanifie.php" ?>
+        <!-- End of Sidebar -->
 
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">

@@ -154,9 +154,9 @@ include " ../../../connexion/conexiondb.php";
     <!-- Page Wrapper -->
     <div id="wrapper">
 
-        <!-- Contient la nav bar gauche -->
-            <?php include "./navGaucheReception.php" ?>
-        <!-- End  --> 
+        <!-- Sidebar -->
+            <?php include "./navGaucheReceptionPlanifie.php" ?>
+        <!-- End of Sidebar -->
 
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
@@ -646,7 +646,7 @@ include " ../../../connexion/conexiondb.php";
                                             <div class="col-md-8 align-items-center">
                                                 <div class="d-flex gap-2 pt-4">
                                                     <?php
-                                                        if($_SESSION['niveau']=='admin'){
+                                                        if($_SESSION['niveau']=='admin' || $_SESSION['niveau']=='chefquart'){
                                                     ?>
                                                         <a href="javascript:void(0);" class="ajouterReception btn btn-success w-lg bouton"><i class="fa fa-plus me-1"></i> Créer reception planifiée</a>
                                                     <?php

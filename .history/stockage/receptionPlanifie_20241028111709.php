@@ -155,151 +155,7 @@ include " ../../../connexion/conexiondb.php";
     <div id="wrapper">
 
         <!-- Sidebar -->
-        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
-
-             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="../indexPage/accueil.php">
-                <div class="sidebar-brand-icon rotate-n-15">
-                    <i class="fas fa-laugh-wink"></i>
-                </div>
-                <div class="sidebar-brand-text mx-3">SB <?php echo $_SESSION['username'];?> <sup>2</sup></div>
-            </a>
-
-            <!-- Divider -->
-            <hr class="sidebar-divider my-0">
-
-            <!-- Nav Item - Dashboard -->
-            <li class="nav-item active">
-                <a class="nav-link" href="../indexPage/accueil.php">
-                    <i class="fas fa-fw fa-tachometer-alt"></i>
-                    <span>Accueil Dashboard</span></a>
-            </li>
-
-            <?php if($_SESSION['niveau']=='admin' || $_SESSION['niveau']=='pontbascule'){ ?>
-                <!-- Divider -->
-                <hr class="sidebar-divider">
-
-                <!-- Nav Item - Tables -->
-
-                <li class="nav-item">
-                    <a class="nav-link" href="#" data-toggle="collapse" data-target="#collapseReception"
-                        aria-expanded="true" aria-controls="collapseUtilities">
-                        <i class="fa fa-book fa-fw"></i>
-                        <span>Pont Bascule</span>
-                    </a>
-                    <div id="collapseReception" class="collapse show" aria-labelledby="headingUtilities"
-                        data-parent="#accordionSidebar">
-                        <div class="bg-white py-2 collapse-inner rounded">
-                            <h6 class="collapse-header">Stockage :</h6>
-                            <a class="collapse-item" href="../stockage/reception.php">Réception</a>
-                            <a class="collapse-item active" href="../stockage/receptionPlanifie.php">Réception planifiée</a>
-                            <a class="collapse-item" href="../stockage/transfert/transfert.php">Transfert</a>
-                            <a class="collapse-item" href="../stockage/Exportation/exportation.php">Export</a>
-                            <a class="collapse-item" href="../stockage/historique.php">Historique</a>
-                            <a class="collapse-item" href="../stockage/stockage/stockage.php">Stockage</a>
-                            <a class="collapse-item" href="../stockage/graphe.php">Graphe Niambour</a>
-                            <a class="collapse-item" href="../stockage/grapheMetal1.php">Graphe Metal 1</a>
-                            <a class="collapse-item" href="../stockage/grapheMetalMbao.php">Graphe Metal Mbao</a>
-                        </div>
-                    </div>
-                </li>
-            <?php } ?>
-
-            <?php if($_SESSION['niveau'] != 'pontbascule'){ ?>
-                <!-- Divider -->
-                <hr class="sidebar-divider">
-
-
-                <!-- Nav Item - Tables -->
-
-                <li class="nav-item">
-                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
-                        aria-expanded="true" aria-controls="collapseUtilities">
-                        <span>Production Cranteuse</span>
-                    </a>
-                    <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"
-                        data-parent="#accordionSidebar">
-                        <div class="bg-white py-2 collapse-inner rounded">
-                            <h6 class="collapse-header">Les différents quarts :</h6>
-                            <a class="collapse-item" href="quart1.php">Quart 1</a>
-                            <a class="collapse-item" href="quart2.php">Quart 2</a>
-                            <a class="collapse-item" href="quart3.php">Quart 3</a>
-                        </div>
-                    </div>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" href="tables.php">
-                    <i class="fas fa-fw fa-table"></i>
-                    <span>Production</span></a>
-                </li>
-
-
-                <div class="sidebar-heading">
-                    Section 3
-                </div>
-
-                <!-- Divider -->
-                <hr class="sidebar-divider">
-
-
-                <!-- Nav Item - Tables -->
-                <li class="nav-item">
-                    <a class="nav-link" href="tables.php">
-                    <i class="fas fa-fw fa-table"></i>
-                    <span>Productions</span></a>
-                </li>
-
-
-                <div class="sidebar-heading">
-                    Section 4
-                </div>
-
-                <!-- Divider -->
-                <hr class="sidebar-divider">
-
-
-
-                <!-- Nav Item - Utilities Collapse Menu -->
-                <!--<li class="nav-item">
-                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
-                        aria-expanded="true" aria-controls="collapseUtilities">
-                        <i class="fas fa-fw fa-wrench"></i>
-                        <span>Utilities</span>
-                    </a>
-                    <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"
-                        data-parent="#accordionSidebar">
-                        <div class="bg-white py-2 collapse-inner rounded">
-                            <h6 class="collapse-header">Custom Utilities:</h6>
-                            <a class="collapse-item" href="utilities-color.html">Colors</a>
-                            <a class="collapse-item" href="utilities-border.html">Borders</a>
-                            <a class="collapse-item" href="utilities-animation.html">Animations</a>
-                            <a class="collapse-item" href="utilities-other.html">Other</a>
-                        </div>
-                    </div>
-                </li>-->
-
-                <!-- Nav Item - Tables -->
-                <li class="nav-item">
-                    <a class="nav-link" href="tables.php">
-                        <i class="fas fa-fw fa-table"></i>
-                        <span>Productions</span></a>
-                </li>
-
-                <div class="sidebar-heading">
-                    Section 5
-                </div>
-            <?php } ?>
-
-            <!-- Divider -->
-            <hr class="sidebar-divider d-none d-md-block">
-
-            <!-- Sidebar Toggler (Sidebar) -->
-            <div class="text-center d-none d-md-inline">
-                <button class="rounded-circle border-0" id="sidebarToggle"></button>
-            </div>
-
-        </ul>
+            <?php include "./navGaucheReceptionPlanifie.php" ?>
         <!-- End of Sidebar -->
 
         <!-- Content Wrapper -->
@@ -622,7 +478,7 @@ include " ../../../connexion/conexiondb.php";
                                                                 <a href="javascript:void(0);" data-toggle="modal" data-target="#fileModal<?php echo $i; ?>" title="Voir commentaire"><i class="bx bx-trash-alt font-size-18"><i class="far fa-eye"></i></a>
                                                             <?php }?>
                                                         </td>
-                                                        <?php if($_SESSION['niveau'] == 'admin'){ ?>
+                                                        <?php if($_SESSION['niveau'] == 'admin' || $_SESSION['niveau']=='chefquart'){ ?>
                                                             <td style="background-color:#CFFEDA;">
                                                                 <a href="javascript:void(0);" title="Supprimer la réception" class="suprimerReceptionPlanifie<?php echo $i; ?> btn btn-danger w-lg bouton ml-3"><i class=""></i>Suprimer</a>
                                                             </td>
@@ -790,7 +646,7 @@ include " ../../../connexion/conexiondb.php";
                                             <div class="col-md-8 align-items-center">
                                                 <div class="d-flex gap-2 pt-4">
                                                     <?php
-                                                        if($_SESSION['niveau']=='admin'){
+                                                        if($_SESSION['niveau']=='admin' || $_SESSION['niveau']=='chefquart'){
                                                     ?>
                                                         <a href="javascript:void(0);" class="ajouterReception btn btn-success w-lg bouton"><i class="fa fa-plus me-1"></i> Créer reception planifiée</a>
                                                     <?php
