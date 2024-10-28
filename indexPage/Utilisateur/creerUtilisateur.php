@@ -12,6 +12,7 @@
 
     include "../../connexion/conexiondb.php";
     include "./mailUser.php";
+    include "../../variables.php";
 
     //Variables
     $ProblemeSurInput="";
@@ -47,7 +48,7 @@
                         <p align='center' style='color:white'>Nom d'utilisateur : <strong> $username </strong></p>
                         <p align='center' style='color:white'>Mot de passe : <strong>Passer@123</strong></p>
                         <p align='center' style='color:white'>Nous vous conseillons de modifier ces paramétres aprés votre premiére connexion.</p>
-                        <p align='center'><a href='http://10.10.10.127:8082/GestionProduction' style='color:white'>Cliquez ici pour y acceder.</a></p>
+                        <p align='center'><a href=$HOST style='color:white'>Cliquez ici pour y acceder.</a></p>
                     </p>
                     <br><br>
                 </div>

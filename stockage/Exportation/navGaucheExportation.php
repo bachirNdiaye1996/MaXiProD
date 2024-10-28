@@ -17,7 +17,7 @@
        <i class="fas fa-fw fa-tachometer-alt"></i>
        <span>Accueil Dashboard</span></a>
 </li>
-<?php if($_SESSION['niveau']=='admin' || $_SESSION['niveau']=='pontbascule'){ ?>
+<?php if($_SESSION['niveau']=='admin' || $_SESSION['niveau']=='pontbascule' || $_SESSION['niveau']=='chefquart'){ ?>
    <!-- Divider -->
    <hr class="sidebar-divider">
 

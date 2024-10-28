@@ -9,6 +9,8 @@
     
     include "../../connexion/conexiondb.php";
     include "./mailTransfert.php";
+    include "../../variables.php";
+
 
     //print_r($_GET)
 
@@ -138,7 +140,7 @@
                     <p align='center' style='margin-top:20px;'>
                         <h2 align='center' style='color:white'>METAL * * * AFRIQUE</h2>
                         <p align='center' style='color:white'>$_SESSION[nomcomplet] a approuvé la demande d'autorisation de modifier ou de supprimer du transfert de code de transfert : <strong>TRAN00-$_GET[idtransfertDemandeAccepter] </strong></p>
-                        <p align='center'><a href='http://10.10.10.127:8082/GestionProduction' style='color:white'>Cliquez ici pour y acceder.</a></p>
+                        <p align='center'><a href=$HOST style='color:white'>Cliquez ici pour y acceder.</a></p>
                     </p>
                     <br><br>
                 </div>

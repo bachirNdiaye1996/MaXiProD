@@ -9,6 +9,8 @@ if(!$_SESSION){
 
 include "../../connexion/conexiondb.php";
 include "./mailTransfert.php";
+include "../../variables.php";
+
 
 
 //Variables
@@ -97,7 +99,7 @@ $idtransfert = $_GET['idtransfert'];  // On recupére l'ID de la réception par 
                             <h2 align='center' style='color:white'>METAL * * * AFRIQUE</h2>
                             <p align='center' style='color:white'>$_SESSION[nomcomplet] vous demande l'autorisation de modifier ou supprimer un transfert de code de transfert : <strong>TRAN00-$idtransfert </strong></p>
                             <p align='center' style='color:white'>Avec comme motif : <strong>$motifRectifier</strong></p>
-                            <p align='center'><a href='http://10.10.10.127:8082/GestionProduction' style='color:white'>Cliquez ici pour y acceder.</a></p>
+                            <p align='center'><a href=$HOST style='color:white'>Cliquez ici pour y acceder.</a></p>
                         </p>
                         <br><br>
                     </div>
