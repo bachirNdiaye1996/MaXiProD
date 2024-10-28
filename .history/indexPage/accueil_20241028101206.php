@@ -181,9 +181,6 @@
 
             <?php } ?>
 
-            <!-- Divider -->
-            <hr class="sidebar-divider d-none d-md-block">
-
             <!-- Sidebar Toggler (Sidebar) -->
             <div class="text-center d-none d-md-inline">
                 <button class="rounded-circle border-0" id="sidebarToggle"></button>
@@ -386,7 +383,7 @@
                                     Changer paramétres
                                 </a>
                                 <?php if($_SESSION['niveau']=='admin' || $_SESSION['niveau']=='chefquart'){ ?>
-                                    <a class="dropdown-item" href="../Production/GestionBaseDonne/gestionTempsArrets.php">
+                                    <a class="dropdown-item" href="../Production/GestionTempsArret/gestionTempsArrets.php">
                                         <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
                                         Gestion des temps d'arrets
                                     </a>
