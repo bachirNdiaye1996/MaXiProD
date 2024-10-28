@@ -92,7 +92,7 @@ include "../../connexion/conexiondb.php";
             </a>
         </li>
 
-        <?php if($_SESSION['niveau']=='admin' || $_SESSION['niveau']=='pontbascule'){ ?>
+        <?php if($_SESSION['niveau']=='admin' || $_SESSION['niveau']=='pontbascule' || $_SESSION['niveau']=='chefquart'){ ?>
             <!-- Divider -->
             <hr class="sidebar-divider">
 

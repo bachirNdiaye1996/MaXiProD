@@ -8,6 +8,7 @@ if(!$_SESSION['niveau']){
 
 include "../connexion/conexiondb.php";
 include "./mailReception.php";
+include "../variables.php";
 
 
 
@@ -121,7 +122,7 @@ if(isset($_POST['approuveReceptionRectifie'])){
                         <h2 align='center' style='color:white'>METAL * * * AFRIQUE</h2>
                         <p align='center' style='color:white'>$_SESSION[nomcomplet] vous demande l'autorisation de modifier ou de supprimer une reception de code de reception : <strong>REC00-$idreceptionDemandeRectifier </strong></p>
                         <p align='center' style='color:white'>Avec comme motif : <strong>$motifRectifier</strong></p>
-                        <p align='center'><a href='http://10.10.10.127:8082/GestionProduction' style='color:white'>Cliquez ici pour y acceder.</a></p>
+                        <p align='center'><a href=$HOST style='color:white'>Cliquez ici pour y acceder.</a></p>
                     </p>
                     <br><br>
                 </div>

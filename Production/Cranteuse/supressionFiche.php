@@ -10,6 +10,8 @@
     // Pour la supression d'une reception avec un get de idsupreception
     include "../../connexion/conexiondb.php";
     include "./mailProductionCranteuse.php";
+    include "../../variables.php";
+
 
 
     if(isset($_GET['idsupfiche'])){
@@ -30,7 +32,7 @@
                 <p align='center' style='margin-top:20px;'>
                     <h2 align='center' style='color:white'>METAL * * * AFRIQUE</h2>
                     <p align='center' style='color:white'>$_SESSION[nomcomplet] a supprimé la fiche de production cranteuse (quart $quart) de code de production : <strong>CRAN-$idsupfiche</strong></p>
-                    <p align='center'><a href='http://10.10.10.127:8082/GestionProduction' style='color:white'>Cliquez ici pour y acceder.</a></p>
+                    <p align='center'><a href=$HOST style='color:white'>Cliquez ici pour y acceder.</a></p>
                 </p>
                 <br><br>
             </div>
