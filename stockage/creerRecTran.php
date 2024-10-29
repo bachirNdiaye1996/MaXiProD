@@ -35,7 +35,7 @@
                 VALUES (NULL, 'Réception planifiée', current_timestamp(), ?, '1');");
             $insertUser->execute(array($user));
 
-            //Pour insertion une nouvelle reception en meme temps
+            /*//Pour insertion une nouvelle reception en meme temps
             $insertUser=$db->prepare("INSERT INTO `reception` (`idreception`, `status`, `datecreation`, `user`, `actif`, `actifapprouvreception`) 
             VALUES (NULL, 'Nouvelle reception', current_timestamp(), ?, '1', '1');");
             $insertUser->execute(array($user));
@@ -76,7 +76,7 @@
             //** Fin select 
             foreach($UserMails as $user => $item){
                 envoie_mail("Gestion de production, nouvelle réception",$item['email'],"Nouvelle réception de code de réception : REC00-$mid",$messageD);
-            }
+            }*/
 
             header("location: receptionPlanifie.php");
             exit;

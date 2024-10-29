@@ -558,7 +558,6 @@ $EpaisseurMB = $queryepaisseur->fetch();
                                                 <tr>       
                                                     <th>Code réception</th>   
                                                     <th>Nom de la DF</th> 
-                                                    <th>Status de la reception</th>                                                                             
                                                     <th>Compte utilisateur</th>
                                                     <th>Nom du recepteur</th>
                                                     <th>Matricule camion</th>
@@ -586,9 +585,9 @@ $EpaisseurMB = $queryepaisseur->fetch();
                                                         <td style="<?php if($reception['acceptereception'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FFBD6E"; ?><?php }?>;">
                                                             <?= $reception['entetedf'] ?>
                                                         </td>
-                                                        <td style="font-size:20px; text-align: center; background-color:#CFFEDA; <?php if($reception['status'] == "Nouvelle reception"){ echo "color:#FB9324"; ?> <?php }elseif($reception['status'] == "Terminée"){ echo "color:#E52503";}else{ echo "color:#7EB003"; ?><?php }?>;">
+                                                        <!--<td style="font-size:20px; text-align: center; background-color:#CFFEDA; <?php if($reception['status'] == "Nouvelle reception"){ echo "color:#FB9324"; ?> <?php }elseif($reception['status'] == "Terminée"){ echo "color:#E52503";}else{ echo "color:#7EB003"; ?><?php }?>;">
                                                             <?= $reception['status'] ?>
-                                                        </td>
+                                                        </td>!-->
                                                         <td style="<?php if($reception['acceptereception'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FFBD6E"; ?><?php }?>;">
                                                             <?= $reception['user'] ?>
                                                         </td>
@@ -835,7 +834,7 @@ $EpaisseurMB = $queryepaisseur->fetch();
                                             <div class="col-md-8 align-items-center">
                                                 <div class="d-flex gap-2 pt-4">
                                                     <?php
-                                                        if($_SESSION['niveau']==''){
+                                                        if($_SESSION['niveau']=='pontbascule'){
                                                     ?>
                                                         <a href="javascript:void(0);" class="ajouterReception btn btn-success w-lg bouton"><i class="fa fa-plus me-1"></i> Créer reception</a>
                                                     <?php

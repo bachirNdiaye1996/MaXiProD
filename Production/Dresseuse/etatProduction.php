@@ -345,7 +345,7 @@ include "./mailProductionDresseuse.php";
                     <div class="mt-5 mb-3 col-lg-12">
                         <div class="card position-relative">
                             <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary">Listes des états de production pour la séction cranteuse</h6>
+                                <h6 class="m-0 font-weight-bold text-primary">Listes des états de production pour la séction dresseuse</h6>
                             </div>
                             <div class="row m-2">
                                 <div class="table-responsive">

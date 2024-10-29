@@ -453,7 +453,7 @@ if(isset($_POST['ajouterproductionTrefilage'])){
                                             <?php
                                                 if($_SESSION['niveau']=='chefquart'){
                                             ?>
-                                                <a href="javascript:void(0);" data-toggle="modal" data-target=".ajouterproductionTrefilage" class="btn btn-success  w-lg bouton m-4"><i class="fa fa-plus me-1 mr-2"></i>Ajouter une production</a>
+                                                <!--<a href="javascript:void(0);" data-toggle="modal" data-target=".ajouterproductionTrefilage" class="btn btn-success  w-lg bouton m-4"><i class="fa fa-plus me-1 mr-2"></i>Ajouter une production</a>!-->
                                             <?php
                                                 } 
                                             ?>

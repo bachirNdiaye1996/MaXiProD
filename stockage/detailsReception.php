@@ -1011,11 +1011,11 @@ $ReceptionStock = $query->fetchAll();
                                                     ?>
                                                         <a href="reception.php" class="btn btn-danger w-lg bouton mr-3 ml-3"><i class="fa fa-angle-double-left mr-2"></i>Retour</a>
                                                     <?php
-                                                        $id = $_GET['idreception'];
+                                                        /*$id = $_GET['idreception'];
                                                         $sql = "select * from reception where idreception=$id";
                                                         $result = $db->query($sql);
-                                                        $row = $result->fetch();
-                                                        if($_SESSION['niveau']=='pontbascule' && $row['status'] != 'Terminée'){
+                                                        $row = $result->fetch();*/
+                                                        if($_SESSION['niveau']=='' && $row['status'] != 'Terminée'){
                                                     ?>
                                                         <a href="javascript:void(0);" title="Ceci permet de mettre fin cette reception" class="changerStatus btn btn-warning w-lg bouton"><i class="fas fa-remove-format me-1"></i> Terminer reception</a>
                                                     <?php
