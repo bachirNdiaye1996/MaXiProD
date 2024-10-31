@@ -320,7 +320,7 @@
                 <td style="background-color:#CFFEDA ;">
                     <div class="col-md-10">
                         <div class="mb-1 text-start">
-                            <input class="form-control" type="text" name="numbobine[]" value="" id="validationDefault0<?$i+99?>" required>
+                            <input class="form-control" type="text" name="numbobine[]" value="" id="validationDefault0<?$i+99?>">
                         </div>
                     </div>
                 </td>
@@ -517,7 +517,7 @@
                                                                     <td style="background-color:#CFFEDA ;">
                                                                         <div class="col-md-10">
                                                                             <div class="mb-1 text-start">
-                                                                                <input class="form-control" type="text" name="numbobine[]" value="" id="validationDefault099" required>
+                                                                                <input class="form-control" type="text" name="numbobine[]" value="" id="validationDefault099">
                                                                             </div>
                                                                         </div>
                                                                     </td>
@@ -669,7 +669,7 @@
                                                                     <td style="background-color:#CFFEDA ;">
                                                                         <div class="col-md-10">
                                                                             <div class="mb-1 text-start">
-                                                                                <input class="form-control" value="<?php echo $_POST['numbobine'][$i]; ?>" id="validationDefault04" type="number" name="numbobine[]" required>
+                                                                                <input class="form-control" value="<?php echo $_POST['numbobine'][$i]; ?>" id="validationDefault04" type="number" name="numbobine[]">
                                                                             </div>
                                                                         </div>
                                                                     </td>
