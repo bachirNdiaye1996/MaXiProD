@@ -38,7 +38,6 @@
         $entetedf="";
         $poidscamion="";
         $datereception="";
-        $dateplanifie="";
 
         $sql = "select * from reception where idreception=$idreception";
         $result = $db->query($sql);
@@ -53,20 +52,20 @@
     //Fin revoir si on a ajouter une ligne
 
     //Changer valeur NombreLigne   
-        /*if(isset($_POST['ChangerNombreLigne'])){
+        if(isset($_POST['ChangerNombreLigne'])){
             $NombreLignes=htmlspecialchars( $_POST['NombreLigne']) - 1;
             header("location: ajouterReceptionFormulaire.php?idreception=$_GET[idreception]&NombreLigne=$NombreLignes");
             exit;
-        }*/
+        }
     //Fin changer valeur NombreLigne  
 
     //Insertion des réceptions
     if(isset($_POST['CreerReception'])){
         $idreception=htmlspecialchars($_POST['idreception']);
         //$referenceusine=htmlspecialchars( $_POST['referenceusine']);
-        $nomrecepteur=htmlspecialchars($_POST['nomrecepteur']);
-        $dateplanifie=htmlspecialchars($_POST['dateplanifie']);
-        $entetedf=htmlspecialchars($_POST['entetedf']);
+        $nomrecepteur=htmlspecialchars( $_POST['nomrecepteur']);
+        $dateplanifie=htmlspecialchars( $_POST['dateplanifie']);
+        $entetedf=htmlspecialchars( $_POST['entetedf']);
         $commentaire=htmlspecialchars($_POST['commentaire']);
         $poidscamion=htmlspecialchars($_POST['poidscamion']);
         $matriculecamion=htmlspecialchars($_POST['matriculecamion']);
@@ -89,7 +88,7 @@
                     $lieutransfert=htmlspecialchars($_POST['lieutransfert'][$i]);
                     $etatbobine=htmlspecialchars($_POST['etatbobine'][$i]);
                     $user=htmlspecialchars($_POST['user'][$i]);
-                    $poidsdeclare=htmlspecialchars($_POST['poidsdeclare'][$i] * $_POST['nbbobine'][$i]);
+                    $poidsdeclare=htmlspecialchars($_POST['poidsdeclare'][$i]);
                     $poidspese=htmlspecialchars($_POST['poidspese'][$i]);
                     //$idLot=htmlspecialchars($_POST['idLot']);
                     //$idbobine=htmlspecialchars($Reception[$i]['idbobine']);
@@ -306,14 +305,14 @@
                 <td style="background-color:#CFFEDA ;">
                 <div class="col-md-10">
                     <div class="mb-1 text-start">
-                        <input class="form-control designa" type="number" step="0.01" name="poidsdeclare[]" id="validationDefault0<?$i+10?>" required>
+                        <input class="form-control designa" type="number" name="poidsdeclare[]" id="validationDefault0<?$i+10?>" required>
                     </div>
                 </div>
                 </td>
                 <td style="background-color:#CFFEDA ;">
                     <div class="col-md-10">
                         <div class="mb-1 text-start">
-                            <input class="form-control designa" type="number" step="0.01" name="poidspese[]">
+                            <input class="form-control designa" type="number" name="poidspese[]">
                         </div>
                     </div>
                 </td>
@@ -497,14 +496,14 @@
                                                                 <td style="background-color:#CFFEDA ;">
                                                                 <div class="col-md-10">
                                                                     <div class="mb-1 text-start">
-                                                                        <input class="form-control designa" type="number" step="0.01" name="poidsdeclare[]" id="validationDefault0<?$i+10?>" required>
+                                                                        <input class="form-control designa" type="number" name="poidsdeclare[]" id="validationDefault0<?$i+10?>" required>
                                                                     </div>
                                                                 </div>
                                                                 </td>
                                                                 <td style="background-color:#CFFEDA ;">
                                                                     <div class="col-md-10">
                                                                         <div class="mb-1 text-start">
-                                                                            <input class="form-control designa" type="number" step="0.01" name="poidspese[]">
+                                                                            <input class="form-control designa" type="number" name="poidspese[]">
                                                                         </div>
                                                                     </div>
                                                                 </td>

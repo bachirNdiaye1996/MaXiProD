@@ -490,21 +490,21 @@
                                                                 <td style="background-color:#CFFEDA ;">
                                                                     <div class="col-md-10">
                                                                         <div class="mb-1 text-start">
-                                                                            <input class="form-control" type="number" name="nbbobine[]" value="" id="validationDefault0<?$i+9?>" required>
+                                                                            <input class="form-control" type="number" step="0.01" name="nbbobine[]" value="" id="validationDefault0<?$i+9?>" required>
                                                                         </div>
                                                                     </div>
                                                                 </td>
                                                                 <td style="background-color:#CFFEDA ;">
                                                                 <div class="col-md-10">
                                                                     <div class="mb-1 text-start">
-                                                                        <input class="form-control designa" type="number" step="0.01" name="poidsdeclare[]" id="validationDefault0<?$i+10?>" required>
+                                                                        <input class="form-control designa" type="number" name="poidsdeclare[]" id="validationDefault0<?$i+10?>" required>
                                                                     </div>
                                                                 </div>
                                                                 </td>
                                                                 <td style="background-color:#CFFEDA ;">
                                                                     <div class="col-md-10">
                                                                         <div class="mb-1 text-start">
-                                                                            <input class="form-control designa" type="number" step="0.01" name="poidspese[]">
+                                                                            <input class="form-control designa" type="number" name="poidspese[]">
                                                                         </div>
                                                                     </div>
                                                                 </td>

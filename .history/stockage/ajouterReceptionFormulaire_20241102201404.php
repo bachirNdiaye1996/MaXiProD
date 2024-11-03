@@ -17,7 +17,7 @@
     $NombreLigne = $_GET['NombreLigne'];
 
 
-    /* //** Debut select des receptions
+    //** Debut select des receptions
         $sql = "SELECT * FROM `matierePlanifie` where `actif`=1 and `actifRectifie`=0 and `idreception`=$idreception ORDER BY `idmatiereplanifie` DESC;";
 
         // On prépare la requête
@@ -28,7 +28,7 @@
 
         // On récupère les valeurs dans un tableau associatif
         $ReceptionPlanifieARemplir = $query->fetchAll();
-    //** Fin select des receptions */
+    //** Fin select des receptions
 
 
     //Revoir si on a ajouter une ligne
@@ -38,7 +38,6 @@
         $entetedf="";
         $poidscamion="";
         $datereception="";
-        $dateplanifie="";
 
         $sql = "select * from reception where idreception=$idreception";
         $result = $db->query($sql);
@@ -53,20 +52,20 @@
     //Fin revoir si on a ajouter une ligne
 
     //Changer valeur NombreLigne   
-        /*if(isset($_POST['ChangerNombreLigne'])){
+        if(isset($_POST['ChangerNombreLigne'])){
             $NombreLignes=htmlspecialchars( $_POST['NombreLigne']) - 1;
             header("location: ajouterReceptionFormulaire.php?idreception=$_GET[idreception]&NombreLigne=$NombreLignes");
             exit;
-        }*/
+        }
     //Fin changer valeur NombreLigne  
 
     //Insertion des réceptions
     if(isset($_POST['CreerReception'])){
         $idreception=htmlspecialchars($_POST['idreception']);
         //$referenceusine=htmlspecialchars( $_POST['referenceusine']);
-        $nomrecepteur=htmlspecialchars($_POST['nomrecepteur']);
-        $dateplanifie=htmlspecialchars($_POST['dateplanifie']);
-        $entetedf=htmlspecialchars($_POST['entetedf']);
+        $nomrecepteur=htmlspecialchars( $_POST['nomrecepteur']);
+        $dateplanifie=htmlspecialchars( $_POST['dateplanifie']);
+        $entetedf=htmlspecialchars( $_POST['entetedf']);
         $commentaire=htmlspecialchars($_POST['commentaire']);
         $poidscamion=htmlspecialchars($_POST['poidscamion']);
         $matriculecamion=htmlspecialchars($_POST['matriculecamion']);
@@ -89,13 +88,13 @@
                     $lieutransfert=htmlspecialchars($_POST['lieutransfert'][$i]);
                     $etatbobine=htmlspecialchars($_POST['etatbobine'][$i]);
                     $user=htmlspecialchars($_POST['user'][$i]);
-                    $poidsdeclare=htmlspecialchars($_POST['poidsdeclare'][$i] * $_POST['nbbobine'][$i]);
+                    $poidsdeclare=htmlspecialchars($_POST['poidsdeclare'][$i]);
                     $poidspese=htmlspecialchars($_POST['poidspese'][$i]);
                     //$idLot=htmlspecialchars($_POST['idLot']);
                     //$idbobine=htmlspecialchars($Reception[$i]['idbobine']);
                     $nbbobine=htmlspecialchars($_POST['nbbobine'][$i]);
                     //$idreceptionMatiere=htmlspecialchars($_POST['idreceptionMatiere'][$i]);
-                    //$idreceptionMatierePlanifie=htmlspecialchars($_POST['idreceptionMatierePlanifie'][$i]);
+                    $idreceptionMatierePlanifie=htmlspecialchars($_POST['idreceptionMatierePlanifie'][$i]);
     
     
                     if($nbbobine == 0){
@@ -154,12 +153,12 @@
                             // Fin ajouter le nombre de bobine dans le lieu de reception
                         //}
     
-                        /* //Mettre inactif les matieres a remplir 
+                        //Mettre inactif les matieres a remplir 
                             $sql = "UPDATE `matiereplanifie` SET `actifRectifie` = 1 WHERE `idmatiereplanifie` = ?;";
                             //$result = $db->query($sql); 
                             $sth = $db->prepare($sql);    
                             $sth->execute(array($idreceptionMatierePlanifie));
-                        //Fin mettre inactif les matieres a remplir  */
+                        //Fin mettre inactif les matieres a remplir 
                     }    
                 }
             }else{
@@ -306,14 +305,14 @@
                 <td style="background-color:#CFFEDA ;">
                 <div class="col-md-10">
                     <div class="mb-1 text-start">
-                        <input class="form-control designa" type="number" step="0.01" name="poidsdeclare[]" id="validationDefault0<?$i+10?>" required>
+                        <input class="form-control designa" type="number" name="poidsdeclare[]" id="validationDefault0<?$i+10?>" required>
                     </div>
                 </div>
                 </td>
                 <td style="background-color:#CFFEDA ;">
                     <div class="col-md-10">
                         <div class="mb-1 text-start">
-                            <input class="form-control designa" type="number" step="0.01" name="poidspese[]">
+                            <input class="form-control designa" type="number" name="poidspese[]">
                         </div>
                     </div>
                 </td>
@@ -445,8 +444,8 @@
                                                             //for ($i = 0; $i <= $NombreLigne; $i++){
                                                                 //$i++;
                                                                 //if($article['status'] == 'termine'){
-                                                            //if(0){
-                                                                //foreach($ReceptionPlanifieARemplir as $reception){
+                                                            if(0){
+                                                                foreach($ReceptionPlanifieARemplir as $reception){
                                                                 //$i++;
                                                         ?>
                                                             <tr class="rowClass">
@@ -454,35 +453,35 @@
                                                                     <div class="">
                                                                         <div class="mb-1 text-start">
                                                                             <select class="form-control" name="epaisseur[]" placeholder="Taper l'épaisseur de la bobine" value="">
-                                                                                <option>3</option>
-                                                                                <option>3.5</option>
-                                                                                <option>4</option>
-                                                                                <option>4.5</option>
-                                                                                <option>5</option>
-                                                                                <option>5.5</option>
-                                                                                <option>6</option>
-                                                                                <option>6.5</option>
-                                                                                <option>7</option>
-                                                                                <option>7.5</option>
-                                                                                <option>8</option>
-                                                                                <option>8.5</option>
-                                                                                <option>9</option>
-                                                                                <option>9.5</option>
-                                                                                <option>10</option>
-                                                                                <option>10.5</option>
-                                                                                <option>11</option>
-                                                                                <option>11.5</option>
-                                                                                <option>12</option>
-                                                                                <option>12.5</option>
-                                                                                <option>13</option>
-                                                                                <option>13.5</option>
-                                                                                <option>14</option>
-                                                                                <option>14.5</option>
-                                                                                <option>15</option>
-                                                                                <option>15.5</option>
-                                                                                <option>16</option>
-                                                                                <option>16.5</option>
-                                                                                <option>17</option>
+                                                                                <option <?php if ( $reception['epaisseur']=='3') {echo "selected='selected'";} ?> >3</option>
+                                                                                <option  <?php if ( $reception['epaisseur']=='3.5') {echo "selected='selected'";} ?> >3.5</option>
+                                                                                <option <?php if ( $reception['epaisseur']=='4') {echo "selected='selected'";} ?> >4</option>
+                                                                                <option <?php if ( $reception['epaisseur']=='4.5') {echo "selected='selected'";} ?> >4.5</option>
+                                                                                <option <?php if ( $reception['epaisseur']=='5') {echo "selected='selected'";} ?> >5</option>
+                                                                                <option <?php if ( $reception['epaisseur']=='5.5') {echo "selected='selected'";} ?> >5.5</option>
+                                                                                <option <?php if ( $reception['epaisseur']=='6') {echo "selected='selected'";} ?> >6</option>
+                                                                                <option <?php if ( $reception['epaisseur']=='6.5') {echo "selected='selected'";} ?> >6.5</option>
+                                                                                <option <?php if ( $reception['epaisseur']=='7') {echo "selected='selected'";} ?> >7</option>
+                                                                                <option <?php if ( $reception['epaisseur']=='7.5') {echo "selected='selected'";} ?> >7.5</option>
+                                                                                <option <?php if ( $reception['epaisseur']=='8') {echo "selected='selected'";} ?> >8</option>
+                                                                                <option <?php if ( $reception['epaisseur']=='8.5') {echo "selected='selected'";} ?> >8.5</option>
+                                                                                <option <?php if ( $reception['epaisseur']=='9') {echo "selected='selected'";} ?> >9</option>
+                                                                                <option <?php if ( $reception['epaisseur']=='9.5') {echo "selected='selected'";} ?> >9.5</option>
+                                                                                <option <?php if ( $reception['epaisseur']=='10') {echo "selected='selected'";} ?> >10</option>
+                                                                                <option <?php if ( $reception['epaisseur']=='10.5') {echo "selected='selected'";} ?> >10.5</option>
+                                                                                <option <?php if ( $reception['epaisseur']=='11') {echo "selected='selected'";} ?> >11</option>
+                                                                                <option <?php if ( $reception['epaisseur']=='11.5') {echo "selected='selected'";} ?> >11.5</option>
+                                                                                <option <?php if ( $reception['epaisseur']=='12') {echo "selected='selected'";} ?> >12</option>
+                                                                                <option <?php if ( $reception['epaisseur']=='12.5') {echo "selected='selected'";} ?> >12.5</option>
+                                                                                <option <?php if ( $reception['epaisseur']=='13') {echo "selected='selected'";} ?> >13</option>
+                                                                                <option <?php if ( $reception['epaisseur']=='13.5') {echo "selected='selected'";} ?> >13.5</option>
+                                                                                <option <?php if ( $reception['epaisseur']=='14') {echo "selected='selected'";} ?> >14</option>
+                                                                                <option <?php if ( $reception['epaisseur']=='14.5') {echo "selected='selected'";} ?> >14.5</option>
+                                                                                <option <?php if ( $reception['epaisseur']=='15') {echo "selected='selected'";} ?> >15</option>
+                                                                                <option <?php if ( $reception['epaisseur']=='15.5') {echo "selected='selected'";} ?> >15.5</option>
+                                                                                <option <?php if ( $reception['epaisseur']=='16') {echo "selected='selected'";} ?> >16</option>
+                                                                                <option <?php if ( $reception['epaisseur']=='16.5') {echo "selected='selected'";} ?>>16.5</option>
+                                                                                <option <?php if ( $reception['epaisseur']=='17') {echo "selected='selected'";} ?> >17</option>
                                                                             </select> 
                                                                         </div>
                                                                     </div>
@@ -490,32 +489,32 @@
                                                                 <td style="background-color:#CFFEDA ;">
                                                                     <div class="col-md-10">
                                                                         <div class="mb-1 text-start">
-                                                                            <input class="form-control" type="number" name="nbbobine[]" value="" id="validationDefault0<?$i+9?>" required>
+                                                                            <input class="form-control" type="number" name="nbbobine[]" value="" id="validationDefault04" required>
                                                                         </div>
                                                                     </div>
                                                                 </td>
                                                                 <td style="background-color:#CFFEDA ;">
                                                                 <div class="col-md-10">
                                                                     <div class="mb-1 text-start">
-                                                                        <input class="form-control designa" type="number" step="0.01" name="poidsdeclare[]" id="validationDefault0<?$i+10?>" required>
+                                                                        <input class="form-control designa" type="number" step="0.01"  value="" name="poidsdeclare[]" id="example">
                                                                     </div>
                                                                 </div>
                                                                 </td>
                                                                 <td style="background-color:#CFFEDA ;">
                                                                     <div class="col-md-10">
                                                                         <div class="mb-1 text-start">
-                                                                            <input class="form-control designa" type="number" step="0.01" name="poidspese[]">
+                                                                            <input class="form-control designa" type="number" step="0.01" value="" name="poidspese[]">
                                                                         </div>
                                                                     </div>
                                                                 </td>
                                                                 <td style="background-color:#CFFEDA ;">
                                                                     <div class="col-md-10">
                                                                         <div class="mb-1 text-start">
-                                                                            <select class="form-control" name="lieutransfert[]" value="">
+                                                                            <select class="form-control" name="lieutransfert[]">
                                                                                 <option>Metal1</option>
                                                                                 <option>Niambour</option>
                                                                                 <option>Metal Mbao</option>
-                                                                            </select>                                                  
+                                                                            </select>                                                
                                                                         </div>
                                                                     </div>
                                                                 </td>
@@ -536,15 +535,16 @@
                                                                     </button> 
                                                                 </td>
                                                             </tr>
-                                                            <!--<div class="col-md-6 invisible">
+                                                            <div class="col-md-6 invisible">
                                                                 <div class="mb-1 text-start">
-                                                                    <input class="form-control" type="text" value="<?php ?>; 
+                                                                    <input class="form-control" type="text" value="<?php
+                                                                        echo $reception['idmatiereplanifie'];?>; 
                                                                     ?>" name="idreceptionMatierePlanifie[]" id="example-date-input3">
                                                                 </div>
-                                                            </div>!-->
+                                                            </div>
                                                         <?php
-                                                                //}
-                                                            //}
+                                                                }
+                                                            }
                                                         ?>
                                                     </tbody>
                                                 </table>
