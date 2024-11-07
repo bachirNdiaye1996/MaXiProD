@@ -40,7 +40,7 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
             $IdproductioncrantC1Q1 = $productioncrantC1Q1['idfichecranteuseq1'];    // Id de productioncrantC1Q1
 
             //** Debut select de la production (consommation)
-                $sql = "SELECT sum(poids) as piodstotal, diametre, sum(dechet) as dechet FROM `cranteuseq1consommation` where `actif`=1 and `idfichecranteuseq1`=$IdproductioncrantC1Q1 GROUP BY `diametre`;";
+                $sql = "SELECT sum(poids) as piodstotal, diametre, numerofin, sum(dechet) as dechet FROM `cranteuseq1consommation` where `actif`=1 and `idfichecranteuseq1`=$IdproductioncrantC1Q1 GROUP BY `diametre` ORDER BY `diametre` DESC;";
 
                 // On prépare la requête
                 $query = $db->prepare($sql);
@@ -81,7 +81,7 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
 
 
             //** Debut select de la production (prod)
-                $sql = "SELECT sum(prodpoids) as piodstotal, proddiametre, sum(proddechet) as dechet FROM `cranteuseq1production` where `actif`=1 and `idfichecranteuseq1`=$IdproductioncrantC1Q1 GROUP BY `proddiametre`;";
+                $sql = "SELECT sum(prodpoids) as piodstotal, proddiametre, sum(proddechet) as dechet FROM `cranteuseq1production` where `actif`=1 and `idfichecranteuseq1`=$IdproductioncrantC1Q1 GROUP BY `proddiametre` ORDER BY `proddiametre` DESC;";
 
                 // On prépare la requête
                 $query = $db->prepare($sql);
@@ -115,7 +115,7 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
             $IdproductioncrantC2Q1 = $productioncrantC2Q1['idfichecranteuseq1'];    // Id de productioncrantC1Q1
 
             //** Debut select de la production (consommation)
-                $sql = "SELECT sum(poids) as piodstotal, diametre, sum(dechet) as dechet FROM `cranteuseq1consommation` where `actif`=1 and `idfichecranteuseq1`=$IdproductioncrantC2Q1 GROUP BY `diametre`;";
+                $sql = "SELECT sum(poids) as piodstotal, diametre, numerofin, sum(dechet) as dechet FROM `cranteuseq1consommation` where `actif`=1 and `idfichecranteuseq1`=$IdproductioncrantC2Q1 GROUP BY `diametre` ORDER BY `diametre` DESC;";
 
                 // On prépare la requête
                 $query = $db->prepare($sql);
@@ -156,7 +156,7 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
 
 
             //** Debut select de la production (prod)
-                $sql = "SELECT sum(prodpoids) as piodstotal, proddiametre, sum(proddechet) as dechet FROM `cranteuseq1production` where `actif`=1 and `idfichecranteuseq1`=$IdproductioncrantC2Q1 GROUP BY `proddiametre`;";
+                $sql = "SELECT sum(prodpoids) as piodstotal, proddiametre, sum(proddechet) as dechet FROM `cranteuseq1production` where `actif`=1 and `idfichecranteuseq1`=$IdproductioncrantC2Q1 GROUP BY `proddiametre` ORDER BY `proddiametre` DESC;";
 
                 // On prépare la requête
                 $query = $db->prepare($sql);
@@ -191,7 +191,7 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
         $IdproductioncrantC1Q2 = $productioncrantC1Q2['idfichecranteuseq1'];    // Id de productioncrantC1Q1
 
         //** Debut select de la production (consommation)
-            $sql = "SELECT sum(poids) as piodstotal, diametre, sum(dechet) as dechet FROM `cranteuseq1consommation` where `actif`=1 and `idfichecranteuseq1`=$IdproductioncrantC1Q2 GROUP BY `diametre`;";
+            $sql = "SELECT sum(poids) as piodstotal, diametre, numerofin, sum(dechet) as dechet FROM `cranteuseq1consommation` where `actif`=1 and `idfichecranteuseq1`=$IdproductioncrantC1Q2 GROUP BY `diametre` ORDER BY `diametre` DESC;";
 
             // On prépare la requête
             $query = $db->prepare($sql);
@@ -232,7 +232,7 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
 
 
         //** Debut select de la production (prod)
-            $sql = "SELECT sum(prodpoids) as piodstotal, proddiametre, sum(proddechet) as dechet FROM `cranteuseq1production` where `actif`=1 and `idfichecranteuseq1`=$IdproductioncrantC1Q2 GROUP BY `proddiametre`;";
+            $sql = "SELECT sum(prodpoids) as piodstotal, proddiametre, sum(proddechet) as dechet FROM `cranteuseq1production` where `actif`=1 and `idfichecranteuseq1`=$IdproductioncrantC1Q2 GROUP BY `proddiametre` ORDER BY `proddiametre` DESC;";
 
             // On prépare la requête
             $query = $db->prepare($sql);
@@ -266,7 +266,7 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
             $IdproductioncrantC2Q2 = $productioncrantC2Q2['idfichecranteuseq1'];    // Id de productioncrantC1Q1
 
             //** Debut select de la production (consommation)
-                $sql = "SELECT sum(poids) as piodstotal, diametre, sum(dechet) as dechet FROM `cranteuseq1consommation` where `actif`=1 and `idfichecranteuseq1`=$IdproductioncrantC2Q2 GROUP BY `diametre`;";
+                $sql = "SELECT sum(poids) as piodstotal, diametre, numerofin, sum(dechet) as dechet FROM `cranteuseq1consommation` where `actif`=1 and `idfichecranteuseq1`=$IdproductioncrantC2Q2 GROUP BY `diametre` ORDER BY `diametre` DESC;";
 
                 // On prépare la requête
                 $query = $db->prepare($sql);
@@ -307,7 +307,7 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
 
 
             //** Debut select de la production (prod)
-                $sql = "SELECT sum(prodpoids) as piodstotal, proddiametre, sum(proddechet) as dechet FROM `cranteuseq1production` where `actif`=1 and `idfichecranteuseq1`=$IdproductioncrantC2Q2 GROUP BY `proddiametre`;";
+                $sql = "SELECT sum(prodpoids) as piodstotal, proddiametre, sum(proddechet) as dechet FROM `cranteuseq1production` where `actif`=1 and `idfichecranteuseq1`=$IdproductioncrantC2Q2 GROUP BY `proddiametre` ORDER BY `proddiametre` DESC;";
 
                 // On prépare la requête
                 $query = $db->prepare($sql);
@@ -343,7 +343,7 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
         $IdproductioncrantC1Q3 = $productioncrantC1Q3['idfichecranteuseq1'];    // Id de productioncrantC1Q1
 
         //** Debut select de la production (consommation)
-            $sql = "SELECT sum(poids) as piodstotal, diametre, sum(dechet) as dechet FROM `cranteuseq1consommation` where `actif`=1 and `idfichecranteuseq1`=$IdproductioncrantC1Q3 GROUP BY `diametre`;";
+            $sql = "SELECT sum(poids) as piodstotal, diametre, numerofin, sum(dechet) as dechet FROM `cranteuseq1consommation` where `actif`=1 and `idfichecranteuseq1`=$IdproductioncrantC1Q3 GROUP BY `diametre`;";
 
             // On prépare la requête
             $query = $db->prepare($sql);
@@ -418,7 +418,7 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
             $IdproductioncrantC2Q3 = $productioncrantC2Q3['idfichecranteuseq1'];    // Id de productioncrantC1Q1
 
             //** Debut select de la production (consommation)
-                $sql = "SELECT sum(poids) as piodstotal, diametre, sum(dechet) as dechet FROM `cranteuseq1consommation` where `actif`=1 and `idfichecranteuseq1`=$IdproductioncrantC2Q3 GROUP BY `diametre`;";
+                $sql = "SELECT sum(poids) as piodstotal, diametre, numerofin, sum(dechet) as dechet FROM `cranteuseq1consommation` where `actif`=1 and `idfichecranteuseq1`=$IdproductioncrantC2Q3 GROUP BY `diametre`;";
 
                 // On prépare la requête
                 $query = $db->prepare($sql);
@@ -851,7 +851,8 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                         <div class="row">
                                             <table class="table table-bordered mb-2 ml-3 mr-4 col-lg-3" width="100%" cellspacing="0">
                                                 <thead>
-                                                    <tr>       
+                                                    <tr>  
+                                                        <th>N° FM</th>     
                                                         <th>Consommations (KG)</th>                                                                                
                                                         <th>Diametres</th>
                                                         <th>Rebus</th>
@@ -864,11 +865,150 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                                             $RebusTotal += $consommationC1Q1['dechet'];
                                                     ?>
                                                         <tr>
+                                                            <td style="background-color:#4e73df ; color:white;"><a style="text-decoration: none; font-family: arial; font-size: 20px; color:white;" href="javascript:void(0);" data-toggle="modal" data-target="#Information<?php echo $i; ?>" title="Voir details du produit" class="link-offset-2 link-underline"><?= $consommationC1Q1['numerofin'] ?></a></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $consommationC1Q1['piodstotal'] ?></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $consommationC1Q1['diametre'] ?></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $consommationC1Q1['dechet'] ?></td>
                                                         </tr>
-                                                    <!-- Pour le sweetAlert approuveTransfert !--> 
+                                                        <!-- Pour le sweetAlert approuveTransfert !--> 
+                                                        <div class="modal fade " id="Information<?php echo $i; ?>" tabindex="-1" aria-labelledby="fileModalLabel" aria-hidden="true" >
+                                                            <div class="modal-dialog modal-xl modal-dialog-centered" style="width=750px">
+                                                                <div class="modal-content">
+                                                                    <div class="card">
+                                                                        <div class="card-header bg-primary text-center">
+                                                                            <h5 class="modal-title" id="fileModalLabel" style="color:white">Details du produit consommé correspondant :</h5>
+                                                                        </div>
+                                                                        <div class="card-body">
+                                                                            <div class="col-lg-12 mt-5 mb-5">
+                                                                                <?php
+                                                                                    $IDM = $consommationC1Q1['numerofin'];
+                                                                                    //** Debut select des receptions
+                                                                                        $sql = "SELECT * FROM `matiere` where `numbobine`=$IDM;";
+                                                                            
+                                                                                        // On prépare la requête
+                                                                                        $query = $db->prepare($sql);
+                                                                            
+                                                                                        // On exécute
+                                                                                        $query->execute();
+                                                                            
+                                                                                        // On récupère les valeurs dans un tableau associatif
+                                                                                        $Matiere = $query->fetch();
+                                                                                    //** Fin select des receptions
+                                                                                    
+                                                                                    $IDR = $Matiere['idreception'];
+
+                                                                                    $IdMatiere = $Matiere['idmatierereception'];
+
+                                                                                    //** Debut select des receptions
+                                                                                        $sql = "SELECT * FROM `matiere` where `idmatiere`=$IdMatiere;";
+                                                                                
+                                                                                        // On prépare la requête
+                                                                                        $query = $db->prepare($sql);
+                                                                            
+                                                                                        // On exécute
+                                                                                        $query->execute();
+                                                                            
+                                                                                        // On récupère les valeurs dans un tableau associatif
+                                                                                        $MatiereDepart = $query->fetch();
+                                                                                    //** Fin select des receptions
+
+                                                                                    //** Debut select des receptions
+                                                                                        $sql = "SELECT * FROM `reception` where `actif`=1 and `idreception`=$IDR;";
+
+                                                                                        // On prépare la requête
+                                                                                        $query = $db->prepare($sql);
+
+                                                                                        // On exécute
+                                                                                        $query->execute();
+
+                                                                                        // On récupère les valeurs dans un tableau associatif
+                                                                                        $Reception = $query->fetch();
+                                                                                    //** Fin select des receptions       
+                                                                                ?>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Nom de la DF : </span><?php echo $Reception['entetedf']; ?></h5></label>
+                                                                                    <div class="col-sm-4">
+                                                                                        <h5 style="color:blue;"></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Date réception : </span><?php echo $Reception['datereception']; ?></h5></label>
+                                                                                    <div class="col-sm-4">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Nombre de bobine : </span><?php echo $MatiereDepart['nbbobine']; ?></h5></label>
+                                                                                    <div class="col-sm-4">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Poids des bobines : </span><?php echo $MatiereDepart['poidsdeclare']; ?> (KG)</h5></label>
+                                                                                    <div class="col-sm-4">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Lieu de la réception : </span><?php echo $MatiereDepart['lieutransfert']; ?></h5></label>
+                                                                                    <div class="col-sm-4">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-8 col-form-label"><h5 style="color: #199AF3">Commentaire associé lors de la réception : </h5></label><br>
+                                                                                    <div class="col-sm-8 ml-5">
+                                                                                        <h5><?php echo $Reception['commentaire']; ?></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Nom du récepteur : </span> <?php echo $Reception['nomrecepteur']; ?></h5></label>
+                                                                                    <div class="col-sm-6">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Matricule du camion : </span><?php echo $Reception['matriculecamion']; ?></h5></label>
+                                                                                    <div class="col-sm-6">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Numéro de BL : </span><?php echo $Reception['bl']; ?></h5></label>
+                                                                                    <div class="col-sm-6">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div> <hr>
+                                                                                <div class="form-group row mt-5">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Code bobine : </span><?php echo "REC00".$Matiere['idreception']."-BOB0-".$MatiereDepart['idmatiere']; ?></h5></label>
+                                                                                    <div class="col-sm-4">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-6 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Poids de la bobine déclaré lors du transfert : </span><?php echo $Matiere['poidsdeclare']; ?> (KG)</h5></label>
+                                                                                    <div class="col-sm-4">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Etat bobine : </span> <?php echo $Matiere['etatbobine']; ?></h5></label>
+                                                                                    <div class="col-sm-6">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col text-center">
+                                                                                <a href="" class="btn btn-primary text-center">Retour</a>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="card-footer bg-primary text-muted text-center">
+                                                                            <h5 style="color:white">METAL *** AFRIQUE</h5>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>    
+                                                            </div>
+                                                        </div>
                                                     <?php
                                                         }
                                                     ?> 
@@ -996,6 +1136,7 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                             <table class="table table-bordered mb-2 ml-3 mr-4 col-lg-3" width="100%" cellspacing="0">
                                                 <thead>
                                                     <tr>       
+                                                        <th>N° FM</th>
                                                         <th>Consommations (KG)</th>                                                                                
                                                         <th>Diametres</th>
                                                         <th>Rebus</th>
@@ -1003,16 +1144,157 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                                 </thead>
                                                 <tbody>
                                                     <?php
+                                                        $i=0;
                                                         foreach($consommationsC2Q1 as $consommationC2Q1){
                                                             $PoidsConsommeTotal += $consommationC2Q1['piodstotal'];
                                                             $RebusTotal += $consommationC2Q1['dechet'];
+                                                            $i++;
                                                     ?>
                                                         <tr>
+                                                            <td style="background-color:#4e73df ; color:white;"><a style="text-decoration: none; font-family: arial; font-size: 20px; color:white;" href="javascript:void(0);" data-toggle="modal" data-target="#Information<?php echo $i; ?>" title="Voir details du produit" class="link-offset-2 link-underline"><?= $consommationC2Q1['numerofin'] ?></a></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $consommationC2Q1['piodstotal'] ?></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $consommationC2Q1['diametre'] ?></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $consommationC2Q1['dechet'] ?></td>
                                                         </tr>
-                                                    <!-- Pour le sweetAlert approuveTransfert !--> 
+                                                        <!-- Pour le sweetAlert approuveTransfert !--> 
+                                                        <div class="modal fade " id="Information<?php echo $i; ?>" tabindex="-1" aria-labelledby="fileModalLabel" aria-hidden="true" >
+                                                            <div class="modal-dialog modal-xl modal-dialog-centered" style="width=750px">
+                                                                <div class="modal-content">
+                                                                    <div class="card">
+                                                                        <div class="card-header bg-primary text-center">
+                                                                            <h5 class="modal-title" id="fileModalLabel" style="color:white">Details du produit consommé correspondant :</h5>
+                                                                        </div>
+                                                                        <div class="card-body">
+                                                                            <div class="col-lg-12 mt-5 mb-5">
+                                                                                <?php
+                                                                                    $IDM = $consommationC2Q1['numerofin'];
+                                                                                    //** Debut select des receptions
+                                                                                        $sql = "SELECT * FROM `matiere` where `numbobine`=$IDM;";
+                                                                            
+                                                                                        // On prépare la requête
+                                                                                        $query = $db->prepare($sql);
+                                                                            
+                                                                                        // On exécute
+                                                                                        $query->execute();
+                                                                            
+                                                                                        // On récupère les valeurs dans un tableau associatif
+                                                                                        $Matiere = $query->fetch();
+                                                                                    //** Fin select des receptions
+                                                                                    
+                                                                                    $IDR = $Matiere['idreception'];
+
+                                                                                    $IdMatiere = $Matiere['idmatierereception'];
+
+                                                                                    //** Debut select des receptions
+                                                                                        $sql = "SELECT * FROM `matiere` where `idmatiere`=$IdMatiere;";
+                                                                                
+                                                                                        // On prépare la requête
+                                                                                        $query = $db->prepare($sql);
+                                                                            
+                                                                                        // On exécute
+                                                                                        $query->execute();
+                                                                            
+                                                                                        // On récupère les valeurs dans un tableau associatif
+                                                                                        $MatiereDepart = $query->fetch();
+                                                                                    //** Fin select des receptions
+
+                                                                                    //** Debut select des receptions
+                                                                                        $sql = "SELECT * FROM `reception` where `actif`=1 and `idreception`=$IDR;";
+
+                                                                                        // On prépare la requête
+                                                                                        $query = $db->prepare($sql);
+
+                                                                                        // On exécute
+                                                                                        $query->execute();
+
+                                                                                        // On récupère les valeurs dans un tableau associatif
+                                                                                        $Reception = $query->fetch();
+                                                                                    //** Fin select des receptions       
+                                                                                ?>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Nom de la DF : </span><?php echo $Reception['entetedf']; ?></h5></label>
+                                                                                    <div class="col-sm-4">
+                                                                                        <h5 style="color:blue;"></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Date réception : </span><?php echo $Reception['datereception']; ?></h5></label>
+                                                                                    <div class="col-sm-4">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Nombre de bobine : </span><?php echo $MatiereDepart['nbbobine']; ?></h5></label>
+                                                                                    <div class="col-sm-4">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Poids des bobines : </span><?php echo $MatiereDepart['poidsdeclare']; ?> (KG)</h5></label>
+                                                                                    <div class="col-sm-4">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Lieu de la réception : </span><?php echo $MatiereDepart['lieutransfert']; ?></h5></label>
+                                                                                    <div class="col-sm-4">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-8 col-form-label"><h5 style="color: #199AF3">Commentaire associé lors de la réception : </h5></label><br>
+                                                                                    <div class="col-sm-8 ml-5">
+                                                                                        <h5><?php echo $Reception['commentaire']; ?></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Nom du récepteur : </span> <?php echo $Reception['nomrecepteur']; ?></h5></label>
+                                                                                    <div class="col-sm-6">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Matricule du camion : </span><?php echo $Reception['matriculecamion']; ?></h5></label>
+                                                                                    <div class="col-sm-6">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Numéro de BL : </span><?php echo $Reception['bl']; ?></h5></label>
+                                                                                    <div class="col-sm-6">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div> <hr>
+                                                                                <div class="form-group row mt-5">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Code bobine : </span><?php echo "REC00".$Matiere['idreception']."-BOB0-".$MatiereDepart['idmatiere']; ?></h5></label>
+                                                                                    <div class="col-sm-4">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-6 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Poids de la bobine déclaré lors du transfert : </span><?php echo $Matiere['poidsdeclare']; ?> (KG)</h5></label>
+                                                                                    <div class="col-sm-4">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Etat bobine : </span> <?php echo $Matiere['etatbobine']; ?></h5></label>
+                                                                                    <div class="col-sm-6">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col text-center">
+                                                                                <a href="" class="btn btn-primary text-center">Retour</a>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="card-footer bg-primary text-muted text-center">
+                                                                            <h5 style="color:white">METAL *** AFRIQUE</h5>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>    
+                                                            </div>
+                                                        </div>
                                                     <?php
                                                         }
                                                     ?> 
@@ -1139,6 +1421,7 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                             <table class="table table-bordered mb-2 ml-3 mr-4 col-lg-3" width="100%" cellspacing="0">
                                                 <thead>
                                                     <tr>       
+                                                        <th>N° FM</th>
                                                         <th>Consommations (KG)</th>                                                                                
                                                         <th>Diametres</th>
                                                         <th>Rebus</th>
@@ -1151,11 +1434,150 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                                             $RebusTotal += $consommationC1Q2['dechet'];
                                                     ?>
                                                         <tr>
+                                                            <td style="background-color:#4e73df ; color:white;"><a style="text-decoration: none; font-family: arial; font-size: 20px; color:white;" href="javascript:void(0);" data-toggle="modal" data-target="#Information<?php echo $i; ?>" title="Voir details du produit" class="link-offset-2 link-underline"><?= $consommationC1Q2['numerofin'] ?></a></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $consommationC1Q2['piodstotal'] ?></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $consommationC1Q2['diametre'] ?></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $consommationC1Q2['dechet'] ?></td>
                                                         </tr>
-                                                    <!-- Pour le sweetAlert approuveTransfert !--> 
+                                                        <!-- Pour le sweetAlert approuveTransfert !--> 
+                                                        <div class="modal fade " id="Information<?php echo $i; ?>" tabindex="-1" aria-labelledby="fileModalLabel" aria-hidden="true" >
+                                                            <div class="modal-dialog modal-xl modal-dialog-centered" style="width=750px">
+                                                                <div class="modal-content">
+                                                                    <div class="card">
+                                                                        <div class="card-header bg-primary text-center">
+                                                                            <h5 class="modal-title" id="fileModalLabel" style="color:white">Details du produit consommé correspondant :</h5>
+                                                                        </div>
+                                                                        <div class="card-body">
+                                                                            <div class="col-lg-12 mt-5 mb-5">
+                                                                                <?php
+                                                                                    $IDM = $consommationC1Q2['numerofin'];
+                                                                                    //** Debut select des receptions
+                                                                                        $sql = "SELECT * FROM `matiere` where `numbobine`=$IDM;";
+                                                                            
+                                                                                        // On prépare la requête
+                                                                                        $query = $db->prepare($sql);
+                                                                            
+                                                                                        // On exécute
+                                                                                        $query->execute();
+                                                                            
+                                                                                        // On récupère les valeurs dans un tableau associatif
+                                                                                        $Matiere = $query->fetch();
+                                                                                    //** Fin select des receptions
+                                                                                    
+                                                                                    $IDR = $Matiere['idreception'];
+
+                                                                                    $IdMatiere = $Matiere['idmatierereception'];
+
+                                                                                    //** Debut select des receptions
+                                                                                        $sql = "SELECT * FROM `matiere` where `idmatiere`=$IdMatiere;";
+                                                                                
+                                                                                        // On prépare la requête
+                                                                                        $query = $db->prepare($sql);
+                                                                            
+                                                                                        // On exécute
+                                                                                        $query->execute();
+                                                                            
+                                                                                        // On récupère les valeurs dans un tableau associatif
+                                                                                        $MatiereDepart = $query->fetch();
+                                                                                    //** Fin select des receptions
+
+                                                                                    //** Debut select des receptions
+                                                                                        $sql = "SELECT * FROM `reception` where `actif`=1 and `idreception`=$IDR;";
+
+                                                                                        // On prépare la requête
+                                                                                        $query = $db->prepare($sql);
+
+                                                                                        // On exécute
+                                                                                        $query->execute();
+
+                                                                                        // On récupère les valeurs dans un tableau associatif
+                                                                                        $Reception = $query->fetch();
+                                                                                    //** Fin select des receptions       
+                                                                                ?>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Nom de la DF : </span><?php echo $Reception['entetedf']; ?></h5></label>
+                                                                                    <div class="col-sm-4">
+                                                                                        <h5 style="color:blue;"></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Date réception : </span><?php echo $Reception['datereception']; ?></h5></label>
+                                                                                    <div class="col-sm-4">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Nombre de bobine : </span><?php echo $MatiereDepart['nbbobine']; ?></h5></label>
+                                                                                    <div class="col-sm-4">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Poids des bobines : </span><?php echo $MatiereDepart['poidsdeclare']; ?> (KG)</h5></label>
+                                                                                    <div class="col-sm-4">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Lieu de la réception : </span><?php echo $MatiereDepart['lieutransfert']; ?></h5></label>
+                                                                                    <div class="col-sm-4">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-8 col-form-label"><h5 style="color: #199AF3">Commentaire associé lors de la réception : </h5></label><br>
+                                                                                    <div class="col-sm-8 ml-5">
+                                                                                        <h5><?php echo $Reception['commentaire']; ?></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Nom du récepteur : </span> <?php echo $Reception['nomrecepteur']; ?></h5></label>
+                                                                                    <div class="col-sm-6">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Matricule du camion : </span><?php echo $Reception['matriculecamion']; ?></h5></label>
+                                                                                    <div class="col-sm-6">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Numéro de BL : </span><?php echo $Reception['bl']; ?></h5></label>
+                                                                                    <div class="col-sm-6">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div> <hr>
+                                                                                <div class="form-group row mt-5">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Code bobine : </span><?php echo "REC00".$Matiere['idreception']."-BOB0-".$MatiereDepart['idmatiere']; ?></h5></label>
+                                                                                    <div class="col-sm-4">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-6 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Poids de la bobine déclaré lors du transfert : </span><?php echo $Matiere['poidsdeclare']; ?> (KG)</h5></label>
+                                                                                    <div class="col-sm-4">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Etat bobine : </span> <?php echo $Matiere['etatbobine']; ?></h5></label>
+                                                                                    <div class="col-sm-6">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col text-center">
+                                                                                <a href="" class="btn btn-primary text-center">Retour</a>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="card-footer bg-primary text-muted text-center">
+                                                                            <h5 style="color:white">METAL *** AFRIQUE</h5>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>    
+                                                            </div>
+                                                        </div>
                                                     <?php
                                                         }
                                                     ?> 
@@ -1282,7 +1704,8 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                         <div class="row">
                                             <table class="table table-bordered mb-2 ml-3 mr-4 col-lg-3" width="100%" cellspacing="0">
                                                 <thead>
-                                                    <tr>       
+                                                    <tr>  
+                                                        <th>N° FM</th>     
                                                         <th>Consommations (KG)</th>                                                                                
                                                         <th>Diametres</th>
                                                         <th>Rebus</th>
@@ -1295,11 +1718,150 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                                             $RebusTotal += $consommationC2Q2['dechet'];
                                                     ?>
                                                         <tr>
+                                                            <td style="background-color:#4e73df ; color:white;"><a style="text-decoration: none; font-family: arial; font-size: 20px; color:white;" href="javascript:void(0);" data-toggle="modal" data-target="#Information<?php echo $i; ?>" title="Voir details du produit" class="link-offset-2 link-underline"><?= $consommationC2Q2['numerofin'] ?></a></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $consommationC2Q2['piodstotal'] ?></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $consommationC2Q2['diametre'] ?></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $consommationC2Q2['dechet'] ?></td>
                                                         </tr>
-                                                    <!-- Pour le sweetAlert approuveTransfert !--> 
+                                                        <!-- Pour le sweetAlert approuveTransfert !--> 
+                                                        <div class="modal fade " id="Information<?php echo $i; ?>" tabindex="-1" aria-labelledby="fileModalLabel" aria-hidden="true" >
+                                                            <div class="modal-dialog modal-xl modal-dialog-centered" style="width=750px">
+                                                                <div class="modal-content">
+                                                                    <div class="card">
+                                                                        <div class="card-header bg-primary text-center">
+                                                                            <h5 class="modal-title" id="fileModalLabel" style="color:white">Details du produit consommé correspondant :</h5>
+                                                                        </div>
+                                                                        <div class="card-body">
+                                                                            <div class="col-lg-12 mt-5 mb-5">
+                                                                                <?php
+                                                                                    $IDM = $consommationC2Q2['numerofin'];
+                                                                                    //** Debut select des receptions
+                                                                                        $sql = "SELECT * FROM `matiere` where `numbobine`=$IDM;";
+                                                                            
+                                                                                        // On prépare la requête
+                                                                                        $query = $db->prepare($sql);
+                                                                            
+                                                                                        // On exécute
+                                                                                        $query->execute();
+                                                                            
+                                                                                        // On récupère les valeurs dans un tableau associatif
+                                                                                        $Matiere = $query->fetch();
+                                                                                    //** Fin select des receptions
+                                                                                    
+                                                                                    $IDR = $Matiere['idreception'];
+
+                                                                                    $IdMatiere = $Matiere['idmatierereception'];
+
+                                                                                    //** Debut select des receptions
+                                                                                        $sql = "SELECT * FROM `matiere` where `idmatiere`=$IdMatiere;";
+                                                                                
+                                                                                        // On prépare la requête
+                                                                                        $query = $db->prepare($sql);
+                                                                            
+                                                                                        // On exécute
+                                                                                        $query->execute();
+                                                                            
+                                                                                        // On récupère les valeurs dans un tableau associatif
+                                                                                        $MatiereDepart = $query->fetch();
+                                                                                    //** Fin select des receptions
+
+                                                                                    //** Debut select des receptions
+                                                                                        $sql = "SELECT * FROM `reception` where `actif`=1 and `idreception`=$IDR;";
+
+                                                                                        // On prépare la requête
+                                                                                        $query = $db->prepare($sql);
+
+                                                                                        // On exécute
+                                                                                        $query->execute();
+
+                                                                                        // On récupère les valeurs dans un tableau associatif
+                                                                                        $Reception = $query->fetch();
+                                                                                    //** Fin select des receptions       
+                                                                                ?>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Nom de la DF : </span><?php echo $Reception['entetedf']; ?></h5></label>
+                                                                                    <div class="col-sm-4">
+                                                                                        <h5 style="color:blue;"></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Date réception : </span><?php echo $Reception['datereception']; ?></h5></label>
+                                                                                    <div class="col-sm-4">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Nombre de bobine : </span><?php echo $MatiereDepart['nbbobine']; ?></h5></label>
+                                                                                    <div class="col-sm-4">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Poids des bobines : </span><?php echo $MatiereDepart['poidsdeclare']; ?> (KG)</h5></label>
+                                                                                    <div class="col-sm-4">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Lieu de la réception : </span><?php echo $MatiereDepart['lieutransfert']; ?></h5></label>
+                                                                                    <div class="col-sm-4">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-8 col-form-label"><h5 style="color: #199AF3">Commentaire associé lors de la réception : </h5></label><br>
+                                                                                    <div class="col-sm-8 ml-5">
+                                                                                        <h5><?php echo $Reception['commentaire']; ?></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Nom du récepteur : </span> <?php echo $Reception['nomrecepteur']; ?></h5></label>
+                                                                                    <div class="col-sm-6">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Matricule du camion : </span><?php echo $Reception['matriculecamion']; ?></h5></label>
+                                                                                    <div class="col-sm-6">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Numéro de BL : </span><?php echo $Reception['bl']; ?></h5></label>
+                                                                                    <div class="col-sm-6">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div> <hr>
+                                                                                <div class="form-group row mt-5">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Code bobine : </span><?php echo "REC00".$Matiere['idreception']."-BOB0-".$MatiereDepart['idmatiere']; ?></h5></label>
+                                                                                    <div class="col-sm-4">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-6 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Poids de la bobine déclaré lors du transfert : </span><?php echo $Matiere['poidsdeclare']; ?> (KG)</h5></label>
+                                                                                    <div class="col-sm-4">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Etat bobine : </span> <?php echo $Matiere['etatbobine']; ?></h5></label>
+                                                                                    <div class="col-sm-6">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col text-center">
+                                                                                <a href="" class="btn btn-primary text-center">Retour</a>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="card-footer bg-primary text-muted text-center">
+                                                                            <h5 style="color:white">METAL *** AFRIQUE</h5>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>    
+                                                            </div>
+                                                        </div>
                                                     <?php
                                                         }
                                                     ?> 
@@ -1438,7 +2000,8 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                         <div class="row">
                                             <table class="table table-bordered mb-2 ml-3 mr-4 col-lg-3" width="100%" cellspacing="0">
                                                 <thead>
-                                                    <tr>       
+                                                    <tr>  
+                                                        <th>N° FM</th>     
                                                         <th>Consommations (KG)</th>                                                                                
                                                         <th>Diametres</th>
                                                         <th>Rebus</th>
@@ -1451,11 +2014,150 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                                             $RebusTotal += $consommationC1Q3['dechet'];
                                                     ?>
                                                         <tr>
+                                                            <td style="background-color:#4e73df ; color:white;"><a style="text-decoration: none; font-family: arial; font-size: 20px; color:white;" href="javascript:void(0);" data-toggle="modal" data-target="#Information<?php echo $i; ?>" title="Voir details du produit" class="link-offset-2 link-underline"><?= $consommationC1Q3['numerofin'] ?></a></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $consommationC1Q3['piodstotal'] ?></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $consommationC1Q3['diametre'] ?></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $consommationC1Q3['dechet'] ?></td>
                                                         </tr>
-                                                    <!-- Pour le sweetAlert approuveTransfert !--> 
+                                                        <!-- Pour le sweetAlert approuveTransfert !--> 
+                                                        <div class="modal fade " id="Information<?php echo $i; ?>" tabindex="-1" aria-labelledby="fileModalLabel" aria-hidden="true" >
+                                                            <div class="modal-dialog modal-xl modal-dialog-centered" style="width=750px">
+                                                                <div class="modal-content">
+                                                                    <div class="card">
+                                                                        <div class="card-header bg-primary text-center">
+                                                                            <h5 class="modal-title" id="fileModalLabel" style="color:white">Details du produit consommé correspondant :</h5>
+                                                                        </div>
+                                                                        <div class="card-body">
+                                                                            <div class="col-lg-12 mt-5 mb-5">
+                                                                                <?php
+                                                                                    $IDM = $consommationC1Q3['numerofin'];
+                                                                                    //** Debut select des receptions
+                                                                                        $sql = "SELECT * FROM `matiere` where `numbobine`=$IDM;";
+                                                                            
+                                                                                        // On prépare la requête
+                                                                                        $query = $db->prepare($sql);
+                                                                            
+                                                                                        // On exécute
+                                                                                        $query->execute();
+                                                                            
+                                                                                        // On récupère les valeurs dans un tableau associatif
+                                                                                        $Matiere = $query->fetch();
+                                                                                    //** Fin select des receptions
+                                                                                    
+                                                                                    $IDR = $Matiere['idreception'];
+
+                                                                                    $IdMatiere = $Matiere['idmatierereception'];
+
+                                                                                    //** Debut select des receptions
+                                                                                        $sql = "SELECT * FROM `matiere` where `idmatiere`=$IdMatiere;";
+                                                                                
+                                                                                        // On prépare la requête
+                                                                                        $query = $db->prepare($sql);
+                                                                            
+                                                                                        // On exécute
+                                                                                        $query->execute();
+                                                                            
+                                                                                        // On récupère les valeurs dans un tableau associatif
+                                                                                        $MatiereDepart = $query->fetch();
+                                                                                    //** Fin select des receptions
+
+                                                                                    //** Debut select des receptions
+                                                                                        $sql = "SELECT * FROM `reception` where `actif`=1 and `idreception`=$IDR;";
+
+                                                                                        // On prépare la requête
+                                                                                        $query = $db->prepare($sql);
+
+                                                                                        // On exécute
+                                                                                        $query->execute();
+
+                                                                                        // On récupère les valeurs dans un tableau associatif
+                                                                                        $Reception = $query->fetch();
+                                                                                    //** Fin select des receptions       
+                                                                                ?>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Nom de la DF : </span><?php echo $Reception['entetedf']; ?></h5></label>
+                                                                                    <div class="col-sm-4">
+                                                                                        <h5 style="color:blue;"></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Date réception : </span><?php echo $Reception['datereception']; ?></h5></label>
+                                                                                    <div class="col-sm-4">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Nombre de bobine : </span><?php echo $MatiereDepart['nbbobine']; ?></h5></label>
+                                                                                    <div class="col-sm-4">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Poids des bobines : </span><?php echo $MatiereDepart['poidsdeclare']; ?> (KG)</h5></label>
+                                                                                    <div class="col-sm-4">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Lieu de la réception : </span><?php echo $MatiereDepart['lieutransfert']; ?></h5></label>
+                                                                                    <div class="col-sm-4">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-8 col-form-label"><h5 style="color: #199AF3">Commentaire associé lors de la réception : </h5></label><br>
+                                                                                    <div class="col-sm-8 ml-5">
+                                                                                        <h5><?php echo $Reception['commentaire']; ?></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Nom du récepteur : </span> <?php echo $Reception['nomrecepteur']; ?></h5></label>
+                                                                                    <div class="col-sm-6">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Matricule du camion : </span><?php echo $Reception['matriculecamion']; ?></h5></label>
+                                                                                    <div class="col-sm-6">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Numéro de BL : </span><?php echo $Reception['bl']; ?></h5></label>
+                                                                                    <div class="col-sm-6">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div> <hr>
+                                                                                <div class="form-group row mt-5">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Code bobine : </span><?php echo "REC00".$Matiere['idreception']."-BOB0-".$MatiereDepart['idmatiere']; ?></h5></label>
+                                                                                    <div class="col-sm-4">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-6 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Poids de la bobine déclaré lors du transfert : </span><?php echo $Matiere['poidsdeclare']; ?> (KG)</h5></label>
+                                                                                    <div class="col-sm-4">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Etat bobine : </span> <?php echo $Matiere['etatbobine']; ?></h5></label>
+                                                                                    <div class="col-sm-6">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col text-center">
+                                                                                <a href="" class="btn btn-primary text-center">Retour</a>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="card-footer bg-primary text-muted text-center">
+                                                                            <h5 style="color:white">METAL *** AFRIQUE</h5>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>    
+                                                            </div>
+                                                        </div>
                                                     <?php
                                                         }
                                                     ?> 
@@ -1582,7 +2284,8 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                         <div class="row">
                                             <table class="table table-bordered mb-2 ml-3 mr-4 col-lg-3" width="100%" cellspacing="0">
                                                 <thead>
-                                                    <tr>       
+                                                    <tr>   
+                                                        <th>N° FM</th>    
                                                         <th>Consommations (KG)</th>                                                                                
                                                         <th>Diametres</th>
                                                         <th>Rebus</th>
@@ -1595,11 +2298,150 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                                             $RebusTotal += $consommationC2Q3['dechet'];
                                                     ?>
                                                         <tr>
+                                                            <td style="background-color:#4e73df ; color:white;"><a style="text-decoration: none; font-family: arial; font-size: 20px; color:white;" href="javascript:void(0);" data-toggle="modal" data-target="#Information<?php echo $i; ?>" title="Voir details du produit" class="link-offset-2 link-underline"><?= $consommationC2Q3['numerofin'] ?></a></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $consommationC2Q3['piodstotal'] ?></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $consommationC2Q3['diametre'] ?></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $consommationC2Q3['dechet'] ?></td>
                                                         </tr>
-                                                    <!-- Pour le sweetAlert approuveTransfert !--> 
+                                                        <!-- Pour le sweetAlert approuveTransfert !--> 
+                                                        <div class="modal fade " id="Information<?php echo $i; ?>" tabindex="-1" aria-labelledby="fileModalLabel" aria-hidden="true" >
+                                                            <div class="modal-dialog modal-xl modal-dialog-centered" style="width=750px">
+                                                                <div class="modal-content">
+                                                                    <div class="card">
+                                                                        <div class="card-header bg-primary text-center">
+                                                                            <h5 class="modal-title" id="fileModalLabel" style="color:white">Details du produit consommé correspondant :</h5>
+                                                                        </div>
+                                                                        <div class="card-body">
+                                                                            <div class="col-lg-12 mt-5 mb-5">
+                                                                                <?php
+                                                                                    $IDM = $consommationC2Q3['numerofin'];
+                                                                                    //** Debut select des receptions
+                                                                                        $sql = "SELECT * FROM `matiere` where `numbobine`=$IDM;";
+                                                                            
+                                                                                        // On prépare la requête
+                                                                                        $query = $db->prepare($sql);
+                                                                            
+                                                                                        // On exécute
+                                                                                        $query->execute();
+                                                                            
+                                                                                        // On récupère les valeurs dans un tableau associatif
+                                                                                        $Matiere = $query->fetch();
+                                                                                    //** Fin select des receptions
+                                                                                    
+                                                                                    $IDR = $Matiere['idreception'];
+
+                                                                                    $IdMatiere = $Matiere['idmatierereception'];
+
+                                                                                    //** Debut select des receptions
+                                                                                        $sql = "SELECT * FROM `matiere` where `idmatiere`=$IdMatiere;";
+                                                                                
+                                                                                        // On prépare la requête
+                                                                                        $query = $db->prepare($sql);
+                                                                            
+                                                                                        // On exécute
+                                                                                        $query->execute();
+                                                                            
+                                                                                        // On récupère les valeurs dans un tableau associatif
+                                                                                        $MatiereDepart = $query->fetch();
+                                                                                    //** Fin select des receptions
+
+                                                                                    //** Debut select des receptions
+                                                                                        $sql = "SELECT * FROM `reception` where `actif`=1 and `idreception`=$IDR;";
+
+                                                                                        // On prépare la requête
+                                                                                        $query = $db->prepare($sql);
+
+                                                                                        // On exécute
+                                                                                        $query->execute();
+
+                                                                                        // On récupère les valeurs dans un tableau associatif
+                                                                                        $Reception = $query->fetch();
+                                                                                    //** Fin select des receptions       
+                                                                                ?>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Nom de la DF : </span><?php echo $Reception['entetedf']; ?></h5></label>
+                                                                                    <div class="col-sm-4">
+                                                                                        <h5 style="color:blue;"></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Date réception : </span><?php echo $Reception['datereception']; ?></h5></label>
+                                                                                    <div class="col-sm-4">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Nombre de bobine : </span><?php echo $MatiereDepart['nbbobine']; ?></h5></label>
+                                                                                    <div class="col-sm-4">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Poids des bobines : </span><?php echo $MatiereDepart['poidsdeclare']; ?> (KG)</h5></label>
+                                                                                    <div class="col-sm-4">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Lieu de la réception : </span><?php echo $MatiereDepart['lieutransfert']; ?></h5></label>
+                                                                                    <div class="col-sm-4">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-8 col-form-label"><h5 style="color: #199AF3">Commentaire associé lors de la réception : </h5></label><br>
+                                                                                    <div class="col-sm-8 ml-5">
+                                                                                        <h5><?php echo $Reception['commentaire']; ?></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Nom du récepteur : </span> <?php echo $Reception['nomrecepteur']; ?></h5></label>
+                                                                                    <div class="col-sm-6">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Matricule du camion : </span><?php echo $Reception['matriculecamion']; ?></h5></label>
+                                                                                    <div class="col-sm-6">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Numéro de BL : </span><?php echo $Reception['bl']; ?></h5></label>
+                                                                                    <div class="col-sm-6">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div> <hr>
+                                                                                <div class="form-group row mt-5">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Code bobine : </span><?php echo "REC00".$Matiere['idreception']."-BOB0-".$MatiereDepart['idmatiere']; ?></h5></label>
+                                                                                    <div class="col-sm-4">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-6 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Poids de la bobine déclaré lors du transfert : </span><?php echo $Matiere['poidsdeclare']; ?> (KG)</h5></label>
+                                                                                    <div class="col-sm-4">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="form-group row">
+                                                                                    <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Etat bobine : </span> <?php echo $Matiere['etatbobine']; ?></h5></label>
+                                                                                    <div class="col-sm-6">
+                                                                                        <h5></h5>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col text-center">
+                                                                                <a href="" class="btn btn-primary text-center">Retour</a>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="card-footer bg-primary text-muted text-center">
+                                                                            <h5 style="color:white">METAL *** AFRIQUE</h5>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>    
+                                                            </div>
+                                                        </div>
                                                     <?php
                                                         }
                                                     ?> 

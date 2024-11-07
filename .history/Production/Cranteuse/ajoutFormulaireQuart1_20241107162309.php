@@ -149,7 +149,7 @@
             //
 
             // Consommations
-                for ($i = 0; $i < count($_POST['diametre']); $i++){   
+                for ($i = 0; $i < count($_POST['diametre']); $i++){
                     $diametre=htmlspecialchars( $_POST['diametre'][$i]);
                     $numerofinString = explode("/", htmlspecialchars($_POST['numerofin'][$i]));
                     $numerofin=$numerofinString[0];
@@ -158,9 +158,9 @@
                     $dechet=htmlspecialchars($_POST['dechet'][$i]);
 
                     // Voir si FM est fini
-                    if(isset($_POST['finirfm'][$i])){     
+                    if(isset($_POST['finirfm'.$i])){
                         $insertUser=$db->prepare("INSERT INTO `cranteuseq1consommation` (`idcranteuseq1consommation`, `diametre`, `numerofin`, `poids`, `dechet`, `idfichecranteuseq1`, `actif`, `heuremontagebobine`,`finirfm`) 
-                        VALUES (NULL, ?, ?, ?, ?, ?, '1', ?,1);");
+                        VALUES (NULL, ?, ?, ?, ?, ?, '1', ?, 1);");
                         $insertUser->execute(array($diametre,$numerofin,$poids,$dechet,$idfichecranteuseq1Max, $heuremontagebobine));
     
                         // On enleve une bobine dans la table epaisseur
@@ -320,8 +320,11 @@
     </script>
 
     <script type="text/javascript"> 
+        var foo1 = "<script>";
+        var foo2 = "</scr"+"ipt>";
+
         $(document).ready(function(){  
-            var i = 1; 
+            var i = 0; 
             $('#addErreurs').click(function(){           
             //alert('ok');           
             i++;           
@@ -344,11 +347,7 @@
                 <td style="background-color:#CFFEDA;">
                     <div class="col-md-10">
                         <div class="mb-1 text-start">
-                            <select class="form-control" name="raisonerreur[]">
-                                <option>Raison 1</option>
-                                <option>Raison 2</option>
-                                <option>Raison 3</option> 
-                            </select>                                                
+                            <input class="form-control" id="validationDefault01" type="text" name="raisonerreur[]" value="" placeholder="Mettez la raison d'erreur" required>
                         </div>
                     </div>
                 </td>
@@ -368,14 +367,14 @@
                 <td style="background-color:#CFFEDA ;">
                     <div class="col-md-10">
                         <div class="mb-1 text-start">
-                            <input class="form-control designa" type="number" step="0.01" name="diametre[]" id="example" value="" required>
+                            <input class="form-control designa" type="number" step="0.01" name="diametre[]" id="diametre`+i+`" value="" required>
                         </div> 
                     </div>
                 </td>
                 <td style="background-color:#CFFEDA ;">
                     <div class="">
                         <div class="mb-1 text-start">
-                            <select class="form-control" name="numerofin[]">
+                            <select class="form-control" name="numerofin[]" id="numerofin`+i+`" required>
                                 <option></option> 
                                 <?php
                                     foreach($stockCranteuse as $stock){
@@ -388,6 +387,17 @@
                         </div>
                     </div>     
                 </td>
+                `+foo1+`
+                    $(document).ready(function(){
+                        $('#numerofin`+i+`').change(function(){
+                            //Selected value
+                            var inputValue = $(this).val();
+                            var myArray = inputValue.split('/');
+                            document.getElementById("diametre`+i+`").value = myArray[1];
+                            document.getElementById("poids`+i+`").value = myArray[2];
+                        });
+                    });
+                `+foo2+`
                 <td style="background-color:#CFFEDA ;">
                     <div class="col-md-10">
                         <div class="mb-1 text-start">
@@ -398,7 +408,7 @@
                 <td style="background-color:#CFFEDA ;">
                     <div class="col-md-10">
                         <div class="mb-1 text-start">
-                            <input class="form-control designa" type="number" step="0.01" name="poids[]" id="example" value="" required>
+                            <input class="form-control designa" type="number" step="0.01" name="poids[]" id="poids`+i+`" value="" required>
                         </div>
                     </div>
                 </td>
@@ -413,7 +423,7 @@
                     <div class="col-md-10">
                         <div class="form-check-inline">
                             <label class="form-check-label">
-                                <input type="checkbox" style="width: 25px; height: 25px;" class="form-check-input" name="finirfm">
+                                <input type="checkbox" style="width: 25px; height: 25px;" class="form-check-input" name="finirfm`+i+`[]">
                             </label>
                         </div>
                     </div>  
@@ -435,21 +445,21 @@
                 <td style="background-color:#CFFEDA ;">
                     <div class="col-md-10">
                         <div class="mb-1 text-start">
-                            <input class="form-control designa" type="number" step="0.01" name="Proddiametre[]" id="Proddiametre" value="" required>
+                            <input class="form-control designa" type="number" step="0.01" name="Proddiametre[]" id="Proddiametre`+i+`" value="" required>
                         </div>
                     </div>
                 </td>
                 <td style="background-color:#CFFEDA ;">
                     <div class="col-md-10">
                         <div class="mb-1 text-start">
-                            <input class="form-control designa" type="text" name="Prodnomenclature[]" id="Prodnomenclature" value="" required>
+                            <input class="form-control designa" type="text" name="Prodnomenclature[]" id="Prodnomenclature" value="">
                         </div>
                     </div>
                 </td>
                 <td style="background-color:#CFFEDA ;">
                     <div class="">
                         <div class="mb-1 text-start">
-                            <select class="form-control" name="Prodnumerofin[]" id="numerofinProd">
+                            <select class="form-control" name="Prodnumerofin[]" id="numerofinProd`+i+`" required>
                                 <option></option> 
                                 <?php
                                     foreach($stockCranteuse as $stock){
@@ -462,10 +472,21 @@
                         </div>
                     </div>
                 </td>
+                `+foo1+`
+                    $(document).ready(function(){
+                        $('#numerofinProd`+i+`').change(function(){
+                            //Selected value
+                            var inputValue = $(this).val();
+                            var myArray = inputValue.split('/');
+                            document.getElementById("Proddiametre`+i+`").value = myArray[1];
+                            document.getElementById("Prodpoids`+i+`").value = myArray[2];
+                        });
+                    });
+                `+foo2+`
                 <td style="background-color:#CFFEDA ;">
                     <div class="col-md-10">
                         <div class="mb-1 text-start">
-                            <input class="form-control designa" type="number" step="0.01" name="Prodpoids[]" id="Prodpoids" value="" required>
+                            <input class="form-control designa" type="number" step="0.01" name="Prodpoids[]" id="Prodpoids`+i+`" value="" required>
                         </div>
                     </div>
                 </td>
@@ -671,14 +692,14 @@
                                                                         <td style="background-color:#CFFEDA ;">
                                                                             <div class="col-md-10">
                                                                                 <div class="mb-1 text-start">
-                                                                                    <input class="form-control designa" type="text" name="Prodnomenclature[]" id="Prodnomenclature" value="" required>
+                                                                                    <input class="form-control designa" type="text" name="Prodnomenclature[]" id="Prodnomenclature" value="">
                                                                                 </div>
                                                                             </div>
                                                                         </td>
                                                                         <td style="background-color:#CFFEDA ;">
                                                                             <div class="">
                                                                                 <div class="mb-1 text-start">
-                                                                                    <select class="form-control" name="Prodnumerofin[]" id="numerofinProd">
+                                                                                    <select class="form-control" name="Prodnumerofin[]" id="numerofinProd" required>
                                                                                         <option></option> 
                                                                                         <?php
                                                                                             foreach($stockCranteuse as $stock){
@@ -765,7 +786,7 @@
                                                             </thead>
                                                             <tbody id="dynamicaddConsommations">
                                                                 <?php
-                                                                    //$i=0;
+                                                                    $i=0;
                                                                     //for ($i = 0; $i <= $NombreLigne; $i++){
                                                                         //$i++;
                                                                         //if($article['status'] == 'termine'){
@@ -781,7 +802,7 @@
                                                                         <td style="background-color:#CFFEDA ;">
                                                                             <div class="">
                                                                                 <div class="mb-1 text-start">
-                                                                                    <select class="form-control" id="numerofin" name="numerofin[]">
+                                                                                    <select class="form-control" id="numerofin" name="numerofin[]" required>
                                                                                         <option></option> 
                                                                                         <?php
                                                                                             foreach($stockCranteuse as $stock){
@@ -830,7 +851,7 @@
                                                                             <div class="col-md-10">
                                                                                 <div class="form-check-inline">
                                                                                     <label class="form-check-label">
-                                                                                        <input type="checkbox" style="width: 25px; height: 25px;" class="form-check-input" name="finirfm">
+                                                                                        <input type="checkbox" style="width: 25px; height: 25px;" class="form-check-input" name="finirfm<?php echo $i;?>[]">
                                                                                     </label>
                                                                                 </div>
                                                                             </div>  
@@ -887,7 +908,7 @@
                                                                                 </div>
                                                                             </div>
                                                                         </td>
-                                                                        <td style="background-color:#CFFEDA;">
+                                                                        <!--<td style="background-color:#CFFEDA;">
                                                                             <div class="col-md-10">
                                                                                 <div class="mb-1 text-start">
                                                                                     <select class="form-control" name="raisonerreur[]">
@@ -895,6 +916,13 @@
                                                                                         <option>Raison 2</option>
                                                                                         <option>Raison 3</option> 
                                                                                     </select>                                                
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>!-->
+                                                                        <td style="background-color:#CFFEDA;">
+                                                                            <div class="col-md-10">
+                                                                                <div class="mb-1 text-start">
+                                                                                    <input class="form-control" id="validationDefault01" type="text" name="raisonerreur[]" value="" placeholder="Mettez la raison d'erreur" required>
                                                                                 </div>
                                                                             </div>
                                                                         </td>
@@ -1025,7 +1053,7 @@
                                                                         <td style="background-color:#CFFEDA ;">
                                                                             <div class="">
                                                                                 <div class="mb-1 text-start">
-                                                                                    <select class="form-control" name="Prodnumerofin[]" id="numerofinProd">
+                                                                                    <select class="form-control" name="Prodnumerofin[]" id="numerofinProd" required>
                                                                                         <option value="<?php echo $_POST['Prodnumerofin'][$i].'/'; ?>"><?php $numerofinString = explode("/", $_POST['Prodnumerofin'][$i]); echo $numerofinString[0]; ?></option> 
                                                                                         <?php
                                                                                             foreach($stockCranteuse as $stock){
@@ -1128,7 +1156,7 @@
                                                                         <td style="background-color:#CFFEDA ;">
                                                                             <div class="">
                                                                                 <div class="mb-1 text-start">
-                                                                                    <select class="form-control" id="numerofin" name="numerofin[]">
+                                                                                    <select class="form-control" id="numerofin" name="numerofin[]" required>
                                                                                         <option value="<?php echo $_POST['numerofin'][$i].'/' ?>"><?php $numerofinString = explode("/", $_POST['numerofin'][$i]); echo $numerofinString[0]; ?></option> 
                                                                                         <?php
                                                                                             foreach($stockCranteuse as $stock){
@@ -1177,7 +1205,7 @@
                                                                             <div class="col-md-10">
                                                                                 <div class="form-check-inline">
                                                                                     <label class="form-check-label">
-                                                                                        <input type="checkbox" style="width: 25px; height: 25px;" class="form-check-input" name="finirfm" <?php if(isset($_POST['finirfm'][$i])){ echo "checked"; } ?> >
+                                                                                        <input type="checkbox" style="width: 25px; height: 25px;" class="form-check-input" name="finirfm<?php echo $i;?>[]" <?php if(isset($_POST['finirfm'.$i])){ echo "checked"; } ?> >
                                                                                     </label>
                                                                                 </div>
                                                                             </div>  
@@ -1234,14 +1262,21 @@
                                                                                 </div>
                                                                             </div>
                                                                         </td>
-                                                                        <td style="background-color:#CFFEDA;">
+                                                                        <!--<td style="background-color:#CFFEDA;">
                                                                             <div class="col-md-10">
                                                                                 <div class="mb-1 text-start">
                                                                                     <select class="form-control" name="raisonerreur[]">
-                                                                                        <option <?php if ( $_POST['raisonerreur']=="Raison 1") {echo "selected='selected'";} ?>>Raison 1</option>
-                                                                                        <option <?php if ( $_POST['raisonerreur']=="Raison 2") {echo "selected='selected'";} ?>>Raison 2</option>
-                                                                                        <option <?php if ( $_POST['raisonerreur']=="Raison 3") {echo "selected='selected'";} ?>>Raison 3</option> 
+                                                                                        <option <?php if ( $_POST['raisonerreur'][$i]=="Raison 1") {echo "selected='selected'";} ?>>Raison 1</option>
+                                                                                        <option <?php if ( $_POST['raisonerreur'][$i]=="Raison 2") {echo "selected='selected'";} ?>>Raison 2</option>
+                                                                                        <option <?php if ( $_POST['raisonerreur'][$i]=="Raison 3") {echo "selected='selected'";} ?>>Raison 3</option> 
                                                                                     </select>                                                
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>!-->
+                                                                        <td style="background-color:#CFFEDA;">
+                                                                            <div class="col-md-10">
+                                                                                <div class="mb-1 text-start">
+                                                                                    <input class="form-control" id="validationDefault01" type="text" name="raisonerreur[]" value="<?php echo $_POST['raisonerreur'][$i]; ?>" placeholder="Mettez la raison d'erreur" required>
                                                                                 </div>
                                                                             </div>
                                                                         </td>
