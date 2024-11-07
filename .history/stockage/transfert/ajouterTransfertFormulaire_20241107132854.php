@@ -69,7 +69,7 @@
             $poidspese=htmlspecialchars($_POST['poidspese'][$i]);
             $pointdepart=htmlspecialchars($_POST['pointdepart'][$i]);
             $pointarrive=htmlspecialchars($_POST['pointarrive'][$i]);
-            if(empty($_POST['nbbobine'][$i])){
+            if(isset($_POST['nbbobine'][$i])){
                 $nbbobine=1;
             }else{
                 $nbbobine=htmlspecialchars($_POST['nbbobine'][$i]);
@@ -117,12 +117,7 @@
                 $poidspese=htmlspecialchars($_POST['poidspese'][$i]);
                 $pointdepart=htmlspecialchars($_POST['pointdepart'][$i]);
                 $pointarrive=htmlspecialchars($_POST['pointarrive'][$i]);
-                if(empty($_POST['nbbobine'][$i])){
-                    $nbbobine=1;
-                }else{
-                    $nbbobine=htmlspecialchars($_POST['nbbobine'][$i]);
-                }
-                //$nbbobine=htmlspecialchars($_POST['nbbobine'][$i]);
+                $nbbobine=htmlspecialchars($_POST['nbbobine'][$i]);
                 //$codereception=htmlspecialchars($_POST['codereception'][$i]);
                 $numbobine=htmlspecialchars($_POST['numbobine'][$i]);
 

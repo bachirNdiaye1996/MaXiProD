@@ -91,7 +91,7 @@
             //Fin Rechercher le nombre de piéces 
 
             if(($numbobine == "" && $pointarrive == "Cranteuse") || ($numbobine == "" && $pointarrive == "Tréfilage")){ 
-                $ProblemeNumeroBobine="erreurProblemeNumeroBobine";
+                //$ProblemeNumeroBobine="erreurProblemeNumeroBobine";
                 $ligneErreurBobine = $i+1;
             }
 
