@@ -705,6 +705,7 @@ $ReceptionStock = $query->fetchAll();
                                                     <th>Code transfert</th>                                                                                
                                                     <th>Epaisseur</th>
                                                     <th>Nombre bobine</th>
+                                                    <th>Numéro FM</th>
                                                     <th>Poids déclaré (KG)</th>
                                                     <th>Poids pesé (KG)</th>
                                                     <th>Etat bobine</th>
@@ -727,6 +728,7 @@ $ReceptionStock = $query->fetchAll();
                                                         </td>
                                                         <td style="<?php if($transfert['actifapprouvtransfert'] == 1){ echo 'background-color:#D72708 ; color:white;';}else{echo 'background-color:#4e73df ; color:white;';}?>"><?= $transfert['epaisseur'] ?></td>
                                                         <td style="<?php if($transfert['actifapprouvtransfert'] == 1){ echo 'background-color:#D72708 ; color:white;';}else{echo 'background-color:#4e73df ; color:white;';}?>"><?= $transfert['nbbobine'] ?></td>
+                                                        <td style="<?php if($transfert['actifapprouvtransfert'] == 1){ echo 'background-color:#D72708 ; color:white;';}else{echo 'background-color:#4e73df ; color:white;';}?>"><?php if($transfert['nbbobine'] == 1){echo $transfert['numbobine'];} ?></td>
                                                         <td style="<?php if($transfert['actifapprouvtransfert'] == 1){ echo 'background-color:#D72708 ; color:white;';}else{echo 'background-color:#4e73df ; color:white;';}?>"><?= $transfert['poidsdeclare'] ?></td>
                                                         <td style="<?php if($transfert['actifapprouvtransfert'] == 1){ echo 'background-color:#D72708 ; color:white;';}else{echo 'background-color:#4e73df ; color:white;';}?>"><?= $transfert['poidspese'] ?></td>
                                                         <td style="<?php if($transfert['actifapprouvtransfert'] == 1){ echo 'background-color:#D72708 ; color:white;';}else{echo 'background-color:#4e73df ; color:white;';}?>"><?= $transfert['etatbobine'] ?></td>
