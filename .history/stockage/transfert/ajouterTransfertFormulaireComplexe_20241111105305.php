@@ -222,8 +222,6 @@
         }
     }
 
-    //print_r($ProblemeNbBobineDepart);
-
 
 ?>
 
@@ -580,7 +578,7 @@
                                                     <div class="col-md-2 mr-2 mt-3 mb-5">
                                                         <div class="mb-1 text-start">
                                                             <label class="form-label fw-bold" for="nom">Nom complet du saisisseur</label>
-                                                            <input class="form-control" id="validationDefault01" type="text" name="saisisseur" value="<?php echo $_POST['saisisseur']; ?>" placeholder="Mettez le nom complet du saisisseur" required>
+                                                            <input class="form-control" id="validationDefault01" type="text" name="saisisseur" value="" placeholder="Mettez le nom complet du saisisseur" required>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-2 ml-5 mt-3">
@@ -770,7 +768,7 @@
                                                         <?php if($ProblemeNumeroBobine == "erreurProblemeNumeroBobine"){ ?> 
                                                             <script>    
                                                                 Swal.fire({
-                                                                    text: 'Veiller renseigner le numéro de fil machine en corrigeant la ligne svp!',
+                                                                    text: 'Veiller renseigner le numéro de fil machine en corrigeant la ligne <?php echo $ligneErreurBobine; ?> svp!',
                                                                     icon: 'error',
                                                                     timer: 5500,
                                                                     showConfirmButton: false,
@@ -783,7 +781,7 @@
                                                         <?php if($ProblemeNbBobineDepart == "erreurProblemeNbDepart"){ ?> 
                                                             <script>    
                                                                 Swal.fire({
-                                                                    text: 'Veiller revoir votre stockage (nombre de bobine, epaisseur ou poids déclaré) et corrigé la ligne svp!',
+                                                                    text: 'Veiller revoir votre stockage (nombre de bobine, epaisseur ou poids déclaré) et corrigé la ligne <?php echo $ligneErreur; ?> svp!',
                                                                     icon: 'error',
                                                                     timer: 5500,
                                                                     showConfirmButton: false,

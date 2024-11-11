@@ -222,8 +222,6 @@
         }
     }
 
-    //print_r($ProblemeNbBobineDepart);
-
 
 ?>
 
@@ -238,7 +236,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <link rel="shortcut icon" href="../image/iconOnglet.png"/>
+    <link rel="shortcut icon" href="../image/iconOnglet.png" />
     <title>METAL AFRIQUE</title>
 
     <!-- Custom fonts for this template -->
@@ -770,7 +768,7 @@
                                                         <?php if($ProblemeNumeroBobine == "erreurProblemeNumeroBobine"){ ?> 
                                                             <script>    
                                                                 Swal.fire({
-                                                                    text: 'Veiller renseigner le numéro de fil machine en corrigeant la ligne svp!',
+                                                                    text: 'Veiller renseigner le numéro de fil machine en corrigeant la ligne <?php echo $ligneErreurBobine; ?> svp!',
                                                                     icon: 'error',
                                                                     timer: 5500,
                                                                     showConfirmButton: false,
@@ -783,7 +781,7 @@
                                                         <?php if($ProblemeNbBobineDepart == "erreurProblemeNbDepart"){ ?> 
                                                             <script>    
                                                                 Swal.fire({
-                                                                    text: 'Veiller revoir votre stockage (nombre de bobine, epaisseur ou poids déclaré) et corrigé la ligne svp!',
+                                                                    text: 'Veiller revoir votre stockage (nombre de bobine, epaisseur ou poids déclaré) et corrigé la ligne <?php echo $ligneErreur; ?> svp!',
                                                                     icon: 'error',
                                                                     timer: 5500,
                                                                     showConfirmButton: false,

@@ -770,7 +770,7 @@
                                                         <?php if($ProblemeNumeroBobine == "erreurProblemeNumeroBobine"){ ?> 
                                                             <script>    
                                                                 Swal.fire({
-                                                                    text: 'Veiller renseigner le numéro de fil machine en corrigeant la ligne svp!',
+                                                                    text: 'Veiller renseigner le numéro de fil machine en corrigeant la ligne <?php echo $ligneErreurBobine; ?> svp!',
                                                                     icon: 'error',
                                                                     timer: 5500,
                                                                     showConfirmButton: false,
@@ -780,10 +780,10 @@
                                                                 });
                                                             </script> 
                                                         <?php } ?>
-                                                        <?php if($ProblemeNbBobineDepart == "erreurProblemeNbDepart"){ ?> 
+                                                        <?php if($ProblemeNbBobineDepart == "erreurProblemeNbDepart"){ print_r("Test 122"); ?> 
                                                             <script>    
                                                                 Swal.fire({
-                                                                    text: 'Veiller revoir votre stockage (nombre de bobine, epaisseur ou poids déclaré) et corrigé la ligne svp!',
+                                                                    text: 'Veiller revoir votre stockage (nombre de bobine, epaisseur ou poids déclaré) et corrigé la ligne <?php echo $ligneErreur; ?> svp!',
                                                                     icon: 'error',
                                                                     timer: 5500,
                                                                     showConfirmButton: false,

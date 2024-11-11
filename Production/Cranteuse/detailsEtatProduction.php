@@ -40,7 +40,7 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
             $IdproductioncrantC1Q1 = $productioncrantC1Q1['idfichecranteuseq1'];    // Id de productioncrantC1Q1
 
             //** Debut select de la production (consommation)
-                $sql = "SELECT sum(poids) as piodstotal, diametre, numerofin, sum(dechet) as dechet FROM `cranteuseq1consommation` where `actif`=1 and `idfichecranteuseq1`=$IdproductioncrantC1Q1 GROUP BY `diametre` ORDER BY `diametre` DESC;";
+                $sql = "SELECT sum(poids) as piodstotal, diametre, numerofin, sum(dechet) as dechet FROM `cranteuseq1consommation` where `actif`=1 and `idfichecranteuseq1`=$IdproductioncrantC1Q1 GROUP BY `diametre` ORDER BY `diametre` ASC;";
 
                 // On prépare la requête
                 $query = $db->prepare($sql);
@@ -115,7 +115,7 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
             $IdproductioncrantC2Q1 = $productioncrantC2Q1['idfichecranteuseq1'];    // Id de productioncrantC1Q1
 
             //** Debut select de la production (consommation)
-                $sql = "SELECT sum(poids) as piodstotal, diametre, numerofin, sum(dechet) as dechet FROM `cranteuseq1consommation` where `actif`=1 and `idfichecranteuseq1`=$IdproductioncrantC2Q1 GROUP BY `diametre` ORDER BY `diametre` DESC;";
+                $sql = "SELECT sum(poids) as piodstotal, diametre, numerofin, sum(dechet) as dechet FROM `cranteuseq1consommation` where `actif`=1 and `idfichecranteuseq1`=$IdproductioncrantC2Q1 GROUP BY `diametre` ORDER BY `diametre` ASC;";
 
                 // On prépare la requête
                 $query = $db->prepare($sql);
@@ -191,7 +191,7 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
         $IdproductioncrantC1Q2 = $productioncrantC1Q2['idfichecranteuseq1'];    // Id de productioncrantC1Q1
 
         //** Debut select de la production (consommation)
-            $sql = "SELECT sum(poids) as piodstotal, diametre, numerofin, sum(dechet) as dechet FROM `cranteuseq1consommation` where `actif`=1 and `idfichecranteuseq1`=$IdproductioncrantC1Q2 GROUP BY `diametre` ORDER BY `diametre` DESC;";
+            $sql = "SELECT sum(poids) as piodstotal, diametre, numerofin, sum(dechet) as dechet FROM `cranteuseq1consommation` where `actif`=1 and `idfichecranteuseq1`=$IdproductioncrantC1Q2 GROUP BY `diametre` ORDER BY `diametre` ASC;";
 
             // On prépare la requête
             $query = $db->prepare($sql);
@@ -266,7 +266,7 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
             $IdproductioncrantC2Q2 = $productioncrantC2Q2['idfichecranteuseq1'];    // Id de productioncrantC1Q1
 
             //** Debut select de la production (consommation)
-                $sql = "SELECT sum(poids) as piodstotal, diametre, numerofin, sum(dechet) as dechet FROM `cranteuseq1consommation` where `actif`=1 and `idfichecranteuseq1`=$IdproductioncrantC2Q2 GROUP BY `diametre` ORDER BY `diametre` DESC;";
+                $sql = "SELECT sum(poids) as piodstotal, diametre, numerofin, sum(dechet) as dechet FROM `cranteuseq1consommation` where `actif`=1 and `idfichecranteuseq1`=$IdproductioncrantC2Q2 GROUP BY `diametre` ORDER BY `diametre` ASC;";
 
                 // On prépare la requête
                 $query = $db->prepare($sql);
@@ -343,7 +343,7 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
         $IdproductioncrantC1Q3 = $productioncrantC1Q3['idfichecranteuseq1'];    // Id de productioncrantC1Q1
 
         //** Debut select de la production (consommation)
-            $sql = "SELECT sum(poids) as piodstotal, diametre, numerofin, sum(dechet) as dechet FROM `cranteuseq1consommation` where `actif`=1 and `idfichecranteuseq1`=$IdproductioncrantC1Q3 GROUP BY `diametre` ORDER BY `diametre` DESC;";
+            $sql = "SELECT sum(poids) as piodstotal, diametre, numerofin, sum(dechet) as dechet FROM `cranteuseq1consommation` where `actif`=1 and `idfichecranteuseq1`=$IdproductioncrantC1Q3 GROUP BY `diametre` ORDER BY `diametre` ASC;";
 
             // On prépare la requête
             $query = $db->prepare($sql);
@@ -418,7 +418,7 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
             $IdproductioncrantC2Q3 = $productioncrantC2Q3['idfichecranteuseq1'];    // Id de productioncrantC1Q1
 
             //** Debut select de la production (consommation)
-                $sql = "SELECT sum(poids) as piodstotal, diametre, numerofin, sum(dechet) as dechet FROM `cranteuseq1consommation` where `actif`=1 and `idfichecranteuseq1`=$IdproductioncrantC2Q3 GROUP BY `diametre` ORDER BY `diametre` DESC;";
+                $sql = "SELECT sum(poids) as piodstotal, diametre, numerofin, sum(dechet) as dechet FROM `cranteuseq1consommation` where `actif`=1 and `idfichecranteuseq1`=$IdproductioncrantC2Q3 GROUP BY `diametre` ORDER BY `diametre` ASC;";
 
                 // On prépare la requête
                 $query = $db->prepare($sql);
