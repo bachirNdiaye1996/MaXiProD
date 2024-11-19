@@ -7,6 +7,9 @@ if(!$_SESSION['niveau']){
 }
 
 include "../connexion/conexiondb.php";
+include "./mailReception.php";
+include "../variables.php";
+
 
 
 //Variables
@@ -106,6 +109,42 @@ if(isset($_POST['approuveReceptionRectifie'])){
             //Pour enlever la couleur rouge
             $sql1 = "UPDATE `matiere` set `acceptereceptionmodif`=1 where idmatiere=$idmatiereDemandeRectifier";
             $db->query($sql1);
+
+            $messageD = "
+            <html>  
+            <head>
+            <meta http-equiv='Content-Type' content='text/html; charset=utf-8' />
+                <title>Nouveau compte</title>
+            </head>
+            <body>
+                <div id='email-wrap' style='background: #3F5EFB; border-radius: 10px;'><br><br>
+                    <p align='center' style='margin-top:20px;'>
+                        <h2 align='center' style='color:white'>METAL * * * AFRIQUE</h2>
+                        <p align='center' style='color:white'>$_SESSION[nomcomplet] vous demande l'autorisation de modifier ou de supprimer une reception de code de reception : <strong>REC00-$idreceptionDemandeRectifier </strong></p>
+                        <p align='center' style='color:white'>Avec comme motif : <strong>$motifRectifier</strong></p>
+                        <p align='center'><a href=$HOST style='color:white'>Cliquez ici pour y acceder.</a></p>
+                    </p>
+                    <br><br>
+                </div>
+            </body>
+            </html>
+                ";
+
+            // Utilisateur admin seul
+                $sql = "SELECT * FROM `utilisateur` where `actif`=1 and `niveau`='admin';";
+
+                // On prépare la requête
+                $query = $db->prepare($sql);
+
+                // On exécute
+                $query->execute();
+
+                // On récupère les valeurs dans un tableau associatif
+                $UserMails = $query->fetchAll();
+            //** Fin select 
+            foreach($UserMails as $user => $item){
+                envoie_mail("Gestion de production réctification",$item['email'],"Demande de réctification pour la réception de code REC00-$idreceptionDemandeRectifier",$messageD);
+            }
     
             header("location: detailsReception.php?idreception=$idreceptionDemandeRectifier");
             exit;
@@ -400,147 +439,9 @@ $ReceptionStock = $query->fetchAll();
     <!-- Page Wrapper -->
     <div id="wrapper">
 
-        <!-- Sidebar -->
-        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
-
-             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="../indexPage/accueil.php">
-                <div class="sidebar-brand-icon rotate-n-15">
-                    <i class="fas fa-laugh-wink"></i>
-                </div>
-                <div class="sidebar-brand-text mx-3">SB Admin <sup>2</sup></div>
-            </a>
-
-            <!-- Divider -->
-            <hr class="sidebar-divider my-0">
-
-            <!-- Nav Item - Dashboard -->
-            <li class="nav-item active">
-                <a class="nav-link" href="../indexPage/accueil.php">
-                    <i class="fas fa-fw fa-tachometer-alt"></i>
-                    <span>Accueil Dashboard</span></a>
-            </li>
-
-
-            <!-- Divider -->
-            <hr class="sidebar-divider">
-
-            <!-- Nav Item - Tables -->
-
-            <li class="nav-item active">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseReception"
-                    aria-expanded="true" aria-controls="collapseUtilities">
-                    <i class="fa fa-book fa-fw"></i>
-                    <span>Pont Bascule</span>
-                </a>
-                <div id="collapseReception" class="collapse show" aria-labelledby="headingUtilities"
-                    data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Stockage :</h6>
-                        <a class="collapse-item active" href="../stockage/reception.php">Réception</a>
-                        <a class="collapse-item" href="../stockage/receptionPlanifie.php">Réception planifiée</a>
-                        <a class="collapse-item" href="../stockage/transfert/transfert.php">Transfert</a>
-                        <a class="collapse-item" href="../stockage/transfert/transfert.php">Export</a>
-                        <a class="collapse-item" href="../stockage/stockage/stockage.php">Stockage</a>
-                        <a class="collapse-item" href="../stockage/graphe.php">Graphique</a>
-                    </div>
-                </div>
-            </li>
-
-            <!-- Divider -->
-            <hr class="sidebar-divider">
-
-
-            <!-- Nav Item - Tables -->
-
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
-                    aria-expanded="true" aria-controls="collapseUtilities">
-                    <span>Production Cranteuse</span>
-                </a>
-                <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"
-                    data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Les différents quarts :</h6>
-                        <a class="collapse-item" href="quart1.php">Quart 1</a>
-                        <a class="collapse-item" href="quart2.php">Quart 2</a>
-                        <a class="collapse-item" href="quart3.php">Quart 3</a>
-                    </div>
-                </div>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link" href="tables.php">
-                <i class="fas fa-fw fa-table"></i>
-                <span>Production</span></a>
-            </li>
-
-
-            <div class="sidebar-heading">
-                Section 3
-            </div>
-
-            <!-- Divider -->
-            <hr class="sidebar-divider">
-
-
-            <!-- Nav Item - Tables -->
-            <li class="nav-item">
-                <a class="nav-link" href="tables.php">
-                <i class="fas fa-fw fa-table"></i>
-                <span>Productions</span></a>
-            </li>
-
-
-            <div class="sidebar-heading">
-                Section 4
-            </div>
-
-            <!-- Divider -->
-            <hr class="sidebar-divider">
-
-
-
-            <!-- Nav Item - Utilities Collapse Menu -->
-            <!--<li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
-                    aria-expanded="true" aria-controls="collapseUtilities">
-                    <i class="fas fa-fw fa-wrench"></i>
-                    <span>Utilities</span>
-                </a>
-                <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"
-                    data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Custom Utilities:</h6>
-                        <a class="collapse-item" href="utilities-color.html">Colors</a>
-                        <a class="collapse-item" href="utilities-border.html">Borders</a>
-                        <a class="collapse-item" href="utilities-animation.html">Animations</a>
-                        <a class="collapse-item" href="utilities-other.html">Other</a>
-                    </div>
-                </div>
-            </li>-->
-
-            <!-- Nav Item - Tables -->
-            <li class="nav-item">
-                <a class="nav-link" href="tables.php">
-                    <i class="fas fa-fw fa-table"></i>
-                    <span>Productions</span></a>
-            </li>
-
-            <div class="sidebar-heading">
-                Section 5
-            </div>
-
-            <!-- Divider -->
-            <hr class="sidebar-divider d-none d-md-block">
-
-            <!-- Sidebar Toggler (Sidebar) -->
-            <div class="text-center d-none d-md-inline">
-                <button class="rounded-circle border-0" id="sidebarToggle"></button>
-            </div>
-
-        </ul>
-        <!-- End of Sidebar -->
+        <!-- Contient la nav bar gauche -->
+            <?php include "./navGaucheReception.php" ?>
+        <!-- End  --> 
 
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
@@ -843,7 +744,7 @@ $ReceptionStock = $query->fetchAll();
                                                 ?>
                                                     <tr>
                                                         <td style="<?php if($reception['actifapprouvreception'] == 1){ echo 'background-color:#D72708 ; color:white;';}else{echo 'background-color:#4e73df ; color:white;';}?>">
-                                                            <a style="text-decoration: none; font-family: arial; font-size: 20px; color:white;" href="javascript:void(0);" data-toggle="modal" data-target="#Information" title="Voir commentaire" class="link-offset-2 link-underline"><?php echo "REC-0".$reception['idreception']."-BOB-0".$reception['idmatiere'] ?></a>
+                                                            <a style="text-decoration: none; font-family: arial; font-size: 20px; color:white;" href="javascript:void(0);" data-toggle="modal" data-target="#Information" title="Voir détails" class="link-offset-2 link-underline"><?php echo "REC-0".$reception['idreception']."-BOB-0".$reception['idmatiere'] ?></a>
                                                             <!--<a style="text-decoration: none; font-family: arial; font-size: 20px; color:white;" title="Allez vers la reception planifiée correspondante" href="detailsReceptionPlanifie.php?idreception=<?= $reception['idreception'] ?>" class="link-offset-2 link-underline"><?php echo "REC-0".$reception['idreception']."-BOB-0".$reception['idmatiere'] ?></a>!-->
                                                         </td>
                                                         <td style="<?php if($reception['actifapprouvreception'] == 1){ echo 'background-color:#D72708 ; color:white;';}else{echo 'background-color:#4e73df ; color:white;';}?>"> <?= $reception['epaisseur'] ?> </td>
@@ -874,87 +775,91 @@ $ReceptionStock = $query->fetchAll();
 
                                                     <!-- Pour la rectification des receptions !-->
                                                     <div class="modal fade approuveReceptionRectifie<?php echo $i; ?>" id="" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
-                                                        <div class="modal-dialog modal-xl modal-dialog-centered">
+                                                        <div class="modal-dialog modal-xl modal-dialog-centered" style="width=750px">
                                                             <div class="modal-content">
-                                                                <div class="modal-header">
-                                                                    <h5 class="modal-title" id="myExtraLargeModalLabel">Demander la rectification de cette reception au prét de l'administrateur</h5>
-                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                <div class="card">
+                                                                    <div class="card-header bg-primary text-center">
+                                                                        <h5 class="modal-title" id="myExtraLargeModalLabel" style="color:white">Demander la rectification de cette reception au prét de l'administrateur</h5>
+                                                                    </div>
+                                                                    <div class="card-body">
+                                                                        <form action="#" method="POST" enctype="multipart/form-data">
+                                                                            <div class="row">
+                                                                                <div class=" invisible">
+                                                                                    <div class="">
+                                                                                        <input class="form-control" type="text" value="<?= $reception['idreception'] ?>" name="idreceptionDemandeRectifier">
+                                                                                    </div>
+                                                                                </div> 
+                                                                                <div class=" invisible">
+                                                                                    <div class="">
+                                                                                        <input class="form-control" type="text" value="<?= $reception['idmatiere'] ?>" name="idmatiereDemandeRectifier">
+                                                                                    </div>
+                                                                                </div> 
+                                                                                <div class=" invisible">
+                                                                                    <div class="">
+                                                                                        <input class="form-control" type="text" value="<?= $reception['epaisseur'] ?>" name="epaisseur">
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class=" invisible">
+                                                                                    <div class="">
+                                                                                        <input class="form-control" type="text" value="<?= $reception['nbbobine'] ?>" name="nombrebobine">
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class=" invisible">
+                                                                                    <div class="">
+                                                                                        <input class="form-control" type="text" value="<?= $reception['lieutransfert'] ?>" name="lieutransfert">
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="invisible">
+                                                                                    <div class="text-start">
+                                                                                        <input class="form-control " type="text" value="<?php echo $_SESSION['nomcomplet'];?>" name="user" id="example-date-input">
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-md-12">
+                                                                                    <label class="form-label fw-bold" for="rectification"><h4>Motif de la rectification</h4></label>
+                                                                                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="motifRectifier" placeholder="Mettez en quelques mots le motif de la rectification qui sera recu par le DSI comme courrier MAIL."></textarea>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row mt-2">
+                                                                                <div class="col-md-12 text-end">
+                                                                                    <?php 
+                                                                                        if($valideTransfert == "erreurInsertion"){ 
+                                                                                    ?> 
+                                                                                        <script>    Swal.fire({
+                                                                                            text: 'Veillez entrer le motif de la rectification svp!',
+                                                                                            icon: 'error',
+                                                                                            timer: 3500,
+                                                                                            showConfirmButton: false,
+                                                                                            });
+                                                                                        </script> 
+                                                                                    <?php
+                                                                                        } 
+                                                                                    ?>
+                                                                                    <?php 
+                                                                                        if($idmatierearrive == "erreurIdmatierearrive"){ 
+                                                                                    ?> 
+                                                                                        <script>    Swal.fire({
+                                                                                            text: 'Vous ne pouvez pas modifier le transfert car le nombre de bobine en stock pour cette épaisseur est insuffisant!',
+                                                                                            icon: 'error',
+                                                                                            timer: 6000,
+                                                                                            showConfirmButton: false,
+                                                                                            });
+                                                                                        </script> 
+                                                                                    <?php
+                                                                                        } 
+                                                                                    ?>
+                                                                                    <div class="d-flex gap-2 pt-4">                           
+                                                                                        <a href=""><input class="btn btn-danger  w-lg bouton" name="" type="submit" value="Annuler"></a>
+                                                                                        <input class="btn btn-success  w-lg bouton ml-3" name="approuveReceptionRectifie" type="submit" value="Enregistrer">
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </form>                
+                                                                    </div>
+                                                                    <div class="card-footer bg-primary text-muted text-center">
+                                                                        <h5 style="color:white">METAL *** AFRIQUE</h5>
+                                                                    </div>
                                                                 </div>
-                                                                <div class="modal-body">
-                                                                    <form action="#" method="POST" enctype="multipart/form-data">
-                                                                        <div class="row">
-                                                                            <div class=" invisible">
-                                                                                <div class="">
-                                                                                    <input class="form-control" type="text" value="<?= $reception['idreception'] ?>" name="idreceptionDemandeRectifier">
-                                                                                </div>
-                                                                            </div> 
-                                                                            <div class=" invisible">
-                                                                                <div class="">
-                                                                                    <input class="form-control" type="text" value="<?= $reception['idmatiere'] ?>" name="idmatiereDemandeRectifier">
-                                                                                </div>
-                                                                            </div> 
-                                                                            <div class=" invisible">
-                                                                                <div class="">
-                                                                                    <input class="form-control" type="text" value="<?= $reception['epaisseur'] ?>" name="epaisseur">
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class=" invisible">
-                                                                                <div class="">
-                                                                                    <input class="form-control" type="text" value="<?= $reception['nbbobine'] ?>" name="nombrebobine">
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class=" invisible">
-                                                                                <div class="">
-                                                                                    <input class="form-control" type="text" value="<?= $reception['lieutransfert'] ?>" name="lieutransfert">
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="invisible">
-                                                                                <div class="text-start">
-                                                                                    <input class="form-control " type="text" value="<?php echo $_SESSION['nomcomplet'];?>" name="user" id="example-date-input">
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="col-md-10">
-                                                                                <label class="form-label fw-bold" for="rectification"><h4>Motif de la rectification</h4></label>
-                                                                                <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="motifRectifier" placeholder="Mettez en quelques mots le motif de la rectification svp."></textarea>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="row mt-2">
-                                                                            <div class="col-md-12 text-end">
-                                                                                <?php 
-                                                                                    if($valideTransfert == "erreurInsertion"){ 
-                                                                                ?> 
-                                                                                    <script>    Swal.fire({
-                                                                                        text: 'Veillez entrer le motif de la rectification svp!',
-                                                                                        icon: 'error',
-                                                                                        timer: 3500,
-                                                                                        showConfirmButton: false,
-                                                                                        });
-                                                                                    </script> 
-                                                                                <?php
-                                                                                    } 
-                                                                                ?>
-                                                                                <?php 
-                                                                                    if($idmatierearrive == "erreurIdmatierearrive"){ 
-                                                                                ?> 
-                                                                                    <script>    Swal.fire({
-                                                                                        text: 'Vous ne pouvez pas modifier le transfert car le nombre de bobine en stock pour cette épaisseur est insuffisant!',
-                                                                                        icon: 'error',
-                                                                                        timer: 6000,
-                                                                                        showConfirmButton: false,
-                                                                                        });
-                                                                                    </script> 
-                                                                                <?php
-                                                                                    } 
-                                                                                ?>
-                                                                                <div class="d-flex gap-2 pt-4">                           
-                                                                                    <a href="#"><input class="btn btn-danger  w-lg bouton" name="" type="submit" value="Annuler"></a>
-                                                                                    <input class="btn btn-success  w-lg bouton ml-4" name="approuveReceptionRectifie" type="submit" value="Enregistrer">
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </form>                             
-                                                                </div>
-                                                            </div>
+                                                            </div> 
                                                         </div>
                                                     </div><!-- /.modal --> 
                                                                                           
@@ -1106,11 +1011,11 @@ $ReceptionStock = $query->fetchAll();
                                                     ?>
                                                         <a href="reception.php" class="btn btn-danger w-lg bouton mr-3 ml-3"><i class="fa fa-angle-double-left mr-2"></i>Retour</a>
                                                     <?php
-                                                        $id = $_GET['idreception'];
+                                                        /*$id = $_GET['idreception'];
                                                         $sql = "select * from reception where idreception=$id";
                                                         $result = $db->query($sql);
-                                                        $row = $result->fetch();
-                                                        if($_SESSION['niveau']=='pontbascule' && $row['status'] != 'Terminée'){
+                                                        $row = $result->fetch();*/
+                                                        if($_SESSION['niveau']=='' && $row['status'] != 'Terminée'){
                                                     ?>
                                                         <a href="javascript:void(0);" title="Ceci permet de mettre fin cette reception" class="changerStatus btn btn-warning w-lg bouton"><i class="fas fa-remove-format me-1"></i> Terminer reception</a>
                                                     <?php
@@ -1546,6 +1451,70 @@ $ReceptionStock = $query->fetchAll();
                                             <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMB['16'] == 0){echo "";}else{echo $EpaisseurMB['16'];} ?></td>
                                             <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMB['16.5'] == 0){echo "";}else{echo $EpaisseurMB['16.5'];} ?></td>
                                             <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurMB['17'] == 0){echo "";}else{echo $EpaisseurMB['17'];} ?></td>
+                                        </tr>
+                                        <tr> 
+                                            <td>Cranteuse</td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['3'] == 0){echo "";}else{echo $EpaisseurCrant['3'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['3.5'] == 0){echo "";}else{echo $EpaisseurCrant['3.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['4'] == 0){echo "";}else{echo $EpaisseurCrant['4'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['4.5'] == 0){echo "";}else{echo $EpaisseurCrant['4.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['5'] == 0){echo "";}else{echo $EpaisseurCrant['5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['5.5'] == 0){echo "";}else{echo $EpaisseurCrant['5.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['6'] == 0){echo "";}else{echo $EpaisseurCrant['6'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['6.5'] == 0){echo "";}else{echo $EpaisseurCrant['6.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['7'] == 0){echo "";}else{echo $EpaisseurCrant['7'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['7.5'] == 0){echo "";}else{echo $EpaisseurCrant['7.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['8'] == 0){echo "";}else{echo $EpaisseurCrant['8'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['8.5'] == 0){echo "";}else{echo $EpaisseurCrant['8.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['9'] == 0){echo "";}else{echo $EpaisseurCrant['9'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['9.5'] == 0){echo "";}else{echo $EpaisseurCrant['9.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['10'] == 0){echo "";}else{echo $EpaisseurCrant['10'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['10.5'] == 0){echo "";}else{echo $EpaisseurCrant['10.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['11'] == 0){echo "";}else{echo $EpaisseurCrant['11'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['11.5'] == 0){echo "";}else{echo $EpaisseurCrant['11.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['12'] == 0){echo "";}else{echo $EpaisseurCrant['12'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['12.5'] == 0){echo "";}else{echo $EpaisseurCrant['12.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['13'] == 0){echo "";}else{echo $EpaisseurCrant['13'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['13.5'] == 0){echo "";}else{echo $EpaisseurCrant['13.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['14'] == 0){echo "";}else{echo $EpaisseurCrant['14'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['14.5'] == 0){echo "";}else{echo $EpaisseurCrant['14.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['15'] == 0){echo "";}else{echo $EpaisseurCrant['15'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['15.5'] == 0){echo "";}else{echo $EpaisseurCrant['15.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['16'] == 0){echo "";}else{echo $EpaisseurCrant['16'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['16.5'] == 0){echo "";}else{echo $EpaisseurCrant['16.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurCrant['17'] == 0){echo "";}else{echo $EpaisseurCrant['17'];} ?></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Tréfilage</td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['3'] == 0){echo "";}else{echo $EpaisseurTref['3'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['3.5'] == 0){echo "";}else{echo $EpaisseurTref['3.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['4'] == 0){echo "";}else{echo $EpaisseurTref['4'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['4.5'] == 0){echo "";}else{echo $EpaisseurTref['4.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['5'] == 0){echo "";}else{echo $EpaisseurTref['5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['5.5'] == 0){echo "";}else{echo $EpaisseurTref['5.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['6'] == 0){echo "";}else{echo $EpaisseurTref['6'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['6.5'] == 0){echo "";}else{echo $EpaisseurTref['6.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['7'] == 0){echo "";}else{echo $EpaisseurTref['7'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['7.5'] == 0){echo "";}else{echo $EpaisseurTref['7.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['8'] == 0){echo "";}else{echo $EpaisseurTref['8'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['8.5'] == 0){echo "";}else{echo $EpaisseurTref['8.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['9'] == 0){echo "";}else{echo $EpaisseurTref['9'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['9.5'] == 0){echo "";}else{echo $EpaisseurTref['9.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['10'] == 0){echo "";}else{echo $EpaisseurTref['10'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['10.5'] == 0){echo "";}else{echo $EpaisseurTref['10.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['11'] == 0){echo "";}else{echo $EpaisseurTref['11'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['11.5'] == 0){echo "";}else{echo $EpaisseurTref['11.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['12'] == 0){echo "";}else{echo $EpaisseurTref['12'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['12.5'] == 0){echo "";}else{echo $EpaisseurTref['12.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['13'] == 0){echo "";}else{echo $EpaisseurTref['13'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['13.5'] == 0){echo "";}else{echo $EpaisseurTref['13.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['14'] == 0){echo "";}else{echo $EpaisseurTref['14'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['14.5'] == 0){echo "";}else{echo $EpaisseurTref['14.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['15'] == 0){echo "";}else{echo $EpaisseurTref['15'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['15.5'] == 0){echo "";}else{echo $EpaisseurTref['15.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['16'] == 0){echo "";}else{echo $EpaisseurTref['16'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['16.5'] == 0){echo "";}else{echo $EpaisseurTref['16.5'];} ?></td>
+                                            <td style="background-color:#CFFEDA ; color:black;"><?php if($EpaisseurTref['17'] == 0){echo "";}else{echo $EpaisseurTref['17'];} ?></td>
                                         </tr>
                                     </tbody>
                                 </table>
