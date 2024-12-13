@@ -98,12 +98,6 @@
                 $ProblemeNbBobineDepart="erreurProblemeNbDepart";
             }
 
-            // On vérifie si le lieu de départ et d'arrivé ne sont pas les meme
-            if( $pointdepart === $pointarrive ){ 
-                $ProblemeLieu="erreurProblemeLieu";
-                $ligneErreurLieu = $i+1;
-            }
-
         // Fin vérification
 
         
@@ -440,7 +434,7 @@
                                     <div class="modal-body">
                                         <form action="#" method="POST" enctype="multipart/form-data" class="row g-3">
                                             <div class="row">
-                                                <?php if($valideTransfert != "erreurEpaisseur" && $ProblemeNbBobineDepart != "erreurProblemeNbDepart" && $ProblemeNumeroBobine != "erreurProblemeNumeroBobine" && $ProblemeLieu != "erreurProblemeLieu"){ // Lorsqu'il y'a pas d'erreur ?> 
+                                                <?php if($valideTransfert != "erreurEpaisseur" && $ProblemeNbBobineDepart != "erreurProblemeNbDepart" && $ProblemeNumeroBobine != "erreurProblemeNumeroBobine"){ // Lorsqu'il y'a pas d'erreur ?> 
                                                     <div class="col-md-2 mr-2 mt-3 mb-5">
                                                         <div class="mb-1 text-start">
                                                             <label class="form-label fw-bold" for="nom">Nom complet du saisisseur</label>
@@ -743,7 +737,7 @@
                                                         ?>" name="idtransfert" id="example-date-input2">
                                                     </div>
                                                 </div>
-                                                <?php if($valideTransfert != "erreurEpaisseur" && $ProblemeNbBobineDepart != "erreurProblemeNbDepart" && $ProblemeNumeroBobine != "erreurProblemeNumeroBobine" && $ProblemeLieu != "erreurProblemeLieu"){ // Lorsqu'il y'a pas d'erreur ?> 
+                                                <?php if($valideTransfert != "erreurEpaisseur" && $ProblemeNbBobineDepart != "erreurProblemeNbDepart" && $ProblemeNumeroBobine != "erreurProblemeNumeroBobine"){ // Lorsqu'il y'a pas d'erreur ?> 
                                                     <div class="col-md-8">
                                                         <div class="mb-1 text-start">
                                                             <label class="form-label fw-bold" for="commentaire" >Commentaire</label>

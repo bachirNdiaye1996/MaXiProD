@@ -39,183 +39,11 @@
         $observationfin=htmlspecialchars($_POST['observationfin']);
         $poidsestimetravaillenonnote=htmlspecialchars($_POST['poidsestimetravaillenonnote']);
 
-        // Vérifie si les heures du quart sont correctes
-            $heures = explode(":", $heuredepartquart);
-            $heuredepartquartHeure = $heures[0]; 
-            $heuredepartquartMin = $heures[1]; 
 
-            $heures = explode(":", $heurefinquart);
-            $heurefinquartHeure = $heures[0]; 
-            $heurefinquartMin = $heures[1];
-        // Fin
 
-        //On verifie avant d'inserer
-            // Quart
-                if(($heurefinquartHeure > $heuredepartquartHeure) || (( $heurefinquartHeure == $heuredepartquartHeure)&&( $heurefinquartMin > $heuredepartquartMin))){
-                }else{
-                    $ProblemeQuart="erreurProblemeQuart";
-                }
-            //
-
-            //On vérifie si la fiche existe ou pas
-                $sqlEpaisseur = "SELECT * FROM `fichecranteuseq1` WHERE `actif`=1 AND `quart`='$quart' AND `machine`='$machine' AND `dateCreation`='$datecreationfiche';";
-                // On prépare la requête
-                $queryEpaisseur = $db->prepare($sqlEpaisseur);
-                $queryEpaisseur->execute();
-                $resultEpaisseur = $queryEpaisseur->fetch();
-                
-                if($resultEpaisseur){
-                    $ProblemeFicheExist="erreurProblemeFicheExist";
-                }
-            // Fin
-
-            // Compteur
-            if(($ProblemeQuart != "erreurProblemeQuart") && ($ProblemeFicheExist != "erreurProblemeFicheExist")){
-                if(($compteurfin > $compteurdebut)){
-                    for ($i = 0; $i < count($_POST['debutarret']); $i++){
-                        $debutarret=htmlspecialchars( $_POST['debutarret'][$i]);
-                        $finarret=htmlspecialchars($_POST['finarret'][$i]);
-                        $raisonerreur=htmlspecialchars($_POST['raisonerreur'][$i]);
-
-                        $heures = explode(":", $finarret);
-                        $heureFinHeure = $heures[0]; 
-                        $heureFinMin = $heures[1]; 
-
-                        $heures = explode(":", $debutarret);
-                        $heureDebutHeure = $heures[0]; 
-                        $heureDebutMin = $heures[1]; 
-
-                        if(( $heureFinHeure > $heureDebutHeure) || (( $heureFinHeure == $heureDebutHeure)&&( $heureFinMin > $heureDebutMin))){
-                            //echo ($heureFinHeure-$heureDebutHeure).":".($heureFinMin-$heureDebutMin);
-                        }else{
-                            $ProblemeArret="erreurProblemeArret";
-                        }
-                    }
-                }else{
-                    $ProblemeCompteur="erreurProblemeCompteur";
-                }
-            }
-
-            //Consommations
-            for ($i = 0; $i < count($_POST['diametre']); $i++){   
-                $diametre=htmlspecialchars( $_POST['diametre'][$i]);
-                $numerofin=htmlspecialchars($_POST['numerofin'][$i]);
-                $heuremontagebobine=htmlspecialchars($_POST['heuremontagebobine'][$i]);
-                $poids=htmlspecialchars($_POST['poids'][$i]);
-                $dechet=htmlspecialchars($_POST['dechet'][$i]);
-
-                if($numerofin == ""){
-                    $ProblemeFilMachine="erreurProblemeFilMachine";
-                }                 
-            }
-
-            //Productions
-            for ($i = 0; $i < count($_POST['Proddiametre']); $i++){   
-                $diametre=htmlspecialchars( $_POST['Proddiametre'][$i]);
-                $numerofin=htmlspecialchars($_POST['Prodnumerofin'][$i]);
-                $poids=htmlspecialchars($_POST['Prodpoids'][$i]);
-
-                if($numerofin == ""){
-                    $ProblemeFilMachine="erreurProblemeFilMachine";
-                } 
-            }
-        //Fin verification
-        
-        if($ProblemeArret != "erreurProblemeArret" && $ProblemeCompteur != "erreurProblemeCompteur" && $ProblemeQuart != "erreurProblemeQuart" && $ProblemeFilMachine != "erreurProblemeFilMachine" && ($ProblemeFicheExist != "erreurProblemeFicheExist")){            
-            $insertUser=$db->prepare("INSERT INTO `fichecranteuseq1` (`idfichecranteuseq1`, `user`, `dateajout`, `quart`, `actif`, `dateCreation`, `compteurdebut`,
-             `compteurfin`, `controleur1`, `controleur2`, `machine`, `observationdebut`, `heuredepartquart`, `heurefinquart`, `saisisseur`, `vitesse`,
-              `observationfin`, `poidsestimetravaillenonnote`, `accepteprodmodif`, `actifapprouvprod`) VALUES (NULL, ?, current_timestamp(), ?, '1', ?, ?,
-              ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '0', '0');");
-            $insertUser->execute(array($user,$quart,$datecreationfiche,$compteurdebut,$compteurfin,$controleur1,$controleur2,$machine,$observationdebut,$heuredepartquart,$heurefinquart,$user,$vitesse,$observationfin,$poidsestimetravaillenonnote));
-
-            // Récuperer le dernier id de la fiche
-                $sqlEpaisseur = "SELECT MAX(idfichecranteuseq1)  AS idMax FROM `fichecranteuseq1`";
-                // On prépare la requête
-                $queryEpaisseur = $db->prepare($sqlEpaisseur);
-                $queryEpaisseur->execute();
-                $resultEpaisseur = $queryEpaisseur->fetch();
-                $idfichecranteuseq1Max = (int) $resultEpaisseur['idMax'];
-            // Fin
-
-            // Arrets
-                for ($i = 0; $i < count($_POST['debutarret']); $i++){
-                    $debutarret=htmlspecialchars( $_POST['debutarret'][$i]);
-                    $finarret=htmlspecialchars($_POST['finarret'][$i]);
-                    $raisonerreur=htmlspecialchars($_POST['raisonerreur'][$i]);
-
-                    $insertUser=$db->prepare("INSERT INTO `cranteuseq1arret` (`idcranteuseq1arret`, `debutarret`, `finarret`, `raison`, `idfichecranteuseq1`, `actif`) 
-                    VALUES (NULL, ?, ?, ?, ?, '1');");
-                    $insertUser->execute(array($debutarret,$finarret,$raisonerreur,$idfichecranteuseq1Max));
-                }
-            //
-
-            // Consommations
-                for ($i = 0; $i < count($_POST['diametre']); $i++){
-                    $diametre=htmlspecialchars( $_POST['diametre'][$i]);
-                    $numerofinString = explode("/", htmlspecialchars($_POST['numerofin'][$i]));
-                    $numerofin=$numerofinString[0];
-                    $heuremontagebobine=htmlspecialchars($_POST['heuremontagebobine'][$i]);
-                    $poids=htmlspecialchars($_POST['poids'][$i]);
-                    $dechet=htmlspecialchars($_POST['dechet'][$i]);
-
-                    // Voir si FM est fini
-                    if(isset($_POST['finirfm'.$i])){
-                        $insertUser=$db->prepare("INSERT INTO `cranteuseq1consommation` (`idcranteuseq1consommation`, `diametre`, `numerofin`, `poids`, `dechet`, `idfichecranteuseq1`, `actif`, `heuremontagebobine`,`finirfm`) 
-                        VALUES (NULL, ?, ?, ?, ?, ?, '1', ?, 1);");
-                        $insertUser->execute(array($diametre,$numerofin,$poids,$dechet,$idfichecranteuseq1Max, $heuremontagebobine));
-    
-                        // On enleve une bobine dans la table epaisseur
-                        $req ="UPDATE epaisseur SET `$diametre`=`$diametre`-1 where `lieu`='Cranteuse';";
-                        //$db->query($req);
-                        $reqtitre = $db->prepare($req);
-                        $reqtitre->execute();
-    
-                        //On enleve une bobine dans la table matiere
-                        $req ="UPDATE matiere SET `nbbobineactuel` = `nbbobineactuel` - 1 where `numbobine`= ?;";
-                        $reqtitre = $db->prepare($req);
-                        $reqtitre->execute(array($numerofin));
-                    }else{
-                        $insertUser=$db->prepare("INSERT INTO `cranteuseq1consommation` (`idcranteuseq1consommation`, `diametre`, `numerofin`, `poids`, `dechet`, `idfichecranteuseq1`, `actif`, `heuremontagebobine`) 
-                        VALUES (NULL, ?, ?, ?, ?, ?, '1', ?);");
-                        $insertUser->execute(array($diametre,$numerofin,$poids,$dechet,$idfichecranteuseq1Max, $heuremontagebobine));
-    
-                        /*// On enleve une bobine dans la table epaisseur
-                        $req ="UPDATE epaisseur SET `$diametre`=`$diametre`-1 where `lieu`='Cranteuse';";
-                        //$db->query($req);
-                        $reqtitre = $db->prepare($req);
-                        $reqtitre->execute();
-    
-                        //On enleve une bobine dans la table matiere
-                        $req ="UPDATE matiere SET `nbbobineactuel` = `nbbobineactuel` - 1 where `numbobine`= ?;";
-                        $reqtitre = $db->prepare($req);
-                        $reqtitre->execute(array($numerofin));*/
-                    }
-                }
-            //
-
-            // Productions
-                for ($i = 0; $i < count($_POST['Proddiametre']); $i++){
-                    $diametre=htmlspecialchars( $_POST['Proddiametre'][$i]);
-                    $nomenclature=htmlspecialchars( $_POST['Prodnomenclature'][$i]);
-                    $numerofinString = explode("/", htmlspecialchars($_POST['Prodnumerofin'][$i]));
-                    $numerofin=$numerofinString[0];
-                    $poids=htmlspecialchars($_POST['Prodpoids'][$i]);
-                    // C'est pour les échantillons
-                    $echanlongueur=htmlspecialchars( $_POST['Echanlongueur'][$i]);
-                    $echanpoids=htmlspecialchars($_POST['Echanpoids'][$i]);
-                    $echandf=htmlspecialchars($_POST['Echandf'][$i]);
-
-                    $insertUser=$db->prepare("INSERT INTO `cranteuseq1production` (`idcranteuseq1production`, `proddiametre`, `prodnumerofin`, `prodpoids`, `idfichecranteuseq1`, `actif`,`prodnomenclature`,`echanlongueur`,`echanpoids`,`echandf`) 
-                    VALUES (NULL, ?, ?, ?, ?, '1', ?, ?, ?, ?);");
-                    $insertUser->execute(array($diametre,$numerofin,$poids,$idfichecranteuseq1Max,$nomenclature,$echanlongueur,$echanpoids,$echandf));
-                }
-            //
-
-            header("location: detailsCranteuseQ1.php?idfichecranteuseq1=$idfichecranteuseq1Max&quart=$quart");
-            exit;
+        for ($i = 0; $i < count($_POST['diametre']); $i++){
+            echo $_POST['finirfm'.$i][$i];
         }
-
-        for ($i = 0; $i < count($_POST['diametre']); $i++){}
     }
 
     //** Nombre des bobines total
@@ -328,13 +156,11 @@
 
         $(document).ready(function(){  
             var i = 0; 
-            var j = 0; 
-            var k = 0;
             $('#addErreurs').click(function(){           
             //alert('ok');           
-            k++;           
+            i++;           
             $('#dynamicaddErreurs').append(`
-            <tr id="row'+k+'" class="rowClass">
+            <tr id="row'+i+'" class="rowClass">
                 <td style="background-color:#CFFEDA ;">
                     <div class="col-md-10">
                         <div class="mb-1 text-start">
@@ -436,6 +262,11 @@
                 `+foo1+`
                     $('#finirfm`+i+`').click(function(){
                         $('#finirfm`+i+`').attr('name', 'finirfm`+i+`[]');
+                        $('#finirfm`+i+`').attr('id', 'finirfmactif`+i+`');
+                    });
+                    $('#finirfmactif`+i+`').click(function(){
+                        $('#finirfm`+i+`').attr('name', 'finirfm`+i+`[]');
+                        $('#finirfm`+i+`').attr('id', 'finirfmactif`+i+`');
                     });
                 `+foo2+`
                 <td style="background-color:#CFFEDA ;" class="text-center"> 
@@ -449,13 +280,13 @@
             
             $('#addProductions').click(function(){           
             //alert('ok');           
-            j++;           
+            i++;           
             $('#dynamicaddProductions').append(`
-            <tr id="row'+j+'" class="rowClass">
+            <tr id="row'+i+'" class="rowClass">
                 <td style="background-color:#CFFEDA ;">
                     <div class="col-md-10">
                         <div class="mb-1 text-start">
-                            <input class="form-control designa" type="number" step="0.01" name="Proddiametre[]" id="Proddiametre`+j+`" value="" required>
+                            <input class="form-control designa" type="number" step="0.01" name="Proddiametre[]" id="Proddiametre`+i+`" value="" required>
                         </div>
                     </div>
                 </td>
@@ -469,7 +300,7 @@
                 <td style="background-color:#CFFEDA ;">
                     <div class="">
                         <div class="mb-1 text-start">
-                            <select class="form-control" name="Prodnumerofin[]" id="numerofinProd`+j+`" required>
+                            <select class="form-control" name="Prodnumerofin[]" id="numerofinProd`+i+`" required>
                                 <option></option> 
                                 <?php
                                     foreach($stockCranteuse as $stock){
@@ -484,19 +315,19 @@
                 </td>
                 `+foo1+`
                     $(document).ready(function(){
-                        $('#numerofinProd`+j+`').change(function(){
+                        $('#numerofinProd`+i+`').change(function(){
                             //Selected value
                             var inputValue = $(this).val();
                             var myArray = inputValue.split('/');
-                            document.getElementById("Proddiametre`+j+`").value = myArray[1];
-                            document.getElementById("Prodpoids`+j+`").value = myArray[2];
+                            document.getElementById("Proddiametre`+i+`").value = myArray[1];
+                            document.getElementById("Prodpoids`+i+`").value = myArray[2];
                         });
                     });
                 `+foo2+`
                 <td style="background-color:#CFFEDA ;">
                     <div class="col-md-10">
                         <div class="mb-1 text-start">
-                            <input class="form-control designa" type="number" step="0.01" name="Prodpoids[]" id="Prodpoids`+j+`" value="" required>
+                            <input class="form-control designa" type="number" step="0.01" name="Prodpoids[]" id="Prodpoids`+i+`" value="" required>
                         </div>
                     </div>
                 </td>

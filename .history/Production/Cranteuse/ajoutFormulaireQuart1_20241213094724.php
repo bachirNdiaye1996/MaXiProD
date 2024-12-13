@@ -332,9 +332,9 @@
             var k = 0;
             $('#addErreurs').click(function(){           
             //alert('ok');           
-            k++;           
+            i++;           
             $('#dynamicaddErreurs').append(`
-            <tr id="row'+k+'" class="rowClass">
+            <tr id="row'+i+'" class="rowClass">
                 <td style="background-color:#CFFEDA ;">
                     <div class="col-md-10">
                         <div class="mb-1 text-start">
