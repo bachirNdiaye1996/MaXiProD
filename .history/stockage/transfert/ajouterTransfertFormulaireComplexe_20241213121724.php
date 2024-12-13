@@ -98,12 +98,6 @@
                 $ProblemeNbBobineDepart="erreurProblemeNbDepart";
             }
 
-            // On vérifie si le lieu de départ et d'arrivé ne sont pas les meme
-            if( $pointdepart === $pointarrive ){ 
-                $ProblemeLieu="erreurProblemeLieu";
-                $ligneErreurLieu = $i+1;
-            }
-
         // Fin vérification
 
         

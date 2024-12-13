@@ -12,7 +12,6 @@
 
     //Variables
     // Il faut savoir que metal3 est remplacer par niambour
-    $k = 0;
     $valideFiche="";
     $ProblemeQuart="";
     $ProblemeCompteur="";
@@ -214,8 +213,6 @@
             header("location: detailsCranteuseQ1.php?idfichecranteuseq1=$idfichecranteuseq1Max&quart=$quart");
             exit;
         }
-
-        for ($i = 0; $i < count($_POST['diametre']); $i++){}
     }
 
     //** Nombre des bobines total
@@ -328,13 +325,11 @@
 
         $(document).ready(function(){  
             var i = 0; 
-            var j = 0; 
-            var k = 0;
             $('#addErreurs').click(function(){           
             //alert('ok');           
-            k++;           
+            i++;           
             $('#dynamicaddErreurs').append(`
-            <tr id="row'+k+'" class="rowClass">
+            <tr id="row'+i+'" class="rowClass">
                 <td style="background-color:#CFFEDA ;">
                     <div class="col-md-10">
                         <div class="mb-1 text-start">
@@ -366,7 +361,7 @@
 
             $('#addConsommations').click(function(){           
             //alert('ok');           
-            i++;  
+            i++;           
             $('#dynamicaddConsommations').append(`
             <tr id="row'+i+'" class="rowClass">
                 <td style="background-color:#CFFEDA ;">
@@ -428,16 +423,11 @@
                     <div class="col-md-10">
                         <div class="form-check-inline">
                             <label class="form-check-label">
-                                <input type="checkbox" style="width: 25px; height: 25px;" class="form-check-input" name="" id="finirfm`+i+`">
+                                <input type="checkbox" style="width: 25px; height: 25px;" class="form-check-input" name='finirfm`+i+`[]'>
                             </label>
                         </div>
                     </div>  
                 </td>
-                `+foo1+`
-                    $('#finirfm`+i+`').click(function(){
-                        $('#finirfm`+i+`').attr('name', 'finirfm`+i+`[]');
-                    });
-                `+foo2+`
                 <td style="background-color:#CFFEDA ;" class="text-center"> 
                     <button class="btn btn-danger removeConsommations"
                         type="button">Enlever
@@ -449,13 +439,13 @@
             
             $('#addProductions').click(function(){           
             //alert('ok');           
-            j++;           
+            i++;           
             $('#dynamicaddProductions').append(`
-            <tr id="row'+j+'" class="rowClass">
+            <tr id="row'+i+'" class="rowClass">
                 <td style="background-color:#CFFEDA ;">
                     <div class="col-md-10">
                         <div class="mb-1 text-start">
-                            <input class="form-control designa" type="number" step="0.01" name="Proddiametre[]" id="Proddiametre`+j+`" value="" required>
+                            <input class="form-control designa" type="number" step="0.01" name="Proddiametre[]" id="Proddiametre`+i+`" value="" required>
                         </div>
                     </div>
                 </td>
@@ -469,7 +459,7 @@
                 <td style="background-color:#CFFEDA ;">
                     <div class="">
                         <div class="mb-1 text-start">
-                            <select class="form-control" name="Prodnumerofin[]" id="numerofinProd`+j+`" required>
+                            <select class="form-control" name="Prodnumerofin[]" id="numerofinProd`+i+`" required>
                                 <option></option> 
                                 <?php
                                     foreach($stockCranteuse as $stock){
@@ -484,19 +474,19 @@
                 </td>
                 `+foo1+`
                     $(document).ready(function(){
-                        $('#numerofinProd`+j+`').change(function(){
+                        $('#numerofinProd`+i+`').change(function(){
                             //Selected value
                             var inputValue = $(this).val();
                             var myArray = inputValue.split('/');
-                            document.getElementById("Proddiametre`+j+`").value = myArray[1];
-                            document.getElementById("Prodpoids`+j+`").value = myArray[2];
+                            document.getElementById("Proddiametre`+i+`").value = myArray[1];
+                            document.getElementById("Prodpoids`+i+`").value = myArray[2];
                         });
                     });
                 `+foo2+`
                 <td style="background-color:#CFFEDA ;">
                     <div class="col-md-10">
                         <div class="mb-1 text-start">
-                            <input class="form-control designa" type="number" step="0.01" name="Prodpoids[]" id="Prodpoids`+j+`" value="" required>
+                            <input class="form-control designa" type="number" step="0.01" name="Prodpoids[]" id="Prodpoids`+i+`" value="" required>
                         </div>
                     </div>
                 </td>
