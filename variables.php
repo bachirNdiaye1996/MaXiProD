@@ -1,3 +1,3 @@
 <?php 
-    $HOST = 'http://10.10.10.143/MaXiProD';
+    $HOST = 'http://10.10.10.237/MaXiProD';
 ?>
