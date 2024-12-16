@@ -1830,7 +1830,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                                                 <div class="col-lg-12 mt-5 mb-5">
                                                                     <?php
                                                                         //** Debut select de la production (arret)
-                                                                            $sql = "SELECT * FROM `dresseusearret` where `actif`=1 and `idfichedresseuse`=$IdproductiondresD1Q1;";
+                                                                            $sql = "SELECT * FROM `dresseusearret` where `actif`=1 and `idfichedresseuse`=1;";
 
                                                                             // On prépare la requête
                                                                             $query = $db->prepare($sql);
@@ -1934,7 +1934,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                                             <th>Nombre de colis</th> 
                                                             <th>Nombre barres restant</th>
                                                             <th>Total barres</th>
-                                                            <th>Longueur barres</th> 
+                                                            <th>Longueur barres (m)</th> 
                                                             <th>Rebus</th>
                                                         </tr>
                                                     </thead>
@@ -1951,7 +1951,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                                                 <td style="background-color:#4e73df ; color:white;"><?= $productionD2Q1['prodnbcolis'] ?></td>
                                                                 <td style="background-color:#4e73df ; color:white;"><?= $productionD2Q1['prodnbbarrerestant'] ?></td>
                                                                 <td style="background-color:#4e73df ; color:white;"><?= ($productionD2Q1['prodnbBarreColis']*$productionD2Q1['prodnbcolis'])+$productionD2Q1['prodnbbarrerestant']  ?></td>
-                                                                <td style="background-color:#4e73df ; color:white;"><?= $productionD2Q1['prodlongueurbarre']." m" ?></td>
+                                                                <td style="background-color:#4e73df ; color:white;"><?= $productionD2Q1['prodlongueurbarre'] ?></td>
                                                                 <td style="background-color:#4e73df ; color:white;"><?= $productionD2Q1['proddechet'] ?></td>
                                                             </tr>
                                                         <!-- Pour le sweetAlert approuveTransfert !--> 
@@ -2099,7 +2099,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                                             <th>Nombre de colis</th> 
                                                             <th>Nombre barres restant</th>
                                                             <th>Total barres</th>
-                                                            <th>Longueur barres</th> 
+                                                            <th>Longueur barres (m)</th> 
                                                             <th>Rebus</th>
                                                         </tr>
                                                     </thead>
@@ -2116,7 +2116,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                                                 <td style="background-color:#4e73df ; color:white;"><?= $productionD4Q1['prodnbcolis'] ?></td>
                                                                 <td style="background-color:#4e73df ; color:white;"><?= $productionD4Q1['prodnbbarrerestant'] ?></td>
                                                                 <td style="background-color:#4e73df ; color:white;"><?= ($productionD4Q1['prodnbBarreColis']*$productionD4Q1['prodnbcolis'])+$productionD4Q1['prodnbbarrerestant']  ?></td>
-                                                                <td style="background-color:#4e73df ; color:white;"><?= $productionD4Q1['prodlongueurbarre']." m" ?></td>
+                                                                <td style="background-color:#4e73df ; color:white;"><?= $productionD4Q1['prodlongueurbarre'] ?></td>
                                                                 <td style="background-color:#4e73df ; color:white;"><?= $productionD4Q1['proddechet'] ?></td>
                                                             </tr>
                                                         <!-- Pour le sweetAlert approuveTransfert !--> 
@@ -2264,7 +2264,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                                             <th>Nombre de colis</th> 
                                                             <th>Nombre barres restant</th>
                                                             <th>Total barres</th>
-                                                            <th>Longueur barres</th> 
+                                                            <th>Longueur barres (m)</th> 
                                                             <th>Rebus</th>
                                                         </tr>
                                                     </thead>
@@ -2281,7 +2281,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                                                 <td style="background-color:#4e73df ; color:white;"><?= $productionD5Q1['prodnbcolis'] ?></td>
                                                                 <td style="background-color:#4e73df ; color:white;"><?= $productionD5Q1['prodnbbarrerestant'] ?></td>
                                                                 <td style="background-color:#4e73df ; color:white;"><?= ($productionD5Q1['prodnbBarreColis']*$productionD5Q1['prodnbcolis'])+$productionD5Q1['prodnbbarrerestant']  ?></td>
-                                                                <td style="background-color:#4e73df ; color:white;"><?= $productionD5Q1['prodlongueurbarre']." m" ?></td>
+                                                                <td style="background-color:#4e73df ; color:white;"><?= $productionD5Q1['prodlongueurbarre'] ?></td>
                                                                 <td style="background-color:#4e73df ; color:white;"><?= $productionD5Q1['proddechet'] ?></td>
                                                             </tr>
                                                         <!-- Pour le sweetAlert approuveTransfert !--> 
@@ -2429,7 +2429,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                                             <th>Nombre de colis</th> 
                                                             <th>Nombre barres restant</th>
                                                             <th>Total barres</th>
-                                                            <th>Longueur barres</th> 
+                                                            <th>Longueur barres (m)</th> 
                                                             <th>Rebus</th>
                                                         </tr>
                                                     </thead>
@@ -2446,7 +2446,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                                                 <td style="background-color:#4e73df ; color:white;"><?= $productionD6Q1['prodnbcolis'] ?></td>
                                                                 <td style="background-color:#4e73df ; color:white;"><?= $productionD6Q1['prodnbbarrerestant'] ?></td>
                                                                 <td style="background-color:#4e73df ; color:white;"><?= ($productionD6Q1['prodnbBarreColis']*$productionD6Q1['prodnbcolis'])+$productionD6Q1['prodnbbarrerestant']  ?></td>
-                                                                <td style="background-color:#4e73df ; color:white;"><?= $productionD6Q1['prodlongueurbarre']." m" ?></td>
+                                                                <td style="background-color:#4e73df ; color:white;"><?= $productionD6Q1['prodlongueurbarre'] ?></td>
                                                                 <td style="background-color:#4e73df ; color:white;"><?= $productionD6Q1['proddechet'] ?></td>
                                                             </tr>
                                                         <!-- Pour le sweetAlert approuveTransfert !--> 
@@ -2594,7 +2594,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                                         <th>Nombre de colis</th> 
                                                         <th>Nombre barres restant</th>
                                                         <th>Total barres</th>
-                                                        <th>Longueur barres</th> 
+                                                        <th>Longueur barres (m)</th> 
                                                         <th>Rebus</th>
                                                     </tr>
                                                 </thead>
@@ -2611,7 +2611,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                                             <td style="background-color:#4e73df ; color:white;"><?= $productionD7Q1['prodnbcolis'] ?></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $productionD7Q1['prodnbbarrerestant'] ?></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= ($productionD7Q1['prodnbBarreColis']*$productionD7Q1['prodnbcolis'])+$productionD7Q1['prodnbbarrerestant']  ?></td>
-                                                            <td style="background-color:#4e73df ; color:white;"><?= $productionD7Q1['prodlongueurbarre']." m" ?></td>
+                                                            <td style="background-color:#4e73df ; color:white;"><?= $productionD7Q1['prodlongueurbarre'] ?></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $productionD7Q1['proddechet'] ?></td>
                                                         </tr>
                                                     <!-- Pour le sweetAlert approuveTransfert !--> 
@@ -2775,7 +2775,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                                                 <th>Nombre de colis</th> 
                                                                 <th>Nombre barres restant</th>
                                                                 <th>Total barres</th>
-                                                                <th>Longueur barres</th> 
+                                                                <th>Longueur barres (m)</th> 
                                                                 <th>Rebus</th>
                                                             </tr>
                                                         </thead>
@@ -2792,7 +2792,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                                                     <td style="background-color:#4e73df ; color:white;"><?= $productionD1Q2['prodnbcolis'] ?></td>
                                                                     <td style="background-color:#4e73df ; color:white;"><?= $productionD1Q2['prodnbbarrerestant'] ?></td>
                                                                     <td style="background-color:#4e73df ; color:white;"><?= ($productionD1Q2['prodnbBarreColis']*$productionD1Q2['prodnbcolis'])+$productionD1Q2['prodnbbarrerestant']  ?></td>
-                                                                    <td style="background-color:#4e73df ; color:white;"><?= $productionD1Q2['prodlongueurbarre']." m" ?></td>
+                                                                    <td style="background-color:#4e73df ; color:white;"><?= $productionD1Q2['prodlongueurbarre'] ?></td>
                                                                     <td style="background-color:#4e73df ; color:white;"><?= $productionD1Q2['proddechet'] ?></td>
                                                                 </tr>
                                                             <!-- Pour le sweetAlert approuveTransfert !--> 
@@ -2940,7 +2940,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                                                 <th>Nombre de colis</th> 
                                                                 <th>Nombre barres restant</th>
                                                                 <th>Total barres</th>
-                                                                <th>Longueur barres</th> 
+                                                                <th>Longueur barres (m)</th> 
                                                                 <th>Rebus</th>
                                                             </tr>
                                                         </thead>
@@ -2957,7 +2957,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                                                     <td style="background-color:#4e73df ; color:white;"><?= $productionD2Q2['prodnbcolis'] ?></td>
                                                                     <td style="background-color:#4e73df ; color:white;"><?= $productionD2Q2['prodnbbarrerestant'] ?></td>
                                                                     <td style="background-color:#4e73df ; color:white;"><?= ($productionD2Q2['prodnbBarreColis']*$productionD2Q2['prodnbcolis'])+$productionD2Q2['prodnbbarrerestant']  ?></td>
-                                                                    <td style="background-color:#4e73df ; color:white;"><?= $productionD2Q2['prodlongueurbarre']." m" ?></td>
+                                                                    <td style="background-color:#4e73df ; color:white;"><?= $productionD2Q2['prodlongueurbarre'] ?></td>
                                                                     <td style="background-color:#4e73df ; color:white;"><?= $productionD2Q2['proddechet'] ?></td>
                                                                 </tr>
                                                             <!-- Pour le sweetAlert approuveTransfert !--> 
@@ -3105,7 +3105,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                                                 <th>Nombre de colis</th> 
                                                                 <th>Nombre barres restant</th>
                                                                 <th>Total barres</th>
-                                                                <th>Longueur barres</th> 
+                                                                <th>Longueur barres (m)</th> 
                                                                 <th>Rebus</th>
                                                             </tr>
                                                         </thead>
@@ -3122,7 +3122,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                                                     <td style="background-color:#4e73df ; color:white;"><?= $productionD4Q2['prodnbcolis'] ?></td>
                                                                     <td style="background-color:#4e73df ; color:white;"><?= $productionD4Q2['prodnbbarrerestant'] ?></td>
                                                                     <td style="background-color:#4e73df ; color:white;"><?= ($productionD4Q2['prodnbBarreColis']*$productionD4Q2['prodnbcolis'])+$productionD4Q2['prodnbbarrerestant']  ?></td>
-                                                                    <td style="background-color:#4e73df ; color:white;"><?= $productionD4Q2['prodlongueurbarre']." m" ?></td>
+                                                                    <td style="background-color:#4e73df ; color:white;"><?= $productionD4Q2['prodlongueurbarre'] ?></td>
                                                                     <td style="background-color:#4e73df ; color:white;"><?= $productionD4Q2['proddechet'] ?></td>
                                                                 </tr>
                                                             <!-- Pour le sweetAlert approuveTransfert !--> 
@@ -3270,7 +3270,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                                                 <th>Nombre de colis</th> 
                                                                 <th>Nombre barres restant</th>
                                                                 <th>Total barres</th>
-                                                                <th>Longueur barres</th> 
+                                                                <th>Longueur barres (m)</th> 
                                                                 <th>Rebus</th>
                                                             </tr>
                                                         </thead>
@@ -3287,7 +3287,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                                                     <td style="background-color:#4e73df ; color:white;"><?= $productionD5Q2['prodnbcolis'] ?></td>
                                                                     <td style="background-color:#4e73df ; color:white;"><?= $productionD5Q2['prodnbbarrerestant'] ?></td>
                                                                     <td style="background-color:#4e73df ; color:white;"><?= ($productionD5Q2['prodnbBarreColis']*$productionD5Q2['prodnbcolis'])+$productionD5Q2['prodnbbarrerestant']  ?></td>
-                                                                    <td style="background-color:#4e73df ; color:white;"><?= $productionD5Q2['prodlongueurbarre']." m" ?></td>
+                                                                    <td style="background-color:#4e73df ; color:white;"><?= $productionD5Q2['prodlongueurbarre'] ?></td>
                                                                     <td style="background-color:#4e73df ; color:white;"><?= $productionD5Q2['proddechet'] ?></td>
                                                                 </tr>
                                                             <!-- Pour le sweetAlert approuveTransfert !--> 
@@ -3435,7 +3435,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                                                 <th>Nombre de colis</th> 
                                                                 <th>Nombre barres restant</th>
                                                                 <th>Total barres</th>
-                                                                <th>Longueur barres</th> 
+                                                                <th>Longueur barres (m)</th> 
                                                                 <th>Rebus</th>
                                                             </tr>
                                                         </thead>
@@ -3452,7 +3452,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                                                     <td style="background-color:#4e73df ; color:white;"><?= $productionD6Q2['prodnbcolis'] ?></td>
                                                                     <td style="background-color:#4e73df ; color:white;"><?= $productionD6Q2['prodnbbarrerestant'] ?></td>
                                                                     <td style="background-color:#4e73df ; color:white;"><?= ($productionD6Q2['prodnbBarreColis']*$productionD6Q2['prodnbcolis'])+$productionD6Q2['prodnbbarrerestant']  ?></td>
-                                                                    <td style="background-color:#4e73df ; color:white;"><?= $productionD6Q2['prodlongueurbarre']." m" ?></td>
+                                                                    <td style="background-color:#4e73df ; color:white;"><?= $productionD6Q2['prodlongueurbarre'] ?></td>
                                                                     <td style="background-color:#4e73df ; color:white;"><?= $productionD6Q2['proddechet'] ?></td>
                                                                 </tr>
                                                             <!-- Pour le sweetAlert approuveTransfert !--> 
@@ -3600,7 +3600,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                                             <th>Nombre de colis</th> 
                                                             <th>Nombre barres restant</th>
                                                             <th>Total barres</th>
-                                                            <th>Longueur barres</th> 
+                                                            <th>Longueur barres (m)</th> 
                                                             <th>Rebus</th>
                                                         </tr>
                                                     </thead>
@@ -3617,7 +3617,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                                                 <td style="background-color:#4e73df ; color:white;"><?= $productionD7Q2['prodnbcolis'] ?></td>
                                                                 <td style="background-color:#4e73df ; color:white;"><?= $productionD7Q2['prodnbbarrerestant'] ?></td>
                                                                 <td style="background-color:#4e73df ; color:white;"><?= ($productionD7Q2['prodnbBarreColis']*$productionD7Q2['prodnbcolis'])+$productionD7Q2['prodnbbarrerestant']  ?></td>
-                                                                <td style="background-color:#4e73df ; color:white;"><?= $productionD7Q2['prodlongueurbarre']." m" ?></td>
+                                                                <td style="background-color:#4e73df ; color:white;"><?= $productionD7Q2['prodlongueurbarre'] ?></td>
                                                                 <td style="background-color:#4e73df ; color:white;"><?= $productionD7Q2['proddechet'] ?></td>
                                                             </tr>
                                                         <!-- Pour le sweetAlert approuveTransfert !--> 
@@ -3780,7 +3780,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                                                 <th>Nombre de colis</th> 
                                                                 <th>Nombre barres restant</th>
                                                                 <th>Total barres</th>
-                                                                <th>Longueur barres</th> 
+                                                                <th>Longueur barres (m)</th> 
                                                                 <th>Rebus</th>
                                                             </tr>
                                                         </thead>
@@ -3797,7 +3797,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                                                     <td style="background-color:#4e73df ; color:white;"><?= $productionD1Q3['prodnbcolis'] ?></td>
                                                                     <td style="background-color:#4e73df ; color:white;"><?= $productionD1Q3['prodnbbarrerestant'] ?></td>
                                                                     <td style="background-color:#4e73df ; color:white;"><?= ($productionD1Q3['prodnbBarreColis']*$productionD1Q3['prodnbcolis'])+$productionD1Q3['prodnbbarrerestant']  ?></td>
-                                                                    <td style="background-color:#4e73df ; color:white;"><?= $productionD1Q3['prodlongueurbarre']." m" ?></td>
+                                                                    <td style="background-color:#4e73df ; color:white;"><?= $productionD1Q3['prodlongueurbarre'] ?></td>
                                                                     <td style="background-color:#4e73df ; color:white;"><?= $productionD1Q3['proddechet'] ?></td>
                                                                 </tr>
                                                             <!-- Pour le sweetAlert approuveTransfert !--> 
@@ -3945,7 +3945,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                                                 <th>Nombre de colis</th> 
                                                                 <th>Nombre barres restant</th>
                                                                 <th>Total barres</th>
-                                                                <th>Longueur barres</th> 
+                                                                <th>Longueur barres (m)</th> 
                                                                 <th>Rebus</th>
                                                             </tr>
                                                         </thead>
@@ -3962,7 +3962,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                                                     <td style="background-color:#4e73df ; color:white;"><?= $productionD2Q3['prodnbcolis'] ?></td>
                                                                     <td style="background-color:#4e73df ; color:white;"><?= $productionD2Q3['prodnbbarrerestant'] ?></td>
                                                                     <td style="background-color:#4e73df ; color:white;"><?= ($productionD2Q3['prodnbBarreColis']*$productionD2Q3['prodnbcolis'])+$productionD2Q3['prodnbbarrerestant']  ?></td>
-                                                                    <td style="background-color:#4e73df ; color:white;"><?= $productionD2Q3['prodlongueurbarre']." m" ?></td>
+                                                                    <td style="background-color:#4e73df ; color:white;"><?= $productionD2Q3['prodlongueurbarre'] ?></td>
                                                                     <td style="background-color:#4e73df ; color:white;"><?= $productionD2Q3['proddechet'] ?></td>
                                                                 </tr>
                                                             <!-- Pour le sweetAlert approuveTransfert !--> 
@@ -4110,7 +4110,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                                                 <th>Nombre de colis</th> 
                                                                 <th>Nombre barres restant</th>
                                                                 <th>Total barres</th>
-                                                                <th>Longueur barres</th> 
+                                                                <th>Longueur barres (m)</th> 
                                                                 <th>Rebus</th>
                                                             </tr>
                                                         </thead>
@@ -4127,7 +4127,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                                                     <td style="background-color:#4e73df ; color:white;"><?= $productionD4Q3['prodnbcolis'] ?></td>
                                                                     <td style="background-color:#4e73df ; color:white;"><?= $productionD4Q3['prodnbbarrerestant'] ?></td>
                                                                     <td style="background-color:#4e73df ; color:white;"><?= ($productionD4Q3['prodnbBarreColis']*$productionD4Q3['prodnbcolis'])+$productionD4Q3['prodnbbarrerestant']  ?></td>
-                                                                    <td style="background-color:#4e73df ; color:white;"><?= $productionD4Q3['prodlongueurbarre']." m" ?></td>
+                                                                    <td style="background-color:#4e73df ; color:white;"><?= $productionD4Q3['prodlongueurbarre'] ?></td>
                                                                     <td style="background-color:#4e73df ; color:white;"><?= $productionD4Q3['proddechet'] ?></td>
                                                                 </tr>
                                                             <!-- Pour le sweetAlert approuveTransfert !--> 
@@ -4275,7 +4275,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                                                 <th>Nombre de colis</th> 
                                                                 <th>Nombre barres restant</th>
                                                                 <th>Total barres</th>
-                                                                <th>Longueur barres</th> 
+                                                                <th>Longueur barres </th> 
                                                                 <th>Rebus</th>
                                                             </tr>
                                                         </thead>
@@ -4292,7 +4292,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                                                     <td style="background-color:#4e73df ; color:white;"><?= $productionD5Q3['prodnbcolis'] ?></td>
                                                                     <td style="background-color:#4e73df ; color:white;"><?= $productionD5Q3['prodnbbarrerestant'] ?></td>
                                                                     <td style="background-color:#4e73df ; color:white;"><?= ($productionD5Q3['prodnbBarreColis']*$productionD5Q3['prodnbcolis'])+$productionD5Q3['prodnbbarrerestant']  ?></td>
-                                                                    <td style="background-color:#4e73df ; color:white;"><?= $productionD5Q3['prodlongueurbarre']." m" ?></td>
+                                                                    <td style="background-color:#4e73df ; color:white;"><?= $productionD5Q3['prodlongueurbarre'] ?></td>
                                                                     <td style="background-color:#4e73df ; color:white;"><?= $productionD5Q3['proddechet'] ?></td>
                                                                 </tr>
                                                             <!-- Pour le sweetAlert approuveTransfert !--> 
@@ -4440,7 +4440,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                                                 <th>Nombre de colis</th> 
                                                                 <th>Nombre barres restant</th>
                                                                 <th>Total barres</th>
-                                                                <th>Longueur barres</th> 
+                                                                <th>Longueur barres (m)</th> 
                                                                 <th>Rebus</th>
                                                             </tr>
                                                         </thead>
@@ -4457,7 +4457,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                                                     <td style="background-color:#4e73df ; color:white;"><?= $productionD6Q3['prodnbcolis'] ?></td>
                                                                     <td style="background-color:#4e73df ; color:white;"><?= $productionD6Q3['prodnbbarrerestant'] ?></td>
                                                                     <td style="background-color:#4e73df ; color:white;"><?= ($productionD6Q3['prodnbBarreColis']*$productionD6Q3['prodnbcolis'])+$productionD6Q3['prodnbbarrerestant']  ?></td>
-                                                                    <td style="background-color:#4e73df ; color:white;"><?= $productionD6Q3['prodlongueurbarre']." m" ?></td>
+                                                                    <td style="background-color:#4e73df ; color:white;"><?= $productionD6Q3['prodlongueurbarre'] ?></td>
                                                                     <td style="background-color:#4e73df ; color:white;"><?= $productionD6Q3['proddechet'] ?></td>
                                                                 </tr>
                                                             <!-- Pour le sweetAlert approuveTransfert !--> 
@@ -4605,7 +4605,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                                             <th>Nombre de colis</th> 
                                                             <th>Nombre barres restant</th>
                                                             <th>Total barres</th>
-                                                            <th>Longueur barres</th> 
+                                                            <th>Longueur barres (m)</th> 
                                                             <th>Rebus</th>
                                                         </tr>
                                                     </thead>
@@ -4622,7 +4622,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                                                 <td style="background-color:#4e73df ; color:white;"><?= $productionD7Q3['prodnbcolis'] ?></td>
                                                                 <td style="background-color:#4e73df ; color:white;"><?= $productionD7Q3['prodnbbarrerestant'] ?></td>
                                                                 <td style="background-color:#4e73df ; color:white;"><?= ($productionD7Q3['prodnbBarreColis']*$productionD7Q3['prodnbcolis'])+$productionD7Q3['prodnbbarrerestant']  ?></td>
-                                                                <td style="background-color:#4e73df ; color:white;"><?= $productionD7Q3['prodlongueurbarre']." m" ?></td>
+                                                                <td style="background-color:#4e73df ; color:white;"><?= $productionD7Q3['prodlongueurbarre'] ?></td>
                                                                 <td style="background-color:#4e73df ; color:white;"><?= $productionD7Q3['proddechet'] ?></td>
                                                             </tr>
                                                         <!-- Pour le sweetAlert approuveTransfert !--> 
@@ -4754,7 +4754,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                     <thead>
                                         <tr>       
                                             <th style='background-color:#4e73df ; color:white;'>Diametres coupés</th>
-                                            <th style='background-color:#4e73df ; color:white;'>Longueur barres</th>
+                                            <th style='background-color:#4e73df ; color:white;'>Longueur barres (m)</th>
                                             <th style='background-color:#4e73df ; color:white;'>Nombre barres par colis</th> 
                                             <th style='background-color:#4e73df ; color:white;'>Poids total (KG)</th>                                                                                
                                             <th style='background-color:#4e73df ; color:white;'>Nombre de colis</th> 
@@ -4785,7 +4785,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                                     echo "
                                                     <tr>
                                                         <td style='background-color:#4e73df ; color:white;'>$dresseuseproduction[proddiametre]</td>
-                                                        <td style='background-color:#4e73df ; color:white;'>$dresseuseproduction[prodlongueurbarre] m </td>
+                                                        <td style='background-color:#4e73df ; color:white;'>$dresseuseproduction[prodlongueurbarre]</td>
                                                         <td style='background-color:#4e73df ; color:white;'>$dresseuseproduction[prodnbBarreColis]</td>
                                                         <td style='background-color:#4e73df ; color:white;'>$dresseuseproduction[prodpoids]</td>
                                                         <td style='background-color:#4e73df ; color:white;'>$dresseuseproduction[prodnbcolis]</td>

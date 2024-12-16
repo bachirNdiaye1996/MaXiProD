@@ -503,7 +503,7 @@
             //alert('ok');           
             k++;           
             $('#dynamicaddErreurs').append(`
-            <tr id="row'+k+'" class="rowClass">
+            <tr id="row'+i+'" class="rowClass">
                 <td style="background-color:#CFFEDA ;">
                     <div class="col-md-10">
                         <div class="mb-1 text-start">
@@ -624,13 +624,13 @@
 
             $('#addProductions').click(function(){           
             //alert('ok');           
-            j++;           
+            i++;           
             $('#dynamicaddProductions').append(`
-            <tr id="row'+j+'" class="rowClass">
+            <tr id="row'+i+'" class="rowClass">
                 <td style="background-color:#CFFEDA ;">
                     <div class="col-md-10">
                         <div class="mb-1 text-start">
-                            <input class="form-control designa" type="number" step="0.01" name="Proddiametre[]" id="Proddiametre`+j+`" value="" required>
+                            <input class="form-control designa" type="number" step="0.01" name="Proddiametre[]" id="Proddiametre`+i+`" value="" required>
                         </div>
                     </div>
                 </td>
@@ -665,7 +665,7 @@
                 <td style="background-color:#CFFEDA ;">
                     <div class="col-md-12">
                         <div class="mb-1 text-start">
-                            <select class="form-control" name="Prodnumerofin[]" id="numerofinProd`+j+`" required>
+                            <select class="form-control" name="Prodnumerofin[]" id="numerofinProd`+i+`" required>
                                 <option></option> 
                                 <?php
                                     foreach($stockCranteuse as $stock){
@@ -680,19 +680,19 @@
                 </td>
                 `+foo1+`
                     $(document).ready(function(){
-                        $('#numerofinProd`+j+`').change(function(){
+                        $('#numerofinProd`+i+`').change(function(){
                             //Selected value
                             var inputValue = $(this).val();
                             var myArray = inputValue.split('/');
-                            document.getElementById("Proddiametre`+j+`").value = myArray[2];
-                            document.getElementById("Prodpoids`+j+`").value = myArray[3];
+                            document.getElementById("Proddiametre`+i+`").value = myArray[2];
+                            document.getElementById("Prodpoids`+i+`").value = myArray[3];
                         });
                     });
                 `+foo2+`
                 <td style="background-color:#CFFEDA ;">
                     <div class="col-md-10">
                         <div class="mb-1 text-start">
-                            <input class="form-control designa" type="number" step="0.01" name="Prodpoids[]" id="Prodpoids`+j+`" value="" required>
+                            <input class="form-control designa" type="number" step="0.01" name="Prodpoids[]" id="Prodpoids`+i+`" value="" required>
                         </div>
                     </div>
                 </td>
@@ -936,7 +936,7 @@
                                                                             <div class="col-md-10">
                                                                                 <div class="mb-1 text-start">
                                                                                     <select class="form-control" name="numerofin[]" id="numerofin<?php echo $i; ?>" required>
-                                                                                        <option value="<?php echo $rowConsommation['numerofin'].'/' ?>"><?php $numerofinString = explode("/", $rowConsommation['numerofin']); echo $numerofinString[0]; ?></option> 
+                                                                                        <option> </option> 
                                                                                         <?php
                                                                                             foreach($stockCranteuse as $stock){
                                                                                         ?>       
