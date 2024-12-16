@@ -624,7 +624,7 @@
 
             $('#addProductions').click(function(){           
             //alert('ok');           
-            j++;           
+            i++;           
             $('#dynamicaddProductions').append(`
             <tr id="row'+j+'" class="rowClass">
                 <td style="background-color:#CFFEDA ;">

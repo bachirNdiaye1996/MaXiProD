@@ -2817,7 +2817,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                                                     //$TempsFonctionTotal +=  (strtotime($productioncrantC1Q1['heurefinquart']) - strtotime($productioncrantC1Q1['heuredepartquart']));
                                                                 ?>
                                                                 <td style="background-color:#4e73df ; color:white;">
-                                                                    <a style="text-decoration: none; font-family: arial; font-size: 20px; color:white;" href="javascript:void(0);" data-toggle="modal" data-target="#InformationArretD1Q1" title="Voir details des temps d'arret" class="link-offset-2 link-underline mb-5"><?= ($TotalArretHReelD1Q2[0]-1)." H ".$TotalArretHReelD1Q2[1]." min" ?></a>
+                                                                    <a style="text-decoration: none; font-family: arial; font-size: 20px; color:white;" href="javascript:void(0);" data-toggle="modal" data-target="#InformationArretD1Q2" title="Voir details des temps d'arret" class="link-offset-2 link-underline mb-5"><?= ($TotalArretHReelD1Q2[0]-1)." H ".$TotalArretHReelD1Q2[1]." min" ?></a>
                                                                 </td>
                                                             </tr>
                                                         </tbody>
@@ -4754,7 +4754,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                     <thead>
                                         <tr>       
                                             <th style='background-color:#4e73df ; color:white;'>Diametres coupés</th>
-                                            <th style='background-color:#4e73df ; color:white;'>Longueur barres</th>
+                                            <th style='background-color:#4e73df ; color:white;'>Longueur barres (m)</th>
                                             <th style='background-color:#4e73df ; color:white;'>Nombre barres par colis</th> 
                                             <th style='background-color:#4e73df ; color:white;'>Poids total (KG)</th>                                                                                
                                             <th style='background-color:#4e73df ; color:white;'>Nombre de colis</th> 

@@ -624,7 +624,7 @@
 
             $('#addProductions').click(function(){           
             //alert('ok');           
-            j++;           
+            i++;           
             $('#dynamicaddProductions').append(`
             <tr id="row'+j+'" class="rowClass">
                 <td style="background-color:#CFFEDA ;">
@@ -936,7 +936,6 @@
                                                                             <div class="col-md-10">
                                                                                 <div class="mb-1 text-start">
                                                                                     <select class="form-control" name="numerofin[]" id="numerofin<?php echo $i; ?>" required>
-                                                                                        <option value="<?php echo $rowConsommation['numerofin'].'/' ?>"><?php $numerofinString = explode("/", $rowConsommation['numerofin']); echo $numerofinString[0]; ?></option> 
                                                                                         <?php
                                                                                             foreach($stockCranteuse as $stock){
                                                                                         ?>       
