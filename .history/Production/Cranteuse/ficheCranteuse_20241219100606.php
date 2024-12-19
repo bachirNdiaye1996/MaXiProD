@@ -548,7 +548,7 @@ $ValideFiche = "";
                                             <tr>      
                                                 <th>code de production</th>    
                                                 <th>Machine</th>  
-                                                <th>Date production</th>    
+                                                <th>Date enregistrée</th>    
                                                 <th>Compte utilisateur</th>
                                                 <th>Quart</th>
                                                 <th>Date de création</th>

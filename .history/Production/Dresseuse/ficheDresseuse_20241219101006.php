@@ -8,7 +8,7 @@ if(!$_SESSION){
 }
 
 include "../../connexion/conexiondb.php";
-include "./mailProductionCranteuse.php";
+include "./mailProductionDresseuse.php";
 include "../../variables.php";
 
 
@@ -20,28 +20,33 @@ $idmatierearrive="";
 $ValideFiche = "";
 
 
+//echo phpversion();
+
+
 //Pour send mail approuveProdRectifie
     if(isset($_POST['approuveProdRectifie'])){
         if(!empty($_POST['motifRectifier'])){
-            $idfichecranteuseq1=htmlspecialchars($_POST['idfichecranteuseq1']);
+            $idfichedresseuse=htmlspecialchars($_POST['idfichedresseuse']);
             $quart=htmlspecialchars($_POST['quart']);
-            $motifRectifier=htmlspecialchars($_POST['motifRectifier']);
-            //$idmatierearrive=htmlspecialchars($_POST['idmatierearrive']);
+            $motifRectifier=htmlspecialchars($_POST['motifRectifier']); 
+            $dateCreation=htmlspecialchars($_POST['dateCreation']);
+            $machine=htmlspecialchars($_POST['machine']);
 
-            $sql1 = "UPDATE `fichecranteuseq1` set `actifapprouvprod`=1 where idfichecranteuseq1=$idfichecranteuseq1";
+
+            $sql1 = "UPDATE `fichedresseuse` set `actifapprouvprod`=1 where idfichedresseuse=$idfichedresseuse";
             $db->query($sql1);
 
             $messageD = "
             <html>
             <head>
             <meta http-equiv='Content-Type' content='text/html; charset=utf-8'/>
-                <title>Nouveau compte</title>
+                <title></title>
             </head>
             <body>
                 <div id='email-wrap' style='background: #3F5EFB; border-radius: 10px;'><br><br>
                     <p align='center' style='margin-top:20px;'>
                         <h2 align='center' style='color:white'>METAL * * * AFRIQUE</h2>
-                        <p align='center' style='color:white'>$_SESSION[nomcomplet] vous demande l'autorisation de modifier ou de supprimer une fiche de production cranteuse (quart $quart) de code de production : <strong>CRAN-$idfichecranteuseq1</strong></p>
+                        <p align='center' style='color:white'>$_SESSION[nomcomplet] vous demande l'autorisation de modifier ou de supprimer une fiche de production de la machine $machine (quart $quart) du $dateCreation de code de production : <strong>DRES-$idfichedresseuse</strong></p>
                         <p align='center' style='color:white'>Avec comme motif : <strong>$motifRectifier</strong></p>
                         <p align='center'><a href=$HOST style='color:white'>Cliquez ici pour y acceder.</a></p>
                     </p>
@@ -64,16 +69,13 @@ $ValideFiche = "";
                 $UserMails = $query->fetchAll();
             //** Fin select 
             foreach($UserMails as $user => $item){
-                envoie_mail("Gestion de production réctification",$item['email'],"Demande de réctification de la fiche de code CRAN-$idfichecranteuseq1",$messageD);
+                envoie_mail("Gestion de production réctification",$item['email'],"Demande de réctification de la fiche de code DRES-$idfichedresseuse",$messageD);
             }
 
             $ValideFiche="reussi";
                 
-            header("location: ficheCranteuse.php?");
+            header("location: ficheDresseuse.php?");
             exit;
-            /*}else{
-                $idmatierearrive="erreurIdmatierearrive";
-            }*/
 
         }else{
         }
@@ -190,7 +192,7 @@ $ValideFiche = "";
 
 
 //** Debut select de la production
-    $sql = "SELECT * FROM `fichecranteuseq1` where `actif`=1 ORDER BY `idfichecranteuseq1` DESC";
+    $sql = "SELECT * FROM `fichedresseuse` where `actif`=1 ORDER BY `idfichedresseuse` DESC";
 
     // On prépare la requête
     $query = $db->prepare($sql);
@@ -199,7 +201,7 @@ $ValideFiche = "";
     $query->execute();
 
     // On récupère les valeurs dans un tableau associatif
-    $Cranteuseq1 = $query->fetchAll();
+    $Dresseuses = $query->fetchAll();
 //** Fin select de la production
 
 
@@ -261,10 +263,10 @@ $ValideFiche = "";
     <!-- Page Wrapper -->
     <div id="wrapper">
 
-        <?php $activeQ = "active"; ?>
+        <?php $activeD = "active"; ?>
 
         <!-- Contient la nav bar gauche -->
-            <?php include "./navGaucheCranteuse.php" ?>
+            <?php include "./navGaucheDresseuse.php" ?>
         <!-- End  -->
 
         <!-- Content Wrapper -->
@@ -512,7 +514,7 @@ $ValideFiche = "";
                     <!-- Page Heading -->
                     <div class="row">
                         <div class="col-xl-3 col-md-6 mb-1">
-                            <img src="../../image/cranteuse.jpg" class="img-fluid" alt="" style="border-radius: 50%; margin:20px; opacity: 0.7;" width="200">
+                            <img src="../../image/fer-a-beton.jpg" class="img-fluid" alt="" style="border-radius: 50%; margin:20px; opacity: 0.9;" width="200">
                         </div>
                     </div>
                     <!-- DataTales Example -->
@@ -520,7 +522,7 @@ $ValideFiche = "";
                     <div class="mt-5 mb-3 col-lg-12">
                         <div class="card position-relative">
                             <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary">Liste des fiches de production de la section cranteuse</h6>
+                                <h6 class="m-0 font-weight-bold text-primary">Liste des fiches de production de la section dresseuse</h6>
                             </div>
                             <div class="row m-2">
                                 <div class="table-responsive">
@@ -547,8 +549,8 @@ $ValideFiche = "";
                                         <thead>
                                             <tr>      
                                                 <th>code de production</th>    
-                                                <th>Machine</th>  
-                                                <th>Date production</th>    
+                                                <th>Machine</th>   
+                                                <th>Date enregistrée</th>   
                                                 <th>Compte utilisateur</th>
                                                 <th>Quart</th>
                                                 <th>Date de création</th>
@@ -562,48 +564,48 @@ $ValideFiche = "";
                                         <tbody>
                                             <?php
                                                 $i=0;
-                                                foreach($Cranteuseq1 as $cranteuseq1){
+                                                foreach($Dresseuses as $dresseuse){
                                                     $i++;
                                                     //if($article['status'] == 'termine'){<p><a class="" href="#">Underline opacity 0</a></p>
                                             ?>
                                                 <tr>
-                                                    <td style="<?php if($cranteuseq1['actifapprouvprod'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FF5335"; ?><?php }?>; text-align: center;" class="">
-                                                        <a style="text-decoration: none; font-family: arial; font-size: 20px;" href="detailsCranteuseQ1.php?idfichecranteuseq1=<?= $cranteuseq1['idfichecranteuseq1'] ?>&quart=<?= $cranteuseq1['quart'] ?>" class="link-offset-2 link-underline"><?php echo "CRAN-".$cranteuseq1['idfichecranteuseq1']; ?></a>
+                                                    <td style="<?php if($dresseuse['actifapprouvprod'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FF5335"; ?><?php }?>; text-align: center;" class="">
+                                                        <a style="text-decoration: none; font-family: arial; font-size: 20px;" href="detailsFicheDresseuse.php?idfichedresseuse=<?= $dresseuse['idfichedresseuse'] ?>&quart=<?= $dresseuse['quart'] ?>" class="link-offset-2 link-underline"><?php echo "DRES-".$dresseuse['idfichedresseuse']; ?></a>
                                                     </td>
-                                                    <td style="<?php if($cranteuseq1['actifapprouvprod'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FF5335"; ?><?php }?>;">
-                                                        <?= $cranteuseq1['machine'] ?>
+                                                    <td style="<?php if($dresseuse['actifapprouvprod'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FF5335"; ?><?php }?>;">
+                                                        <?= $dresseuse['machine'] ?>
                                                     </td>
-                                                    <td style="<?php if($cranteuseq1['actifapprouvprod'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FF5335"; ?><?php }?>;">
-                                                        <?= $cranteuseq1['dateCreation'] ?>
+                                                    <td style="<?php if($dresseuse['actifapprouvprod'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FF5335"; ?><?php }?>;">
+                                                        <?= $dresseuse['dateCreation'] ?>
                                                     </td>
-                                                    <td style="<?php if($cranteuseq1['actifapprouvprod'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FF5335"; ?><?php }?>;">
-                                                        <?= $cranteuseq1['user'] ?>
+                                                    <td style="<?php if($dresseuse['actifapprouvprod'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FF5335"; ?><?php }?>;">
+                                                        <?= $dresseuse['user'] ?>
                                                     </td>
-                                                    <td style="<?php if($cranteuseq1['actifapprouvprod'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FF5335"; ?><?php }?>;">
-                                                        <?= $cranteuseq1['quart'] ?>
+                                                    <td style="<?php if($dresseuse['actifapprouvprod'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FF5335"; ?><?php }?>;">
+                                                        <?= $dresseuse['quart'] ?>
                                                     </td>
-                                                    <td style="<?php if($cranteuseq1['actifapprouvprod'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FF5335"; ?><?php }?>;">
-                                                        <?= $cranteuseq1['dateajout'] ?>
+                                                    <td style="<?php if($dresseuse['actifapprouvprod'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FF5335"; ?><?php }?>;">
+                                                        <?= $dresseuse['dateajout'] ?>
                                                     </td>
-                                                    <td style="<?php if($cranteuseq1['actifapprouvprod'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FF5335"; ?><?php }?>;">
-                                                        <?= $cranteuseq1['heuredepartquart'] ?>
+                                                    <td style="<?php if($dresseuse['actifapprouvprod'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FF5335"; ?><?php }?>;">
+                                                        <?= $dresseuse['heuredepartquart'] ?>
                                                     </td>
-                                                    <td style="<?php if($cranteuseq1['actifapprouvprod'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FF5335"; ?><?php }?>;">
-                                                        <?= $cranteuseq1['heurefinquart'] ?>
+                                                    <td style="<?php if($dresseuse['actifapprouvprod'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FF5335"; ?><?php }?>;">
+                                                        <?= $dresseuse['heurefinquart'] ?>
                                                     </td>
-                                                    <td style="<?php if($cranteuseq1['actifapprouvprod'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#CFFEDA"; ?><?php }?>;">
-                                                        <?php if($cranteuseq1['actifapprouvprod'] == 0 && $_SESSION['niveau']=='chefquart'){ ?>
-                                                            <a href="javascript:void(0);" data-toggle="modal" data-target=".approuveProdRectifie<?= $i ?>" class="px-2" title="Demander l'autorisation de modifier ou de suprimer cette fiche au prêt du DSI <?php echo ' --> CRAN-'.$cranteuseq1['idfichecranteuseq1']; ?>">
+                                                    <td style="<?php if($dresseuse['actifapprouvprod'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#CFFEDA"; ?><?php }?>;">
+                                                        <?php if($dresseuse['actifapprouvprod'] == 0 && $_SESSION['niveau']=='chefquart'){ ?>
+                                                            <a href="javascript:void(0);" data-toggle="modal" data-target=".approuveProdRectifie<?= $i ?>" class="px-2" title="Demander l'autorisation de modifier ou de suprimer cette fiche au prêt du DSI <?php echo ' --> DRES-'.$dresseuse['idfichedresseuse']; ?>">
                                                             <i class="fas fa-file-signature"></i></a>
                                                         <?php }?>
-                                                        <?php if(($cranteuseq1['accepteprodmodif'] == 0) && ($cranteuseq1['actifapprouvprod'] == 1) && $_SESSION['niveau']=='admin'){ ?>
+                                                        <?php if(($dresseuse['accepteprodmodif'] == 0) && ($dresseuse['actifapprouvprod'] == 1) && $_SESSION['niveau']=='admin'){ ?>
                                                             <a href="javascript:void(0);" class="accepteProdmodifmod<?= $i ?> px-2" class="px-2" title="Permettre au responsable du pont bascule de modifier ou suprimer cette fiche">
                                                             <i class="fas fa-paper-plane"></i></a>
                                                         <?php }?>
-                                                        <?php if(($cranteuseq1['accepteprodmodif'] == 1) && ($cranteuseq1['actifapprouvprod'] == 1) && $_SESSION['niveau']=='chefquart'){ ?>
-                                                            <a href="modifierFicheCranteuse.php?idsupfiche=<?= $cranteuseq1['idfichecranteuseq1'] ?>&quart=<?= $cranteuseq1['quart'] ?>" title="Modifier la fiche"><i class="far fa-edit"></i></a>
+                                                        <?php if(($dresseuse['accepteprodmodif'] == 1) && ($dresseuse['actifapprouvprod'] == 1) && $_SESSION['niveau']=='chefquart'){ ?>
+                                                            <a href="modifierFicheDresseuse.php?idsupfiche=<?= $dresseuse['idfichedresseuse'] ?>&quart=<?= $dresseuse['quart'] ?>" title="Modifier la fiche"><i class="far fa-edit"></i></a>
                                                         <?php }?>
-                                                        <?php if(($cranteuseq1['accepteprodmodif'] == 1) && ($cranteuseq1['actifapprouvprod'] == 1) && $_SESSION['niveau']=='chefquart'){ ?>
+                                                        <?php if(($dresseuse['accepteprodmodif'] == 1) && ($dresseuse['actifapprouvprod'] == 1) && $_SESSION['niveau']=='chefquart'){ ?>
                                                             <a href="javascript:void(0);" id="suprimerFiche<?= $i ?>" class=" px-2 text-danger" title="Suprimer cette fiche de production"><i class="fa fa-cut"></i></a>
                                                         <?php }?>
                                                     </td>
@@ -621,12 +623,22 @@ $ValideFiche = "";
                                                                     <div class="row">
                                                                         <div class="invisible">
                                                                             <div class="">
-                                                                                <input class="" type="text" value="<?= $cranteuseq1['idfichecranteuseq1'] ?>" name="idfichecranteuseq1">
+                                                                                <input class="" type="text" value="<?= $dresseuse['idfichedresseuse'] ?>" name="idfichedresseuse">
                                                                             </div>
                                                                         </div> 
                                                                         <div class="invisible">
                                                                             <div class="">
-                                                                                <input class="" type="text" value="<?= $cranteuseq1['quart'] ?>" name="quart">
+                                                                                <input class="" type="text" value="<?= $dresseuse['quart'] ?>" name="quart">
+                                                                            </div>
+                                                                        </div> 
+                                                                        <div class="invisible">
+                                                                            <div class="">
+                                                                                <input class="" type="text" value="<?= $dresseuse['dateCreation'] ?>" name="dateCreation">
+                                                                            </div>
+                                                                        </div> 
+                                                                        <div class="invisible">
+                                                                            <div class="">
+                                                                                <input class="" type="text" value="<?= $dresseuse['machine'] ?>" name="machine">
                                                                             </div>
                                                                         </div> 
                                                                         <div class="col-md-10 mb-5">
@@ -663,7 +675,6 @@ $ValideFiche = "";
 
                                                 <!-- Pour le sweetAlert Suprimer transfert !-->
                                                 <script>
-                                                    console.log(<?= $i ?>);
                                                     $(document).ready( function(){
                                                         $('#suprimerFiche<?= $i ?>').click(function(e) {
                                                             e.preventDefault();
@@ -679,7 +690,7 @@ $ValideFiche = "";
                                                                 if (result.isConfirmed) {                                                                                                                  
                                                                     $.ajax({
                                                                             type: "POST",
-                                                                            url: 'supressionFiche.php?idsupfiche=<?= $cranteuseq1['idfichecranteuseq1'] ?>&quart=<?= $cranteuseq1['quart'] ?>',
+                                                                            url: 'suppressionFiche.php?idsupficheDresseuse=<?= $dresseuse['idfichedresseuse'] ?>&quart=<?= $dresseuse['quart'] ?>',
                                                                             //data: str,
                                                                             success: function( response ) {
                                                                                 Swal.fire({
@@ -710,7 +721,7 @@ $ValideFiche = "";
                                                             e.preventDefault();
                                                             Swal.fire({
                                                             title: 'En es-tu sure?',
-                                                            text: 'Voulez-vous vraiment autoriser cette demande de rectification ?',
+                                                            text: 'Voulez-vous vraiment autoriser cette demande de réctification ?',
                                                             icon: 'warning',
                                                             showCancelButton: true,
                                                             confirmButtonColor: '#3085d6',
@@ -720,7 +731,7 @@ $ValideFiche = "";
                                                                 if (result.isConfirmed) {                                                                                                                  
                                                                     $.ajax({
                                                                             type: "POST",
-                                                                            url: 'autoriserProductionRectifie.php?idfichecranteuseq1=<?= $cranteuseq1['idfichecranteuseq1'] ?>&quart=<?= $cranteuseq1['quart'] ?>',
+                                                                            url: 'autoriserProductionRectifie.php?idfichedresseuse=<?= $dresseuse['idfichedresseuse'] ?>&machine=<?= $dresseuse['machine'] ?>&dateCreation=<?= $dresseuse['dateCreation'] ?>&quart=<?= $dresseuse['quart'] ?>',
                                                                             //data: str,
                                                                             success: function( response ) {
                                                                                 Swal.fire({
@@ -747,17 +758,14 @@ $ValideFiche = "";
                                             ?>
                                         </tbody>
                                     </table>
-                                    <!-- Bouton et pagnination--> 
-                                    <?php 
-                                        //if($_SESSION['niveau']=='kemc'){
-                                    ?>
+                                    <!-- Bouton et pagnination !--> 
                                                     
                                     <div class="col-md-8 align-items-center mt-5">
                                         <div class="d-flex gap-2 pt-4">
                                             <?php
                                                 if($_SESSION['niveau']=='chefquart'){
                                             ?>
-                                                <a href="ajoutFormulaireQuart1.php" class="btn btn-success w-lg bouton"><i class="fa fa-plus me-1"></i> Ajouter une fiche</a>
+                                                <a href="ajoutFormulaire.php" class="btn btn-success w-lg bouton"><i class="fa fa-plus me-1"></i> Ajouter une fiche</a>
                                             <?php
                                                 } 
                                             ?>

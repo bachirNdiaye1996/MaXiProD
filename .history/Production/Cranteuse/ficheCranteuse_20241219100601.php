@@ -548,7 +548,7 @@ $ValideFiche = "";
                                             <tr>      
                                                 <th>code de production</th>    
                                                 <th>Machine</th>  
-                                                <th>Date production</th>    
+                                                <th>Date enregistrée</th>    
                                                 <th>Compte utilisateur</th>
                                                 <th>Quart</th>
                                                 <th>Date de création</th>
@@ -572,9 +572,6 @@ $ValideFiche = "";
                                                     </td>
                                                     <td style="<?php if($cranteuseq1['actifapprouvprod'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FF5335"; ?><?php }?>;">
                                                         <?= $cranteuseq1['machine'] ?>
-                                                    </td>
-                                                    <td style="<?php if($cranteuseq1['actifapprouvprod'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FF5335"; ?><?php }?>;">
-                                                        <?= $cranteuseq1['dateCreation'] ?>
                                                     </td>
                                                     <td style="<?php if($cranteuseq1['actifapprouvprod'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FF5335"; ?><?php }?>;">
                                                         <?= $cranteuseq1['user'] ?>
