@@ -8,9 +8,8 @@ if(!$_SESSION){
 }
 
 include "../../connexion/conexiondb.php";
-include "./mailProductionCranteuse.php";
+include "./mailProductionTrefilage.php";
 include "../../variables.php";
-
 
 
 //Variables
@@ -19,29 +18,41 @@ $valideTransfert="";
 $idmatierearrive="";
 $ValideFiche = "";
 
+$idficheparquarttrefilage = $_GET['idficheparquarttrefilage'];  // 
+
+
+
+//echo phpversion();
+
 
 //Pour send mail approuveProdRectifie
     if(isset($_POST['approuveProdRectifie'])){
         if(!empty($_POST['motifRectifier'])){
-            $idfichecranteuseq1=htmlspecialchars($_POST['idfichecranteuseq1']);
+            $idfichetrefilage=htmlspecialchars($_POST['idfichetrefilage']);
             $quart=htmlspecialchars($_POST['quart']);
-            $motifRectifier=htmlspecialchars($_POST['motifRectifier']);
-            //$idmatierearrive=htmlspecialchars($_POST['idmatierearrive']);
+            $motifRectifier=htmlspecialchars($_POST['motifRectifier']); 
+            $dateCreation=htmlspecialchars($_POST['dateCreation']);
+            $machine=htmlspecialchars($_POST['machine']);
+            $idficheparquarttrefilage=htmlspecialchars($_POST['idficheparquarttrefilage']);
 
-            $sql1 = "UPDATE `fichecranteuseq1` set `actifapprouvprod`=1 where idfichecranteuseq1=$idfichecranteuseq1";
+            //Mettre de la couleur aux fiche et fiche par quart :
+            $sql1 = "UPDATE `fichetrefilage` set `actifapprouvprod`=1 where idfichetrefilage=$idfichetrefilage";
             $db->query($sql1);
 
+            /*$sql1 = "UPDATE `ficheparquarttrefilage` set `actifapprouvprod`=1 where idficheparquarttrefilage=$idficheparquarttrefilage";
+            $db->query($sql1);*/
+ 
             $messageD = "
             <html>
             <head>
             <meta http-equiv='Content-Type' content='text/html; charset=utf-8'/>
-                <title>Nouveau compte</title>
+                <title></title>
             </head>
-            <body>
+            <body> 
                 <div id='email-wrap' style='background: #3F5EFB; border-radius: 10px;'><br><br>
                     <p align='center' style='margin-top:20px;'>
                         <h2 align='center' style='color:white'>METAL * * * AFRIQUE</h2>
-                        <p align='center' style='color:white'>$_SESSION[nomcomplet] vous demande l'autorisation de modifier ou de supprimer une fiche de production cranteuse (quart $quart) de code de production : <strong>CRAN-$idfichecranteuseq1</strong></p>
+                        <p align='center' style='color:white'>$_SESSION[nomcomplet] vous demande l'autorisation de modifier ou de supprimer une fiche de production de la machine $machine (quart $quart) du $dateCreation de code de production : <strong>TREF-$idficheparquarttrefilage</strong></p>
                         <p align='center' style='color:white'>Avec comme motif : <strong>$motifRectifier</strong></p>
                         <p align='center'><a href=$HOST style='color:white'>Cliquez ici pour y acceder.</a></p>
                     </p>
@@ -64,133 +75,21 @@ $ValideFiche = "";
                 $UserMails = $query->fetchAll();
             //** Fin select 
             foreach($UserMails as $user => $item){
-                envoie_mail("Gestion de production réctification",$item['email'],"Demande de réctification de la fiche de code CRAN-$idfichecranteuseq1",$messageD);
+                envoie_mail("Gestion de production réctification",$item['email'],"Demande de réctification de la fiche de code TREF-$idficheparquarttrefilage",$messageD);
             }
 
-            $ValideFiche="reussi";
+            $ValideFiche="reussi"; 
                 
-            header("location: ficheCranteuse.php?");
+            header("location: ficheTrefilage.php?idficheparquarttrefilage=$idficheparquarttrefilage&quart=$quart&dateCreation=$dateCreation");
             exit;
-            /*}else{
-                $idmatierearrive="erreurIdmatierearrive";
-            }*/
-
         }else{
         }
     }
-//Fin send mail approuveProdRectifie
-
-
-
-    //** Debut  Validerectification 
-    $mess2="";
-    if(isset($_POST['Validerectification'])){
-        //print_r($_POST);
-        if(!empty($_POST['motifRectifier'])){  
-            $id=htmlspecialchars($_POST['idreception']);
-            $user=htmlspecialchars($_POST['user']);
-            //$motifRectifier=htmlspecialchars($_POST['motifRectifier']);
-            $req ="UPDATE reception SET actifapprouvreception=1, `status` = 'En cours de rectification', acceptereception=1, user=? WHERE idreception=$id;"; 
-            //$db->query($req); 
-            $reqtitre = $db->prepare($req);
-            $reqtitre->execute(array($user));
-
-
-            $reqMatiere ="UPDATE matiere SET actifapprouvreception=0 WHERE idmatiere = ?;"; 
-            //$db->query($req); 
-            $reqtitreMatiere = $db->prepare($reqMatiere);
-            $reqtitreMatiere->execute(array($id));
-
-            //$messageD=$_SESSION['nomcomplet'].' vient de faire une livraison de piéces pour la DA00'.$_POST['idda'].' Veillez verifier svp! '.'<a href="http://localhost/GestionDemandePiece">Acceder ici.</a>';
-            /*$messageD = "
-            <html>
-            <head>
-            <meta http-equiv='Content-Type' content='text/html; charset=utf-8' />
-                <title>Nouveau compte</title>
-            </head>
-            <body>
-                <div id='email-wrap' style='background: #33ECFF;color: #FFF; border-radius: 10px;'>
-                    <p align='center'>
-                    <img src='https://bootstrapemail.com/img/icons/logo.png' alt='' width=72 height=72>
-                
-                    <h3 align='center'>METAL AFRIQUE EMAIL</h3>
-                
-                    <p align='center'>$_SESSION[nomcomplet] vient de rejeter la commande de piéces dans la DA00$_POST[idda] pour les motifs suivants :</p>
-                    <p align='center' style='color:red'>$_POST[motifrejet]</p>
-                    <p align='center'><a href='http://localhost/GestionDemandePiece'>Cliquez ici pour y acceder.</a></p>
-                    </p>
-                    <br>
-                </div>
-            </body>
-            </html>
-                ";
-            foreach($articlMails as $article){
-                if(($article['niveau'] == 'kemc') || ($article['niveau'] == 'admin')){
-                    envoie_mail($article['nomcomplet'],$article['email'],'Rejeter commande',$messageD);
-                }
-            }*/
-            
-            /*if(isset($_GET['id'])){
-                $id = $_GET['id'];
-                header("location:acueilAdmin1.php?id=$id");
-                exit;
-            }*/
-
-            //Pour éffacer les valeurs enregistrées dans le stockage
-                
-                //** Debut select des receptions
-                    $sql = "SELECT * FROM `matiere` where `actif`=1 and idreception=$id;";
-        
-                    // On prépare la requête
-                    $query = $db->prepare($sql);
-        
-                    // On exécute
-                    $query->execute();
-        
-                    // On récupère les valeurs dans un tableau associatif
-                    $Reception = $query->fetchAll();
-                //** Fin select des receptions
-                
-                foreach ($Reception as $key => $value) {
-                    $epaisseur = $value['epaisseur'];
-                    $nbbobine = $value['nbbobine'];
-                    $lieutransfert = $value['lieutransfert'];
-                    if(($lieutransfert == "Metal1")){ // Vérifie le type de transfert
-                        //Debut inserer le nombre de bobine par epaisseur
-                        $req ="UPDATE epaisseur SET `$epaisseur` = `$epaisseur` - ? where `id`=1;";  //Metal 1
-                        //$db->query($req); 
-                        $reqtitre = $db->prepare($req);
-                        $reqtitre->execute(array($nbbobine));
-                        //Fin inserer le nombre de bobine par epaisseur
-                    }elseif(($lieutransfert == "Niambour")){
-                        //Debut inserer le nombre de bobine par epaisseur
-                        $req ="UPDATE epaisseur SET `$epaisseur` = `$epaisseur` - ? where `id`=3;";  // Metal 3 dit Niambour
-                        //$db->query($req); 
-                        $reqtitre = $db->prepare($req);
-                        $reqtitre->execute(array($nbbobine));
-                        //Fin inserer le nombre de bobine par epaisseur
-                    }elseif(($lieutransfert == "Metal Mbao")){
-                        //Debut inserer le nombre de bobine par epaisseur
-                        $req ="UPDATE epaisseur SET `$epaisseur` = `$epaisseur` - ? where `id`=3;";  // Metal 3 dit Niambour
-                        //$db->query($req); 
-                        $reqtitre = $db->prepare($req);
-                        $reqtitre->execute(array($nbbobine));
-                        //Fin inserer le nombre de bobine par epaisseur
-                    }
-                }
-            //Fin pour éffacer les valeurs enregistrées 
-
-            header("location: detailsReception.php?idreception=$_GET[idreception]");
-            exit;
-        }else{
-        $mess2 = "error";
-        }    
-    }
-//** Fin debut  Validerectification 
-
+//Fin send mail approuveProdRectifie 
+ 
 
 //** Debut select de la production
-    $sql = "SELECT * FROM `fichecranteuseq1` where `actif`=1 ORDER BY `idfichecranteuseq1` DESC";
+    $sql = "SELECT * FROM `fichetrefilage` where `actif`=1 and `idficheparquarttrefilage`=$idficheparquarttrefilage ORDER BY `idfichetrefilage` DESC";
 
     // On prépare la requête
     $query = $db->prepare($sql);
@@ -199,7 +98,7 @@ $ValideFiche = "";
     $query->execute();
 
     // On récupère les valeurs dans un tableau associatif
-    $Cranteuseq1 = $query->fetchAll();
+    $Trefilages = $query->fetchAll();
 //** Fin select de la production
 
 
@@ -225,7 +124,7 @@ $ValideFiche = "";
     <link href="../../indexPage/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link
         href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
-        rel="stylesheet">
+    rel="stylesheet">
 
     <!-- Sweet Alert -->
     <link href="../../libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css"/>
@@ -242,18 +141,12 @@ $ValideFiche = "";
 
     <script>
         // Pour le loading
-            //const loader = document.querySelector('.loader');
-
             document.addEventListener('DOMContentLoaded', () => {
                 //console.log(loader);
-                //document.getElementById('loader').className = "fondu-out";
                 document.getElementById("loader").remove();
-                //loader.classList.add('fondu-out');
-
             })
         //Pour le loading
     </script>
-
 </head>
 
 <body id="page-top">
@@ -261,10 +154,10 @@ $ValideFiche = "";
     <!-- Page Wrapper -->
     <div id="wrapper">
 
-        <?php $activeQ = "active"; ?>
+        <?php $activeD = "active"; ?>
 
         <!-- Contient la nav bar gauche -->
-            <?php include "./navGaucheCranteuse.php" ?>
+            <?php include "./navGaucheTrefilage.php" ?>
         <!-- End  -->
 
         <!-- Content Wrapper -->
@@ -512,7 +405,7 @@ $ValideFiche = "";
                     <!-- Page Heading -->
                     <div class="row">
                         <div class="col-xl-3 col-md-6 mb-1">
-                            <img src="../../image/cranteuse.jpg" class="img-fluid" alt="" style="border-radius: 50%; margin:20px; opacity: 0.7;" width="200">
+                            <img src="../../image/trefilet.jpg" class="img-fluid" alt="" style="border-radius: 50%; margin:20px; opacity: 0.9;" width="200">
                         </div>
                     </div>
                     <!-- DataTales Example -->
@@ -520,7 +413,7 @@ $ValideFiche = "";
                     <div class="mt-5 mb-3 col-lg-12">
                         <div class="card position-relative">
                             <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary">Liste des fiches de production de la section cranteuse</h6>
+                                <h6 class="m-0 font-weight-bold text-primary">Liste des fiches de production de la section tréfilage</h6>
                             </div>
                             <div class="row m-2">
                                 <div class="table-responsive">
@@ -547,8 +440,8 @@ $ValideFiche = "";
                                         <thead>
                                             <tr>      
                                                 <th>code de production</th>    
-                                                <th>Machine</th>  
-                                                <th>Date production</th>    
+                                                <th>Machine</th>   
+                                                <th>Date production</th>   
                                                 <th>Compte utilisateur</th>
                                                 <th>Quart</th>
                                                 <th>Date de création</th>
@@ -562,48 +455,48 @@ $ValideFiche = "";
                                         <tbody>
                                             <?php
                                                 $i=0;
-                                                foreach($Cranteuseq1 as $cranteuseq1){
+                                                foreach($Trefilages as $trefilage){
                                                     $i++;
                                                     //if($article['status'] == 'termine'){<p><a class="" href="#">Underline opacity 0</a></p>
                                             ?>
                                                 <tr>
-                                                    <td style="<?php if($cranteuseq1['actifapprouvprod'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FF5335"; ?><?php }?>; text-align: center;" class="">
-                                                        <a style="text-decoration: none; font-family: arial; font-size: 20px;" href="detailsCranteuseQ1.php?idfichecranteuseq1=<?= $cranteuseq1['idfichecranteuseq1'] ?>&quart=<?= $cranteuseq1['quart'] ?>" class="link-offset-2 link-underline"><?php echo "CRAN-".$cranteuseq1['idfichecranteuseq1']; ?></a>
+                                                    <td style="<?php if($trefilage['actifapprouvprod'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FF5335"; ?><?php }?>; text-align: center;" class="">
+                                                        <a style="text-decoration: none; font-family: arial; font-size: 20px;" href="detailsFicheTrefilage.php?idfichetrefilage=<?= $trefilage['idfichetrefilage'] ?>&quart=<?= $trefilage['quart'] ?>&idficheparquarttrefilage=<?= $trefilage['idficheparquarttrefilage'] ?>&dateCreation=<?= $trefilage['dateCreation'] ?>" class="link-offset-2 link-underline"><?php echo "FICHE-".$trefilage['idfichetrefilage']; ?></a>
                                                     </td>
-                                                    <td style="<?php if($cranteuseq1['actifapprouvprod'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FF5335"; ?><?php }?>;">
-                                                        <?= $cranteuseq1['machine'] ?>
+                                                    <td style="<?php if($trefilage['actifapprouvprod'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FF5335"; ?><?php }?>;">
+                                                        <?= $trefilage['machine'] ?>
                                                     </td>
-                                                    <td style="<?php if($cranteuseq1['actifapprouvprod'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FF5335"; ?><?php }?>;">
-                                                        <?= $cranteuseq1['dateCreation'] ?>
+                                                    <td style="<?php if($trefilage['actifapprouvprod'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FF5335"; ?><?php }?>;">
+                                                        <?= $trefilage['user'] ?>
                                                     </td>
-                                                    <td style="<?php if($cranteuseq1['actifapprouvprod'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FF5335"; ?><?php }?>;">
-                                                        <?= $cranteuseq1['user'] ?>
+                                                    <td style="<?php if($trefilage['actifapprouvprod'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FF5335"; ?><?php }?>;">
+                                                        <?= $trefilage['quart'] ?>
                                                     </td>
-                                                    <td style="<?php if($cranteuseq1['actifapprouvprod'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FF5335"; ?><?php }?>;">
-                                                        <?= $cranteuseq1['quart'] ?>
+                                                    <td style="<?php if($trefilage['actifapprouvprod'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FF5335"; ?><?php }?>;">
+                                                        <?= $trefilage['dateajout'] ?>
                                                     </td>
-                                                    <td style="<?php if($cranteuseq1['actifapprouvprod'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FF5335"; ?><?php }?>;">
-                                                        <?= $cranteuseq1['dateajout'] ?>
+                                                    <td style="<?php if($trefilage['actifapprouvprod'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FF5335"; ?><?php }?>;">
+                                                        <?= $trefilage['dateCreation'] ?>
                                                     </td>
-                                                    <td style="<?php if($cranteuseq1['actifapprouvprod'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FF5335"; ?><?php }?>;">
-                                                        <?= $cranteuseq1['heuredepartquart'] ?>
+                                                    <td style="<?php if($trefilage['actifapprouvprod'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FF5335"; ?><?php }?>;">
+                                                        <?= $trefilage['heuredepartquart'] ?>
                                                     </td>
-                                                    <td style="<?php if($cranteuseq1['actifapprouvprod'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FF5335"; ?><?php }?>;">
-                                                        <?= $cranteuseq1['heurefinquart'] ?>
+                                                    <td style="<?php if($trefilage['actifapprouvprod'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#FF5335"; ?><?php }?>;">
+                                                        <?= $trefilage['heurefinquart'] ?>
                                                     </td>
-                                                    <td style="<?php if($cranteuseq1['actifapprouvprod'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#CFFEDA"; ?><?php }?>;">
-                                                        <?php if($cranteuseq1['actifapprouvprod'] == 0 && $_SESSION['niveau']=='chefquart'){ ?>
-                                                            <a href="javascript:void(0);" data-toggle="modal" data-target=".approuveProdRectifie<?= $i ?>" class="px-2" title="Demander l'autorisation de modifier ou de suprimer cette fiche au prêt du DSI <?php echo ' --> CRAN-'.$cranteuseq1['idfichecranteuseq1']; ?>">
+                                                    <td style="<?php if($trefilage['actifapprouvprod'] == 0){ echo "background-color:#CFFEDA"; ?> <?php }else{ echo "background-color:#CFFEDA"; ?><?php }?>;">
+                                                        <?php if($trefilage['actifapprouvprod'] == 0 && $_SESSION['niveau']=='chefquart'){ ?>
+                                                            <a href="javascript:void(0);" data-toggle="modal" data-target=".approuveProdRectifie<?= $i ?>" class="px-2" title="Demander l'autorisation de modifier ou de suprimer cette fiche au prêt du DSI <?php echo ' --> TREF-'.$trefilage['idfichetrefilage']; ?>">
                                                             <i class="fas fa-file-signature"></i></a>
                                                         <?php }?>
-                                                        <?php if(($cranteuseq1['accepteprodmodif'] == 0) && ($cranteuseq1['actifapprouvprod'] == 1) && $_SESSION['niveau']=='admin'){ ?>
-                                                            <a href="javascript:void(0);" class="accepteProdmodifmod<?= $i ?> px-2" class="px-2" title="Permettre au responsable du pont bascule de modifier ou suprimer cette fiche">
+                                                        <?php if(($trefilage['accepteprodmodif'] == 0) && ($trefilage['actifapprouvprod'] == 1) && $_SESSION['niveau']=='admin'){ ?>
+                                                            <a href="javascript:void(0);" class="accepteProdmodifmod<?= $i ?> px-2" class="px-2" title="Permettre au chef de quart de modifier ou de suprimer cette fiche de production">
                                                             <i class="fas fa-paper-plane"></i></a>
                                                         <?php }?>
-                                                        <?php if(($cranteuseq1['accepteprodmodif'] == 1) && ($cranteuseq1['actifapprouvprod'] == 1) && $_SESSION['niveau']=='chefquart'){ ?>
-                                                            <a href="modifierFicheCranteuse.php?idsupfiche=<?= $cranteuseq1['idfichecranteuseq1'] ?>&quart=<?= $cranteuseq1['quart'] ?>" title="Modifier la fiche"><i class="far fa-edit"></i></a>
+                                                        <?php if(($trefilage['accepteprodmodif'] == 1) && ($trefilage['actifapprouvprod'] == 1) && $_SESSION['niveau']=='chefquart'){ ?>
+                                                            <a href="modifierFicheTrefilage.php?idsupfiche=<?= $trefilage['idfichetrefilage'] ?>&dateCreation=<?= $trefilage['dateCreation'] ?>&machine=<?= $trefilage['machine']; ?>&quart=<?= $trefilage['quart']; ?>&idficheparquarttrefilage=<?= $trefilage['idficheparquarttrefilage']; ?>" title="Modifier la fiche"><i class="far fa-edit"></i></a>
                                                         <?php }?>
-                                                        <?php if(($cranteuseq1['accepteprodmodif'] == 1) && ($cranteuseq1['actifapprouvprod'] == 1) && $_SESSION['niveau']=='chefquart'){ ?>
+                                                        <?php if(($trefilage['accepteprodmodif'] == 1) && ($trefilage['actifapprouvprod'] == 1) && $_SESSION['niveau']=='chefquart'){ ?>
                                                             <a href="javascript:void(0);" id="suprimerFiche<?= $i ?>" class=" px-2 text-danger" title="Suprimer cette fiche de production"><i class="fa fa-cut"></i></a>
                                                         <?php }?>
                                                     </td>
@@ -621,17 +514,32 @@ $ValideFiche = "";
                                                                     <div class="row">
                                                                         <div class="invisible">
                                                                             <div class="">
-                                                                                <input class="" type="text" value="<?= $cranteuseq1['idfichecranteuseq1'] ?>" name="idfichecranteuseq1">
+                                                                                <input class="" type="text" value="<?= $trefilage['idfichetrefilage'] ?>" name="idfichetrefilage">
                                                                             </div>
                                                                         </div> 
                                                                         <div class="invisible">
                                                                             <div class="">
-                                                                                <input class="" type="text" value="<?= $cranteuseq1['quart'] ?>" name="quart">
+                                                                                <input class="" type="text" value="<?= $trefilage['quart'] ?>" name="quart">
+                                                                            </div>
+                                                                        </div> 
+                                                                        <div class="invisible">
+                                                                            <div class="">
+                                                                                <input class="" type="text" value="<?= $trefilage['dateCreation'] ?>" name="dateCreation">
+                                                                            </div>
+                                                                        </div> 
+                                                                        <div class="invisible">
+                                                                            <div class="">
+                                                                                <input class="" type="text" value="<?= $trefilage['idficheparquarttrefilage'] ?>" name="idficheparquarttrefilage">
+                                                                            </div>
+                                                                        </div> 
+                                                                        <div class="invisible">
+                                                                            <div class="">
+                                                                                <input class="" type="text" value="<?= $trefilage['machine'] ?>" name="machine">
                                                                             </div>
                                                                         </div> 
                                                                         <div class="col-md-10 mb-5">
                                                                             <label class="form-label fw-bold" for="rectification"><h4>Motif de la rectification</h4></label>
-                                                                            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="motifRectifier" placeholder="Mettez en quelques mots le motif de la rectification qui sera recu par le DSI par MAIL svp." required></textarea>
+                                                                            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="motifRectifier" placeholder="Mettez en quelques mots le motif de la rectification qui sera recu par le DSI par MAIL." required></textarea>
                                                                         </div>
                                                                     </div>
                                                                     <div class="">
@@ -663,7 +571,6 @@ $ValideFiche = "";
 
                                                 <!-- Pour le sweetAlert Suprimer transfert !-->
                                                 <script>
-                                                    console.log(<?= $i ?>);
                                                     $(document).ready( function(){
                                                         $('#suprimerFiche<?= $i ?>').click(function(e) {
                                                             e.preventDefault();
@@ -678,22 +585,22 @@ $ValideFiche = "";
                                                             }).then((result) => {
                                                                 if (result.isConfirmed) {                                                                                                                  
                                                                     $.ajax({
-                                                                            type: "POST",
-                                                                            url: 'supressionFiche.php?idsupfiche=<?= $cranteuseq1['idfichecranteuseq1'] ?>&quart=<?= $cranteuseq1['quart'] ?>',
-                                                                            //data: str,
-                                                                            success: function( response ) {
-                                                                                Swal.fire({
-                                                                                    text: 'Fiche suprimée avec succes!',
-                                                                                    icon: 'success',
-                                                                                    timer: 3000,
-                                                                                    showConfirmButton: false,
-                                                                                });
-                                                                                location.reload();
-                                                                            },
-                                                                            error: function( response ) {
-                                                                                $('#status').text('Impossible de supprimer cette fiche : '+ response.status + " " + response.statusText);
-                                                                                //console.log( response );
-                                                                            }						
+                                                                        type: "POST",
+                                                                        url: 'suppressionFiche.php?idsupficheTrefilage=<?= $trefilage['idfichetrefilage'] ?>&dateCreation=<?= $trefilage['dateCreation'] ?>&quart=<?= $trefilage['quart']; ?>&idficheparquarttrefilage=<?= $trefilage['idficheparquarttrefilage']?>',
+                                                                        //data: str,
+                                                                        success: function( response ) {
+                                                                            Swal.fire({
+                                                                                text: 'Fiche suprimée avec succes!',
+                                                                                icon: 'success',
+                                                                                timer: 3000,
+                                                                                showConfirmButton: false,
+                                                                            });
+                                                                            location.reload();
+                                                                        },
+                                                                        error: function( response ) {
+                                                                            $('#status').text('Impossible de supprimer cette fiche : '+ response.status + " " + response.statusText);
+                                                                            //console.log( response );
+                                                                        }						
                                                                     });
                                                                 }
                                                             });
@@ -710,7 +617,7 @@ $ValideFiche = "";
                                                             e.preventDefault();
                                                             Swal.fire({
                                                             title: 'En es-tu sure?',
-                                                            text: 'Voulez-vous vraiment autoriser cette demande de rectification ?',
+                                                            text: 'Voulez-vous vraiment autoriser cette demande de réctification ?',
                                                             icon: 'warning',
                                                             showCancelButton: true,
                                                             confirmButtonColor: '#3085d6',
@@ -720,7 +627,7 @@ $ValideFiche = "";
                                                                 if (result.isConfirmed) {                                                                                                                  
                                                                     $.ajax({
                                                                             type: "POST",
-                                                                            url: 'autoriserProductionRectifie.php?idfichecranteuseq1=<?= $cranteuseq1['idfichecranteuseq1'] ?>&quart=<?= $cranteuseq1['quart'] ?>',
+                                                                            url: 'autoriserProductionRectifie.php?idfichetrefilage=<?= $trefilage['idfichetrefilage'] ?>&machine=<?= $trefilage['machine'] ?>&dateCreation=<?= $trefilage['dateCreation'] ?>&quart=<?= $trefilage['quart']; ?>&idficheparquarttrefilage=<?= $trefilage['idficheparquarttrefilage'] ?>',
                                                                             //data: str,
                                                                             success: function( response ) {
                                                                                 Swal.fire({
@@ -747,21 +654,18 @@ $ValideFiche = "";
                                             ?>
                                         </tbody>
                                     </table>
-                                    <!-- Bouton et pagnination--> 
-                                    <?php 
-                                        //if($_SESSION['niveau']=='kemc'){
-                                    ?>
+                                    <!-- Bouton et pagnination !--> 
                                                     
-                                    <div class="col-md-8 align-items-center mt-5">
+                                    <div class="col-md-8 align-items-center mt-5 mb-4">
                                         <div class="d-flex gap-2 pt-4">
+                                            <a href="ficheParQuartTrefilage.php" class="btn btn-danger w-lg bouton ml-3 mr-4"><i class="fa fa-angle-double-left mr-2"></i>Retour</a>
                                             <?php
                                                 if($_SESSION['niveau']=='chefquart'){
                                             ?>
-                                                <a href="ajoutFormulaireQuart1.php" class="btn btn-success w-lg bouton"><i class="fa fa-plus me-1"></i> Ajouter une fiche</a>
+                                                <a href="ajoutFormulaire.php?idficheparquarttrefilage=<?= $_GET['idficheparquarttrefilage'] ?>&quart=<?= $_GET['quart'] ?>&dateCreation=<?= $_GET['dateCreation'] ?>" class="btn btn-success w-lg bouton"><i class="fa fa-plus me-1"></i> Ajouter une fiche</a>
                                             <?php
                                                 } 
                                             ?>
-                                                 <!--<a href="ficheCranteuse.php" class="btn btn-danger w-lg bouton ml-3"><i class="fa fa-angle-double-left mr-2"></i>Retour</a>--> 
                                         </div>
                                     </div>
                                 </div>
