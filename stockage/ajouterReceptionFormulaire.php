@@ -394,7 +394,7 @@
                                                 <div class="col-md-2 ml-5 mr-5 mt-3">
                                                     <div class="mb-5 text-start">
                                                         <label class="form-label fw-bold" for="nom">Entete de la DF</label> 
-                                                        <input class="form-control" type="text" name="entetedf" value="<?= $row['entetedf'] ?>" id="validationDefault01" required placeholder="Mettez l'entete de la DF">
+                                                        <input class="form-control" type="text" name="entetedf" value="<?= $row['entetedf'] ?>" id="validationDefault01" placeholder="Mettez l'entete de la DF">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-2 mr-2 mt-3">
@@ -406,19 +406,19 @@
                                                 <div class="col-md-2 ml-5 mt-3">
                                                     <div class="mb-1 text-start">
                                                         <label class="form-label fw-bold" for="nom">Matricule du Camion</label>
-                                                        <input class="form-control" type="text" name="matriculecamion" value="<?= $row['matriculecamion'] ?>" id="validationDefault03" required placeholder="Mettez le matricule du camion">
+                                                        <input class="form-control" type="text" name="matriculecamion" value="<?= $row['matriculecamion'] ?>" id="validationDefault03" placeholder="Mettez le matricule du camion">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-2 ml-5 mt-3">
                                                     <div class="mb-1 text-start">
                                                         <label class="form-label fw-bold" for="nom">BL</label>
-                                                        <input class="form-control" type="text" name="bl" value="<?= $row['bl'] ?>" id="validationDefault058" required placeholder="Mettez le numéro du BL">
+                                                        <input class="form-control" type="text" name="bl" value="<?= $row['bl'] ?>" id="validationDefault058" placeholder="Mettez le numéro du BL">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-2 ml-5 mt-3">
                                                     <div class="mb-1 text-start">
                                                         <label class="form-label fw-bold" for="nom">Poids pont bascule</label>
-                                                        <input class="form-control" type="text" name="poidscamion" value="<?= $row['poidscamion'] ?>" id="validationDefault20" required placeholder="Mettez le poids pont bascule">
+                                                        <input class="form-control" type="text" name="poidscamion" value="<?= $row['poidscamion'] ?>" id="validationDefault20" placeholder="Mettez le poids pont bascule">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-2 mt-3 ml-5 mb-5">
