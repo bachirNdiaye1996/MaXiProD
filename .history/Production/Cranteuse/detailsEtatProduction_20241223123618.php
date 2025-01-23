@@ -40,7 +40,7 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
             $IdproductioncrantC1Q1 = $productioncrantC1Q1['idfichecranteuseq1'];    // Id de productioncrantC1Q1
 
             //** Debut select de la production (consommation)
-                $sql = "SELECT sum(poids) as piodstotal, diametre, numerofin, sum(dechet) as dechet FROM `cranteuseq1consommation` where `actif`=1 and `idfichecranteuseq1`=$IdproductioncrantC1Q1 GROUP BY `diametre` ORDER BY `diametre` DESC;";
+                $sql = "SELECT sum(poids) as piodstotal, diametre, numerofin, sum(dechet) as dechet FROM `cranteuseq1consommation` where `actif`=1 and `idfichecranteuseq1`=$IdproductioncrantC1Q1 GROUP BY `diametre` ORDER BY `diametre` ASC;";
 
                 // On prépare la requête
                 $query = $db->prepare($sql);
@@ -115,7 +115,7 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
             $IdproductioncrantC2Q1 = $productioncrantC2Q1['idfichecranteuseq1'];    // Id de productioncrantC1Q1
 
             //** Debut select de la production (consommation)
-                $sql = "SELECT sum(poids) as piodstotal, diametre, numerofin, sum(dechet) as dechet FROM `cranteuseq1consommation` where `actif`=1 and `idfichecranteuseq1`=$IdproductioncrantC2Q1 GROUP BY `diametre` ORDER BY `diametre` DESC;";
+                $sql = "SELECT sum(poids) as piodstotal, diametre, numerofin, sum(dechet) as dechet FROM `cranteuseq1consommation` where `actif`=1 and `idfichecranteuseq1`=$IdproductioncrantC2Q1 GROUP BY `diametre` ORDER BY `diametre` ASC;";
 
                 // On prépare la requête
                 $query = $db->prepare($sql);
@@ -166,7 +166,7 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
 
                 // On récupère les valeurs dans un tableau associatif
                 $productionsC2Q1 = $query->fetchAll();
-            //** Fin select de la production 
+            //** Fin select de la production
         }
     /** Fin Cranteuse2 Q1 */
 /** Fin Quart 1 */
@@ -191,7 +191,7 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
         $IdproductioncrantC1Q2 = $productioncrantC1Q2['idfichecranteuseq1'];    // Id de productioncrantC1Q1
 
         //** Debut select de la production (consommation)
-            $sql = "SELECT sum(poids) as piodstotal, diametre, numerofin, sum(dechet) as dechet FROM `cranteuseq1consommation` where `actif`=1 and `idfichecranteuseq1`=$IdproductioncrantC1Q2 GROUP BY `diametre` ORDER BY `diametre` DESC;";
+            $sql = "SELECT sum(poids) as piodstotal, diametre, numerofin, sum(dechet) as dechet FROM `cranteuseq1consommation` where `actif`=1 and `idfichecranteuseq1`=$IdproductioncrantC1Q2 GROUP BY `diametre` ORDER BY `diametre` ASC;";
 
             // On prépare la requête
             $query = $db->prepare($sql);
@@ -266,7 +266,7 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
             $IdproductioncrantC2Q2 = $productioncrantC2Q2['idfichecranteuseq1'];    // Id de productioncrantC1Q1
 
             //** Debut select de la production (consommation)
-                $sql = "SELECT sum(poids) as piodstotal, diametre, numerofin, sum(dechet) as dechet FROM `cranteuseq1consommation` where `actif`=1 and `idfichecranteuseq1`=$IdproductioncrantC2Q2 GROUP BY `diametre` ORDER BY `diametre` DESC;";
+                $sql = "SELECT sum(poids) as piodstotal, diametre, numerofin, sum(dechet) as dechet FROM `cranteuseq1consommation` where `actif`=1 and `idfichecranteuseq1`=$IdproductioncrantC2Q2 GROUP BY `diametre` ORDER BY `diametre` ASC;";
 
                 // On prépare la requête
                 $query = $db->prepare($sql);
@@ -343,7 +343,7 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
         $IdproductioncrantC1Q3 = $productioncrantC1Q3['idfichecranteuseq1'];    // Id de productioncrantC1Q1
 
         //** Debut select de la production (consommation)
-            $sql = "SELECT sum(poids) as piodstotal, diametre, numerofin, sum(dechet) as dechet FROM `cranteuseq1consommation` where `actif`=1 and `idfichecranteuseq1`=$IdproductioncrantC1Q3 GROUP BY `diametre` ORDER BY `diametre` DESC;";
+            $sql = "SELECT sum(poids) as piodstotal, diametre, numerofin, sum(dechet) as dechet FROM `cranteuseq1consommation` where `actif`=1 and `idfichecranteuseq1`=$IdproductioncrantC1Q3 GROUP BY `diametre` ORDER BY `diametre` ASC;";
 
             // On prépare la requête
             $query = $db->prepare($sql);
@@ -418,7 +418,7 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
             $IdproductioncrantC2Q3 = $productioncrantC2Q3['idfichecranteuseq1'];    // Id de productioncrantC1Q1
 
             //** Debut select de la production (consommation)
-                $sql = "SELECT sum(poids) as piodstotal, diametre, numerofin, sum(dechet) as dechet FROM `cranteuseq1consommation` where `actif`=1 and `idfichecranteuseq1`=$IdproductioncrantC2Q3 GROUP BY `diametre` ORDER BY `diametre` DESC;";
+                $sql = "SELECT sum(poids) as piodstotal, diametre, numerofin, sum(dechet) as dechet FROM `cranteuseq1consommation` where `actif`=1 and `idfichecranteuseq1`=$IdproductioncrantC2Q3 GROUP BY `diametre` ORDER BY `diametre` ASC;";
 
                 // On prépare la requête
                 $query = $db->prepare($sql);
@@ -852,7 +852,6 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                             <table class="table table-bordered mb-2 ml-3 mr-4 col-lg-3" width="100%" cellspacing="0">
                                                 <thead>
                                                     <tr>  
-                                                        <th>N° FM</th>     
                                                         <th>Consommations (KG)</th>                                                                                
                                                         <th>Diametres</th>
                                                         <th>Rebus</th>
@@ -865,7 +864,6 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                                             $RebusTotal += $consommationC1Q1['dechet'];
                                                     ?>
                                                         <tr>
-                                                            <td style="background-color:#4e73df ; color:white;"><a style="text-decoration: none; font-family: arial; font-size: 20px; color:white;" href="javascript:void(0);" data-toggle="modal" data-target="#Information<?php echo $i; ?>" title="Voir details du produit" class="link-offset-2 link-underline"><?= $consommationC1Q1['numerofin'] ?></a></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $consommationC1Q1['piodstotal'] ?></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $consommationC1Q1['diametre'] ?></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $consommationC1Q1['dechet'] ?></td>
@@ -1136,7 +1134,6 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                             <table class="table table-bordered mb-2 ml-3 mr-4 col-lg-3" width="100%" cellspacing="0">
                                                 <thead>
                                                     <tr>       
-                                                        <th>N° FM</th>
                                                         <th>Consommations (KG)</th>                                                                                
                                                         <th>Diametres</th>
                                                         <th>Rebus</th>
@@ -1151,7 +1148,6 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                                             $i++;
                                                     ?>
                                                         <tr>
-                                                            <td style="background-color:#4e73df ; color:white;"><a style="text-decoration: none; font-family: arial; font-size: 20px; color:white;" href="javascript:void(0);" data-toggle="modal" data-target="#Information<?php echo $i; ?>" title="Voir details du produit" class="link-offset-2 link-underline"><?= $consommationC2Q1['numerofin'] ?></a></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $consommationC2Q1['piodstotal'] ?></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $consommationC2Q1['diametre'] ?></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $consommationC2Q1['dechet'] ?></td>
@@ -1421,7 +1417,6 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                             <table class="table table-bordered mb-2 ml-3 mr-4 col-lg-3" width="100%" cellspacing="0">
                                                 <thead>
                                                     <tr>       
-                                                        <th>N° FM</th>
                                                         <th>Consommations (KG)</th>                                                                                
                                                         <th>Diametres</th>
                                                         <th>Rebus</th>
@@ -1434,7 +1429,6 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                                             $RebusTotal += $consommationC1Q2['dechet'];
                                                     ?>
                                                         <tr>
-                                                            <td style="background-color:#4e73df ; color:white;"><a style="text-decoration: none; font-family: arial; font-size: 20px; color:white;" href="javascript:void(0);" data-toggle="modal" data-target="#Information<?php echo $i; ?>" title="Voir details du produit" class="link-offset-2 link-underline"><?= $consommationC1Q2['numerofin'] ?></a></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $consommationC1Q2['piodstotal'] ?></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $consommationC1Q2['diametre'] ?></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $consommationC1Q2['dechet'] ?></td>
@@ -1705,7 +1699,6 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                             <table class="table table-bordered mb-2 ml-3 mr-4 col-lg-3" width="100%" cellspacing="0">
                                                 <thead>
                                                     <tr>  
-                                                        <th>N° FM</th>     
                                                         <th>Consommations (KG)</th>                                                                                
                                                         <th>Diametres</th>
                                                         <th>Rebus</th>
@@ -1718,7 +1711,6 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                                             $RebusTotal += $consommationC2Q2['dechet'];
                                                     ?>
                                                         <tr>
-                                                            <td style="background-color:#4e73df ; color:white;"><a style="text-decoration: none; font-family: arial; font-size: 20px; color:white;" href="javascript:void(0);" data-toggle="modal" data-target="#Information<?php echo $i; ?>" title="Voir details du produit" class="link-offset-2 link-underline"><?= $consommationC2Q2['numerofin'] ?></a></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $consommationC2Q2['piodstotal'] ?></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $consommationC2Q2['diametre'] ?></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $consommationC2Q2['dechet'] ?></td>
@@ -2001,7 +1993,6 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                             <table class="table table-bordered mb-2 ml-3 mr-4 col-lg-3" width="100%" cellspacing="0">
                                                 <thead>
                                                     <tr>  
-                                                        <th>N° FM</th>     
                                                         <th>Consommations (KG)</th>                                                                                
                                                         <th>Diametres</th>
                                                         <th>Rebus</th>
@@ -2014,7 +2005,6 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                                             $RebusTotal += $consommationC1Q3['dechet'];
                                                     ?>
                                                         <tr>
-                                                            <td style="background-color:#4e73df ; color:white;"><a style="text-decoration: none; font-family: arial; font-size: 20px; color:white;" href="javascript:void(0);" data-toggle="modal" data-target="#Information<?php echo $i; ?>" title="Voir details du produit" class="link-offset-2 link-underline"><?= $consommationC1Q3['numerofin'] ?></a></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $consommationC1Q3['piodstotal'] ?></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $consommationC1Q3['diametre'] ?></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $consommationC1Q3['dechet'] ?></td>
@@ -2285,7 +2275,6 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                             <table class="table table-bordered mb-2 ml-3 mr-4 col-lg-3" width="100%" cellspacing="0">
                                                 <thead>
                                                     <tr>   
-                                                        <th>N° FM</th>    
                                                         <th>Consommations (KG)</th>                                                                                
                                                         <th>Diametres</th>
                                                         <th>Rebus</th>
@@ -2298,7 +2287,6 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                                             $RebusTotal += $consommationC2Q3['dechet'];
                                                     ?>
                                                         <tr>
-                                                            <td style="background-color:#4e73df ; color:white;"><a style="text-decoration: none; font-family: arial; font-size: 20px; color:white;" href="javascript:void(0);" data-toggle="modal" data-target="#Information<?php echo $i; ?>" title="Voir details du produit" class="link-offset-2 link-underline"><?= $consommationC2Q3['numerofin'] ?></a></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $consommationC2Q3['piodstotal'] ?></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $consommationC2Q3['diametre'] ?></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $consommationC2Q3['dechet'] ?></td>

@@ -852,7 +852,6 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                             <table class="table table-bordered mb-2 ml-3 mr-4 col-lg-3" width="100%" cellspacing="0">
                                                 <thead>
                                                     <tr>  
-                                                        <th>N° FM</th>     
                                                         <th>Consommations (KG)</th>                                                                                
                                                         <th>Diametres</th>
                                                         <th>Rebus</th>
@@ -865,7 +864,6 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                                             $RebusTotal += $consommationC1Q1['dechet'];
                                                     ?>
                                                         <tr>
-                                                            <td style="background-color:#4e73df ; color:white;"><a style="text-decoration: none; font-family: arial; font-size: 20px; color:white;" href="javascript:void(0);" data-toggle="modal" data-target="#Information<?php echo $i; ?>" title="Voir details du produit" class="link-offset-2 link-underline"><?= $consommationC1Q1['numerofin'] ?></a></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $consommationC1Q1['piodstotal'] ?></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $consommationC1Q1['diametre'] ?></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $consommationC1Q1['dechet'] ?></td>
@@ -1136,7 +1134,6 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                             <table class="table table-bordered mb-2 ml-3 mr-4 col-lg-3" width="100%" cellspacing="0">
                                                 <thead>
                                                     <tr>       
-                                                        <th>N° FM</th>
                                                         <th>Consommations (KG)</th>                                                                                
                                                         <th>Diametres</th>
                                                         <th>Rebus</th>
@@ -1151,7 +1148,6 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                                             $i++;
                                                     ?>
                                                         <tr>
-                                                            <td style="background-color:#4e73df ; color:white;"><a style="text-decoration: none; font-family: arial; font-size: 20px; color:white;" href="javascript:void(0);" data-toggle="modal" data-target="#Information<?php echo $i; ?>" title="Voir details du produit" class="link-offset-2 link-underline"><?= $consommationC2Q1['numerofin'] ?></a></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $consommationC2Q1['piodstotal'] ?></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $consommationC2Q1['diametre'] ?></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $consommationC2Q1['dechet'] ?></td>
@@ -1421,7 +1417,6 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                             <table class="table table-bordered mb-2 ml-3 mr-4 col-lg-3" width="100%" cellspacing="0">
                                                 <thead>
                                                     <tr>       
-                                                        <th>N° FM</th>
                                                         <th>Consommations (KG)</th>                                                                                
                                                         <th>Diametres</th>
                                                         <th>Rebus</th>
@@ -1434,7 +1429,6 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                                             $RebusTotal += $consommationC1Q2['dechet'];
                                                     ?>
                                                         <tr>
-                                                            <td style="background-color:#4e73df ; color:white;"><a style="text-decoration: none; font-family: arial; font-size: 20px; color:white;" href="javascript:void(0);" data-toggle="modal" data-target="#Information<?php echo $i; ?>" title="Voir details du produit" class="link-offset-2 link-underline"><?= $consommationC1Q2['numerofin'] ?></a></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $consommationC1Q2['piodstotal'] ?></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $consommationC1Q2['diametre'] ?></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $consommationC1Q2['dechet'] ?></td>
@@ -1705,7 +1699,6 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                             <table class="table table-bordered mb-2 ml-3 mr-4 col-lg-3" width="100%" cellspacing="0">
                                                 <thead>
                                                     <tr>  
-                                                        <th>N° FM</th>     
                                                         <th>Consommations (KG)</th>                                                                                
                                                         <th>Diametres</th>
                                                         <th>Rebus</th>
@@ -1718,7 +1711,6 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                                             $RebusTotal += $consommationC2Q2['dechet'];
                                                     ?>
                                                         <tr>
-                                                            <td style="background-color:#4e73df ; color:white;"><a style="text-decoration: none; font-family: arial; font-size: 20px; color:white;" href="javascript:void(0);" data-toggle="modal" data-target="#Information<?php echo $i; ?>" title="Voir details du produit" class="link-offset-2 link-underline"><?= $consommationC2Q2['numerofin'] ?></a></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $consommationC2Q2['piodstotal'] ?></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $consommationC2Q2['diametre'] ?></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $consommationC2Q2['dechet'] ?></td>
@@ -2001,7 +1993,6 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                             <table class="table table-bordered mb-2 ml-3 mr-4 col-lg-3" width="100%" cellspacing="0">
                                                 <thead>
                                                     <tr>  
-                                                        <th>N° FM</th>     
                                                         <th>Consommations (KG)</th>                                                                                
                                                         <th>Diametres</th>
                                                         <th>Rebus</th>
@@ -2014,7 +2005,6 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                                             $RebusTotal += $consommationC1Q3['dechet'];
                                                     ?>
                                                         <tr>
-                                                            <td style="background-color:#4e73df ; color:white;"><a style="text-decoration: none; font-family: arial; font-size: 20px; color:white;" href="javascript:void(0);" data-toggle="modal" data-target="#Information<?php echo $i; ?>" title="Voir details du produit" class="link-offset-2 link-underline"><?= $consommationC1Q3['numerofin'] ?></a></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $consommationC1Q3['piodstotal'] ?></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $consommationC1Q3['diametre'] ?></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $consommationC1Q3['dechet'] ?></td>
@@ -2285,7 +2275,6 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                             <table class="table table-bordered mb-2 ml-3 mr-4 col-lg-3" width="100%" cellspacing="0">
                                                 <thead>
                                                     <tr>   
-                                                        <th>N° FM</th>    
                                                         <th>Consommations (KG)</th>                                                                                
                                                         <th>Diametres</th>
                                                         <th>Rebus</th>
@@ -2298,7 +2287,6 @@ $idfichecranteuseq1 = $_GET['dateCreation'];  // On recupére l'ID de la récept
                                                             $RebusTotal += $consommationC2Q3['dechet'];
                                                     ?>
                                                         <tr>
-                                                            <td style="background-color:#4e73df ; color:white;"><a style="text-decoration: none; font-family: arial; font-size: 20px; color:white;" href="javascript:void(0);" data-toggle="modal" data-target="#Information<?php echo $i; ?>" title="Voir details du produit" class="link-offset-2 link-underline"><?= $consommationC2Q3['numerofin'] ?></a></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $consommationC2Q3['piodstotal'] ?></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $consommationC2Q3['diametre'] ?></td>
                                                             <td style="background-color:#4e73df ; color:white;"><?= $consommationC2Q3['dechet'] ?></td>

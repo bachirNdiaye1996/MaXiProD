@@ -449,7 +449,7 @@ $idficheparquarttrefilage = $_GET['idficheparquarttrefilage'];  //
                                                 <th>Fin quart</th>
                                                 <?php //if($_SESSION['niveau'] == ''){ ?>
                                                     <th>Option</th>
-                                                <?php //}?> 
+                                                <?php //}?>
                                             </tr>
                                         </thead>
                                         <tbody>

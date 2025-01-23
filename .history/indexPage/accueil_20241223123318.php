@@ -56,7 +56,7 @@
             <hr class="sidebar-divider my-0">
 
             <!-- Nav Item - Dashboard -->
-            <li class="nav-item active">
+            <li class="nav-item">
                 <a class="nav-link" href="accueil.php">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Accueil Dashboard</span></a>
@@ -67,7 +67,7 @@
 
                 <!-- Nav Item - Tables -->
             <?php if($_SESSION['niveau']=='admin' || $_SESSION['niveau']=='pontbascule' || $_SESSION['niveau']=='chefquart'){ ?>
-                <li class="nav-item">
+                <li class="nav-item active">
                     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseReception"
                         aria-expanded="true" aria-controls="collapseUtilities">
                         <i class="fa fa-book fa-fw"></i>
@@ -119,7 +119,7 @@
                 
                 <!-- Nav Item - Tables -->
 
-                <li class="nav-item">
+                <li class="nav-item <?php if($_SESSION['niveau'] == 'chefquart'){ echo 'active'; }?>">
                     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
                         aria-expanded="true" aria-controls="collapseUtilities">
                         <i class="fa fa-book fa-fw"></i>
@@ -447,6 +447,7 @@
 
                     <!-- Content Row -->
                     <div class="row">
+
                         <!-- Earnings (Monthly) Card Example -->
                         <div class="col-xl-3 col-md-6 mb-4">
                             <a href="404.php">
@@ -537,7 +538,6 @@
 
                     <div class="row">
                         <!-- A mettre le body -->
-
                     </div>
 
                 </div>
