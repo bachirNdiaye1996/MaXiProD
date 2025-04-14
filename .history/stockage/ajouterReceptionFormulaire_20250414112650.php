@@ -17,7 +17,7 @@
     $NombreLigne = $_GET['NombreLigne'];
 
 
-    //** Debut select des receptions
+    /* //** Debut select des receptions
         $sql = "SELECT * FROM `matierePlanifie` where `actif`=1 and `actifRectifie`=0 and `idreception`=$idreception ORDER BY `idmatiereplanifie` DESC;";
 
         // On prépare la requête
@@ -28,7 +28,7 @@
 
         // On récupère les valeurs dans un tableau associatif
         $ReceptionPlanifieARemplir = $query->fetchAll();
-    //** Fin select des receptions
+    //** Fin select des receptions */
 
 
     //Revoir si on a ajouter une ligne
@@ -38,6 +38,7 @@
         $entetedf="";
         $poidscamion="";
         $datereception="";
+        $dateplanifie="";
 
         $sql = "select * from reception where idreception=$idreception";
         $result = $db->query($sql);
@@ -52,20 +53,20 @@
     //Fin revoir si on a ajouter une ligne
 
     //Changer valeur NombreLigne   
-        if(isset($_POST['ChangerNombreLigne'])){
+        /*if(isset($_POST['ChangerNombreLigne'])){
             $NombreLignes=htmlspecialchars( $_POST['NombreLigne']) - 1;
             header("location: ajouterReceptionFormulaire.php?idreception=$_GET[idreception]&NombreLigne=$NombreLignes");
             exit;
-        }
+        }*/
     //Fin changer valeur NombreLigne  
 
     //Insertion des réceptions
     if(isset($_POST['CreerReception'])){
         $idreception=htmlspecialchars($_POST['idreception']);
         //$referenceusine=htmlspecialchars( $_POST['referenceusine']);
-        $nomrecepteur=htmlspecialchars( $_POST['nomrecepteur']);
-        $dateplanifie=htmlspecialchars( $_POST['dateplanifie']);
-        $entetedf=htmlspecialchars( $_POST['entetedf']);
+        $nomrecepteur=htmlspecialchars($_POST['nomrecepteur']);
+        $dateplanifie=htmlspecialchars($_POST['dateplanifie']);
+        $entetedf=htmlspecialchars($_POST['entetedf']);
         $commentaire=htmlspecialchars($_POST['commentaire']);
         $poidscamion=htmlspecialchars($_POST['poidscamion']);
         $matriculecamion=htmlspecialchars($_POST['matriculecamion']);
@@ -88,13 +89,13 @@
                     $lieutransfert=htmlspecialchars($_POST['lieutransfert'][$i]);
                     $etatbobine=htmlspecialchars($_POST['etatbobine'][$i]);
                     $user=htmlspecialchars($_POST['user'][$i]);
-                    $poidsdeclare=htmlspecialchars($_POST['poidsdeclare'][$i]);
+                    $poidsdeclare=htmlspecialchars($_POST['poidsdeclare'][$i] * $_POST['nbbobine'][$i]);
                     $poidspese=htmlspecialchars($_POST['poidspese'][$i]);
                     //$idLot=htmlspecialchars($_POST['idLot']);
                     //$idbobine=htmlspecialchars($Reception[$i]['idbobine']);
                     $nbbobine=htmlspecialchars($_POST['nbbobine'][$i]);
                     //$idreceptionMatiere=htmlspecialchars($_POST['idreceptionMatiere'][$i]);
-                    $idreceptionMatierePlanifie=htmlspecialchars($_POST['idreceptionMatierePlanifie'][$i]);
+                    //$idreceptionMatierePlanifie=htmlspecialchars($_POST['idreceptionMatierePlanifie'][$i]);
     
     
                     if($nbbobine == 0){
@@ -153,12 +154,12 @@
                             // Fin ajouter le nombre de bobine dans le lieu de reception
                         //}
     
-                        //Mettre inactif les matieres a remplir 
+                        /* //Mettre inactif les matieres a remplir 
                             $sql = "UPDATE `matiereplanifie` SET `actifRectifie` = 1 WHERE `idmatiereplanifie` = ?;";
                             //$result = $db->query($sql); 
                             $sth = $db->prepare($sql);    
                             $sth->execute(array($idreceptionMatierePlanifie));
-                        //Fin mettre inactif les matieres a remplir 
+                        //Fin mettre inactif les matieres a remplir  */
                     }    
                 }
             }else{
@@ -305,14 +306,14 @@
                 <td style="background-color:#CFFEDA ;">
                 <div class="col-md-10">
                     <div class="mb-1 text-start">
-                        <input class="form-control designa" type="number" name="poidsdeclare[]" id="validationDefault0<?$i+10?>" required>
+                        <input class="form-control designa" type="number" step="0.01" name="poidsdeclare[]" id="validationDefault0<?$i+10?>" required>
                     </div>
                 </div>
                 </td>
                 <td style="background-color:#CFFEDA ;">
                     <div class="col-md-10">
                         <div class="mb-1 text-start">
-                            <input class="form-control designa" type="number" name="poidspese[]">
+                            <input class="form-control designa" type="number" step="0.01" name="poidspese[]">
                         </div>
                     </div>
                 </td>
@@ -393,7 +394,7 @@
                                                 <div class="col-md-2 ml-5 mr-5 mt-3">
                                                     <div class="mb-5 text-start">
                                                         <label class="form-label fw-bold" for="nom">Entete de la DF</label> 
-                                                        <input class="form-control" type="text" name="entetedf" value="<?= $row['entetedf'] ?>" id="validationDefault01" required placeholder="Mettez l'entete de la DF">
+                                                        <input class="form-control" type="text" name="entetedf" value="<?= $row['entetedf'] ?>" id="validationDefault01" placeholder="Mettez l'entete de la DF">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-2 mr-2 mt-3">
@@ -405,19 +406,19 @@
                                                 <div class="col-md-2 ml-5 mt-3">
                                                     <div class="mb-1 text-start">
                                                         <label class="form-label fw-bold" for="nom">Matricule du Camion</label>
-                                                        <input class="form-control" type="text" name="matriculecamion" value="<?= $row['matriculecamion'] ?>" id="validationDefault03" required placeholder="Mettez le matricule du camion">
+                                                        <input class="form-control" type="text" name="matriculecamion" value="<?= $row['matriculecamion'] ?>" id="validationDefault03" placeholder="Mettez le matricule du camion">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-2 ml-5 mt-3">
                                                     <div class="mb-1 text-start">
                                                         <label class="form-label fw-bold" for="nom">BL</label>
-                                                        <input class="form-control" type="text" name="bl" value="<?= $row['bl'] ?>" id="validationDefault058" required placeholder="Mettez le numéro du BL">
+                                                        <input class="form-control" type="text" name="bl" value="<?= $row['bl'] ?>" id="validationDefault058" placeholder="Mettez le numéro du BL">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-2 ml-5 mt-3">
                                                     <div class="mb-1 text-start">
                                                         <label class="form-label fw-bold" for="nom">Poids pont bascule</label>
-                                                        <input class="form-control" type="text" name="poidscamion" value="<?= $row['poidscamion'] ?>" id="validationDefault20" required placeholder="Mettez le poids pont bascule">
+                                                        <input class="form-control" type="text" name="poidscamion" value="<?= $row['poidscamion'] ?>" id="validationDefault20" placeholder="Mettez le poids pont bascule">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-2 mt-3 ml-5 mb-5">
@@ -496,14 +497,14 @@
                                                                 <td style="background-color:#CFFEDA ;">
                                                                 <div class="col-md-10">
                                                                     <div class="mb-1 text-start">
-                                                                        <input class="form-control designa" type="number" name="poidsdeclare[]" id="validationDefault0<?$i+10?>" required>
+                                                                        <input class="form-control designa" type="number" step="0.01" name="poidsdeclare[]" id="validationDefault0<?$i+10?>" required>
                                                                     </div>
                                                                 </div>
                                                                 </td>
                                                                 <td style="background-color:#CFFEDA ;">
                                                                     <div class="col-md-10">
                                                                         <div class="mb-1 text-start">
-                                                                            <input class="form-control designa" type="number" name="poidspese[]">
+                                                                            <input class="form-control designa" type="number" step="0.01" name="poidspese[]">
                                                                         </div>
                                                                     </div>
                                                                 </td>
