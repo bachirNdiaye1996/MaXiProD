@@ -121,7 +121,6 @@
 
                         if($resultEpaisseur){
                             $ProblemeUnicite="erreurProblemeUnicite";
-                            break;
                         }
                     //Fin Rechercher le nombre de piéces
                     $numbobinedebut++; 
@@ -815,19 +814,6 @@
                                                             <script>    
                                                                 Swal.fire({
                                                                     text: 'Le lieu de départ doit étre différent du lieu d arrivé',
-                                                                    icon: 'error',
-                                                                    timer: 5500,
-                                                                    showConfirmButton: false,
-                                                                },
-                                                                function(){ 
-                                                                    location.reload();
-                                                                });
-                                                            </script> 
-                                                        <?php } ?>
-                                                        <?php if($ProblemeUnicite == "erreurProblemeUnicite"){ ?> 
-                                                            <script>    
-                                                                Swal.fire({
-                                                                    text: 'Il y a un numéro de FM qui existe déja dans la base de donnée.',
                                                                     icon: 'error',
                                                                     timer: 5500,
                                                                     showConfirmButton: false,

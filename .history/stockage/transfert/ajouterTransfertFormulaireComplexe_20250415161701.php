@@ -824,7 +824,7 @@
                                                                 });
                                                             </script> 
                                                         <?php } ?>
-                                                        <?php if($ProblemeUnicite == "erreurProblemeUnicite"){ ?> 
+                                                        <?php if($ProblemeUniciteExist == "erreurProblemeUniciteExist"){ ?> 
                                                             <script>    
                                                                 Swal.fire({
                                                                     text: 'Il y a un numéro de FM qui existe déja dans la base de donnée.',

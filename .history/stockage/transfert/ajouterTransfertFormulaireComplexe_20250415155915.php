@@ -20,8 +20,6 @@
     $NombreLigne = $_GET['NombreLigne'];  
     $ProblemeNumeroBobine="";
     $ProblemeLieu="";
-    $ProblemeUnicite="";        // Unicite du num bobine
-
 
 
 
@@ -109,7 +107,7 @@
                 while($numbobinedebut <= $numbobinefin){    
                     //print_r($_POST['epaisseur']);
                     //Rechercher le nombre de piéces sur le lieu de depart
-                        $sqlEpaisseur = "SELECT * FROM `matiere` where `numbobine`='$numbobinedebut' LIMIT 1;";
+                        $sqlEpaisseur = "SELECT * FROM `matiere` where `numbobine`='$pointdepart' LIMIT 1;";
                         // On prépare la requête
                         $queryEpaisseur = $db->prepare($sqlEpaisseur);
 
@@ -120,8 +118,7 @@
                         $resultEpaisseur = $queryEpaisseur->fetch();
 
                         if($resultEpaisseur){
-                            $ProblemeUnicite="erreurProblemeUnicite";
-                            break;
+                            $Iddepart = $resultEpaisseur['idmatiere'];
                         }
                     //Fin Rechercher le nombre de piéces
                     $numbobinedebut++; 
@@ -130,7 +127,7 @@
         // Fin vérification
 
         
-        if($ProblemeNbBobineDepart != "erreurProblemeNbDepart" && $ProblemeNumeroBobine != "erreurProblemeNumeroBobine" && $ProblemeLieu != "erreurProblemeLieu"  && $ProblemeUnicite != "erreurProblemeUnicite"){
+        if($ProblemeNbBobineDepart != "erreurProblemeNbDepart" && $ProblemeNumeroBobine != "erreurProblemeNumeroBobine" && $ProblemeLieu != "erreurProblemeLieu"){
 
             $sql = "UPDATE `transfert` SET `datetransfert` = '$datetransfert', `transporteur` = '$transporteur', `commentaire` = '$commentaire', `saisisseur` = '$saisisseur' WHERE `idtransfert` = ?;";
             //$result = $db->query($sql);
@@ -463,7 +460,7 @@
                                     <div class="modal-body">
                                         <form action="#" method="POST" enctype="multipart/form-data" class="row g-3">
                                             <div class="row">
-                                                <?php if($valideTransfert != "erreurEpaisseur" && $ProblemeNbBobineDepart != "erreurProblemeNbDepart" && $ProblemeNumeroBobine != "erreurProblemeNumeroBobine" && $ProblemeLieu != "erreurProblemeLieu"  && $ProblemeUnicite != "erreurProblemeUnicite"){ // Lorsqu'il y'a pas d'erreur ?> 
+                                                <?php if($valideTransfert != "erreurEpaisseur" && $ProblemeNbBobineDepart != "erreurProblemeNbDepart" && $ProblemeNumeroBobine != "erreurProblemeNumeroBobine" && $ProblemeLieu != "erreurProblemeLieu"){ // Lorsqu'il y'a pas d'erreur ?> 
                                                     <div class="col-md-2 mr-2 mt-3 mb-5">
                                                         <div class="mb-1 text-start">
                                                             <label class="form-label fw-bold" for="nom">Nom complet du saisisseur</label>
@@ -766,7 +763,7 @@
                                                         ?>" name="idtransfert" id="example-date-input2">
                                                     </div>
                                                 </div>
-                                                <?php if($valideTransfert != "erreurEpaisseur" && $ProblemeNbBobineDepart != "erreurProblemeNbDepart" && $ProblemeNumeroBobine != "erreurProblemeNumeroBobine" && $ProblemeLieu != "erreurProblemeLieu"  && $ProblemeUnicite != "erreurProblemeUnicite"){ // Lorsqu'il y'a pas d'erreur ?> 
+                                                <?php if($valideTransfert != "erreurEpaisseur" && $ProblemeNbBobineDepart != "erreurProblemeNbDepart" && $ProblemeNumeroBobine != "erreurProblemeNumeroBobine" && $ProblemeLieu != "erreurProblemeLieu"){ // Lorsqu'il y'a pas d'erreur ?> 
                                                     <div class="col-md-8">
                                                         <div class="mb-1 text-start">
                                                             <label class="form-label fw-bold" for="commentaire" >Commentaire</label>
@@ -815,19 +812,6 @@
                                                             <script>    
                                                                 Swal.fire({
                                                                     text: 'Le lieu de départ doit étre différent du lieu d arrivé',
-                                                                    icon: 'error',
-                                                                    timer: 5500,
-                                                                    showConfirmButton: false,
-                                                                },
-                                                                function(){ 
-                                                                    location.reload();
-                                                                });
-                                                            </script> 
-                                                        <?php } ?>
-                                                        <?php if($ProblemeUnicite == "erreurProblemeUnicite"){ ?> 
-                                                            <script>    
-                                                                Swal.fire({
-                                                                    text: 'Il y a un numéro de FM qui existe déja dans la base de donnée.',
                                                                     icon: 'error',
                                                                     timer: 5500,
                                                                     showConfirmButton: false,
