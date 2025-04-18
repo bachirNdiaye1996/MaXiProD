@@ -1077,9 +1077,9 @@
                                                             </thead>
                                                             <tbody id="dynamicaddProductions">
                                                                 <?php
-                                                                    $i= -1;
+                                                                    //$i=0;
                                                                     foreach($rowProductions as $rowProduction){
-                                                                        $i++;
+                                                                        //$i++;
                                                                         //if($article['status'] == 'termine'){
                                                                 ?>
                                                                     <tr class="rowClass">
@@ -1492,7 +1492,7 @@
                                                                         </td>
                                                                         <script>
                                                                             $(document).ready(function(){
-                                                                                $('#numerofinProd<?php echo $i; ?>').change(function(){
+                                                                                $('#numerofinProd').change(function(){
                                                                                     //Selected value
                                                                                     var inputValue = $(this).val();
                                                                                     var myArray = inputValue.split('/');

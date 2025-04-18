@@ -1079,7 +1079,7 @@
                                                                 <?php
                                                                     $i= -1;
                                                                     foreach($rowProductions as $rowProduction){
-                                                                        $i++;
+                                                                        //$i++;
                                                                         //if($article['status'] == 'termine'){
                                                                 ?>
                                                                     <tr class="rowClass">

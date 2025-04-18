@@ -470,17 +470,6 @@ $TotalBarres = 0;
                                                     <td style="background-color:#4e73df ; color:white;"><?= $prodcrantq1['debutarret'] ?></td>
                                                     <td style="background-color:#4e73df ; color:white;"><?= $prodcrantq1['finarret'] ?></td>
                                                     <td style="background-color:#4e73df ; color:white;"><?= $prodcrantq1['raison'] ?></td>
-                                                    <td style="background-color:#4e73df ; color:white;"><?php 
-                                                        $TotalArret = strtotime($prodcrantq1['finarret']) - strtotime($prodcrantq1['debutarret']);
-                                                        $TotalArret = explode(":",date("H:i",$TotalArret) );
-                                                        if(($TotalArret[0]-1) == 0){
-                                                            if($TotalArret[1] == 0){}else{echo $TotalArret[1]." minutes";}
-                                                        }else{
-                                                            echo ($TotalArret[0]-1)." Heures ";
-                                                            if($TotalArret[1] == 0){}else{echo $TotalArret[1]." minutes";}
-                                                        }
-                                                        ?>
-                                                    </td>
                                                 </tr>
                                             <!-- Pour le sweetAlert approuveTransfert !--> 
                                             <?php
