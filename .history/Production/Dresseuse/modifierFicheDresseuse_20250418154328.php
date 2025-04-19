@@ -1498,6 +1498,12 @@
                                                                 ?>
                                                             </tbody>
                                                         </table>
+
+                                                        <div class="col-md-4  d-flex gap-2">
+                                                            <div class="mb-5 text-start d-flex gap-2 pt-4">
+                                                                <input class="btn btn-success  w-lg bouton mr-3" name="ChangerNombreLigne" id="addProductions" type="button" value="Ajouter une ligne">
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 <?php } ?>
                                                 
