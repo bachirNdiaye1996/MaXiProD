@@ -342,21 +342,39 @@ include "../../connexion/conexiondb.php";
                 </nav>
                 <!-- End of Topbar -->
 
-                <div class="col-lg-12 mt-3 mr-5">
-                    <ul class="row list-group-horizontal mt-4 ml-5">
-                        <li class="list-group mr-4"><a href="stockage.php" class="list-group-item list-group-item-action" aria-current="true">METAL 1</a></li>
-                        <li class="list-group mr-4"><a href="stockageMetalMbao.php" class="list-group-item list-group-item-action active">METAL MBAO</a></li>
-                        <li class="list-group mr-4"><a href="stockageNiambour.php" class="list-group-item list-group-item-action">NIAMBOUR</a></li>
-                        <li class="list-group mr-4"><a href="stockageCranteuse.php" class="list-group-item list-group-item-action">MACHINE CRANTEUSE</a></li>
-                        <li class="list-group mr-4"><a href="stockageTrefilage.php" class="list-group-item list-group-item-action">MACHINE TREFILAGE</a></li>
-                    </ul>
-                </div>
-
                 <!-- Begin Page Content -->
-                <div class="row mt-5 ml-5 mr-5">
+                <div class="row mt-5 ml-5">
+                    <div class="col-lg-3 mt-3 mr-5">
+                        <div class="">
+                            <div class="list-group">
+                                <a href="stockage.php" class="list-group-item list-group-item-action" aria-current="true">METAL 1</a>
+                                <a href="stockageMetalMbao.php" class="list-group-item list-group-item-action active">METAL MBAO</a>
+                                <a href="stockageNiambour.php" class="list-group-item list-group-item-action">NIAMBOUR</a>
+                                <a href="stockageCranteuse.php" class="list-group-item list-group-item-action">MACHINE CRANTEUSE</a>
+                                <a href="stockageTrefilage.php" class="list-group-item list-group-item-action">MACHINE TREFILAGE</a>
+                            </div>
+                                <!-- End of Sidebar -->
+                            <!-- Page Heading -->
+                            <!-- <div class="row">
+                                <div class="col-xl-3 col-md-6 mb-1">
+                                    <img src="../../image/stockage/ferabeton.jpg" class="img-fluid" alt="" style="border-radius: 50%; margin:20px; opacity: 0.7;" width="200">
+                                </div>
+                            </div> -->
+                        </div> 
+                    </div>
+                    <div class="col-lg-12 mt-3 mr-5">
+                        <ul class="row list-group-horizontal mt-4 ml-5">
+                            <li class="list-group mr-4"><a href="stockage.php" class="list-group-item list-group-item-action" aria-current="true">METAL 1</a></li>
+                            <li class="list-group mr-4"><a href="stockageMetalMbao.php" class="list-group-item list-group-item-action">METAL MBAO</a></li>
+                            <li class="list-group mr-4"><a href="stockageNiambour.php" class="list-group-item list-group-item-action">NIAMBOUR</a></li>
+                            <li class="list-group mr-4"><a href="stockageCranteuse.php" class="list-group-item list-group-item-action active">MACHINE CRANTEUSE</a></li>
+                            <li class="list-group mr-4"><a href="stockageTrefilage.php" class="list-group-item list-group-item-action">MACHINE TREFILAGE</a></li>
+                        </ul>
+                    </div>
+
                     <!-- DataTales Example -->
                     <!-- Fade In Utility -->
-                    <div class="col-lg-12 mt-3">
+                    <div class="col-lg-8 mt-3">
                         <div class="card position-relative">
                             <div class="card-header py-3">
                                 <h6 class="m-0 font-weight-bold text-primary">Nombre de bobine stocké à Métal Mbao : <?php echo $nbReception; ?></h6>

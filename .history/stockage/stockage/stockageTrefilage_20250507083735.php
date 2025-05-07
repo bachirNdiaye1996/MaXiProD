@@ -15,7 +15,7 @@ include "../../connexion/conexiondb.php";
 //** Nombre des bobines total
     $sql = "SELECT SUM(`3`) + SUM(`3.5`) + SUM(`4`) + SUM(`4.5`) + SUM(`5`) + SUM(`5.5`) + SUM(`6`) + SUM(`6.5`) + SUM(`7`) + SUM(`7.5`)
     + SUM(`8`) + SUM(`8.5`) + SUM(`9`) + SUM(`9.5`) + SUM(`10`) + SUM(`10.5`) + SUM(`11`) + SUM(`11.5`) + SUM(`12`) + SUM(`12.5`) + SUM(`13`) + SUM(`13.5`) + 
-    SUM(`14`) + SUM(`14.5`) + SUM(`15`) + SUM(`15.5`) + SUM(`16`) + SUM(`16.5`) + SUM(`17`) AS nb_reception_total FROM `epaisseur` where `lieu`='Metal Mbao';";
+    SUM(`14`) + SUM(`14.5`) + SUM(`15`) + SUM(`15.5`) + SUM(`16`) + SUM(`16.5`) + SUM(`17`) AS nb_reception_total FROM `epaisseur` where `lieu`='Tréfilage';";
     // On prépare la requête
     $query = $db->prepare($sql);
 
@@ -29,16 +29,16 @@ include "../../connexion/conexiondb.php";
 //** Fin nombre des bobines total
 
 //** Debut select de stockage pour Metal1
-    $sqlepaisseur = "SELECT * FROM `matiere` where `nbbobineactuel`>0 and `lieutransfert`='Metal Mbao'  ORDER BY `idmatiere` DESC;";
+$sqlepaisseur = "SELECT * FROM `matiere` where `nbbobineactuel`>0 and `lieutransfert`='Tréfilage'  ORDER BY `idmatiere` DESC;";
 
-    // On prépare la requête
-    $queryepaisseur = $db->prepare($sqlepaisseur);
+// On prépare la requête
+$queryepaisseur = $db->prepare($sqlepaisseur);
 
-    // On exécute
-    $queryepaisseur->execute();
+// On exécute
+$queryepaisseur->execute();
 
-    // On récupère les valeurs dans un tableau associatif
-    $stockMetalMB = $queryepaisseur->fetchAll();
+// On récupère les valeurs dans un tableau associatif
+$stockTrefilage = $queryepaisseur->fetchAll();
 //** Fin select de stockage pour Metal1
 
 ?>
@@ -91,7 +91,7 @@ include "../../connexion/conexiondb.php";
             })
         //Pour le loading
     </script>
-
+    
 </head>
 
 <body id="page-top">
@@ -339,32 +339,30 @@ include "../../connexion/conexiondb.php";
                             </div>    
                         </div>
                     </div>
+
                 </nav>
                 <!-- End of Topbar -->
-
                 <div class="col-lg-12 mt-3 mr-5">
                     <ul class="row list-group-horizontal mt-4 ml-5">
                         <li class="list-group mr-4"><a href="stockage.php" class="list-group-item list-group-item-action" aria-current="true">METAL 1</a></li>
-                        <li class="list-group mr-4"><a href="stockageMetalMbao.php" class="list-group-item list-group-item-action active">METAL MBAO</a></li>
+                        <li class="list-group mr-4"><a href="stockageMetalMbao.php" class="list-group-item list-group-item-action">METAL MBAO</a></li>
                         <li class="list-group mr-4"><a href="stockageNiambour.php" class="list-group-item list-group-item-action">NIAMBOUR</a></li>
                         <li class="list-group mr-4"><a href="stockageCranteuse.php" class="list-group-item list-group-item-action">MACHINE CRANTEUSE</a></li>
-                        <li class="list-group mr-4"><a href="stockageTrefilage.php" class="list-group-item list-group-item-action">MACHINE TREFILAGE</a></li>
+                        <li class="list-group mr-4"><a href="stockageTrefilage.php" class="list-group-item list-group-item-action active">MACHINE TREFILAGE</a></li>
                     </ul>
                 </div>
-
                 <!-- Begin Page Content -->
-                <div class="row mt-5 ml-5 mr-5">
+                <div class="row mt-5 ml-5">
                     <!-- DataTales Example -->
                     <!-- Fade In Utility -->
-                    <div class="col-lg-12 mt-3">
+                    <div class="col-lg-8 mt-3">
                         <div class="card position-relative">
                             <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary">Nombre de bobine stocké à Métal Mbao : <?php echo $nbReception; ?></h6>
+                                <h6 class="m-0 font-weight-bold text-primary">Nombre de bobine stocké à la machine Tréfilage : <?php echo $nbReception; ?></h6>
                             </div>
                             <div class="row m-2">
-                                <div class="table-responsive">
-                                    <!-- Page Loader -->
-                                        <div id="loader">
+                                <!-- Page Loader -->
+                                    <div id="loader">
                                             <span class="lettre">M</span>
                                             <span class="lettre">E</span>
                                             <span class="lettre">T</span>
@@ -382,10 +380,11 @@ include "../../connexion/conexiondb.php";
                                             <span class="lettre">E</span>
                                         </div>
                                     <!-- Page Loader -->
+                                <div class="table-responsive">
                                     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                         <thead>
                                             <tr>       
-                                                <th>Code stockage</th>                                                                                
+                                                <th>Numéro fil machine</th>                                                                                
                                                 <th>Epaisseur</th>
                                                 <th>Nombre bobine</th>
                                                 <th>Poids déclaré</th>
@@ -397,13 +396,13 @@ include "../../connexion/conexiondb.php";
                                         <tbody>
                                             <?php
                                                 $i=0;
-                                                foreach($stockMetalMB as $stock){
+                                                foreach($stockTrefilage as $stock){
                                                     $i++;
                                                     //if($article['status'] == 'termine'){
                                             ?>
                                                 <tr>
                                                     <td style="background-color:#4e73df ; color:white;">
-                                                        <a style="text-decoration: none; font-family: arial; font-size: 20px; color:white;" href="javascript:void(0);" data-toggle="modal" data-target="#Information<?php echo $i; ?>" title="Voir details du produit" class="link-offset-2 link-underline"><?php echo "REC00".$stock['idreception']."-BOB-0".$stock['idmatiere']; ?></a>
+                                                        <a style="text-decoration: none; font-family: arial; font-size: 20px; color:white;" href="javascript:void(0);" href="javascript:void(0);" data-toggle="modal" data-target="#Information<?php echo $i; ?>" title="Voir details du produit" class="link-offset-2 link-underline"><?php echo $stock['numbobine']; ?></a>
                                                         <!--<a style="text-decoration: none; font-family: arial; font-size: 20px; color:white;" title="Allez vers la reception planifiée correspondante" href="detailsReceptionPlanifie.php?idreception=<?= $stock['idreception'] ?>" class="link-offset-2 link-underline"><?php echo "REC-0".$stock['idreception']."-BOB-0".$stock['idmatiere'] ?></a>!-->
                                                     </td>
                                                     <td style="background-color:#4e73df ; color:white;"> <?= $stock['epaisseur'] ?> </td>

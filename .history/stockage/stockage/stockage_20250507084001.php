@@ -2,6 +2,7 @@
 
 session_start(); 
 
+
 if(!$_SESSION){
     header("location: ../../404.php");
     return 0;
@@ -15,10 +16,10 @@ include "../../connexion/conexiondb.php";
 //** Nombre des bobines total
     $sql = "SELECT SUM(`3`) + SUM(`3.5`) + SUM(`4`) + SUM(`4.5`) + SUM(`5`) + SUM(`5.5`) + SUM(`6`) + SUM(`6.5`) + SUM(`7`) + SUM(`7.5`)
     + SUM(`8`) + SUM(`8.5`) + SUM(`9`) + SUM(`9.5`) + SUM(`10`) + SUM(`10.5`) + SUM(`11`) + SUM(`11.5`) + SUM(`12`) + SUM(`12.5`) + SUM(`13`) + SUM(`13.5`) + 
-    SUM(`14`) + SUM(`14.5`) + SUM(`15`) + SUM(`15.5`) + SUM(`16`) + SUM(`16.5`) + SUM(`17`) AS nb_reception_total FROM `epaisseur` where `lieu`='Metal Mbao';";
+    SUM(`14`) + SUM(`14.5`) + SUM(`15`) + SUM(`15.5`) + SUM(`16`) + SUM(`16.5`) + SUM(`17`) AS nb_reception_total FROM `epaisseur` where `lieu`='Metal1';";
     // On prépare la requête
     $query = $db->prepare($sql);
-
+    
     // On exécute
     $query->execute();
 
@@ -26,10 +27,95 @@ include "../../connexion/conexiondb.php";
     $result = $query->fetch();
 
     $nbReception = (int) $result['nb_reception_total'];
-//** Fin nombre des bobines total
+//** Fin nombre des bobines total 
+
+//** Nombre des bobines total à Metal 1 
+    $sql = "SELECT SUM(`3`) + SUM(`3.5`) + SUM(`4`) + SUM(`4.5`) + SUM(`5`) + SUM(`5.5`) + SUM(`6`) + SUM(`6.5`) + SUM(`7`) + SUM(`7.5`)
+    + SUM(`8`) + SUM(`8.5`) + SUM(`9`) + SUM(`9.5`) + SUM(`10`) + SUM(`10.5`) + SUM(`11`) + SUM(`11.5`) + SUM(`12`) + SUM(`12.5`) + SUM(`13`) + SUM(`13.5`) + 
+    SUM(`14`) + SUM(`14.5`) + SUM(`15`) + SUM(`15.5`) + SUM(`16`) + SUM(`16.5`) + SUM(`17`) AS nb_reception_total FROM `epaisseur` where `lieu`='Metal1';";
+    // On prépare la requête
+    $query = $db->prepare($sql);
+
+
+    // On exécute
+    $query->execute();
+
+    // On récupère le nombre d'artic les
+    $result = $query->fetch();
+
+    $nombreMetal1 = (int) $result['nb_reception_total'];
+//** Fin nombre des bobines total Metal 1  
+
+//** Nombre des bobines total à Cranteuse
+    $sql = "SELECT SUM(`3`) + SUM(`3.5`) + SUM(`4`) + SUM(`4.5`) + SUM(`5`) + SUM(`5.5`) + SUM(`6`) + SUM(`6.5`) + SUM(`7`) + SUM(`7.5`)
+    + SUM(`8`) + SUM(`8.5`) + SUM(`9`) + SUM(`9.5`) + SUM(`10`) + SUM(`10.5`) + SUM(`11`) + SUM(`11.5`) + SUM(`12`) + SUM(`12.5`) + SUM(`13`) + SUM(`13.5`) + 
+    SUM(`14`) + SUM(`14.5`) + SUM(`15`) + SUM(`15.5`) + SUM(`16`) + SUM(`16.5`) + SUM(`17`) AS nb_reception_total FROM `epaisseur` where `lieu`='Cranteuse';";
+    // On prépare la requête
+    $query = $db->prepare($sql);
+
+
+    // On exécute
+    $query->execute();
+
+    // On récupère le nombre d'artic les
+    $result = $query->fetch();
+
+    $nombreCranteuse = (int) $result['nb_reception_total'];
+//** Fin nombre des bobines total Cranteuse  
+
+//** Nombre des bobines total à Mbao
+    $sql = "SELECT SUM(`3`) + SUM(`3.5`) + SUM(`4`) + SUM(`4.5`) + SUM(`5`) + SUM(`5.5`) + SUM(`6`) + SUM(`6.5`) + SUM(`7`) + SUM(`7.5`)
+    + SUM(`8`) + SUM(`8.5`) + SUM(`9`) + SUM(`9.5`) + SUM(`10`) + SUM(`10.5`) + SUM(`11`) + SUM(`11.5`) + SUM(`12`) + SUM(`12.5`) + SUM(`13`) + SUM(`13.5`) + 
+    SUM(`14`) + SUM(`14.5`) + SUM(`15`) + SUM(`15.5`) + SUM(`16`) + SUM(`16.5`) + SUM(`17`) AS nb_reception_total FROM `epaisseur` where `lieu`='Metal Mbao';";
+    // On prépare la requête
+    $query = $db->prepare($sql);
+
+
+    // On exécute
+    $query->execute();
+
+    // On récupère le nombre d'artic les
+    $result = $query->fetch();
+
+    $nombreMbao = (int) $result['nb_reception_total'];
+//** Fin nombre des bobines total Mbao  
+
+//** Nombre des bobines total à Trefilage
+    $sql = "SELECT SUM(`3`) + SUM(`3.5`) + SUM(`4`) + SUM(`4.5`) + SUM(`5`) + SUM(`5.5`) + SUM(`6`) + SUM(`6.5`) + SUM(`7`) + SUM(`7.5`)
+    + SUM(`8`) + SUM(`8.5`) + SUM(`9`) + SUM(`9.5`) + SUM(`10`) + SUM(`10.5`) + SUM(`11`) + SUM(`11.5`) + SUM(`12`) + SUM(`12.5`) + SUM(`13`) + SUM(`13.5`) + 
+    SUM(`14`) + SUM(`14.5`) + SUM(`15`) + SUM(`15.5`) + SUM(`16`) + SUM(`16.5`) + SUM(`17`) AS nb_reception_total FROM `epaisseur` where `lieu`='Trefilage';";
+    // On prépare la requête
+    $query = $db->prepare($sql);
+
+
+    // On exécute
+    $query->execute();
+
+    // On récupère le nombre d'artic les
+    $result = $query->fetch();
+
+    $nombreTrefilage = (int) $result['nb_reception_total'];
+//** Fin nombre des bobines total Trefilage  
+
+//** Nombre des bobines total à Niambour
+    $sql = "SELECT SUM(`3`) + SUM(`3.5`) + SUM(`4`) + SUM(`4.5`) + SUM(`5`) + SUM(`5.5`) + SUM(`6`) + SUM(`6.5`) + SUM(`7`) + SUM(`7.5`)
+    + SUM(`8`) + SUM(`8.5`) + SUM(`9`) + SUM(`9.5`) + SUM(`10`) + SUM(`10.5`) + SUM(`11`) + SUM(`11.5`) + SUM(`12`) + SUM(`12.5`) + SUM(`13`) + SUM(`13.5`) + 
+    SUM(`14`) + SUM(`14.5`) + SUM(`15`) + SUM(`15.5`) + SUM(`16`) + SUM(`16.5`) + SUM(`17`) AS nb_reception_total FROM `epaisseur` where `lieu`='Niambour';";
+    // On prépare la requête
+    $query = $db->prepare($sql);
+
+    // On exécute
+    $query->execute();
+
+    // On récupère le nombre d'artic les
+    $result = $query->fetch();
+
+    $nombreNiambour = (int) $result['nb_reception_total'];
+//** Fin nombre des bobines total Niambour  
+
 
 //** Debut select de stockage pour Metal1
-    $sqlepaisseur = "SELECT * FROM `matiere` where `nbbobineactuel`>0 and `lieutransfert`='Metal Mbao'  ORDER BY `idmatiere` DESC;";
+    $sqlepaisseur = "SELECT * FROM `matiere` where `nbbobineactuel`>0 and `lieutransfert`='Metal1' ORDER BY `idmatiere` DESC;";
 
     // On prépare la requête
     $queryepaisseur = $db->prepare($sqlepaisseur);
@@ -38,8 +124,9 @@ include "../../connexion/conexiondb.php";
     $queryepaisseur->execute();
 
     // On récupère les valeurs dans un tableau associatif
-    $stockMetalMB = $queryepaisseur->fetchAll();
+    $stockMetal1 = $queryepaisseur->fetchAll();
 //** Fin select de stockage pour Metal1
+
 
 ?>
 
@@ -341,25 +428,28 @@ include "../../connexion/conexiondb.php";
                     </div>
                 </nav>
                 <!-- End of Topbar -->
-
                 <div class="col-lg-12 mt-3 mr-5">
                     <ul class="row list-group-horizontal mt-4 ml-5">
-                        <li class="list-group mr-4"><a href="stockage.php" class="list-group-item list-group-item-action" aria-current="true">METAL 1</a></li>
-                        <li class="list-group mr-4"><a href="stockageMetalMbao.php" class="list-group-item list-group-item-action active">METAL MBAO</a></li>
+                        <li class="list-group mr-4"><a href="stockage.php" class="list-group-item list-group-item-action active" aria-current="true">METAL 1</a></li>
+                        <li class="list-group mr-4"><a href="stockageMetalMbao.php" class="list-group-item list-group-item-action">METAL MBAO</a></li>
                         <li class="list-group mr-4"><a href="stockageNiambour.php" class="list-group-item list-group-item-action">NIAMBOUR</a></li>
                         <li class="list-group mr-4"><a href="stockageCranteuse.php" class="list-group-item list-group-item-action">MACHINE CRANTEUSE</a></li>
                         <li class="list-group mr-4"><a href="stockageTrefilage.php" class="list-group-item list-group-item-action">MACHINE TREFILAGE</a></li>
                     </ul>
                 </div>
-
                 <!-- Begin Page Content -->
-                <div class="row mt-5 ml-5 mr-5">
+                <div class="row mt-5 ml-5">
                     <!-- DataTales Example -->
                     <!-- Fade In Utility -->
-                    <div class="col-lg-12 mt-3">
+                    <div class="col-lg-8 mt-3">
                         <div class="card position-relative">
                             <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary">Nombre de bobine stocké à Métal Mbao : <?php echo $nbReception; ?></h6>
+                                <h6 class="m-0 font-weight-bold text-primary">Nombre de bobine stocké à Métal 1 : <?php echo $nbReception; ?></h6>
+                                <input type="hidden" id="nombreMetal1" name="nombreMetal1"  value="<?php echo (($nombreMetal1)); ?>" />
+                                <input type="hidden" id="nombreNiambour" name="nombreNiambour"  value="<?php echo ($nombreNiambour); ?>" />
+                                <input type="hidden" id="nombreCranteuse" name="nombreCranteuse"  value="<?php echo (($nombreCranteuse)); ?>" />
+                                <input type="hidden" id="nombreTrefilage" name="nombreTrefilage"  value="<?php echo (($nombreTrefilage)); ?>" />
+                                <input type="hidden" id="nombreMbao" name="nombreMbao"  value="<?php echo (($nombreMbao)); ?>" />
                             </div>
                             <div class="row m-2">
                                 <div class="table-responsive">
@@ -397,7 +487,7 @@ include "../../connexion/conexiondb.php";
                                         <tbody>
                                             <?php
                                                 $i=0;
-                                                foreach($stockMetalMB as $stock){
+                                                foreach($stockMetal1 as $stock){
                                                     $i++;
                                                     //if($article['status'] == 'termine'){
                                             ?>
@@ -540,7 +630,7 @@ include "../../connexion/conexiondb.php";
     </a>
 
 
-    <!-- Bootstrap core JavaScript-->
+
     <script src="../../indexPage/vendor/jquery/jquery.min.js"></script>
     <script src="../../indexPage/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
@@ -557,6 +647,7 @@ include "../../connexion/conexiondb.php";
     <!-- Page level custom scripts -->
     <script src="../../indexPage/js/demo/datatables-demo.js"></script>
 
+    <!-- Page level custom scripts -->
 </body>
 
 </html>
