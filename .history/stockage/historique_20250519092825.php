@@ -588,6 +588,95 @@ $ReceptionStock = $query->fetchAll();
                                 <!-- Tableau d'en bas -->
                             </div>
                         </div>
+                        
+                        <!-- Pour le status !--> 
+                        <div class="modal fade " id="Information" tabindex="-1" aria-labelledby="fileModalLabel" aria-hidden="true" >
+                            <div class="modal-dialog modal-xl modal-dialog-centered" style="width=750px">
+                                <div class="modal-content">
+                                    <div class="card">
+                                        <div class="card-header bg-primary text-center">
+                                            <h5 class="modal-title" id="fileModalLabel" style="color:white">Details de la reception planifiée correspondante :</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="col-lg-12 mt-5 mb-5">
+                                                    <div class="form-group row">
+                                                        <label for="staticEmail" class="col-sm-4 col-form-label"><h5>Nom de la DF :</h5></label>
+                                                        <div class="col-sm-4">
+                                                            <h5 style="color:blue;"><?= $ReceptionPlani['entetedf'] ?></h5>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label for="staticEmail" class="col-sm-4 col-form-label"><h5>Code réception :</h5></label>
+                                                        <div class="col-sm-4">
+                                                            <h5 style=""><?= "REC00-".$reception['idreception'] ?></h5>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label for="staticEmail" class="col-sm-4 col-form-label"><h5>Date réception planifiée :</h5></label>
+                                                        <div class="col-sm-4">
+                                                            <h5><?= $ReceptionPlani['datereception'] ?></h5>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label for="staticEmail" class="col-sm-4 col-form-label"><h5>Commentaire associé :</h5></label>
+                                                        <div class="col-sm-6">
+                                                            <h5><?= $ReceptionPlani['commentaire'] ?></h5>
+                                                        </div>
+                                                    </div>
+                                                <div class="card position-relative">
+                                                    <div class="card-header py-3">
+                                                        <h6 class="m-0 font-weight-bold text-primary">Liste des bobines planifiées</h6>
+                                                    </div>
+                                                    <div class="row m-2">
+                                                        <div class="table-responsive">
+                                                            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                                                <thead>
+                                                                    <tr>       
+                                                                        <th>Code bobine</th>                                                                                
+                                                                        <th>Epaisseur</th>
+                                                                        <th>Nombre bobine</th>
+                                                                        <th>Poids déclaré</th>
+                                                                        <th>Poids brut</th>
+                                                                        <th>Derniére modification</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <?php
+                                                                        $i=0;
+                                                                        foreach($reception as $reception){
+                                                                            $i++;
+                                                                            //if($article['status'] == 'termine'){
+                                                                    ?>
+                                                                        <tr>
+                                                                            <td style="background-color:#CFFEDA ; text-align: center;">
+                                                                                <a style="text-decoration: none; font-family: arial; font-size: 20px;" title="Allez vers la reception correspondante" href="detailsReception.php?idreception=<?= $reception['idreception'] ?>" class="link-offset-2 link-underline"><?php echo "REC-0".$reception['idreception']."-BOB-0".$reception['idmatiereplanifie'] ?></a>
+                                                                            </td>
+                                                                            <td style="background-color:#CFFEDA ;"><?php echo "DIA ".$reception['epaisseur']." MM" ?></td>
+                                                                            <td style="background-color:#CFFEDA ;"><?= $reception['nbbobine'] ?></td>
+                                                                            <td style="background-color:#CFFEDA ;"><?= $reception['poidsdeclare'] ?></td>
+                                                                            <td style="background-color:#CFFEDA ;"><?= $reception['poidsbrut'] ?></td>
+                                                                            <td style="background-color:#CFFEDA ;"><?= $reception['dateajout'] ?></td>
+                                                                        </tr>
+                                                                    <?php
+                                                                        }
+                                                                    ?> 
+                                                                </tbody>
+                                                            </table>
+                                                        </div>                                                                
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col text-center">
+                                                <a href="" class="btn btn-primary text-center">Retour</a>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer bg-primary text-muted text-center">
+                                            <h5 style="color:white">METAL *** AFRIQUE</h5>
+                                        </div>
+                                    </div>
+                                </div>    
+                            </div>
+                        </div>
 
                         <!-- Modale pour ajouter reception -->
                         <div class="modal fade add-new" id="add-new" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">

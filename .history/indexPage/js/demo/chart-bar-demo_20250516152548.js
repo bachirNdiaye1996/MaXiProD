@@ -4,9 +4,9 @@ Chart.defaults.global.defaultFontColor = '#858796';
 
 // Select
 
-import { createConnection } from 'mysql';
+var mysql = require('mysql');
 
-var con = createConnection({
+var con = mysql.createConnection({
   host: 'localhost',
   port: '36',
   user: 'root',
@@ -15,12 +15,12 @@ var con = createConnection({
 
 
 con.connect(function(err) {
-  if (err) throw err;
-  console.log("connected!");
-  con.query("SELECT * FROM utilisateur", function (err, result, fields) {
     if (err) throw err;
-    console.log(result);
-  });
+    console.log("connected!");
+    con.query("SELECT 1 as solution", function (err, result, fields) {
+        if (err) throw err;
+        console.log(result);
+    });
 });
 
 con.end();

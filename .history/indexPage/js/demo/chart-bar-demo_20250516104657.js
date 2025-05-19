@@ -2,29 +2,6 @@
 Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
 Chart.defaults.global.defaultFontColor = '#858796';
 
-// Select
-
-import { createConnection } from 'mysql';
-
-var con = createConnection({
-  host: 'localhost',
-  port: '36',
-  user: 'root',
-  password: ''
-});
-
-
-con.connect(function(err) {
-  if (err) throw err;
-  console.log("connected!");
-  con.query("SELECT * FROM utilisateur", function (err, result, fields) {
-    if (err) throw err;
-    console.log(result);
-  });
-});
-
-con.end();
-//Fin Select
 function number_format(number, decimals, dec_point, thousands_sep) {
   // *     example: number_format(1234.56, 2, ',', ' ');
   // *     return: '1 234,56'
@@ -126,7 +103,7 @@ var myBarChart = new Chart(ctx, {
       callbacks: {
         label: function(tooltipItem, chart) {
           var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
-          return datasetLabel + ' : ' + number_format(tooltipItem.yLabel) +' Kg ';
+          return datasetLabel + number_format(tooltipItem.yLabel) +' Kg ';
         }
       }
     },

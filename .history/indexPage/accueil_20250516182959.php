@@ -534,7 +534,7 @@
                             </div>
                         </div>
                         <?php 
-                            if("$_SESSION[niveau]" == "admin"){ 
+                            if((strcmp("$_SESSION[niveau]","admin") !== 0)){ 
                         ?>
                             <!-- Pending Requests Card Example -->
                             <div class="col-xl-3 col-md-6 mb-4">

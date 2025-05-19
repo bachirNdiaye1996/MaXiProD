@@ -4,26 +4,33 @@ Chart.defaults.global.defaultFontColor = '#858796';
 
 // Select
 
-import { createConnection } from 'mysql';
+var mysql = require('mysql');
 
-var con = createConnection({
-  host: 'localhost',
-  port: '36',
-  user: 'root',
-  password: ''
+var con = mysql.createConnection({
+    host: 'localhost',
+    port: '36',
+    user: 'root',
+    password: ''
 });
 
 
 con.connect(function(err) {
-  if (err) throw err;
-  console.log("connected!");
-  con.query("SELECT * FROM utilisateur", function (err, result, fields) {
     if (err) throw err;
-    console.log(result);
-  });
+    console.log("connected!");
+    con.query("SELECT 1 as solution", function (err, result, fields) {
+        if (err) throw err;
+        console.log(result);
+    });
 });
 
-con.end();
+
+connection.query('SELECT * FROM `utilisateur`', function(err, rows, fields) {
+  if (err) throw err;
+    for (var i = 0; i < rows.length; i++) {
+      result = rows; //je stock le résultat dans une variable pour l'envoyer à la vue
+    };
+});
+console.log(JSON.stringify(result));
 //Fin Select
 function number_format(number, decimals, dec_point, thousands_sep) {
   // *     example: number_format(1234.56, 2, ',', ' ');

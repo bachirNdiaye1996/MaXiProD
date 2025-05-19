@@ -22,10 +22,8 @@
     
         // On récupère les valeurs dans un tableau associatif
         $Utilisateurs = $query->fetchAll();
+    
     //** Fin select des receptions
-
-    $NBUSERS = count($Utilisateurs);
-
 ?>
 
 
@@ -533,60 +531,39 @@
                                 </div>
                             </div>
                         </div>
-                        <?php 
-                            if("$_SESSION[niveau]" == "admin"){ 
-                        ?>
-                            <!-- Pending Requests Card Example -->
-                            <div class="col-xl-3 col-md-6 mb-4">
-                                <div class="card border-left-warning shadow h-100 py-2">
-                                    <div class="card-body">
-                                        <div class="row no-gutters align-items-center">
-                                            <div class="col mr-2">
-                                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                                    Nombre d'utilisateurs</div>
-                                                <div class="h5 mb-0 font-weight-bold text-gray-800"> <?php   echo $NBUSERS; ?></div>
-                                            </div>
-                                            <div class="col-auto">
-                                                <i class="fas fa-comments fa-2x text-gray-300"></i>
-                                            </div>
+
+                        <!-- Pending Requests Card Example -->
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-warning shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                                Utilisateurs</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-comments fa-2x text-gray-300"></i>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        <?php 
-                            }
-                        ?>
+                        </div>
                     </div>
 
                     <!-- Content Row -->
 
-                    <div class="row mb-4 mt-5">
+                    <div class="row">
                         <!-- A mettre le body -->
                         <!-- Bar Chart -->
-                        <div class="col-xl-8 col-lg-7">
-                            <div class="card shadow">
+                        <div class="col-xl-12 col-lg-7">
+                            <div class="card shadow mb-4">
                                 <div class="card-header py-3">
                                     <h6 class="m-0 font-weight-bold text-primary">Section CRANTEUSE</h6>
                                 </div>
                                 <div class="card-body">
                                     <div>
                                         <canvas id="myChart"></canvas>
-                                    </div>
-                                    <hr>
-                                    Production
-                                    <code>de ce mois</code> à la section cranteuse.
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-xl-4 col-lg-7">
-                            <div class="card shadow">
-                                <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">Section CRANTEUSE</h6>
-                                </div>
-                                <div class="card-body">
-                                    <div>
-                                        <canvas id="myChartCirculaire"></canvas>
                                     </div>
                                     <hr>
                                     Production
@@ -601,58 +578,26 @@
                     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
                     <script>
-                        var xValues = ["Italy", "France", "Spain", "USA", "Argentina"];
-                        var yValues = [55, 49, 44, 24, 15];
-                        var barColors = [
-                        "#b91d47",
-                        "#00aba9",
-                        "#2b5797",
-                        "#e8c3b9",
-                        "#1e7145"
-                        ];
+                    const ctx = document.getElementById('myChart');
 
-                        new Chart("myChartCirculaire", {
-                        type: "pie",
+                    new Chart(ctx, {
+                        type: 'bar',
                         data: {
-                            labels: xValues,
-                            datasets: [{
-                            backgroundColor: barColors,
-                            data: yValues
-                            }]
+                        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+                        datasets: [{
+                            label: '# of Votes',
+                            data: [12, 19, 3, 5, 2, 3],
+                            borderWidth: 1
+                        }]
                         },
                         options: {
-                            title: {
-                            display: true,
-                            text: "World Wide Wine Production 2018"
+                        scales: {
+                            y: {
+                            beginAtZero: true
                             }
                         }
-                        });
-                    </script>
-
-                    <script>
-                        const ctx = document.getElementById('myChart');
-
-                        new Chart(ctx, {
-                            type: 'bar',
-                            data: {
-                                labels: ["1", "2", "3", "4", "5", "6","7", "8", "9", "10", "11", "12","13", "14", "15", "16", "17", "18","19", "20", "21", "22", "23", "24","25", "26", "27", "28", "29", "30","31"],
-                                datasets: [{
-                                    label: "Consommation",
-                                    backgroundColor: "#4e73df",
-                                    hoverBackgroundColor: "#2e59d9",
-                                    borderColor: "#4e73df",
-                                    data: [4215, 5312, 6251, 7841, 9821, 14984,4215, 5312, 6251, 7841, 9821, 14984,4215, 5312, 6251, 7841, 9821, 14984,4215, 5312, 6251, 7841, 9821, 14984,4215, 5312, 6251, 7841, 9821, 14984, 14984],
-                                    borderWidth: 1
-                                }]
-                            },
-                            options: {
-                            scales: {
-                                y: {
-                                beginAtZero: true
-                                }
-                            }
-                            }
-                        });
+                        }
+                    });
                     </script>
 
                 </div>

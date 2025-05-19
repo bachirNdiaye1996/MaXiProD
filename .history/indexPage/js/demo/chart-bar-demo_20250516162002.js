@@ -4,7 +4,7 @@ Chart.defaults.global.defaultFontColor = '#858796';
 
 // Select
 
-import { createConnection } from 'mysql';
+import { createConnection } from './node_modules/mysql';
 
 var con = createConnection({
   host: 'localhost',

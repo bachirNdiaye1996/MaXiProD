@@ -2,29 +2,13 @@
 Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
 Chart.defaults.global.defaultFontColor = '#858796';
 
-// Select
-
-import { createConnection } from 'mysql';
-
-var con = createConnection({
-  host: 'localhost',
-  port: '36',
-  user: 'root',
-  password: ''
-});
-
-
-con.connect(function(err) {
+connection.query('SELECT * FROM `test` WHERE 1', function(err, rows, fields) {
   if (err) throw err;
-  console.log("connected!");
-  con.query("SELECT * FROM utilisateur", function (err, result, fields) {
-    if (err) throw err;
-    console.log(result);
-  });
+    for (var i = 0; i < rows.length; i++) {
+      result = rows; //je stock le résultat dans une variable pour l'envoyer à la vue
+    };
 });
 
-con.end();
-//Fin Select
 function number_format(number, decimals, dec_point, thousands_sep) {
   // *     example: number_format(1234.56, 2, ',', ' ');
   // *     return: '1 234,56'

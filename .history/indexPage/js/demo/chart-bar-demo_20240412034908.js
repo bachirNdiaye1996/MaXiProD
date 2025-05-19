@@ -2,29 +2,6 @@
 Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
 Chart.defaults.global.defaultFontColor = '#858796';
 
-// Select
-
-import { createConnection } from 'mysql';
-
-var con = createConnection({
-  host: 'localhost',
-  port: '36',
-  user: 'root',
-  password: ''
-});
-
-
-con.connect(function(err) {
-  if (err) throw err;
-  console.log("connected!");
-  con.query("SELECT * FROM utilisateur", function (err, result, fields) {
-    if (err) throw err;
-    console.log(result);
-  });
-});
-
-con.end();
-//Fin Select
 function number_format(number, decimals, dec_point, thousands_sep) {
   // *     example: number_format(1234.56, 2, ',', ' ');
   // *     return: '1 234,56'
@@ -55,13 +32,13 @@ var ctx = document.getElementById("myBarChart");
 var myBarChart = new Chart(ctx, {
   type: 'bar',
   data: {
-    labels: ["1", "2", "3", "4", "5", "6","7", "8", "9", "10", "11", "12","13", "14", "15", "16", "17", "18","19", "20", "21", "22", "23", "24","25", "26", "27", "28", "29", "30","31"],
+    labels: ["January", "February", "March", "April", "May", "June"],
     datasets: [{
-      label: "Consommation",
+      label: "Revenue",
       backgroundColor: "#4e73df",
       hoverBackgroundColor: "#2e59d9",
       borderColor: "#4e73df",
-      data: [4215, 5312, 6251, 7841, 9821, 14984,4215, 5312, 6251, 7841, 9821, 14984,4215, 5312, 6251, 7841, 9821, 14984,4215, 5312, 6251, 7841, 9821, 14984,4215, 5312, 6251, 7841, 9821, 14984, 14984],
+      data: [4215, 5312, 6251, 7841, 9821, 14984],
     }],
   },
   options: {
@@ -77,7 +54,7 @@ var myBarChart = new Chart(ctx, {
     scales: {
       xAxes: [{
         time: {
-          unit: 'day'
+          unit: 'month'
         },
         gridLines: {
           display: false,
@@ -96,7 +73,7 @@ var myBarChart = new Chart(ctx, {
           padding: 10,
           // Include a dollar sign in the ticks
           callback: function(value, index, values) {
-            return number_format(value) + 'KG';
+            return '$' + number_format(value);
           }
         },
         gridLines: {
@@ -126,7 +103,7 @@ var myBarChart = new Chart(ctx, {
       callbacks: {
         label: function(tooltipItem, chart) {
           var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
-          return datasetLabel + ' : ' + number_format(tooltipItem.yLabel) +' Kg ';
+          return datasetLabel + ': $' + number_format(tooltipItem.yLabel);
         }
       }
     },

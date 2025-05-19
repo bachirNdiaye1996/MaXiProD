@@ -4,9 +4,9 @@ Chart.defaults.global.defaultFontColor = '#858796';
 
 // Select
 
-import { createConnection } from 'mysql';
+var mysql = require('mysql');
 
-var con = createConnection({
+var con = mysql.createConnection({
   host: 'localhost',
   port: '36',
   user: 'root',

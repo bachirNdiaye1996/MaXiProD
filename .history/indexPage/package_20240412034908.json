@@ -6,7 +6,6 @@
         "start": "node_modules/.bin/gulp watch"
     },
     "description": "An open source Bootstrap 4 admin theme.",
-    "type": "module",
     "keywords": [
         "css",
         "sass",
