@@ -1387,6 +1387,7 @@
                                             <tr>       
                                                 <th>Numéro fil machine</th>                                                                                
                                                 <th>Epaisseur</th>
+                                                <th>Nomenclature</th>
                                                 <th>Nombre rouleaux</th>
                                                 <th>Poids déclaré</th>
                                                 <th>Londgueur échantillon</th>
@@ -1404,6 +1405,7 @@
                                                 <tr>
                                                     <td style="background-color:#4e73df ; color:white;"> <?= $stock['prodnumerofin'] ?> </td>
                                                     <td style="background-color:#4e73df ; color:white;"> <?= $stock['proddiametre'] ?> </td>
+                                                    <td style="background-color:#4e73df ; color:white;"> <?= $stock['prodnomenclature'] ?> </td>
                                                     <td style="background-color:#4e73df ; color:white;"><?= $stock['prodnbbobine'] ?></td>
                                                     <td style="background-color:#4e73df ; color:white;"><?= $stock['prodpoids'] ?></td>
                                                     <td style="background-color:#4e73df ; color:white;"><?= $stock['echanlongueur'] ?></td>

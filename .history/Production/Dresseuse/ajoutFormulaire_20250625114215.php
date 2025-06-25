@@ -187,7 +187,7 @@
                     $numerofin=$numerofinString[0];
                     $poids=htmlspecialchars($_POST['Prodpoids'][$i]);
                     $insertUser=$db->prepare("INSERT INTO `dresseuseproduction` (`iddresseuseproduction`, `proddiametre`, `prodnumerofin`, `prodpoids`, `idfichedresseuse`, `actif`,`prodnbBarreColis`,`prodnbcolis`,`prodnbbarrerestant`,`proddechet`,`prodlongueurbarre`,`dateCreation`) 
-                    VALUES (NULL, ?, ?, ?, ?, '1', ?, ?, ?, ?, ?);");
+                    VALUES (NULL, ?, ?, ?, ?, '1', ?, ?, ?, ?, ?, ?);");
                     $insertUser->execute(array($diametre,$numerofin,$poids,$idfichecranteuseq1Max,$ProdnbBarreColis,$Prodnbcolis,$Prodnbbarrerestant,$Proddechet,$Prodlongueurbarre,$datecreationfiche));
 
                     // Rendre inactif le produit choisi  ------->  `actifdresseuse` = 1
@@ -1387,6 +1387,7 @@
                                             <tr>       
                                                 <th>Numéro fil machine</th>                                                                                
                                                 <th>Epaisseur</th>
+                                                <th>Nomenclature</th>
                                                 <th>Nombre rouleaux</th>
                                                 <th>Poids déclaré</th>
                                                 <th>Londgueur échantillon</th>
