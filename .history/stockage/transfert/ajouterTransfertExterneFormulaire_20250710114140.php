@@ -361,6 +361,8 @@
                             <select class="form-control" name="pointarrive[]">
                                 <option>Metal1</option>
                                 <option>Niambour</option>
+                                <option>Tréfilage</option>
+                                <option>Cranteuse</option>
                                 <option>Metal Mbao</option>
                             </select>                                                
                         </div>
@@ -535,6 +537,8 @@
                                                                                 <select class="form-control" name="pointdepart[]">
                                                                                     <option>Metal1</option>
                                                                                     <option>Niambour</option>
+                                                                                    <option>Tréfilage</option>
+                                                                                    <option>Cranteuse</option>
                                                                                     <option>Metal Mbao</option>
                                                                                 </select>                                                
                                                                             </div>
@@ -546,6 +550,8 @@
                                                                                 <select class="form-control" name="pointarrive[]">
                                                                                     <option>Metal1</option>
                                                                                     <option>Niambour</option>
+                                                                                    <option>Tréfilage</option>
+                                                                                    <option>Cranteuse</option>
                                                                                     <option>Metal Mbao</option>
                                                                                 </select>                                                
                                                                             </div>

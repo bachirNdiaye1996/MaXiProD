@@ -15,14 +15,12 @@
     $valideTransfert="";
     $ProblemeLieu="";
     $ProblemeNbBobineDepart="";
-    $Iddepart=null;                        // Variable qui nous permet d'optenir l'Id de la matiere de départ
+    $Iddepart=null;                       // Variable qui nous permet d'optenir l'Id de la matiere de départ
     $idtransfert = $_GET['idtransfert'];  // On recupére l'ID du transfert par get
     $Reception[]=null;
     $NombreLigne = $_GET['NombreLigne'];  
     $ProblemeNumeroBobine="";
     $ProblemeUnicite="";        // Unicite du num bobine
-    $ProblemeUniciteExist="";   // Unicite du num bobine Existant dans la base
-
 
 
 
@@ -50,6 +48,19 @@
         }
     // Fin changer valeur NombreLigne 
 
+    // Création d'un select pour sortir les bobines en stocks dans Cranteuse et Trefilage
+            $sqlepaisseur = "SELECT * FROM `matiere` where `nbbobineactuel`>0 and `lieutransfert`='Cranteuse' or `lieutransfert`='Tréfilage'  ORDER BY `idmatiere` DESC;";
+
+            // On prépare la requête
+            $queryepaisseur = $db->prepare($sqlepaisseur);
+    
+            // On exécute
+            $queryepaisseur->execute();
+    
+            // On récupère les valeurs dans un tableau associatif
+            $stockCranteuseTrefilage = $queryepaisseur->fetchAll();
+    // Fin
+    
     //Insertion des réceptions
     if(isset($_POST['CreerTransfert'])){
 
@@ -63,52 +74,66 @@
         // On vérifie d'abord si c'est correct avant d'enregistrer
         $ligneErreur = null;       // La ligne qui a l'erreur 
         $ligneErreurBobine = null;       // La ligne qui a l'erreur ligneErreurBobine
+        $ligneErreurUnicite = null;       // La ligne qui a l'erreur 
         $ligneErreurLieu = null;         // La ligne qui a l'erreur sur le lieu
-        $ligneErreurProblemeUnicite = null;         //
 
-        for ($i = 0; $i < count($_POST['epaisseur']); $i++){
-            $epaisseur=htmlspecialchars( $_POST['epaisseur'][$i]);
-            //$largeur=htmlspecialchars($_POST['largeur']);
-            $etatbobine=htmlspecialchars($_POST['etatbobine'][$i]);
-            //$user=htmlspecialchars($_POST['user'][$i]);
-            $poidsdeclare=htmlspecialchars($_POST['poidsdeclare'][$i]);
-            $poidspese=htmlspecialchars($_POST['poidspese'][$i]);
-            $pointdepart=htmlspecialchars($_POST['pointdepart'][$i]);
-            $pointarrive=htmlspecialchars($_POST['pointarrive'][$i]);
-            if(empty($_POST['nbbobine'][$i])){
-                $nbbobine=1;
-            }else{
-                $nbbobine=htmlspecialchars($_POST['nbbobine'][$i]);
-            }
-            //$codereception=htmlspecialchars($_POST['codereception'][$i]);
-
-            //Rechercher le nombre de piéces sur le lieu de depart
-                $sqlEpaisseur = "SELECT * FROM `matiere` where `lieutransfert`='$pointdepart' and `epaisseur`='$epaisseur' and `nbbobineactuel` != 0 and `nbbobineactuel`>=$nbbobine LIMIT 1;";
-                // On prépare la requête
-                $queryEpaisseur = $db->prepare($sqlEpaisseur);
-
-                // On exécute
-                $queryEpaisseur->execute();
-
-                // On récupère le nombre d'articles
-                $resultEpaisseur = $queryEpaisseur->fetch();
-            //Fin Rechercher le nombre de piéces 
-
-            // On vérifie si le lieu de départ et d'arrivé ne sont pas les meme
-            if( $pointdepart === $pointarrive ){ 
-                $ProblemeLieu="erreurProblemeLieu";
-                $ligneErreurLieu = $i+1;
-            }
-
-            if($resultEpaisseur){ 
-            }else{
-                $ProblemeNbBobineDepart="erreurProblemeNbDepart";
-                $ligneErreur = $i+1;
+        if(count(array_unique($_POST['numbobine'])) != count($_POST['numbobine'])) {
+            // Unicite du num bobine
+                $ProblemeUnicite="erreurProblemeUnicite";
+                //$ligneErreurProblemeUnicite = $i+1;
+            //
+        }else {
+            for ($i = 0; $i < count($_POST['epaisseur']); $i++){
+                $epaisseur=htmlspecialchars( $_POST['epaisseur'][$i]);
+                //$largeur=htmlspecialchars($_POST['largeur']);
+                $etatbobine=htmlspecialchars($_POST['etatbobine'][$i]);
+                //$user=htmlspecialchars($_POST['user'][$i]);
+                $poidsdeclare=htmlspecialchars($_POST['poidsdeclare'][$i]);
+                $poidspese=htmlspecialchars($_POST['poidspese'][$i]);
+                $pointdepart=htmlspecialchars($_POST['pointdepart'][$i]);
+                $pointarrive=htmlspecialchars($_POST['pointarrive'][$i]);
+                //if(empty($_POST['nbbobine'][$i])){
+                    $nbbobine=1;
+                /*}else{
+                    $nbbobine=htmlspecialchars($_POST['nbbobine'][$i]);
+                }*/
+                //$codereception=htmlspecialchars($_POST['codereception'][$i]);
+                $numerofinString = explode("/", htmlspecialchars($_POST['numbobine'][$i]));
+                $numbobine=$numerofinString[0];
+    
+                /*//Rechercher le nombre de piéces sur le lieu de depart
+                    $sqlEpaisseur = "SELECT * FROM `matiere` where `lieutransfert`='$pointdepart' and `epaisseur`='$epaisseur' and `nbbobineactuel` != 0 and `nbbobineactuel`>=$nbbobine LIMIT 1;";
+                    // On prépare la requête
+                    $queryEpaisseur = $db->prepare($sqlEpaisseur);
+    
+                    // On exécute
+                    $queryEpaisseur->execute();
+    
+                    // On récupère le nombre d'articles
+                    $resultEpaisseur = $queryEpaisseur->fetch();
+                //Fin Rechercher le nombre de piéces*/ 
+    
+                if(($numbobine == "" && $pointarrive == "Cranteuse") || ($numbobine == "" && $pointarrive == "Tréfilage")){ 
+                    $ProblemeNumeroBobine="erreurProblemeNumeroBobine";
+                    $ligneErreurBobine = $i+1;
+                }
+    
+                // On vérifie si le lieu de départ et d'arrivé ne sont pas les meme
+                if( $pointdepart === $pointarrive ){ 
+                    $ProblemeLieu="erreurProblemeLieu";
+                    $ligneErreurLieu = $i+1;
+                }
+    
+                /*if($resultEpaisseur){ 
+                }else{
+                    $ProblemeNbBobineDepart="erreurProblemeNbDepart";
+                    $ligneErreur = $i+1;
+                }*/
             }
         }
-        
 
-        if($ProblemeNbBobineDepart != "erreurProblemeNbDepart" && $ProblemeNumeroBobine != "erreurProblemeNumeroBobine" && $ProblemeLieu != "erreurProblemeLieu" && $ProblemeUnicite != "erreurProblemeUnicite" && $ProblemeUniciteExist != "erreurProblemeUniciteExist"){
+        if($ProblemeNbBobineDepart != "erreurProblemeNbDepart" && $ProblemeNumeroBobine != "erreurProblemeNumeroBobine" && $ProblemeLieu != "erreurProblemeLieu" && $ProblemeUnicite != "erreurProblemeUnicite"){
+
             $sql = "UPDATE `transfert` SET `datetransfert` = '$datetransfert', `transporteur` = '$transporteur', `commentaire` = '$commentaire', `saisisseur` = '$saisisseur' WHERE `idtransfert` = ?;";
             //$result = $db->query($sql);
             $sth = $db->prepare($sql);    
@@ -122,14 +147,15 @@
                 $poidspese=htmlspecialchars($_POST['poidspese'][$i]);
                 $pointdepart=htmlspecialchars($_POST['pointdepart'][$i]);
                 $pointarrive=htmlspecialchars($_POST['pointarrive'][$i]);
-                if(empty($_POST['nbbobine'][$i])){
+                //if(empty($_POST['nbbobine'][$i])){
                     $nbbobine=1;
-                }else{
+                /*}else{
                     $nbbobine=htmlspecialchars($_POST['nbbobine'][$i]);
-                }
+                }*/
                 //$nbbobine=htmlspecialchars($_POST['nbbobine'][$i]);
                 //$codereception=htmlspecialchars($_POST['codereception'][$i]);
-
+                $numerofinString = explode("/", htmlspecialchars($_POST['numbobine'][$i]));
+                $numbobine=$numerofinString[0];
                 /*
                     1 -> Metal1
                     3 -> Niambour
@@ -139,7 +165,7 @@
                 */
 
                 //Rechercher le nombre de piéces sur le lieu de depart
-                    $sqlEpaisseur = "SELECT * FROM `matiere` where `lieutransfert`='$pointdepart' and `epaisseur`='$epaisseur' and `nbbobineactuel` != 0 and `nbbobineactuel`>=$nbbobine LIMIT 1;";
+                    $sqlEpaisseur = "SELECT * FROM `matiere` where `numbobine`='$numbobine' LIMIT 1;";
                     // On prépare la requête
                     $queryEpaisseur = $db->prepare($sqlEpaisseur);
 
@@ -155,14 +181,14 @@
                 //Fin Rechercher le nombre de piéces 
 
                 // Enlever le nombre de bobine dans le lieu de depart
-                    $req ="UPDATE matiere SET `nbbobineactuel` = `nbbobineactuel` - ? where `idmatiere`='$resultEpaisseur[idmatiere]';";
+                    $req ="UPDATE matiere SET `nbbobineactuel` = `nbbobineactuel` - ?, `numbobine`='' where `numbobine`='$numbobine';";
                     $reqtitre = $db->prepare($req);
                     $reqtitre->execute(array($nbbobine));
                 // Fin enlever le nombre de bobine dans le lieu de depart
 
                 //On recuppére l'idreception
                     $IdReception = $resultEpaisseur['idreception'];
-                    $idmatierereception=$resultEpaisseur['idmatiere'];
+                    $idmatiererecpteion=$resultEpaisseur['idmatiere'];
                 //Fin
                 /*if($resultMatiereArrive){
                     // ajouter le nombre de bobine dans le lieu de depart
@@ -172,8 +198,8 @@
                     // Fin ajouter le nombre de bobine dans le lieu de depart
                 }else{ */
                     // Ajouter le nombre de bobine dans le lieu d'arrive
-                        $insertUser=$db->prepare("INSERT INTO `matiere` (`idmatiere`, `epaisseur`, `poidsdeclare`, `poidspese`, `dateajout`,`nbbobine`,`lieutransfert`,`idreception`,`etatbobine`,`nbbobineactuel`,`idmatierereception`) 
-                        VALUES (NULL, ?, ?, ?, current_timestamp(), ?, ?, ?, ?, ?, ?);");
+                        $insertUser=$db->prepare("INSERT INTO `matiere` (`idmatiere`, `epaisseur`, `poidsdeclare`, `poidspese`, `dateajout`,`nbbobine`,`lieutransfert`,`idreception`,`etatbobine`,`nbbobineactuel`,`numbobine`,`idmatierereception`) 
+                        VALUES (NULL, ?, ?, ?, current_timestamp(), ?, ?, ?, ?, ?, '', ?);");
                         $insertUser->execute(array($epaisseur,$poidsdeclare, $poidspese,$nbbobine,$pointarrive, $IdReception, $etatbobine, $nbbobine,$idmatierereception));  
                     // Fin ajouter le nombre de bobine dans le lieu d'arrive
                 //}
@@ -223,9 +249,9 @@
                         $reqtitre->execute(array($nbbobine));
                     //}
 
-                    $insertUser=$db->prepare("INSERT INTO `transfertdetails` (`idtransfertdetail`, `poidspese`, `dateajout`, `user`, `nbbobine`, `actif`, `pointdepart`, `idtransfert`, `epaisseur`, `etatbobine`, `poidsdeclare`, `commentaire`, `pointarrive`,`idmatieredepart`,`idmatierearrive`)
-                    VALUES (NULL, ?, current_timestamp(), NULL, ?, '1', ?, ?, ?, ?, ?, ?, ?, ?, ?);");
-                    $insertUser->execute(array($poidspese,$nbbobine,$pointdepart,$idtransfert,$epaisseur,$etatbobine,$poidsdeclare,$commentaire,$pointarrive,$Iddepart,$idMax));
+                    $insertUser=$db->prepare("INSERT INTO `transfertdetails` (`idtransfertdetail`, `poidspese`, `dateajout`, `user`, `nbbobine`, `actif`, `pointdepart`, `idtransfert`, `epaisseur`, `etatbobine`, `poidsdeclare`, `commentaire`, `pointarrive`,`idmatieredepart`,`idmatierearrive`,`numbobine`)
+                    VALUES (NULL, ?, current_timestamp(), NULL, ?, '1', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
+                    $insertUser->execute(array($poidspese,$nbbobine,$pointdepart,$idtransfert,$epaisseur,$etatbobine,$poidsdeclare,$commentaire,$pointarrive,$Iddepart,$idMax,$numbobine));
                 //}
             }
 
@@ -279,6 +305,9 @@
     </script>
 
     <script type="text/javascript"> 
+        var foo1 = "<script>";
+        var foo2 = "</scr"+"ipt>";
+
         $(document).ready(function(){  
             var i = 1;         
             $('#add').click(function(){           
@@ -289,7 +318,7 @@
                 <td style="background-color:#CFFEDA ;">
                     <div class="">
                         <div class="mb-1 text-start">
-                            <select class="form-control" name="epaisseur[]" placeholder="Taper l'épaisseur de la bobine" value="">
+                            <select class="form-control" name="epaisseur[]" placeholder="Taper l'épaisseur de la bobine" value="" id="epaisseur`+i+`">
                                 <option>3</option>
                                 <option>3.5</option>
                                 <option>4</option>
@@ -324,33 +353,54 @@
                     </div>
                 </td>
                 <td style="background-color:#CFFEDA ;">
+                    <div class="">
+                        <div class="mb-1 text-start">
+                            <select class="form-control" name="numbobine[]" id="numerofinProd`+i+`">
+                                <option></option> 
+                                <?php
+                                    foreach($stockCranteuseTrefilage as $stock){
+                                ?>      
+                                    <option value="<?php echo $stock['numbobine'].'/'.$stock['epaisseur'].'/'.$stock['poidsdeclare'].'/'.$stock['poidspese'].'/'.$stock['lieutransfert']; ?>"> <?php echo $stock['numbobine']; ?></option>                                                                                     
+                                <?php
+                                    }
+                                ?>
+                            </select>                                                
+                        </div>
+                    </div>
+                </td>
+                `+foo1+`
+                    $(document).ready(function(){
+                        $('#numerofinProd`+i+`').change(function(){
+                            //Selected value
+                            var inputValue = $(this).val();
+                            var myArray = inputValue.split('/');
+                            document.getElementById("epaisseur`+i+`").value = myArray[1];
+                            document.getElementById("poidspese`+i+`").value = myArray[3];
+                            document.getElementById("poidsdeclare`+i+`").value = myArray[2];
+                            document.getElementById("lieutransfert`+i+`").value = myArray[4];
+                        });
+                    });
+                `+foo2+`
+                <td style="background-color:#CFFEDA ;">
                     <div class="col-md-10">
                         <div class="mb-1 text-start">
-                            <input class="form-control" type="number" name="nbbobine[]" value="" id="validationDefault0<?$i+9?>">
+                            <input class="form-control designa" type="number" step="0.01" name="poidsdeclare[]" id="poidsdeclare`+i+`" required>
                         </div>
                     </div>
                 </td>
                 <td style="background-color:#CFFEDA ;">
                     <div class="col-md-10">
                         <div class="mb-1 text-start">
-                            <input class="form-control designa" type="number" step="0.01" name="poidsdeclare[]" id="validationDefault0<?$i+11?>" required>
+                            <input class="form-control designa" type="number" step="0.01" name="poidspese[]" id="poidspese`+i+`">
                         </div>
                     </div>
                 </td>
                 <td style="background-color:#CFFEDA ;">
                     <div class="col-md-10">
                         <div class="mb-1 text-start">
-                            <input class="form-control designa" type="number" step="0.01" name="poidspese[]">
-                        </div>
-                    </div>
-                </td>
-                <td style="background-color:#CFFEDA ;">
-                    <div class="col-md-10">
-                        <div class="mb-1 text-start">
-                            <select class="form-control" name="pointdepart[]">
-                                <option>Metal1</option>
-                                <option>Niambour</option>
-                                <option>Metal Mbao</option>
+                            <select class="form-control" name="pointdepart[]" id="lieutransfert`+i+`">
+                                <option>Tréfilage</option>
+                                <option>Cranteuse</option>
                             </select>                                                
                         </div>
                     </div>
@@ -361,6 +411,8 @@
                             <select class="form-control" name="pointarrive[]">
                                 <option>Metal1</option>
                                 <option>Niambour</option>
+                                <option>Tréfilage</option>
+                                <option>Cranteuse</option>
                                 <option>Metal Mbao</option>
                             </select>                                                
                         </div>
@@ -431,7 +483,7 @@
                                     <div class="modal-body">
                                         <form action="#" method="POST" enctype="multipart/form-data" class="row g-3">
                                             <div class="row">
-                                                <?php if($valideTransfert != "erreurEpaisseur" && $ProblemeNbBobineDepart != "erreurProblemeNbDepart" && $ProblemeNumeroBobine != "erreurProblemeNumeroBobine" && $ProblemeLieu != "erreurProblemeLieu" && $ProblemeUnicite != "erreurProblemeUnicite" && $ProblemeUniciteExist != "erreurProblemeUniciteExist"){ // Lorsqu'il y'a pas d'erreur ?> 
+                                                <?php if($valideTransfert != "erreurEpaisseur" && $ProblemeNbBobineDepart != "erreurProblemeNbDepart" && $ProblemeNumeroBobine != "erreurProblemeNumeroBobine" && $ProblemeLieu != "erreurProblemeLieu" && $ProblemeUnicite != "erreurProblemeUnicite"){ // Lorsqu'il y'a pas d'erreur ?> 
                                                     <div class="col-md-2 mr-2 mt-3 mb-5">
                                                         <div class="mb-1 text-start">
                                                             <label class="form-label fw-bold" for="nom">Nom complet du saisisseur</label>
@@ -454,7 +506,7 @@
                                                         <thead>
                                                             <tr>       
                                                                 <th>Epaisseur</th>
-                                                                <th>Nombre de bobine</th>
+                                                                <th>Numéro fil machine</th>
                                                                 <th>Poids déclaré</th>
                                                                 <th>Poids pesé</th>
                                                                 <th>Point de départ</th>
@@ -474,7 +526,7 @@
                                                                     <td style="background-color:#CFFEDA ;">
                                                                         <div class="">
                                                                             <div class="mb-1 text-start">
-                                                                                <select class="form-control" name="epaisseur[]" placeholder="Taper l'épaisseur de la bobine">
+                                                                                <select class="form-control" name="epaisseur[]" placeholder="Taper l'épaisseur de la bobine" id="epaisseur">
                                                                                     <option>3</option>
                                                                                     <option>3.5</option>
                                                                                     <option>4</option>
@@ -509,32 +561,56 @@
                                                                         </div>
                                                                     </td>
                                                                     <td style="background-color:#CFFEDA ;">
+                                                                        <div class="">
+                                                                            <div class="mb-1 text-start">
+                                                                                <select class="form-control" name="numbobine[]" id="numerofinProd">
+                                                                                    <option></option> 
+                                                                                    <?php
+                                                                                        foreach($stockCranteuseTrefilage as $stock){
+                                                                                    ?>      
+                                                                                        <option value="<?php echo $stock['numbobine'].'/'.$stock['epaisseur'].'/'.$stock['poidsdeclare'].'/'.$stock['poidspese'].'/'.$stock['lieutransfert']; ?>"> <?php echo $stock['numbobine']; ?></option>                                                                                     
+                                                                                    <?php
+                                                                                        }
+                                                                                    ?>
+                                                                                </select>                                                
+                                                                            </div>
+                                                                        </div>
+                                                                    </td>
+                                                                    <script>
+                                                                        $(document).ready(function(){
+                                                                            $('#numerofinProd').change(function(){
+                                                                                //Selected value
+                                                                                var inputValue = $(this).val();
+                                                                                var myArray = inputValue.split('/');
+                                                                                document.getElementById("epaisseur").value = myArray[1];
+                                                                                document.getElementById("poidspese").value = myArray[3];
+                                                                                document.getElementById("poidsdeclare").value = myArray[2];
+                                                                                document.getElementById("lieutransfert").value = myArray[4];
+                                                                            });
+                                                                        });
+                                                                    </script>
+                                                                    <td style="background-color:#CFFEDA ;">
                                                                         <div class="col-md-10">
                                                                             <div class="mb-1 text-start">
-                                                                                <input class="form-control" id="validationDefault04" type="number" name="nbbobine[]">
+                                                                                <input class="form-control designa" type="number" step="0.01" name="poidsdeclare[]" value="" id="poidsdeclare" required>
                                                                             </div>
                                                                         </div>
                                                                     </td>
                                                                     <td style="background-color:#CFFEDA ;">
                                                                         <div class="col-md-10">
                                                                             <div class="mb-1 text-start">
-                                                                                <input class="form-control designa" id="validationDefault06" type="number" step="0.01" name="poidsdeclare[]" value="" required>
+                                                                                <input class="form-control designa" type="number" step="0.01" name="poidspese[]" value="" id="poidspese">
                                                                             </div>
                                                                         </div>
                                                                     </td>
                                                                     <td style="background-color:#CFFEDA ;">
                                                                         <div class="col-md-10">
                                                                             <div class="mb-1 text-start">
-                                                                                <input class="form-control designa" type="number" step="0.01" name="poidspese[]" value="">
-                                                                            </div>
-                                                                        </div>
-                                                                    </td>
-                                                                    <td style="background-color:#CFFEDA ;">
-                                                                        <div class="col-md-10">
-                                                                            <div class="mb-1 text-start">
-                                                                                <select class="form-control" name="pointdepart[]">
+                                                                                <select class="form-control" name="pointdepart[]" id="lieutransfert">
                                                                                     <option>Metal1</option>
                                                                                     <option>Niambour</option>
+                                                                                    <option>Tréfilage</option>
+                                                                                    <option>Cranteuse</option>
                                                                                     <option>Metal Mbao</option>
                                                                                 </select>                                                
                                                                             </div>
@@ -546,6 +622,8 @@
                                                                                 <select class="form-control" name="pointarrive[]">
                                                                                     <option>Metal1</option>
                                                                                     <option>Niambour</option>
+                                                                                    <option>Tréfilage</option>
+                                                                                    <option>Cranteuse</option>
                                                                                     <option>Metal Mbao</option>
                                                                                 </select>                                                
                                                                             </div>
@@ -601,7 +679,7 @@
                                                         <thead>
                                                             <tr>       
                                                                 <th>Epaisseur</th>
-                                                                <th>Nombre de bobine</th>
+                                                                <th>Numéro fil machine</th>
                                                                 <th>Poids déclaré</th>
                                                                 <th>Poids pesé</th>
                                                                 <th>Point de départ</th>
@@ -619,7 +697,7 @@
                                                                     <td style="background-color:#CFFEDA ;">
                                                                         <div class="">
                                                                             <div class="mb-1 text-start">
-                                                                                <select class="form-control" name="epaisseur[]" placeholder="Taper l'épaisseur de la bobine">
+                                                                                <select class="form-control" name="epaisseur[]" placeholder="Taper l'épaisseur de la bobine" id="epaisseur<?php echo $i; ?>">
                                                                                     <option <?php if ( $_POST['epaisseur'][$i]=='3') {echo "selected='selected'";} ?> >3</option>
                                                                                     <option  <?php if ( $_POST['epaisseur'][$i]=='3.5') {echo "selected='selected'";} ?> >3.5</option>
                                                                                     <option <?php if ( $_POST['epaisseur'][$i]=='4') {echo "selected='selected'";} ?> >4</option>
@@ -654,30 +732,55 @@
                                                                         </div>
                                                                     </td>
                                                                     <td style="background-color:#CFFEDA ;">
+                                                                        <div class="">
+                                                                            <div class="mb-1 text-start">
+                                                                                <select class="form-control" name="numbobine[]" id="numerofinProd<?php echo $i; ?>">
+                                                                                    <option><?php $numerofinString = explode("/", htmlspecialchars($_POST['numbobine'][$i]));
+                                                                                                  $numbobine=$numerofinString[0];
+                                                                                                    echo $numbobine; 
+                                                                                                ?></option> 
+                                                                                    <?php
+                                                                                        foreach($stockCranteuseTrefilage as $stock){
+                                                                                    ?>      
+                                                                                        <option value="<?php echo $stock['numbobine'].'/'.$stock['epaisseur'].'/'.$stock['poidsdeclare'].'/'.$stock['poidspese'].'/'.$stock['lieutransfert']; ?>"> <?php echo $stock['numbobine']; ?></option>                                                                                     
+                                                                                    <?php
+                                                                                        }
+                                                                                    ?>
+                                                                                </select>                                                
+                                                                            </div>
+                                                                        </div>
+                                                                    </td>
+                                                                    <script>
+                                                                        $(document).ready(function(){
+                                                                            $('#numerofinProd<?php echo $i; ?>').change(function(){
+                                                                                //Selected value
+                                                                                var inputValue = $(this).val();
+                                                                                var myArray = inputValue.split('/');
+                                                                                document.getElementById("epaisseur<?php echo $i; ?>").value = myArray[1];
+                                                                                document.getElementById("poidspese<?php echo $i; ?>").value = myArray[3];
+                                                                                document.getElementById("poidsdeclare<?php echo $i; ?>").value = myArray[2];
+                                                                                document.getElementById("lieutransfert<?php echo $i; ?>").value = myArray[4];
+                                                                            });
+                                                                        });
+                                                                    </script>
+                                                                    <td style="background-color:#CFFEDA ;">
                                                                         <div class="col-md-10">
                                                                             <div class="mb-1 text-start">
-                                                                                <input class="form-control" value="<?php echo $_POST['nbbobine'][$i]; ?>" id="validationDefault04" type="number" name="nbbobine[]">
+                                                                                <input class="form-control designa" id="poidsdeclare<?php echo $i; ?>" type="number" step="0.01" name="poidsdeclare[]" value="<?php echo $_POST['poidsdeclare'][$i]; ?>" required>
                                                                             </div>
                                                                         </div>
                                                                     </td>
                                                                     <td style="background-color:#CFFEDA ;">
                                                                         <div class="col-md-10">
                                                                             <div class="mb-1 text-start">
-                                                                                <input class="form-control designa" id="validationDefault06" type="number" step="0.01" name="poidsdeclare[]" value="<?php echo $_POST['poidsdeclare'][$i]; ?>" required>
+                                                                                <input class="form-control designa" type="number" step="0.01" name="poidspese[]" id="poidspese<?php echo $i; ?>" value="<?php echo $_POST['poidspese'][$i]; ?>">
                                                                             </div>
                                                                         </div>
                                                                     </td>
                                                                     <td style="background-color:#CFFEDA ;">
                                                                         <div class="col-md-10">
                                                                             <div class="mb-1 text-start">
-                                                                                <input class="form-control designa" type="number" step="0.01" name="poidspese[]" id="example" value="<?php echo $_POST['poidspese'][$i]; ?>">
-                                                                            </div>
-                                                                        </div>
-                                                                    </td>
-                                                                    <td style="background-color:#CFFEDA ;">
-                                                                        <div class="col-md-10">
-                                                                            <div class="mb-1 text-start">
-                                                                                <select class="form-control" name="pointdepart[]">
+                                                                                <select class="form-control" name="pointdepart[]" id="lieutransfert<?php echo $i; ?>">
                                                                                     <option <?php if ( $_POST['pointdepart'][$i]=='Metal1') {echo "selected='selected'";} ?> >Metal1</option>
                                                                                     <option <?php if ( $_POST['pointdepart'][$i]=='Niambour') {echo "selected='selected'";} ?> >Niambour</option>
                                                                                     <option <?php if ( $_POST['pointdepart'][$i]=='Metal Mbao') {echo "selected='selected'";} ?> >Metal Mbao</option>
@@ -739,7 +842,7 @@
                                                         ?>" name="idtransfert" id="example-date-input2">
                                                     </div>
                                                 </div>
-                                                <?php if($valideTransfert != "erreurEpaisseur" && $ProblemeNbBobineDepart != "erreurProblemeNbDepart" && $ProblemeLieu != "erreurProblemeLieu" && $ProblemeUnicite != "erreurProblemeUnicite" && $ProblemeUniciteExist != "erreurProblemeUniciteExist"){ // Lorsqu'il y'a pas d'erreur ?> 
+                                                <?php if($valideTransfert != "erreurEpaisseur" && $ProblemeNbBobineDepart != "erreurProblemeNbDepart" && $ProblemeLieu != "erreurProblemeLieu" && $ProblemeUnicite != "erreurProblemeUnicite"){ // Lorsqu'il y'a pas d'erreur ?> 
                                                     <div class="col-md-8">
                                                         <div class="mb-1 text-start">
                                                             <label class="form-label fw-bold" for="commentaire" >Commentaire</label>
@@ -783,37 +886,24 @@
                                                                     location.reload();
                                                                 });
                                                             </script> 
+                                                        <?php } ?>  
+                                                        <?php if($ProblemeUnicite == "erreurProblemeUnicite"){ ?> 
+                                                            <script>    
+                                                                Swal.fire({
+                                                                    text: 'Vérifier le numéro de FM doit etre unique',
+                                                                    icon: 'error',
+                                                                    timer: 5500,
+                                                                    showConfirmButton: false,
+                                                                },
+                                                                function(){ 
+                                                                    location.reload();
+                                                                });
+                                                            </script> 
                                                         <?php } ?>
                                                         <?php if($ProblemeLieu == "erreurProblemeLieu"){ ?> 
                                                             <script>    
                                                                 Swal.fire({
                                                                     text: 'Le lieu de départ doit étre différent du lieu d arrivé à la ligne <?php echo $ligneErreurLieu; ?>',
-                                                                    icon: 'error',
-                                                                    timer: 5500,
-                                                                    showConfirmButton: false,
-                                                                },
-                                                                function(){ 
-                                                                    location.reload();
-                                                                });
-                                                            </script> 
-                                                        <?php } ?>
-                                                        <?php if($ProblemeUniciteExist == "erreurProblemeUniciteExist"){ ?> 
-                                                            <script>    
-                                                                Swal.fire({
-                                                                    text: 'Le numéro de FM existe déja dans la base de donnée à la ligne <?php echo $ligneErreurProblemeUnicite; ?>',
-                                                                    icon: 'error',
-                                                                    timer: 5500,
-                                                                    showConfirmButton: false,
-                                                                },
-                                                                function(){ 
-                                                                    location.reload();
-                                                                });
-                                                            </script> 
-                                                        <?php } ?>
-                                                        <?php if($ProblemeUnicite == "erreurProblemeUnicite"){ ?> 
-                                                            <script>    
-                                                                Swal.fire({
-                                                                    text: 'Vérifier le numéro de FM doit etre unique',
                                                                     icon: 'error',
                                                                     timer: 5500,
                                                                     showConfirmButton: false,
