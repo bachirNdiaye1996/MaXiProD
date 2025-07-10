@@ -1004,7 +1004,7 @@ $ReceptionStock = $query->fetchAll();
                                                             if($row ['actifapprouvreception']== 1){*/
                                                     ?>
                                                         <a href="ajouterTransfertFormulaire.php?idtransfert=<?= $_GET['idtransfert']?>&NombreLigne=0" class="btn btn-success w-lg bouton mr-3"><i class="fa fa-plus me-1"></i> Ajouter transfert</a>
-                                                        <a href="ajouterTransfertFormulaireComplexe.php?idtransfert=<?= $_GET['idtransfert']?>&NombreLigne=0" class="btn btn-primary w-lg bouton mr-3"><i class="fa fa-plus me-1"></i> Ajouter transfert rapide</a>
+                                                        <a href="ajouterTransfertFormulaireComplexe.php?idtransfert=<?= $_GET['idtransfert']?>&NombreLigne=0" class="btn btn-success w-lg bouton mr-3"><i class="fa fa-plus me-1"></i> Ajouter transfert rapide</a>
                                                         <a href="ajouterTransfertExterneFormulaire.php?idtransfert=<?= $_GET['idtransfert']?>&NombreLigne=0" class="btn btn-success w-lg bouton mr-3"><i class="fa fa-plus me-1"></i> Ajouter transfert externe</a>
                                                         <a href="ajouterTransfertFormulaireInverse.php?idtransfert=<?= $_GET['idtransfert']?>&NombreLigne=0" class="btn btn-primary w-lg bouton mr-3"><i class="fa fa-plus me-1"></i> Ajouter transfert inverse</a>
                                                     <?php

@@ -66,79 +66,47 @@
         $ligneErreurLieu = null;         // La ligne qui a l'erreur sur le lieu
         $ligneErreurProblemeUnicite = null;         //
 
-        if(count(array_unique($_POST['numbobine'])) != count($_POST['numbobine'])){
-            // Unicite du num bobine
-                $ProblemeUnicite="erreurProblemeUnicite";
-            //$ligneErreurProblemeUnicite = $i+1;
-        }else {
-            for ($i = 0; $i < count($_POST['epaisseur']); $i++){
-                $epaisseur=htmlspecialchars( $_POST['epaisseur'][$i]);
-                //$largeur=htmlspecialchars($_POST['largeur']);
-                $etatbobine=htmlspecialchars($_POST['etatbobine'][$i]);
-                //$user=htmlspecialchars($_POST['user'][$i]);
-                $poidsdeclare=htmlspecialchars($_POST['poidsdeclare'][$i]);
-                $poidspese=htmlspecialchars($_POST['poidspese'][$i]);
-                $pointdepart=htmlspecialchars($_POST['pointdepart'][$i]);
-                $pointarrive=htmlspecialchars($_POST['pointarrive'][$i]);
-                if(empty($_POST['nbbobine'][$i])){
-                    $nbbobine=1;
-                }else{
-                    $nbbobine=htmlspecialchars($_POST['nbbobine'][$i]);
-                }
-                //$codereception=htmlspecialchars($_POST['codereception'][$i]);
-                $numbobine=htmlspecialchars($_POST['numbobine'][$i]);
-    
-    
-                //Rechercher le nombre de piéces sur le lieu de depart
-                    $sqlEpaisseur = "SELECT * FROM `matiere` where `lieutransfert`='$pointdepart' and `epaisseur`='$epaisseur' and `nbbobineactuel` != 0 and `nbbobineactuel`>=$nbbobine LIMIT 1;";
-                    // On prépare la requête
-                    $queryEpaisseur = $db->prepare($sqlEpaisseur);
-    
-                    // On exécute
-                    $queryEpaisseur->execute();
-    
-                    // On récupère le nombre d'articles
-                    $resultEpaisseur = $queryEpaisseur->fetch();
-                //Fin Rechercher le nombre de piéces 
-    
-                //Rechercher le nombre de piéces sur le lieu de depart
-                    $sqlEpaisseur = "SELECT * FROM `matiere` where `numbobine`='$numbobine' LIMIT 1;";
-                    // On prépare la requête
-                    $queryEpaisseur = $db->prepare($sqlEpaisseur);
-    
-                    // On exécute
-                    $queryEpaisseur->execute();
-    
-                    // On récupère le nombre d'articles
-                    $resultProblemeUnicite = $queryEpaisseur->fetch();
-                //Fin Rechercher le nombre de piéces 
-    
-                // Unicite du num bobine
-                    if($resultProblemeUnicite){ 
-                        $ProblemeUniciteExist="erreurProblemeUniciteExist";
-                        $ligneErreurProblemeUnicite = $i+1;
-                    }else{
-                    }
-                //
-    
-                if(($numbobine == "" && $pointarrive == "Cranteuse") || ($numbobine == "" && $pointarrive == "Tréfilage")){ 
-                    $ProblemeNumeroBobine="erreurProblemeNumeroBobine";
-                    $ligneErreurBobine = $i+1;
-                }
-    
-                // On vérifie si le lieu de départ et d'arrivé ne sont pas les meme
-                if( $pointdepart === $pointarrive ){ 
-                    $ProblemeLieu="erreurProblemeLieu";
-                    $ligneErreurLieu = $i+1;
-                }
-    
-                if($resultEpaisseur){ 
-                }else{
-                    $ProblemeNbBobineDepart="erreurProblemeNbDepart";
-                    $ligneErreur = $i+1;
-                }
+        for ($i = 0; $i < count($_POST['epaisseur']); $i++){
+            $epaisseur=htmlspecialchars( $_POST['epaisseur'][$i]);
+            //$largeur=htmlspecialchars($_POST['largeur']);
+            $etatbobine=htmlspecialchars($_POST['etatbobine'][$i]);
+            //$user=htmlspecialchars($_POST['user'][$i]);
+            $poidsdeclare=htmlspecialchars($_POST['poidsdeclare'][$i]);
+            $poidspese=htmlspecialchars($_POST['poidspese'][$i]);
+            $pointdepart=htmlspecialchars($_POST['pointdepart'][$i]);
+            $pointarrive=htmlspecialchars($_POST['pointarrive'][$i]);
+            if(empty($_POST['nbbobine'][$i])){
+                $nbbobine=1;
+            }else{
+                $nbbobine=htmlspecialchars($_POST['nbbobine'][$i]);
+            }
+            //$codereception=htmlspecialchars($_POST['codereception'][$i]);
+
+            //Rechercher le nombre de piéces sur le lieu de depart
+                $sqlEpaisseur = "SELECT * FROM `matiere` where `lieutransfert`='$pointdepart' and `epaisseur`='$epaisseur' and `nbbobineactuel` != 0 and `nbbobineactuel`>=$nbbobine LIMIT 1;";
+                // On prépare la requête
+                $queryEpaisseur = $db->prepare($sqlEpaisseur);
+
+                // On exécute
+                $queryEpaisseur->execute();
+
+                // On récupère le nombre d'articles
+                $resultEpaisseur = $queryEpaisseur->fetch();
+            //Fin Rechercher le nombre de piéces 
+
+            // On vérifie si le lieu de départ et d'arrivé ne sont pas les meme
+            if( $pointdepart === $pointarrive ){ 
+                $ProblemeLieu="erreurProblemeLieu";
+                $ligneErreurLieu = $i+1;
+            }
+
+            if($resultEpaisseur){ 
+            }else{
+                $ProblemeNbBobineDepart="erreurProblemeNbDepart";
+                $ligneErreur = $i+1;
             }
         }
+        
 
         if($ProblemeNbBobineDepart != "erreurProblemeNbDepart" && $ProblemeNumeroBobine != "erreurProblemeNumeroBobine" && $ProblemeLieu != "erreurProblemeLieu" && $ProblemeUnicite != "erreurProblemeUnicite" && $ProblemeUniciteExist != "erreurProblemeUniciteExist"){
             $sql = "UPDATE `transfert` SET `datetransfert` = '$datetransfert', `transporteur` = '$transporteur', `commentaire` = '$commentaire', `saisisseur` = '$saisisseur' WHERE `idtransfert` = ?;";
@@ -161,7 +129,6 @@
                 }
                 //$nbbobine=htmlspecialchars($_POST['nbbobine'][$i]);
                 //$codereception=htmlspecialchars($_POST['codereception'][$i]);
-                $numbobine=htmlspecialchars($_POST['numbobine'][$i]);
 
                 /*
                     1 -> Metal1
@@ -205,9 +172,9 @@
                     // Fin ajouter le nombre de bobine dans le lieu de depart
                 }else{ */
                     // Ajouter le nombre de bobine dans le lieu d'arrive
-                        $insertUser=$db->prepare("INSERT INTO `matiere` (`idmatiere`, `epaisseur`, `poidsdeclare`, `poidspese`, `dateajout`,`nbbobine`,`lieutransfert`,`idreception`,`etatbobine`,`nbbobineactuel`,`numbobine`,`idmatierereception`) 
-                        VALUES (NULL, ?, ?, ?, current_timestamp(), ?, ?, ?, ?, ?, ?, ?);");
-                        $insertUser->execute(array($epaisseur,$poidsdeclare, $poidspese,$nbbobine,$pointarrive, $IdReception, $etatbobine, $nbbobine,$numbobine,$idmatierereception));  
+                        $insertUser=$db->prepare("INSERT INTO `matiere` (`idmatiere`, `epaisseur`, `poidsdeclare`, `poidspese`, `dateajout`,`nbbobine`,`lieutransfert`,`idreception`,`etatbobine`,`nbbobineactuel`,`idmatierereception`) 
+                        VALUES (NULL, ?, ?, ?, current_timestamp(), ?, ?, ?, ?, ?, ?);");
+                        $insertUser->execute(array($epaisseur,$poidsdeclare, $poidspese,$nbbobine,$pointarrive, $IdReception, $etatbobine, $nbbobine,$idmatierereception));  
                     // Fin ajouter le nombre de bobine dans le lieu d'arrive
                 //}
                 
@@ -256,9 +223,9 @@
                         $reqtitre->execute(array($nbbobine));
                     //}
 
-                    $insertUser=$db->prepare("INSERT INTO `transfertdetails` (`idtransfertdetail`, `poidspese`, `dateajout`, `user`, `nbbobine`, `actif`, `pointdepart`, `idtransfert`, `epaisseur`, `etatbobine`, `poidsdeclare`, `commentaire`, `pointarrive`,`idmatieredepart`,`idmatierearrive`,`numbobine`)
-                    VALUES (NULL, ?, current_timestamp(), NULL, ?, '1', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
-                    $insertUser->execute(array($poidspese,$nbbobine,$pointdepart,$idtransfert,$epaisseur,$etatbobine,$poidsdeclare,$commentaire,$pointarrive,$Iddepart,$idMax,$numbobine));
+                    $insertUser=$db->prepare("INSERT INTO `transfertdetails` (`idtransfertdetail`, `poidspese`, `dateajout`, `user`, `nbbobine`, `actif`, `pointdepart`, `idtransfert`, `epaisseur`, `etatbobine`, `poidsdeclare`, `commentaire`, `pointarrive`,`idmatieredepart`,`idmatierearrive`)
+                    VALUES (NULL, ?, current_timestamp(), NULL, ?, '1', ?, ?, ?, ?, ?, ?, ?, ?, ?);");
+                    $insertUser->execute(array($poidspese,$nbbobine,$pointdepart,$idtransfert,$epaisseur,$etatbobine,$poidsdeclare,$commentaire,$pointarrive,$Iddepart,$idMax));
                 //}
             }
 
@@ -366,7 +333,7 @@
                 <td style="background-color:#CFFEDA ;">
                     <div class="col-md-10">
                         <div class="mb-1 text-start">
-                            <input class="form-control" type="text" name="numbobine[]" value="" id="validationDefault0<?$i+99?>">
+                            <input class="form-control designa" type="number" step="0.01" name="poidspese[]">
                         </div>
                     </div>
                 </td>
@@ -374,13 +341,6 @@
                     <div class="col-md-10">
                         <div class="mb-1 text-start">
                             <input class="form-control designa" type="number" step="0.01" name="poidsdeclare[]" id="validationDefault0<?$i+11?>" required>
-                        </div>
-                    </div>
-                </td>
-                <td style="background-color:#CFFEDA ;">
-                    <div class="col-md-10">
-                        <div class="mb-1 text-start">
-                            <input class="form-control designa" type="number" step="0.01" name="poidspese[]">
                         </div>
                     </div>
                 </td>
@@ -499,7 +459,6 @@
                                                             <tr>       
                                                                 <th>Epaisseur</th>
                                                                 <th>Nombre de bobine</th>
-                                                                <th>Numéro fil machine</th>
                                                                 <th>Poids déclaré</th>
                                                                 <th>Poids pesé</th>
                                                                 <th>Point de départ</th>
@@ -557,13 +516,6 @@
                                                                         <div class="col-md-10">
                                                                             <div class="mb-1 text-start">
                                                                                 <input class="form-control" id="validationDefault04" type="number" name="nbbobine[]">
-                                                                            </div>
-                                                                        </div>
-                                                                    </td>
-                                                                    <td style="background-color:#CFFEDA ;">
-                                                                        <div class="col-md-10">
-                                                                            <div class="mb-1 text-start">
-                                                                                <input class="form-control" type="text" name="numbobine[]" value="" id="validationDefault099">
                                                                             </div>
                                                                         </div>
                                                                     </td>
@@ -658,7 +610,6 @@
                                                             <tr>       
                                                                 <th>Epaisseur</th>
                                                                 <th>Nombre de bobine</th>
-                                                                <th>Numéro fil machine</th>
                                                                 <th>Poids déclaré</th>
                                                                 <th>Poids pesé</th>
                                                                 <th>Point de départ</th>
@@ -714,13 +665,6 @@
                                                                         <div class="col-md-10">
                                                                             <div class="mb-1 text-start">
                                                                                 <input class="form-control" value="<?php echo $_POST['nbbobine'][$i]; ?>" id="validationDefault04" type="number" name="nbbobine[]">
-                                                                            </div>
-                                                                        </div>
-                                                                    </td>
-                                                                    <td style="background-color:#CFFEDA ;">
-                                                                        <div class="col-md-10">
-                                                                            <div class="mb-1 text-start">
-                                                                                <input class="form-control" value="<?php echo $_POST['numbobine'][$i]; ?>" id="validationDefault04" type="number" name="numbobine[]">
                                                                             </div>
                                                                         </div>
                                                                     </td>

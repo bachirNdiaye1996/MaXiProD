@@ -66,6 +66,12 @@
         $ligneErreurLieu = null;         // La ligne qui a l'erreur sur le lieu
         $ligneErreurProblemeUnicite = null;         //
 
+        for ($i = 0; $i < count($_POST['epaisseur']); $i++){
+            if($_POST['numbobine'][$i] == "") {
+            }else{
+
+            }
+        }
         if(count(array_unique($_POST['numbobine'])) != count($_POST['numbobine'])){
             // Unicite du num bobine
                 $ProblemeUnicite="erreurProblemeUnicite";
@@ -373,14 +379,14 @@
                 <td style="background-color:#CFFEDA ;">
                     <div class="col-md-10">
                         <div class="mb-1 text-start">
-                            <input class="form-control designa" type="number" step="0.01" name="poidsdeclare[]" id="validationDefault0<?$i+11?>" required>
+                            <input class="form-control designa" type="number" step="0.01" name="poidspese[]">
                         </div>
                     </div>
                 </td>
                 <td style="background-color:#CFFEDA ;">
                     <div class="col-md-10">
                         <div class="mb-1 text-start">
-                            <input class="form-control designa" type="number" step="0.01" name="poidspese[]">
+                            <input class="form-control designa" type="number" step="0.01" name="poidsdeclare[]" id="validationDefault0<?$i+11?>" required>
                         </div>
                     </div>
                 </td>
@@ -500,8 +506,8 @@
                                                                 <th>Epaisseur</th>
                                                                 <th>Nombre de bobine</th>
                                                                 <th>Numéro fil machine</th>
-                                                                <th>Poids déclaré</th>
                                                                 <th>Poids pesé</th>
+                                                                <th>Poids déclaré</th>
                                                                 <th>Point de départ</th>
                                                                 <th>Point d'arrivée</th>
                                                                 <th>Etat bobine</th>
@@ -570,14 +576,14 @@
                                                                     <td style="background-color:#CFFEDA ;">
                                                                         <div class="col-md-10">
                                                                             <div class="mb-1 text-start">
-                                                                                <input class="form-control designa" id="validationDefault06" type="number" step="0.01" name="poidsdeclare[]" value="" required>
+                                                                                <input class="form-control designa" type="number" step="0.01" name="poidspese[]" value="">
                                                                             </div>
                                                                         </div>
                                                                     </td>
                                                                     <td style="background-color:#CFFEDA ;">
                                                                         <div class="col-md-10">
                                                                             <div class="mb-1 text-start">
-                                                                                <input class="form-control designa" type="number" step="0.01" name="poidspese[]" value="">
+                                                                                <input class="form-control designa" id="validationDefault06" type="number" step="0.01" name="poidsdeclare[]" value="" required>
                                                                             </div>
                                                                         </div>
                                                                     </td>
@@ -659,8 +665,8 @@
                                                                 <th>Epaisseur</th>
                                                                 <th>Nombre de bobine</th>
                                                                 <th>Numéro fil machine</th>
-                                                                <th>Poids déclaré</th>
                                                                 <th>Poids pesé</th>
+                                                                <th>Poids déclaré</th>
                                                                 <th>Point de départ</th>
                                                                 <th>Point d'arrivée</th>
                                                                 <th>Etat bobine</th>
@@ -727,14 +733,14 @@
                                                                     <td style="background-color:#CFFEDA ;">
                                                                         <div class="col-md-10">
                                                                             <div class="mb-1 text-start">
-                                                                                <input class="form-control designa" id="validationDefault06" type="number" step="0.01" name="poidsdeclare[]" value="<?php echo $_POST['poidsdeclare'][$i]; ?>" required>
+                                                                                <input class="form-control designa" type="number" step="0.01" name="poidspese[]" id="example" value="<?php echo $_POST['poidspese'][$i]; ?>">
                                                                             </div>
                                                                         </div>
                                                                     </td>
                                                                     <td style="background-color:#CFFEDA ;">
                                                                         <div class="col-md-10">
                                                                             <div class="mb-1 text-start">
-                                                                                <input class="form-control designa" type="number" step="0.01" name="poidspese[]" id="example" value="<?php echo $_POST['poidspese'][$i]; ?>">
+                                                                                <input class="form-control designa" id="validationDefault06" type="number" step="0.01" name="poidsdeclare[]" value="<?php echo $_POST['poidsdeclare'][$i]; ?>" required>
                                                                             </div>
                                                                         </div>
                                                                     </td>

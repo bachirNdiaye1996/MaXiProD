@@ -13,15 +13,15 @@
     //Variables
     // Il faut savoir que metal3 est remplacer par niambour
     $valideTransfert="";
-    $ProblemeLieu="";
     $ProblemeNbBobineDepart="";
-    $Iddepart=null;                        // Variable qui nous permet d'optenir l'Id de la matiere de départ
+    $Iddepart=null;                       // Variable qui nous permet d'optenir l'Id de la matiere de départ
     $idtransfert = $_GET['idtransfert'];  // On recupére l'ID du transfert par get
     $Reception[]=null;
     $NombreLigne = $_GET['NombreLigne'];  
     $ProblemeNumeroBobine="";
+    $ProblemeLieu="";
     $ProblemeUnicite="";        // Unicite du num bobine
-    $ProblemeUniciteExist="";   // Unicite du num bobine Existant dans la base
+
 
 
 
@@ -50,7 +50,7 @@
         }
     // Fin changer valeur NombreLigne 
 
-    //Insertion des réceptions
+    //Insertion des transferts
     if(isset($_POST['CreerTransfert'])){
 
         $idtransfert=htmlspecialchars($_POST['idtransfert']);
@@ -61,116 +61,105 @@
 
 
         // On vérifie d'abord si c'est correct avant d'enregistrer
-        $ligneErreur = null;       // La ligne qui a l'erreur 
-        $ligneErreurBobine = null;       // La ligne qui a l'erreur ligneErreurBobine
-        $ligneErreurLieu = null;         // La ligne qui a l'erreur sur le lieu
-        $ligneErreurProblemeUnicite = null;         //
 
-        if(count(array_unique($_POST['numbobine'])) != count($_POST['numbobine'])){
-            // Unicite du num bobine
-                $ProblemeUnicite="erreurProblemeUnicite";
-            //$ligneErreurProblemeUnicite = $i+1;
-        }else {
-            for ($i = 0; $i < count($_POST['epaisseur']); $i++){
-                $epaisseur=htmlspecialchars( $_POST['epaisseur'][$i]);
-                //$largeur=htmlspecialchars($_POST['largeur']);
-                $etatbobine=htmlspecialchars($_POST['etatbobine'][$i]);
-                //$user=htmlspecialchars($_POST['user'][$i]);
-                $poidsdeclare=htmlspecialchars($_POST['poidsdeclare'][$i]);
-                $poidspese=htmlspecialchars($_POST['poidspese'][$i]);
-                $pointdepart=htmlspecialchars($_POST['pointdepart'][$i]);
-                $pointarrive=htmlspecialchars($_POST['pointarrive'][$i]);
-                if(empty($_POST['nbbobine'][$i])){
-                    $nbbobine=1;
-                }else{
-                    $nbbobine=htmlspecialchars($_POST['nbbobine'][$i]);
-                }
-                //$codereception=htmlspecialchars($_POST['codereception'][$i]);
-                $numbobine=htmlspecialchars($_POST['numbobine'][$i]);
-    
-    
-                //Rechercher le nombre de piéces sur le lieu de depart
-                    $sqlEpaisseur = "SELECT * FROM `matiere` where `lieutransfert`='$pointdepart' and `epaisseur`='$epaisseur' and `nbbobineactuel` != 0 and `nbbobineactuel`>=$nbbobine LIMIT 1;";
+            $numbobinedebut=htmlspecialchars($_POST['numbobinedebut']);
+            $numbobinefin=htmlspecialchars($_POST['numbobinefin']);
+            $nbbobines=$numbobinefin - $numbobinedebut;
+
+            // Les Post[]
+            $epaisseur=htmlspecialchars($_POST['epaisseur']);
+            //$largeur=htmlspecialchars($_POST['largeur']);
+            $etatbobine=htmlspecialchars($_POST['etatbobine']);
+            //$user=htmlspecialchars($_POST['user'][$i]);
+            $poidsdeclare=htmlspecialchars($_POST['poidsdeclare']);
+            $poidspese=htmlspecialchars($_POST['poidspese']);
+            $pointdepart=htmlspecialchars($_POST['pointdepart']);
+            $pointarrive=htmlspecialchars($_POST['pointarrive']);
+            $nbbobine=1;
+
+            if($nbbobines > 0){ 
+                //Depart epaisseur
+                    $sqlEpaisseur = "SELECT `$epaisseur` AS epaisseurVeriDepart FROM `epaisseur` where `lieu`='$pointdepart';";
                     // On prépare la requête
                     $queryEpaisseur = $db->prepare($sqlEpaisseur);
-    
+
                     // On exécute
                     $queryEpaisseur->execute();
-    
+
                     // On récupère le nombre d'articles
                     $resultEpaisseur = $queryEpaisseur->fetch();
-                //Fin Rechercher le nombre de piéces 
+
+                    $nbEpaisseurDepart = (int) $resultEpaisseur['epaisseurVeriDepart'];
+                //Fin Depart epaisseur
     
-                //Rechercher le nombre de piéces sur le lieu de depart
-                    $sqlEpaisseur = "SELECT * FROM `matiere` where `numbobine`='$numbobine' LIMIT 1;";
-                    // On prépare la requête
-                    $queryEpaisseur = $db->prepare($sqlEpaisseur);
-    
-                    // On exécute
-                    $queryEpaisseur->execute();
-    
-                    // On récupère le nombre d'articles
-                    $resultProblemeUnicite = $queryEpaisseur->fetch();
-                //Fin Rechercher le nombre de piéces 
-    
-                // Unicite du num bobine
-                    if($resultProblemeUnicite){ 
-                        $ProblemeUniciteExist="erreurProblemeUniciteExist";
-                        $ligneErreurProblemeUnicite = $i+1;
-                    }else{
-                    }
-                //
-    
-                if(($numbobine == "" && $pointarrive == "Cranteuse") || ($numbobine == "" && $pointarrive == "Tréfilage")){ 
-                    $ProblemeNumeroBobine="erreurProblemeNumeroBobine";
-                    $ligneErreurBobine = $i+1;
-                }
-    
-                // On vérifie si le lieu de départ et d'arrivé ne sont pas les meme
-                if( $pointdepart === $pointarrive ){ 
-                    $ProblemeLieu="erreurProblemeLieu";
-                    $ligneErreurLieu = $i+1;
-                }
-    
-                if($resultEpaisseur){ 
+                if($nbEpaisseurDepart >= $nbbobines + 1){
                 }else{
                     $ProblemeNbBobineDepart="erreurProblemeNbDepart";
-                    $ligneErreur = $i+1;
                 }
+            }else{
+                $ProblemeNbBobineDepart="erreurProblemeNbDepart";
             }
-        }
 
-        if($ProblemeNbBobineDepart != "erreurProblemeNbDepart" && $ProblemeNumeroBobine != "erreurProblemeNumeroBobine" && $ProblemeLieu != "erreurProblemeLieu" && $ProblemeUnicite != "erreurProblemeUnicite" && $ProblemeUniciteExist != "erreurProblemeUniciteExist"){
+            // On vérifie si le lieu de départ et d'arrivé ne sont pas les meme
+            if( $pointdepart === $pointarrive ){ 
+                $ProblemeLieu="erreurProblemeLieu";
+            }
+
+            // On vérifie les duplications des numéros bobines.
+                while($numbobinedebut <= $numbobinefin){    
+                    //print_r($_POST['epaisseur']);
+                    //Rechercher le nombre de piéces sur le lieu de depart
+                        $sqlEpaisseur = "SELECT * FROM `matiere` where `numbobine`='$numbobinedebut' LIMIT 1;";
+                        // On prépare la requête
+                        $queryEpaisseur = $db->prepare($sqlEpaisseur);
+
+                        // On exécute
+                        $queryEpaisseur->execute();
+
+                        // On récupère le nombre d'articles
+                        $resultEpaisseur = $queryEpaisseur->fetch();
+
+                        if($resultEpaisseur){
+                            $ProblemeUnicite="erreurProblemeUnicite";
+                            break;
+                        }
+                    //Fin Rechercher le nombre de piéces
+                    $numbobinedebut++; 
+                }
+            //
+        // Fin vérification
+
+        
+        if($ProblemeNbBobineDepart != "erreurProblemeNbDepart" && $ProblemeNumeroBobine != "erreurProblemeNumeroBobine" && $ProblemeLieu != "erreurProblemeLieu"  && $ProblemeUnicite != "erreurProblemeUnicite"){
+
             $sql = "UPDATE `transfert` SET `datetransfert` = '$datetransfert', `transporteur` = '$transporteur', `commentaire` = '$commentaire', `saisisseur` = '$saisisseur' WHERE `idtransfert` = ?;";
             //$result = $db->query($sql);
             $sth = $db->prepare($sql);    
             $sth->execute(array($idtransfert));
 
-            for ($i = 0; $i < count($_POST['epaisseur']); $i++){
-                $epaisseur=htmlspecialchars( $_POST['epaisseur'][$i]); 
-                $etatbobine=htmlspecialchars($_POST['etatbobine'][$i]);
-                //$user=htmlspecialchars($_POST['user'][$i]);
-                $poidsdeclare=htmlspecialchars($_POST['poidsdeclare'][$i]);
-                $poidspese=htmlspecialchars($_POST['poidspese'][$i]);
-                $pointdepart=htmlspecialchars($_POST['pointdepart'][$i]);
-                $pointarrive=htmlspecialchars($_POST['pointarrive'][$i]);
-                if(empty($_POST['nbbobine'][$i])){
-                    $nbbobine=1;
-                }else{
-                    $nbbobine=htmlspecialchars($_POST['nbbobine'][$i]);
-                }
-                //$nbbobine=htmlspecialchars($_POST['nbbobine'][$i]);
-                //$codereception=htmlspecialchars($_POST['codereception'][$i]);
-                $numbobine=htmlspecialchars($_POST['numbobine'][$i]);
+            $numbobinedebut=htmlspecialchars($_POST['numbobinedebut']);
+            $numbobinefin=htmlspecialchars($_POST['numbobinefin']);
+            $nbbobines=$numbobinefin - $numbobinedebut;
 
-                /*
-                    1 -> Metal1
-                    3 -> Niambour
-                    4 -> Cranteuse
-                    5 -> Tréfilage
-                    6 -> Metal Mbao
-                */
+            // Les Post[]
+            $epaisseur=htmlspecialchars($_POST['epaisseur']);
+            //$largeur=htmlspecialchars($_POST['largeur']);
+            $etatbobine=htmlspecialchars($_POST['etatbobine']);
+            //$user=htmlspecialchars($_POST['user'][$i]);
+            $poidsdeclare=htmlspecialchars($_POST['poidsdeclare']);
+            $poidspese=htmlspecialchars($_POST['poidspese']);
+            $pointdepart=htmlspecialchars($_POST['pointdepart']);
+            $pointarrive=htmlspecialchars($_POST['pointarrive']);
+            $nbbobine=1;
 
+            //1 -> Metal1
+            //3 -> Niambour
+            //4 -> Cranteuse
+            //5 -> Tréfilage
+            //6 -> Metal Mbao
+
+            while($numbobinedebut <= $numbobinefin){    
+                //print_r($_POST['epaisseur']);
                 //Rechercher le nombre de piéces sur le lieu de depart
                     $sqlEpaisseur = "SELECT * FROM `matiere` where `lieutransfert`='$pointdepart' and `epaisseur`='$epaisseur' and `nbbobineactuel` != 0 and `nbbobineactuel`>=$nbbobine LIMIT 1;";
                     // On prépare la requête
@@ -197,17 +186,17 @@
                     $IdReception = $resultEpaisseur['idreception'];
                     $idmatierereception=$resultEpaisseur['idmatiere'];
                 //Fin
-                /*if($resultMatiereArrive){
+                //if($resultMatiereArrive){
                     // ajouter le nombre de bobine dans le lieu de depart
-                        $req ="UPDATE matiere SET `nbbobineactuel` = `nbbobineactuel` + ?, `poidsdeclare` = `poidsdeclare` + ? where `idmatiere`='$resultMatiereArrive[idmatiere]';";
-                        $reqtitre = $db->prepare($req);
-                        $reqtitre->execute(array($nbbobine,$poidsdeclare));
+                        // $req ="UPDATE matiere SET `nbbobineactuel` = `nbbobineactuel` + ?, `poidsdeclare` = `poidsdeclare` + ? where `idmatiere`='$resultMatiereArrive[idmatiere]';";
+                        //$reqtitre = $db->prepare($req);
+                        //$reqtitre->execute(array($nbbobine,$poidsdeclare));
                     // Fin ajouter le nombre de bobine dans le lieu de depart
-                }else{ */
+                // }else{ 
                     // Ajouter le nombre de bobine dans le lieu d'arrive
                         $insertUser=$db->prepare("INSERT INTO `matiere` (`idmatiere`, `epaisseur`, `poidsdeclare`, `poidspese`, `dateajout`,`nbbobine`,`lieutransfert`,`idreception`,`etatbobine`,`nbbobineactuel`,`numbobine`,`idmatierereception`) 
                         VALUES (NULL, ?, ?, ?, current_timestamp(), ?, ?, ?, ?, ?, ?, ?);");
-                        $insertUser->execute(array($epaisseur,$poidsdeclare, $poidspese,$nbbobine,$pointarrive, $IdReception, $etatbobine, $nbbobine,$numbobine,$idmatierereception));  
+                        $insertUser->execute(array($epaisseur,$poidsdeclare, $poidspese,$nbbobine,$pointarrive, $IdReception, $etatbobine, $nbbobine,$numbobinedebut,$idmatierereception));  
                     // Fin ajouter le nombre de bobine dans le lieu d'arrive
                 //}
                 
@@ -236,10 +225,6 @@
 
                 //if(($nbEpaisseurDepart < $nbbobine) || ($nbbobine == 0)){
                 //    $valideTransfert="erreurEpaisseur";
-                    /*echo"<script language=\"javascript\">";
-                        echo"alert('bonjour')";
-                        echo"return false";
-                    echo"</script>";*/
                 //}else{
                     //if(($pointdepart == "Cranteuse vers Metal1")){ // Vérifie le type de transfert
                         //Debut inserer le nombre de bobine par epaisseur
@@ -258,14 +243,17 @@
 
                     $insertUser=$db->prepare("INSERT INTO `transfertdetails` (`idtransfertdetail`, `poidspese`, `dateajout`, `user`, `nbbobine`, `actif`, `pointdepart`, `idtransfert`, `epaisseur`, `etatbobine`, `poidsdeclare`, `commentaire`, `pointarrive`,`idmatieredepart`,`idmatierearrive`,`numbobine`)
                     VALUES (NULL, ?, current_timestamp(), NULL, ?, '1', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
-                    $insertUser->execute(array($poidspese,$nbbobine,$pointdepart,$idtransfert,$epaisseur,$etatbobine,$poidsdeclare,$commentaire,$pointarrive,$Iddepart,$idMax,$numbobine));
+                    $insertUser->execute(array($poidspese,$nbbobine,$pointdepart,$idtransfert,$epaisseur,$etatbobine,$poidsdeclare,$commentaire,$pointarrive,$Iddepart,$idMax,$numbobinedebut));
                 //}
+                $numbobinedebut++;
             }
 
             header("location: detailTransfert.php?idtransfert=$idtransfert");
             exit;
         }
     }
+
+    //print_r($ProblemeNbBobineDepart);
 
 
 ?>
@@ -281,7 +269,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <link rel="shortcut icon" href="../image/iconOnglet.png" />
+    <link rel="shortcut icon" href="../image/iconOnglet.png"/>
     <title>METAL AFRIQUE</title>
 
     <!-- Custom fonts for this template -->
@@ -475,7 +463,7 @@
                                     <div class="modal-body">
                                         <form action="#" method="POST" enctype="multipart/form-data" class="row g-3">
                                             <div class="row">
-                                                <?php if($valideTransfert != "erreurEpaisseur" && $ProblemeNbBobineDepart != "erreurProblemeNbDepart" && $ProblemeNumeroBobine != "erreurProblemeNumeroBobine" && $ProblemeLieu != "erreurProblemeLieu" && $ProblemeUnicite != "erreurProblemeUnicite" && $ProblemeUniciteExist != "erreurProblemeUniciteExist"){ // Lorsqu'il y'a pas d'erreur ?> 
+                                                <?php if($valideTransfert != "erreurEpaisseur" && $ProblemeNbBobineDepart != "erreurProblemeNbDepart" && $ProblemeNumeroBobine != "erreurProblemeNumeroBobine" && $ProblemeLieu != "erreurProblemeLieu"  && $ProblemeUnicite != "erreurProblemeUnicite"){ // Lorsqu'il y'a pas d'erreur ?> 
                                                     <div class="col-md-2 mr-2 mt-3 mb-5">
                                                         <div class="mb-1 text-start">
                                                             <label class="form-label fw-bold" for="nom">Nom complet du saisisseur</label>
@@ -498,14 +486,13 @@
                                                         <thead>
                                                             <tr>       
                                                                 <th>Epaisseur</th>
-                                                                <th>Nombre de bobine</th>
-                                                                <th>Numéro fil machine</th>
+                                                                <th>Numéro FM début</th>
+                                                                <th>Numéro FM fin</th>
                                                                 <th>Poids déclaré</th>
                                                                 <th>Poids pesé</th>
                                                                 <th>Point de départ</th>
                                                                 <th>Point d'arrivée</th>
                                                                 <th>Etat bobine</th>
-                                                                <th>Supprimer ligne</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody id="dynamicadd">
@@ -519,7 +506,7 @@
                                                                     <td style="background-color:#CFFEDA ;">
                                                                         <div class="">
                                                                             <div class="mb-1 text-start">
-                                                                                <select class="form-control" name="epaisseur[]" placeholder="Taper l'épaisseur de la bobine">
+                                                                                <select class="form-control" name="epaisseur" placeholder="Taper l'épaisseur de la bobine">
                                                                                     <option>3</option>
                                                                                     <option>3.5</option>
                                                                                     <option>4</option>
@@ -556,40 +543,38 @@
                                                                     <td style="background-color:#CFFEDA ;">
                                                                         <div class="col-md-10">
                                                                             <div class="mb-1 text-start">
-                                                                                <input class="form-control" id="validationDefault04" type="number" name="nbbobine[]">
+                                                                                <input class="form-control" id="validationDefault04" type="number" name="numbobinedebut">
                                                                             </div>
                                                                         </div>
                                                                     </td>
                                                                     <td style="background-color:#CFFEDA ;">
                                                                         <div class="col-md-10">
                                                                             <div class="mb-1 text-start">
-                                                                                <input class="form-control" type="text" name="numbobine[]" value="" id="validationDefault099">
+                                                                                <input class="form-control" type="text" name="numbobinefin" type="number" value="" id="validationDefault099">
                                                                             </div>
                                                                         </div>
                                                                     </td>
                                                                     <td style="background-color:#CFFEDA ;">
                                                                         <div class="col-md-10">
                                                                             <div class="mb-1 text-start">
-                                                                                <input class="form-control designa" id="validationDefault06" type="number" step="0.01" name="poidsdeclare[]" value="" required>
+                                                                                <input class="form-control designa" type="number" step="0.01" name="poidspese" value="">
                                                                             </div>
                                                                         </div>
                                                                     </td>
                                                                     <td style="background-color:#CFFEDA ;">
                                                                         <div class="col-md-10">
                                                                             <div class="mb-1 text-start">
-                                                                                <input class="form-control designa" type="number" step="0.01" name="poidspese[]" value="">
+                                                                                <input class="form-control designa" id="validationDefault06" type="number" step="0.01" name="poidsdeclare" value="" required>
                                                                             </div>
                                                                         </div>
                                                                     </td>
                                                                     <td style="background-color:#CFFEDA ;">
                                                                         <div class="col-md-10">
                                                                             <div class="mb-1 text-start">
-                                                                                <select class="form-control" name="pointdepart[]">
+                                                                                <select class="form-control" name="pointdepart">
                                                                                     <option>Metal1</option>
-                                                                                    <option>Niambour</option>
                                                                                     <option>Tréfilage</option>
                                                                                     <option>Cranteuse</option>
-                                                                                    <option>Metal Mbao</option>
                                                                                 </select>                                                
                                                                             </div>
                                                                         </div>
@@ -597,12 +582,10 @@
                                                                     <td style="background-color:#CFFEDA ;">
                                                                         <div class="col-md-10">
                                                                             <div class="mb-1 text-start">
-                                                                                <select class="form-control" name="pointarrive[]">
+                                                                                <select class="form-control" name="pointarrive">
                                                                                     <option>Metal1</option>
-                                                                                    <option>Niambour</option>
                                                                                     <option>Tréfilage</option>
                                                                                     <option>Cranteuse</option>
-                                                                                    <option>Metal Mbao</option>
                                                                                 </select>                                                
                                                                             </div>
                                                                         </div>
@@ -610,7 +593,7 @@
                                                                     <td style="background-color:#CFFEDA ;">
                                                                         <div class="col-md-10">
                                                                             <div class="mb-1 text-start">
-                                                                                <select class="form-control" name="etatbobine[]" value="">
+                                                                                <select class="form-control" name="etatbobine" value="">
                                                                                     <option>Normale</option>
                                                                                     <option>Disloquée</option>
                                                                                     <option>Autres</option>
@@ -618,22 +601,12 @@
                                                                             </div>
                                                                         </div>
                                                                     </td>
-                                                                    <td style="background-color:#CFFEDA ;" class="text-center"> 
-                                                                        <button class="btn btn-danger remove"
-                                                                            type="button">Enlever
-                                                                        </button> 
-                                                                    </td>
                                                                 </tr>
                                                             <?php
                                                             // }
                                                             ?>
                                                         </tbody>
                                                     </table>
-                                                    <div class="col-md-4  d-flex gap-2">
-                                                        <div class="mb-5 text-start d-flex gap-2 pt-4">
-                                                            <input class="btn btn-success  w-lg bouton mr-3" name="ChangerNombreLigne" id="add" type="button" value="Ajouter une ligne">
-                                                        </div>
-                                                    </div>
                                                 <?php }else{  // Lorsqu'il y'a erreur ?>
                                                     <div class="col-md-2 mr-2 mt-3 mb-5">
                                                         <div class="mb-1 text-start">
@@ -657,55 +630,54 @@
                                                         <thead>
                                                             <tr>       
                                                                 <th>Epaisseur</th>
-                                                                <th>Nombre de bobine</th>
-                                                                <th>Numéro fil machine</th>
+                                                                <th>Numéro FM début</th>
+                                                                <th>Numéro FM fin</th>
                                                                 <th>Poids déclaré</th>
                                                                 <th>Poids pesé</th>
                                                                 <th>Point de départ</th>
                                                                 <th>Point d'arrivée</th>
                                                                 <th>Etat bobine</th>
-                                                                <th>Supprimer ligne</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody id="dynamicadd">
                                                             <?php
                                                                 //print_r($_POST);
-                                                                for ($i = 0; $i < count($_POST['epaisseur']); $i++){
+                                                                //for ($i = 0; $i < count($_POST['epaisseur']); $i++){
                                                             ?>
                                                                 <tr class="rowClass">
                                                                     <td style="background-color:#CFFEDA ;">
                                                                         <div class="">
                                                                             <div class="mb-1 text-start">
-                                                                                <select class="form-control" name="epaisseur[]" placeholder="Taper l'épaisseur de la bobine">
-                                                                                    <option <?php if ( $_POST['epaisseur'][$i]=='3') {echo "selected='selected'";} ?> >3</option>
-                                                                                    <option  <?php if ( $_POST['epaisseur'][$i]=='3.5') {echo "selected='selected'";} ?> >3.5</option>
-                                                                                    <option <?php if ( $_POST['epaisseur'][$i]=='4') {echo "selected='selected'";} ?> >4</option>
-                                                                                    <option <?php if ( $_POST['epaisseur'][$i]=='4.5') {echo "selected='selected'";} ?> >4.5</option>
-                                                                                    <option <?php if ( $_POST['epaisseur'][$i]=='5') {echo "selected='selected'";} ?> >5</option>
-                                                                                    <option <?php if ( $_POST['epaisseur'][$i]=='5.5') {echo "selected='selected'";} ?> >5.5</option>
-                                                                                    <option <?php if ( $_POST['epaisseur'][$i]=='6') {echo "selected='selected'";} ?> >6</option>
-                                                                                    <option <?php if ( $_POST['epaisseur'][$i]=='6.5') {echo "selected='selected'";} ?> >6.5</option>
-                                                                                    <option <?php if ( $_POST['epaisseur'][$i]=='7') {echo "selected='selected'";} ?> >7</option>
-                                                                                    <option <?php if ( $_POST['epaisseur'][$i]=='7.5') {echo "selected='selected'";} ?> >7.5</option>
-                                                                                    <option <?php if ( $_POST['epaisseur'][$i]=='8') {echo "selected='selected'";} ?> >8</option>
-                                                                                    <option <?php if ( $_POST['epaisseur'][$i]=='8.5') {echo "selected='selected'";} ?> >8.5</option>
-                                                                                    <option <?php if ( $_POST['epaisseur'][$i]=='9') {echo "selected='selected'";} ?> >9</option>
-                                                                                    <option <?php if ( $_POST['epaisseur'][$i]=='9.5') {echo "selected='selected'";} ?> >9.5</option>
-                                                                                    <option <?php if ( $_POST['epaisseur'][$i]=='10') {echo "selected='selected'";} ?> >10</option>
-                                                                                    <option <?php if ( $_POST['epaisseur'][$i]=='10.5') {echo "selected='selected'";} ?> >10.5</option>
-                                                                                    <option <?php if ( $_POST['epaisseur'][$i]=='11') {echo "selected='selected'";} ?> >11</option>
-                                                                                    <option <?php if ( $_POST['epaisseur'][$i]=='11.5') {echo "selected='selected'";} ?> >11.5</option>
-                                                                                    <option <?php if ( $_POST['epaisseur'][$i]=='12') {echo "selected='selected'";} ?> >12</option>
-                                                                                    <option <?php if ( $_POST['epaisseur'][$i]=='12.5') {echo "selected='selected'";} ?> >12.5</option>
-                                                                                    <option <?php if ( $_POST['epaisseur'][$i]=='13') {echo "selected='selected'";} ?> >13</option>
-                                                                                    <option <?php if ( $_POST['epaisseur'][$i]=='13.5') {echo "selected='selected'";} ?> >13.5</option>
-                                                                                    <option <?php if ( $_POST['epaisseur'][$i]=='14') {echo "selected='selected'";} ?> >14</option>
-                                                                                    <option <?php if ( $_POST['epaisseur'][$i]=='14.5') {echo "selected='selected'";} ?> >14.5</option>
-                                                                                    <option <?php if ( $_POST['epaisseur'][$i]=='15') {echo "selected='selected'";} ?> >15</option>
-                                                                                    <option <?php if ( $_POST['epaisseur'][$i]=='15.5') {echo "selected='selected'";} ?> >15.5</option>
-                                                                                    <option <?php if ( $_POST['epaisseur'][$i]=='16') {echo "selected='selected'";} ?> >16</option>
-                                                                                    <option <?php if ( $_POST['epaisseur'][$i]=='16.5') {echo "selected='selected'";} ?>>16.5</option>
-                                                                                    <option <?php if ( $_POST['epaisseur'][$i]=='17') {echo "selected='selected'";} ?> >17</option>
+                                                                                <select class="form-control" name="epaisseur" placeholder="Taper l'épaisseur de la bobine">
+                                                                                    <option <?php if ( $_POST['epaisseur']=='3') {echo "selected='selected'";} ?> >3</option>
+                                                                                    <option <?php if ( $_POST['epaisseur']=='3.5') {echo "selected='selected'";} ?> >3.5</option>
+                                                                                    <option <?php if ( $_POST['epaisseur']=='4') {echo "selected='selected'";} ?> >4</option>
+                                                                                    <option <?php if ( $_POST['epaisseur']=='4.5') {echo "selected='selected'";} ?> >4.5</option>
+                                                                                    <option <?php if ( $_POST['epaisseur']=='5') {echo "selected='selected'";} ?> >5</option>
+                                                                                    <option <?php if ( $_POST['epaisseur']=='5.5') {echo "selected='selected'";} ?> >5.5</option>
+                                                                                    <option <?php if ( $_POST['epaisseur']=='6') {echo "selected='selected'";} ?> >6</option>
+                                                                                    <option <?php if ( $_POST['epaisseur']=='6.5') {echo "selected='selected'";} ?> >6.5</option>
+                                                                                    <option <?php if ( $_POST['epaisseur']=='7') {echo "selected='selected'";} ?> >7</option>
+                                                                                    <option <?php if ( $_POST['epaisseur']=='7.5') {echo "selected='selected'";} ?> >7.5</option>
+                                                                                    <option <?php if ( $_POST['epaisseur']=='8') {echo "selected='selected'";} ?> >8</option>
+                                                                                    <option <?php if ( $_POST['epaisseur']=='8.5') {echo "selected='selected'";} ?> >8.5</option>
+                                                                                    <option <?php if ( $_POST['epaisseur']=='9') {echo "selected='selected'";} ?> >9</option>
+                                                                                    <option <?php if ( $_POST['epaisseur']=='9.5') {echo "selected='selected'";} ?> >9.5</option>
+                                                                                    <option <?php if ( $_POST['epaisseur']=='10') {echo "selected='selected'";} ?> >10</option>
+                                                                                    <option <?php if ( $_POST['epaisseur']=='10.5') {echo "selected='selected'";} ?> >10.5</option>
+                                                                                    <option <?php if ( $_POST['epaisseur']=='11') {echo "selected='selected'";} ?> >11</option>
+                                                                                    <option <?php if ( $_POST['epaisseur']=='11.5') {echo "selected='selected'";} ?> >11.5</option>
+                                                                                    <option <?php if ( $_POST['epaisseur']=='12') {echo "selected='selected'";} ?> >12</option>
+                                                                                    <option <?php if ( $_POST['epaisseur']=='12.5') {echo "selected='selected'";} ?> >12.5</option>
+                                                                                    <option <?php if ( $_POST['epaisseur']=='13') {echo "selected='selected'";} ?> >13</option>
+                                                                                    <option <?php if ( $_POST['epaisseur']=='13.5') {echo "selected='selected'";} ?> >13.5</option>
+                                                                                    <option <?php if ( $_POST['epaisseur']=='14') {echo "selected='selected'";} ?> >14</option>
+                                                                                    <option <?php if ( $_POST['epaisseur']=='14.5') {echo "selected='selected'";} ?> >14.5</option>
+                                                                                    <option <?php if ( $_POST['epaisseur']=='15') {echo "selected='selected'";} ?> >15</option>
+                                                                                    <option <?php if ( $_POST['epaisseur']=='15.5') {echo "selected='selected'";} ?> >15.5</option>
+                                                                                    <option <?php if ( $_POST['epaisseur']=='16') {echo "selected='selected'";} ?> >16</option>
+                                                                                    <option <?php if ( $_POST['epaisseur']=='16.5') {echo "selected='selected'";} ?>>16.5</option>
+                                                                                    <option <?php if ( $_POST['epaisseur']=='17') {echo "selected='selected'";} ?> >17</option>
                                                                                 </select> 
                                                                             </div>
                                                                         </div>
@@ -713,40 +685,38 @@
                                                                     <td style="background-color:#CFFEDA ;">
                                                                         <div class="col-md-10">
                                                                             <div class="mb-1 text-start">
-                                                                                <input class="form-control" value="<?php echo $_POST['nbbobine'][$i]; ?>" id="validationDefault04" type="number" name="nbbobine[]">
+                                                                                <input class="form-control" value="<?php echo $_POST['numbobinedebut']; ?>" id="validationDefault04" type="number" name="numbobinedebut">
                                                                             </div>
                                                                         </div>
                                                                     </td>
                                                                     <td style="background-color:#CFFEDA ;">
                                                                         <div class="col-md-10">
                                                                             <div class="mb-1 text-start">
-                                                                                <input class="form-control" value="<?php echo $_POST['numbobine'][$i]; ?>" id="validationDefault04" type="number" name="numbobine[]">
+                                                                                <input class="form-control" value="<?php echo $_POST['numbobinefin']; ?>" id="validationDefault04" type="number" name="numbobinefin">
                                                                             </div>
                                                                         </div>
                                                                     </td>
                                                                     <td style="background-color:#CFFEDA ;">
                                                                         <div class="col-md-10">
                                                                             <div class="mb-1 text-start">
-                                                                                <input class="form-control designa" id="validationDefault06" type="number" step="0.01" name="poidsdeclare[]" value="<?php echo $_POST['poidsdeclare'][$i]; ?>" required>
+                                                                                <input class="form-control designa" type="number" step="0.01" name="poidspese" id="example" value="<?php echo $_POST['poidspese']; ?>">
                                                                             </div>
                                                                         </div>
                                                                     </td>
                                                                     <td style="background-color:#CFFEDA ;">
                                                                         <div class="col-md-10">
                                                                             <div class="mb-1 text-start">
-                                                                                <input class="form-control designa" type="number" step="0.01" name="poidspese[]" id="example" value="<?php echo $_POST['poidspese'][$i]; ?>">
+                                                                                <input class="form-control designa" id="validationDefault06" type="number" step="0.01" name="poidsdeclare" value="<?php echo $_POST['poidsdeclare']; ?>" required>
                                                                             </div>
                                                                         </div>
                                                                     </td>
                                                                     <td style="background-color:#CFFEDA ;">
                                                                         <div class="col-md-10">
                                                                             <div class="mb-1 text-start">
-                                                                                <select class="form-control" name="pointdepart[]">
-                                                                                    <option <?php if ( $_POST['pointdepart'][$i]=='Metal1') {echo "selected='selected'";} ?> >Metal1</option>
-                                                                                    <option <?php if ( $_POST['pointdepart'][$i]=='Niambour') {echo "selected='selected'";} ?> >Niambour</option>
-                                                                                    <option <?php if ( $_POST['pointdepart'][$i]=='Metal Mbao') {echo "selected='selected'";} ?> >Metal Mbao</option>
-                                                                                    <option <?php  if ( $_POST['pointdepart'][$i]=='Tréfilage') {echo "selected='selected'";} ?> >Tréfilage</option>
-                                                                                    <option <?php  if ( $_POST['pointdepart'][$i]=='Cranteuse') {echo "selected='selected'";} ?> >Cranteuse</option>
+                                                                                <select class="form-control" name="pointdepart">
+                                                                                    <option <?php if ( $_POST['pointdepart']=='Metal1') {echo "selected='selected'";} ?> >Metal1</option>
+                                                                                    <option <?php  if ( $_POST['pointdepart']=='Tréfilage') {echo "selected='selected'";} ?> >Tréfilage</option>
+                                                                                    <option <?php  if ( $_POST['pointdepart']=='Cranteuse') {echo "selected='selected'";} ?> >Cranteuse</option>
                                                                                 </select>                                                
                                                                             </div>
                                                                         </div>
@@ -754,12 +724,10 @@
                                                                     <td style="background-color:#CFFEDA ;">
                                                                         <div class="col-md-10">
                                                                             <div class="mb-1 text-start">
-                                                                                <select class="form-control" name="pointarrive[]">
-                                                                                    <option <?php if ( $_POST['pointarrive'][$i]=='Metal1') {echo "selected='selected'";} ?> >Metal1</option>
-                                                                                    <option <?php if ( $_POST['pointarrive'][$i]=='Niambour') {echo "selected='selected'";} ?> >Niambour</option>
-                                                                                    <option <?php if ( $_POST['pointarrive'][$i]=='Metal Mbao') {echo "selected='selected'";} ?> >Metal Mbao</option>
-                                                                                    <option <?php  if ( $_POST['pointarrive'][$i]=='Tréfilage') {echo "selected='selected'";} ?> >Tréfilage</option>
-                                                                                    <option <?php  if ( $_POST['pointarrive'][$i]=='Cranteuse') {echo "selected='selected'";} ?> >Cranteuse</option>                                                                                </select>                                                
+                                                                                <select class="form-control" name="pointarrive">
+                                                                                    <option <?php if ( $_POST['pointarrive']=='Metal1') {echo "selected='selected'";} ?> >Metal1</option>
+                                                                                    <option <?php  if ( $_POST['pointarrive']=='Tréfilage') {echo "selected='selected'";} ?> >Tréfilage</option>
+                                                                                    <option <?php  if ( $_POST['pointarrive']=='Cranteuse') {echo "selected='selected'";} ?> >Cranteuse</option>                                                                                </select>                                                
                                                                                 </select> 
                                                                             </div>
                                                                         </div>
@@ -767,22 +735,17 @@
                                                                     <td style="background-color:#CFFEDA ;">
                                                                         <div class="col-md-10">
                                                                             <div class="mb-1 text-start">
-                                                                                <select class="form-control" name="etatbobine[]" value="">
-                                                                                    <option <?php if ( $_POST['etatbobine'][$i]=='Normale') {echo "selected='selected'";} ?> >Normale</option>
-                                                                                    <option <?php if ( $_POST['etatbobine'][$i]=='Disloquée') {echo "selected='selected'";} ?> >Disloquée</option>
-                                                                                    <option <?php if ( $_POST['etatbobine'][$i]=='Autres') {echo "selected='selected'";} ?> >Autres</option>
+                                                                                <select class="form-control" name="etatbobine" value="">
+                                                                                    <option <?php if ( $_POST['etatbobine']=='Normale') {echo "selected='selected'";} ?> >Normale</option>
+                                                                                    <option <?php if ( $_POST['etatbobine']=='Disloquée') {echo "selected='selected'";} ?> >Disloquée</option>
+                                                                                    <option <?php if ( $_POST['etatbobine']=='Autres') {echo "selected='selected'";} ?> >Autres</option>
                                                                                 </select>                                                  
                                                                             </div>
                                                                         </div>
                                                                     </td>
-                                                                    <td style="background-color:#CFFEDA ;" class="text-center"> 
-                                                                        <button class="btn btn-danger remove"
-                                                                            type="button">Enlever
-                                                                        </button> 
-                                                                    </td>
                                                                 </tr>
                                                             <?php
-                                                                }
+                                                                //}
                                                             ?>
                                                         </tbody>
                                                     </table>
@@ -803,7 +766,7 @@
                                                         ?>" name="idtransfert" id="example-date-input2">
                                                     </div>
                                                 </div>
-                                                <?php if($valideTransfert != "erreurEpaisseur" && $ProblemeNbBobineDepart != "erreurProblemeNbDepart" && $ProblemeLieu != "erreurProblemeLieu" && $ProblemeUnicite != "erreurProblemeUnicite" && $ProblemeUniciteExist != "erreurProblemeUniciteExist"){ // Lorsqu'il y'a pas d'erreur ?> 
+                                                <?php if($valideTransfert != "erreurEpaisseur" && $ProblemeNbBobineDepart != "erreurProblemeNbDepart" && $ProblemeNumeroBobine != "erreurProblemeNumeroBobine" && $ProblemeLieu != "erreurProblemeLieu"  && $ProblemeUnicite != "erreurProblemeUnicite"){ // Lorsqu'il y'a pas d'erreur ?> 
                                                     <div class="col-md-8">
                                                         <div class="mb-1 text-start">
                                                             <label class="form-label fw-bold" for="commentaire" >Commentaire</label>
@@ -838,7 +801,7 @@
                                                         <?php if($ProblemeNumeroBobine == "erreurProblemeNumeroBobine"){ ?> 
                                                             <script>    
                                                                 Swal.fire({
-                                                                    text: 'Veiller renseigner le numéro de fil machine en corrigeant la ligne <?php echo $ligneErreurBobine; ?> svp!',
+                                                                    text: 'Veiller renseigner le numéro de fil machine en corrigeant la ligne svp!',
                                                                     icon: 'error',
                                                                     timer: 5500,
                                                                     showConfirmButton: false,
@@ -851,20 +814,7 @@
                                                         <?php if($ProblemeLieu == "erreurProblemeLieu"){ ?> 
                                                             <script>    
                                                                 Swal.fire({
-                                                                    text: 'Le lieu de départ doit étre différent du lieu d arrivé à la ligne <?php echo $ligneErreurLieu; ?>',
-                                                                    icon: 'error',
-                                                                    timer: 5500,
-                                                                    showConfirmButton: false,
-                                                                },
-                                                                function(){ 
-                                                                    location.reload();
-                                                                });
-                                                            </script> 
-                                                        <?php } ?>
-                                                        <?php if($ProblemeUniciteExist == "erreurProblemeUniciteExist"){ ?> 
-                                                            <script>    
-                                                                Swal.fire({
-                                                                    text: 'Le numéro de FM existe déja dans la base de donnée à la ligne <?php echo $ligneErreurProblemeUnicite; ?>',
+                                                                    text: 'Le lieu de départ doit étre différent du lieu d arrivé',
                                                                     icon: 'error',
                                                                     timer: 5500,
                                                                     showConfirmButton: false,
@@ -877,7 +827,7 @@
                                                         <?php if($ProblemeUnicite == "erreurProblemeUnicite"){ ?> 
                                                             <script>    
                                                                 Swal.fire({
-                                                                    text: 'Vérifier le numéro de FM doit etre unique',
+                                                                    text: 'Il y a un numéro de FM qui existe déja dans la base de donnée.',
                                                                     icon: 'error',
                                                                     timer: 5500,
                                                                     showConfirmButton: false,
@@ -890,7 +840,7 @@
                                                         <?php if($ProblemeNbBobineDepart == "erreurProblemeNbDepart"){ ?> 
                                                             <script>    
                                                                 Swal.fire({
-                                                                    text: 'Veiller revoir votre stockage (nombre de bobine, epaisseur ou poids déclaré) et corrigé la ligne <?php echo $ligneErreur; ?> svp!',
+                                                                    text: 'Veiller revoir votre stockage (nombre de bobine, epaisseur ou poids déclaré) et corrigé la ligne svp!',
                                                                     icon: 'error',
                                                                     timer: 5500,
                                                                     showConfirmButton: false,
