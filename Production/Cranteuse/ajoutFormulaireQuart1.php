@@ -420,7 +420,7 @@
                 <td style="background-color:#CFFEDA ;">
                     <div class="col-md-10">
                         <div class="mb-1 text-start">
-                            <input class="form-control designa" type="number" step="0.01" name="dechet[]" id="example" value="" required>
+                            <input class="form-control designa" type="number" step="0.01" name="dechet[]" id="example" value="">
                         </div>
                     </div>
                 </td>
@@ -669,76 +669,6 @@
                                                         </div>
                                                     </div>
 
-                                                    <div class="col-lg-5 mt-2">
-                                                        <h5 class="modal-title mb-3 text-center font-weight-bold text-primary" id="myExtraLargeModalLabel">Gestion des temps d'arret</h5>
-                                                        <table class="table table-bordered" id="" width="100%" cellspacing="0">
-                                                            <thead>
-                                                                <tr>       
-                                                                    <th>Début arrets</th>
-                                                                    <th>Fin arrets</th>
-                                                                    <th>Raisons</th>
-                                                                    <th>Supprimer ligne</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody id="dynamicaddErreurs">
-                                                                <?php
-                                                                    //$i=0;
-                                                                    //for ($i = 0; $i <= $NombreLigne; $i++){
-                                                                        //$i++;
-                                                                        //if($article['status'] == 'termine'){
-                                                                ?>
-                                                                    <tr class="rowClass">
-                                                                        <td style="background-color:#CFFEDA;">
-                                                                            <div class="col-md-10">
-                                                                                <div class="mb-1 text-start">
-                                                                                    <input class="form-control" id="validationDefault04" type="time" name="debutarret[]" required>
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
-                                                                        <td style="background-color:#CFFEDA;">
-                                                                            <div class="col-md-10">
-                                                                                <div class="mb-1 text-start">
-                                                                                    <input class="form-control designa" type="time" name="finarret[]" value="" required>
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
-                                                                        <!--<td style="background-color:#CFFEDA;">
-                                                                            <div class="col-md-10">
-                                                                                <div class="mb-1 text-start">
-                                                                                    <select class="form-control" name="raisonerreur[]">
-                                                                                        <option>Raison 1</option>
-                                                                                        <option>Raison 2</option>
-                                                                                        <option>Raison 3</option> 
-                                                                                    </select>                                                
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>!-->
-                                                                        <td style="background-color:#CFFEDA;">
-                                                                            <div class="col-md-10">
-                                                                                <div class="mb-1 text-start">
-                                                                                    <input class="form-control" id="validationDefault01" type="text" name="raisonerreur[]" value="" placeholder="Mettez la raison d'erreur" required>
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
-                                                                        <td style="background-color:#CFFEDA;" class="text-center"> 
-                                                                            <button class="btn btn-danger removeErreurs"
-                                                                                type="button">Enlever
-                                                                            </button> 
-                                                                        </td>
-                                                                    </tr>
-                                                                <?php
-                                                                // }
-                                                                ?>
-                                                            </tbody>
-                                                        </table>
-
-                                                        <div class="col-md-7  d-flex gap-2">
-                                                            <div class="mb-5 text-start d-flex gap-2 pt-4">
-                                                                <input class="btn btn-success  w-lg bouton mr-3" name="ChangerNombreLigne" id="addErreurs" type="button" value="Ajouter une ligne">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
                                                     <div class="col-lg-7 mt-2">
                                                         <h5 class="modal-title mb-3 text-center font-weight-bold text-primary" id="myExtraLargeModalLabel">Consommations</h5>
                                                         <table class="table table-bordered" id="" width="100%" cellspacing="0">
@@ -812,7 +742,7 @@
                                                                         <td style="background-color:#CFFEDA ;">
                                                                             <div class="col-md-10">
                                                                                 <div class="mb-1 text-start">
-                                                                                    <input class="form-control designa" type="number" step="0.01" name="dechet[]" id="example" value="" required>
+                                                                                    <input class="form-control designa" type="number" step="0.01" name="dechet[]" id="example" value="">
                                                                                 </div>
                                                                             </div>
                                                                         </td>
@@ -840,6 +770,76 @@
                                                         <div class="col-md-4  d-flex gap-2">
                                                             <div class="mb-5 text-start d-flex gap-2 pt-4">
                                                                 <input class="btn btn-success  w-lg bouton mr-3" name="ChangerNombreLigne" id="addConsommations" type="button" value="Ajouter une ligne">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-lg-5 mt-2">
+                                                        <h5 class="modal-title mb-3 text-center font-weight-bold text-primary" id="myExtraLargeModalLabel">Gestion des temps d'arret</h5>
+                                                        <table class="table table-bordered" id="" width="100%" cellspacing="0">
+                                                            <thead>
+                                                                <tr>       
+                                                                    <th>Début arrets</th>
+                                                                    <th>Fin arrets</th>
+                                                                    <th>Raisons</th>
+                                                                    <th>Supprimer ligne</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody id="dynamicaddErreurs">
+                                                                <?php
+                                                                    //$i=0;
+                                                                    //for ($i = 0; $i <= $NombreLigne; $i++){
+                                                                        //$i++;
+                                                                        //if($article['status'] == 'termine'){
+                                                                ?>
+                                                                    <tr class="rowClass">
+                                                                        <td style="background-color:#CFFEDA;">
+                                                                            <div class="col-md-10">
+                                                                                <div class="mb-1 text-start">
+                                                                                    <input class="form-control" id="validationDefault04" type="time" name="debutarret[]" required>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td style="background-color:#CFFEDA;">
+                                                                            <div class="col-md-10">
+                                                                                <div class="mb-1 text-start">
+                                                                                    <input class="form-control designa" type="time" name="finarret[]" value="" required>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <!--<td style="background-color:#CFFEDA;">
+                                                                            <div class="col-md-10">
+                                                                                <div class="mb-1 text-start">
+                                                                                    <select class="form-control" name="raisonerreur[]">
+                                                                                        <option>Raison 1</option>
+                                                                                        <option>Raison 2</option>
+                                                                                        <option>Raison 3</option> 
+                                                                                    </select>                                                
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>!-->
+                                                                        <td style="background-color:#CFFEDA;">
+                                                                            <div class="col-md-10">
+                                                                                <div class="mb-1 text-start">
+                                                                                    <input class="form-control" id="validationDefault01" type="text" name="raisonerreur[]" value="" placeholder="Mettez la raison d'erreur" required>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td style="background-color:#CFFEDA;" class="text-center"> 
+                                                                            <button class="btn btn-danger removeErreurs"
+                                                                                type="button">Enlever
+                                                                            </button> 
+                                                                        </td>
+                                                                    </tr>
+                                                                <?php
+                                                                // }
+                                                                ?>
+                                                            </tbody>
+                                                        </table>
+
+                                                        <div class="col-md-7  d-flex gap-2">
+                                                            <div class="mb-5 text-start d-flex gap-2 pt-4">
+                                                                <input class="btn btn-success  w-lg bouton mr-3" name="ChangerNombreLigne" id="addErreurs" type="button" value="Ajouter une ligne">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -1023,70 +1023,6 @@
                                                         </div>
                                                     </div>
 
-                                                    <div class="col-lg-5 ">
-                                                        <h5 class="modal-title mb-3 text-center font-weight-bold text-primary" id="myExtraLargeModalLabel">Gestion des erreurs</h5>
-                                                        <table class="table table-bordered" id="" width="100%" cellspacing="0">
-                                                            <thead>
-                                                                <tr>       
-                                                                    <th>Début arrets</th>
-                                                                    <th>Fin arrets</th>
-                                                                    <th>Raisons</th>
-                                                                    <th>Supprimer ligne</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody id="dynamicaddErreurs">
-                                                                <?php
-                                                                    //$i=0;
-                                                                    for ($i = 0; $i < count($_POST['debutarret']); $i++){
-                                                                        //$i++;
-                                                                        //if($article['status'] == 'termine'){
-                                                                ?>
-                                                                    <tr class="rowClass">
-                                                                        <td style="background-color:#CFFEDA;">
-                                                                            <div class="col-md-10">
-                                                                                <div class="mb-1 text-start">
-                                                                                    <input class="form-control" id="validationDefault04" type="time" value="<?php echo $_POST['debutarret'][$i]; ?>" name="debutarret[]" required>
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
-                                                                        <td style="background-color:#CFFEDA;">
-                                                                            <div class="col-md-10">
-                                                                                <div class="mb-1 text-start">
-                                                                                    <input class="form-control designa" type="time" name="finarret[]" value="<?php echo $_POST['finarret'][$i]; ?>" required>
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
-                                                                        <!--<td style="background-color:#CFFEDA;">
-                                                                            <div class="col-md-10">
-                                                                                <div class="mb-1 text-start">
-                                                                                    <select class="form-control" name="raisonerreur[]">
-                                                                                        <option <?php if ( $_POST['raisonerreur'][$i]=="Raison 1") {echo "selected='selected'";} ?>>Raison 1</option>
-                                                                                        <option <?php if ( $_POST['raisonerreur'][$i]=="Raison 2") {echo "selected='selected'";} ?>>Raison 2</option>
-                                                                                        <option <?php if ( $_POST['raisonerreur'][$i]=="Raison 3") {echo "selected='selected'";} ?>>Raison 3</option> 
-                                                                                    </select>                                                
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>!-->
-                                                                        <td style="background-color:#CFFEDA;">
-                                                                            <div class="col-md-10">
-                                                                                <div class="mb-1 text-start">
-                                                                                    <input class="form-control" id="validationDefault01" type="text" name="raisonerreur[]" value="<?php echo $_POST['raisonerreur'][$i]; ?>" placeholder="Mettez la raison d'erreur" required>
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
-                                                                        <td style="background-color:#CFFEDA;" class="text-center"> 
-                                                                            <button class="btn btn-danger removeErreurs"
-                                                                                type="button">Enlever
-                                                                            </button> 
-                                                                        </td>
-                                                                    </tr>
-                                                                <?php
-                                                                    }
-                                                                ?>
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-
                                                     <div class="col-lg-7">
                                                         <h5 class="modal-title mb-3 text-center font-weight-bold text-primary" id="myExtraLargeModalLabel">Consommations</h5>
                                                         <table class="table table-bordered" id="" width="100%" cellspacing="0">
@@ -1160,7 +1096,7 @@
                                                                         <td style="background-color:#CFFEDA ;">
                                                                             <div class="col-md-10">
                                                                                 <div class="mb-1 text-start">
-                                                                                    <input class="form-control designa" type="number" step="0.01" name="dechet[]" id="example" value="<?php echo $_POST['dechet'][$i]; ?>" required>
+                                                                                    <input class="form-control designa" type="number" step="0.01" name="dechet[]" id="example" value="<?php echo $_POST['dechet'][$i]; ?>">
                                                                                 </div>
                                                                             </div>
                                                                         </td>
@@ -1181,6 +1117,70 @@
                                                                     </tr>
                                                                 <?php
                                                                 }
+                                                                ?>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+
+                                                    <div class="col-lg-5 ">
+                                                        <h5 class="modal-title mb-3 text-center font-weight-bold text-primary" id="myExtraLargeModalLabel">Gestion des erreurs</h5>
+                                                        <table class="table table-bordered" id="" width="100%" cellspacing="0">
+                                                            <thead>
+                                                                <tr>       
+                                                                    <th>Début arrets</th>
+                                                                    <th>Fin arrets</th>
+                                                                    <th>Raisons</th>
+                                                                    <th>Supprimer ligne</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody id="dynamicaddErreurs">
+                                                                <?php
+                                                                    //$i=0;
+                                                                    for ($i = 0; $i < count($_POST['debutarret']); $i++){
+                                                                        //$i++;
+                                                                        //if($article['status'] == 'termine'){
+                                                                ?>
+                                                                    <tr class="rowClass">
+                                                                        <td style="background-color:#CFFEDA;">
+                                                                            <div class="col-md-10">
+                                                                                <div class="mb-1 text-start">
+                                                                                    <input class="form-control" id="validationDefault04" type="time" value="<?php echo $_POST['debutarret'][$i]; ?>" name="debutarret[]" required>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td style="background-color:#CFFEDA;">
+                                                                            <div class="col-md-10">
+                                                                                <div class="mb-1 text-start">
+                                                                                    <input class="form-control designa" type="time" name="finarret[]" value="<?php echo $_POST['finarret'][$i]; ?>" required>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <!--<td style="background-color:#CFFEDA;">
+                                                                            <div class="col-md-10">
+                                                                                <div class="mb-1 text-start">
+                                                                                    <select class="form-control" name="raisonerreur[]">
+                                                                                        <option <?php if ( $_POST['raisonerreur'][$i]=="Raison 1") {echo "selected='selected'";} ?>>Raison 1</option>
+                                                                                        <option <?php if ( $_POST['raisonerreur'][$i]=="Raison 2") {echo "selected='selected'";} ?>>Raison 2</option>
+                                                                                        <option <?php if ( $_POST['raisonerreur'][$i]=="Raison 3") {echo "selected='selected'";} ?>>Raison 3</option> 
+                                                                                    </select>                                                
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>!-->
+                                                                        <td style="background-color:#CFFEDA;">
+                                                                            <div class="col-md-10">
+                                                                                <div class="mb-1 text-start">
+                                                                                    <input class="form-control" id="validationDefault01" type="text" name="raisonerreur[]" value="<?php echo $_POST['raisonerreur'][$i]; ?>" placeholder="Mettez la raison d'erreur" required>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td style="background-color:#CFFEDA;" class="text-center"> 
+                                                                            <button class="btn btn-danger removeErreurs"
+                                                                                type="button">Enlever
+                                                                            </button> 
+                                                                        </td>
+                                                                    </tr>
+                                                                <?php
+                                                                    }
                                                                 ?>
                                                             </tbody>
                                                         </table>

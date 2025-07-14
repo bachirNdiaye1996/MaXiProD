@@ -699,7 +699,7 @@
                 <td style="background-color:#CFFEDA ;">
                     <div class="col-md-10">
                         <div class="mb-1 text-start">
-                            <input class="form-control designa" type="number" step="0.01" name="Proddechet[]" id="example" value="" required>
+                            <input class="form-control designa" type="number" step="0.01" name="Proddechet[]" id="example" value="">
                         </div>
                     </div>
                 </td>
@@ -1094,7 +1094,7 @@
                                                                         <td style="background-color:#CFFEDA ;">
                                                                             <div class="col-md-10">
                                                                                 <div class="mb-1 text-start">
-                                                                                    <input class="form-control designa" type="number" step="0.01" name="Proddechet[]" id="example" value="<?php echo $rowProduction['proddechet']; ?>" required>
+                                                                                    <input class="form-control designa" type="number" step="0.01" name="Proddechet[]" id="example" value="<?php echo $rowProduction['proddechet']; ?>">
                                                                                 </div>
                                                                             </div>
                                                                         </td>
@@ -1463,7 +1463,7 @@
                                                                         <td style="background-color:#CFFEDA ;">
                                                                             <div class="col-md-10">
                                                                                 <div class="mb-1 text-start">
-                                                                                    <input class="form-control designa" type="number" step="0.01" name="Proddechet[]" id="example" value="<?php echo $_POST['Proddechet'][$i]; ?>" required>
+                                                                                    <input class="form-control designa" type="number" step="0.01" name="Proddechet[]" id="example" value="<?php echo $_POST['Proddechet'][$i]; ?>">
                                                                                 </div>
                                                                             </div>
                                                                         </td>

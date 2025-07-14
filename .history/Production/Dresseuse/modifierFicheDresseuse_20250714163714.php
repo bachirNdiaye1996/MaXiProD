@@ -350,8 +350,8 @@
                         
                         if($iddresseuseproduction != ""){
                             $insertUser=$db->prepare("UPDATE `dresseuseproduction` SET `proddiametre`=?, `prodnumerofin`=?, `prodpoids`=?, `prodnbBarreColis`=?, `prodnbcolis`=?, `prodnbbarrerestant`=?,
-                            `prodlongueurbarre`=?, `proddechet`=?, `idfichedresseuse`=? where `iddresseuseproduction`=?;");
-                            $insertUser->execute(array($diametre,$numerofin,$poids,$ProdnbBarreColis,$Prodnbcolis,$Prodnbbarrerestant,$Prodlongueurbarre,$Proddechet,$idsupfiche,$iddresseuseproduction));
+                            `prodlongueurbarre`=?, `proddechet`=?, `idfichedresseuse`=?, `dateCreation`=? where `iddresseuseproduction`=?;");
+                            $insertUser->execute(array($diametre,$numerofin,$poids,$ProdnbBarreColis,$Prodnbcolis,$Prodnbbarrerestant,$Prodlongueurbarre,$Proddechet,$idsupfiche,$datecreationfiche,$iddresseuseproduction));
 
                             // Supprimer la ligne
                             if(isset($_POST['suprimerProd'.$i])){
@@ -360,8 +360,8 @@
                             }
                         }else{
                             $insertUser=$db->prepare("INSERT INTO `dresseuseproduction` (`iddresseuseproduction`, `proddiametre`, `prodnumerofin`, `prodpoids`, `idfichedresseuse`, `actif`, `prodnbBarreColis`, `prodnbcolis`, `prodnbbarrerestant`, `proddechet`, `prodlongueurbarre`,`dateCreation`) 
-                            VALUES (NULL, ?, ?, ?, ?, '1', ?, ?, ?, ?, ?);");
-                            $insertUser->execute(array($diametre,$numerofin,$poids,$idsupfiche, $ProdnbBarreColis,$Prodnbcolis,$Prodnbbarrerestant,$Proddechet,$Prodlongueurbarre));
+                            VALUES (NULL, ?, ?, ?, ?, '1', ?, ?, ?, ?, ?, ?);");
+                            $insertUser->execute(array($diametre,$numerofin,$poids,$idsupfiche, $ProdnbBarreColis,$Prodnbcolis,$Prodnbbarrerestant,$Proddechet,$Prodlongueurbarre,$datecreationfiche));
                         }
                     }
                 //
@@ -699,7 +699,7 @@
                 <td style="background-color:#CFFEDA ;">
                     <div class="col-md-10">
                         <div class="mb-1 text-start">
-                            <input class="form-control designa" type="number" step="0.01" name="Proddechet[]" id="example" value="" required>
+                            <input class="form-control designa" type="number" step="0.01" name="Proddechet[]" id="example" value="">
                         </div>
                     </div>
                 </td>
@@ -1094,7 +1094,7 @@
                                                                         <td style="background-color:#CFFEDA ;">
                                                                             <div class="col-md-10">
                                                                                 <div class="mb-1 text-start">
-                                                                                    <input class="form-control designa" type="number" step="0.01" name="Proddechet[]" id="example" value="<?php echo $rowProduction['proddechet']; ?>" required>
+                                                                                    <input class="form-control designa" type="number" step="0.01" name="Proddechet[]" id="example" value="<?php echo $rowProduction['proddechet']; ?>">
                                                                                 </div>
                                                                             </div>
                                                                         </td>
@@ -1463,7 +1463,7 @@
                                                                         <td style="background-color:#CFFEDA ;">
                                                                             <div class="col-md-10">
                                                                                 <div class="mb-1 text-start">
-                                                                                    <input class="form-control designa" type="number" step="0.01" name="Proddechet[]" id="example" value="<?php echo $_POST['Proddechet'][$i]; ?>" required>
+                                                                                    <input class="form-control designa" type="number" step="0.01" name="Proddechet[]" id="example" value="<?php echo $_POST['Proddechet'][$i]; ?>">
                                                                                 </div>
                                                                             </div>
                                                                         </td>

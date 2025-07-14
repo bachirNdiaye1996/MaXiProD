@@ -12,6 +12,7 @@
 
     //Variables
     // Il faut savoir que metal3 est remplacer par niambour
+    $k = 0;
     $valideFiche="";
     $ProblemeQuart="";
     $ProblemeCompteur="";
@@ -57,7 +58,7 @@
             //
 
             //On vérifie si la fiche existe ou pas
-                $sqlEpaisseur = "SELECT * FROM `fichedresseuse` WHERE `actif`=1 AND `quart`='$quart' AND `machine`='$machine' AND `dateCreation`='$datecreationfiche';";
+                $sqlEpaisseur = "SELECT * FROM `fichecranteuseq1` WHERE `actif`=1 AND `quart`='$quart' AND `machine`='$machine' AND `dateCreation`='$datecreationfiche';";
                 // On prépare la requête
                 $queryEpaisseur = $db->prepare($sqlEpaisseur);
                 $queryEpaisseur->execute();
@@ -101,6 +102,7 @@
                 $numerofin=htmlspecialchars($_POST['numerofin'][$i]);
                 $heuremontagebobine=htmlspecialchars($_POST['heuremontagebobine'][$i]);
                 $poids=htmlspecialchars($_POST['poids'][$i]);
+                $dechet=htmlspecialchars($_POST['dechet'][$i]);
 
                 if($numerofin == ""){
                     $ProblemeFilMachine="erreurProblemeFilMachine";
@@ -120,14 +122,14 @@
         //Fin verification
         
         if($ProblemeArret != "erreurProblemeArret" && $ProblemeCompteur != "erreurProblemeCompteur" && $ProblemeQuart != "erreurProblemeQuart" && $ProblemeFilMachine != "erreurProblemeFilMachine" && ($ProblemeFicheExist != "erreurProblemeFicheExist")){            
-            $insertUser=$db->prepare("INSERT INTO `fichedresseuse` (`idfichedresseuse`, `user`, `dateajout`, `quart`, `actif`, `dateCreation`, `compteurdebut`,
+            $insertUser=$db->prepare("INSERT INTO `fichecranteuseq1` (`idfichecranteuseq1`, `user`, `dateajout`, `quart`, `actif`, `dateCreation`, `compteurdebut`,
              `compteurfin`, `controleur1`, `controleur2`, `machine`, `observationdebut`, `heuredepartquart`, `heurefinquart`, `saisisseur`, `vitesse`,
               `observationfin`, `poidsestimetravaillenonnote`, `accepteprodmodif`, `actifapprouvprod`) VALUES (NULL, ?, current_timestamp(), ?, '1', ?, ?,
               ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '0', '0');");
             $insertUser->execute(array($user,$quart,$datecreationfiche,$compteurdebut,$compteurfin,$controleur1,$controleur2,$machine,$observationdebut,$heuredepartquart,$heurefinquart,$user,$vitesse,$observationfin,$poidsestimetravaillenonnote));
 
             // Récuperer le dernier id de la fiche
-                $sqlEpaisseur = "SELECT MAX(idfichedresseuse)  AS idMax FROM `fichedresseuse`";
+                $sqlEpaisseur = "SELECT MAX(idfichecranteuseq1)  AS idMax FROM `fichecranteuseq1`";
                 // On prépare la requête
                 $queryEpaisseur = $db->prepare($sqlEpaisseur);
                 $queryEpaisseur->execute();
@@ -141,66 +143,99 @@
                     $finarret=htmlspecialchars($_POST['finarret'][$i]);
                     $raisonerreur=htmlspecialchars($_POST['raisonerreur'][$i]);
 
-                    $insertUser=$db->prepare("INSERT INTO `dresseusearret` (`iddresseusearret`, `debutarret`, `finarret`, `raison`, `idfichedresseuse`, `actif`) 
+                    $insertUser=$db->prepare("INSERT INTO `cranteuseq1arret` (`idcranteuseq1arret`, `debutarret`, `finarret`, `raison`, `idfichecranteuseq1`, `actif`) 
                     VALUES (NULL, ?, ?, ?, ?, '1');");
                     $insertUser->execute(array($debutarret,$finarret,$raisonerreur,$idfichecranteuseq1Max));
                 }
             //
 
             // Consommations
-                for ($i = 0; $i < count($_POST['diametre']); $i++){   
+                for ($i = 0; $i < count($_POST['diametre']); $i++){
                     $diametre=htmlspecialchars( $_POST['diametre'][$i]);
                     $numerofinString = explode("/", htmlspecialchars($_POST['numerofin'][$i]));
                     $numerofin=$numerofinString[0];
-                    $idcranteuseq1prod=$numerofinString[1];
                     $heuremontagebobine=htmlspecialchars($_POST['heuremontagebobine'][$i]);
                     $poids=htmlspecialchars($_POST['poids'][$i]);
+                    $dechet=htmlspecialchars($_POST['dechet'][$i]);
 
-                    // On enleve une bobine dans la table cranteuseq1production
-                    if(isset($_POST['finirfm'.$i])){ 
-                        $req ="UPDATE cranteuseq1production SET `prodnbbobine`=0 where `idcranteuseq1production`='$idcranteuseq1prod';";
+                    // Voir si FM est fini
+                    if(isset($_POST['finirfm'.$i])){
+                        $insertUser=$db->prepare("INSERT INTO `cranteuseq1consommation` (`idcranteuseq1consommation`, `diametre`, `numerofin`, `poids`, `dechet`, `idfichecranteuseq1`, `actif`, `heuremontagebobine`,`finirfm`) 
+                        VALUES (NULL, ?, ?, ?, ?, ?, '1', ?, 1);");
+                        $insertUser->execute(array($diametre,$numerofin,$poids,$dechet,$idfichecranteuseq1Max, $heuremontagebobine));
+    
+                        // On enleve une bobine dans la table epaisseur
+                        $req ="UPDATE epaisseur SET `$diametre`=`$diametre`-1 where `lieu`='Cranteuse';";
                         //$db->query($req);
                         $reqtitre = $db->prepare($req);
                         $reqtitre->execute();
-                            
-                        $insertUser=$db->prepare("INSERT INTO `dresseuseconsommation` (`iddresseuseconsommation`, `diametre`, `numerofin`, `poids`, `idfichedresseuse`, `actif`, `heuremontagebobine`, `finirfm`) 
-                        VALUES (NULL, ?, ?, ?, ?, '1', ?, 1);");
-                        $insertUser->execute(array($diametre,$numerofin,$poids,$idfichecranteuseq1Max, $heuremontagebobine));
+    
+                        //On enleve une bobine dans la table matiere
+                        $req ="UPDATE matiere SET `nbbobineactuel` = `nbbobineactuel` - 1 where `numbobine`= ?;";
+                        $reqtitre = $db->prepare($req);
+                        $reqtitre->execute(array($numerofin));
                     }else{
-                        $insertUser=$db->prepare("INSERT INTO `dresseuseconsommation` (`iddresseuseconsommation`, `diametre`, `numerofin`, `poids`, `idfichedresseuse`, `actif`, `heuremontagebobine`) 
-                        VALUES (NULL, ?, ?, ?, ?, '1', ?);");
-                        $insertUser->execute(array($diametre,$numerofin,$poids,$idfichecranteuseq1Max, $heuremontagebobine));
+                        $insertUser=$db->prepare("INSERT INTO `cranteuseq1consommation` (`idcranteuseq1consommation`, `diametre`, `numerofin`, `poids`, `dechet`, `idfichecranteuseq1`, `actif`, `heuremontagebobine`) 
+                        VALUES (NULL, ?, ?, ?, ?, ?, '1', ?);");
+                        $insertUser->execute(array($diametre,$numerofin,$poids,$dechet,$idfichecranteuseq1Max, $heuremontagebobine));
+    
+                        /*// On enleve une bobine dans la table epaisseur
+                        $req ="UPDATE epaisseur SET `$diametre`=`$diametre`-1 where `lieu`='Cranteuse';";
+                        //$db->query($req);
+                        $reqtitre = $db->prepare($req);
+                        $reqtitre->execute();
+    
+                        //On enleve une bobine dans la table matiere
+                        $req ="UPDATE matiere SET `nbbobineactuel` = `nbbobineactuel` - 1 where `numbobine`= ?;";
+                        $reqtitre = $db->prepare($req);
+                        $reqtitre->execute(array($numerofin));*/
                     }
                 }
             //
 
             // Productions
-                for ($i = 0; $i < count($_POST['Proddiametre']); $i++){   
+                for ($i = 0; $i < count($_POST['Proddiametre']); $i++){
                     $diametre=htmlspecialchars( $_POST['Proddiametre'][$i]);
-                    $ProdnbBarreColis=htmlspecialchars( $_POST['ProdnbBarreColis'][$i]);
-                    $Prodnbcolis=htmlspecialchars( $_POST['Prodnbcolis'][$i]);
-                    $Prodnbbarrerestant=htmlspecialchars( $_POST['Prodnbbarrerestant'][$i]);
-                    $Proddechet=htmlspecialchars( $_POST['Proddechet'][$i]);
-                    $Prodlongueurbarre=htmlspecialchars( $_POST['Prodlongueurbarre'][$i]); 
-
+                    $nomenclature=htmlspecialchars( $_POST['Prodnomenclature'][$i]);
                     $numerofinString = explode("/", htmlspecialchars($_POST['Prodnumerofin'][$i]));
                     $numerofin=$numerofinString[0];
                     $poids=htmlspecialchars($_POST['Prodpoids'][$i]);
-                    $insertUser=$db->prepare("INSERT INTO `dresseuseproduction` (`iddresseuseproduction`, `proddiametre`, `prodnumerofin`, `prodpoids`, `idfichedresseuse`, `actif`,`prodnbBarreColis`,`prodnbcolis`,`prodnbbarrerestant`,`proddechet`,`prodlongueurbarre`,`dateCreation`) 
-                    VALUES (NULL, ?, ?, ?, ?, '1', ?, ?, ?, ?, ?, ?);");
-                    $insertUser->execute(array($diametre,$numerofin,$poids,$idfichecranteuseq1Max,$ProdnbBarreColis,$Prodnbcolis,$Prodnbbarrerestant,$Proddechet,$Prodlongueurbarre,$datecreationfiche));
+                    // C'est pour les échantillons
+                    $echanlongueur=htmlspecialchars( $_POST['Echanlongueur'][$i]);
+                    $echanpoids=htmlspecialchars($_POST['Echanpoids'][$i]);
+                    $echandf=htmlspecialchars($_POST['Echandf'][$i]);
 
-                    // Rendre inactif le produit choisi  ------->  `actifdresseuse` = 1
+                    $insertUser=$db->prepare("INSERT INTO `cranteuseq1production` (`idcranteuseq1production`, `proddiametre`, `prodnumerofin`, `prodpoids`, `idfichecranteuseq1`, `actif`,`prodnomenclature`,`echanlongueur`,`echanpoids`,`echandf`,`dateCreation`) 
+                    VALUES (NULL, ?, ?, ?, ?, '1', ?, ?, ?, ?, ?);");
+                    $insertUser->execute(array($diametre,$numerofin,$poids,$idfichecranteuseq1Max,$nomenclature,$echanlongueur,$echanpoids,$echandf,$datecreationfiche));
                 }
             //
 
-            header("location: detailsFicheDresseuse.php?idfichedresseuse=$idfichecranteuseq1Max&quart=$quart");
+            header("location: detailsCranteuseQ1.php?idfichecranteuseq1=$idfichecranteuseq1Max&quart=$quart");
             exit;
         }
+
+        for ($i = 0; $i < count($_POST['diametre']); $i++){}
     }
 
+    //** Nombre des bobines total
+        $sql = "SELECT SUM(`3`) + SUM(`3.5`) + SUM(`4`) + SUM(`4.5`) + SUM(`5`) + SUM(`5.5`) + SUM(`6`) + SUM(`6.5`) + SUM(`7`) + SUM(`7.5`)
+        + SUM(`8`) + SUM(`8.5`) + SUM(`9`) + SUM(`9.5`) + SUM(`10`) + SUM(`10.5`) + SUM(`11`) + SUM(`11.5`) + SUM(`12`) + SUM(`12.5`) + SUM(`13`) + SUM(`13.5`) + 
+        SUM(`14`) + SUM(`14.5`) + SUM(`15`) + SUM(`15.5`) + SUM(`16`) + SUM(`16.5`) + SUM(`17`) AS nb_reception_total FROM `epaisseur` where `lieu`='Cranteuse';";
+        // On prépare la requête
+        $query = $db->prepare($sql);
+
+        // On exécute
+        $query->execute();
+
+        // On récupère le nombre d'articles
+        $result = $query->fetch();
+
+        $nbReception = (int) $result['nb_reception_total'];
+    //** Fin nombre des bobines total
+
     //** Debut select de stockage pour Metal1
-        $sqlepaisseur = "SELECT * FROM `cranteuseq1production` where `actif`=1 and `actifdresseuse`=1 and `prodnbbobine`=1  ORDER BY `idcranteuseq1production` DESC;";
+        $sqlepaisseur = "SELECT * FROM `matiere` where `nbbobineactuel`>0 and `lieutransfert`='Cranteuse'  ORDER BY `idmatiere` DESC;";
 
         // On prépare la requête
         $queryepaisseur = $db->prepare($sqlepaisseur);
@@ -290,10 +325,11 @@
     <script type="text/javascript"> 
         var foo1 = "<script>";
         var foo2 = "</scr"+"ipt>";
+
         $(document).ready(function(){  
-            var i = 0;
-            var k = 0;
+            var i = 0; 
             var j = 0; 
+            var k = 0;
             $('#addErreurs').click(function(){           
             //alert('ok');           
             k++;           
@@ -330,32 +366,31 @@
 
             $('#addConsommations').click(function(){           
             //alert('ok');           
-            i++; 
-            //console.log(i);          
+            i++;  
             $('#dynamicaddConsommations').append(`
             <tr id="row'+i+'" class="rowClass">
                 <td style="background-color:#CFFEDA ;">
                     <div class="col-md-10">
                         <div class="mb-1 text-start">
                             <input class="form-control designa" type="number" step="0.01" name="diametre[]" id="diametre`+i+`" value="" required>
-                        </div>
+                        </div> 
                     </div>
                 </td>
                 <td style="background-color:#CFFEDA ;">
                     <div class="">
                         <div class="mb-1 text-start">
-                            <select class="form-control" id="numerofin`+i+`" name="numerofin[]" required>
+                            <select class="form-control" name="numerofin[]" id="numerofin`+i+`" required>
                                 <option></option> 
                                 <?php
                                     foreach($stockCranteuse as $stock){
                                 ?>                                                                                        
-                                    <option value="<?php echo $stock['prodnumerofin'].'/'.$stock['idcranteuseq1production'].'/'.$stock['proddiametre'].'/'.$stock['prodpoids']; ?>"> <?php echo $stock['prodnumerofin']; ?></option>                                                                                  
+                                    <option value="<?php echo $stock['numbobine'].'/'.$stock['epaisseur'].'/'.$stock['poidsdeclare']; ?>"> <?php echo $stock['numbobine']; ?></option>                                                                                     
                                 <?php
-                                    }
-                                ?>
+                                    }  
+                                ?> 
                             </select>                                                
                         </div>
-                    </div>
+                    </div>     
                 </td>
                 `+foo1+`
                     $(document).ready(function(){
@@ -363,8 +398,8 @@
                             //Selected value
                             var inputValue = $(this).val();
                             var myArray = inputValue.split('/');
-                            document.getElementById("diametre`+i+`").value = myArray[2];
-                            document.getElementById("poids`+i+`").value = myArray[3];
+                            document.getElementById("diametre`+i+`").value = myArray[1];
+                            document.getElementById("poids`+i+`").value = myArray[2];
                         });
                     });
                 `+foo2+`
@@ -379,6 +414,13 @@
                     <div class="col-md-10">
                         <div class="mb-1 text-start">
                             <input class="form-control designa" type="number" step="0.01" name="poids[]" id="poids`+i+`" value="" required>
+                        </div>
+                    </div>
+                </td>
+                <td style="background-color:#CFFEDA ;">
+                    <div class="col-md-10">
+                        <div class="mb-1 text-start">
+                            <input class="form-control designa" type="number" step="0.01" name="dechet[]" id="example" value="">
                         </div>
                     </div>
                 </td>
@@ -420,40 +462,19 @@
                 <td style="background-color:#CFFEDA ;">
                     <div class="col-md-10">
                         <div class="mb-1 text-start">
-                            <input class="form-control designa" type="number" step="0.01" name="ProdnbBarreColis[]" id="ProdnbBarreColis" value="" required>
-                        </div>
-                    </div>
-                </td>
-                <td style="background-color:#CFFEDA ;">
-                    <div class="col-md-10">
-                        <div class="mb-1 text-start">
-                            <input class="form-control designa" type="number" step="0.01" name="Prodnbcolis[]" id="Prodnbcolis" value="" required>
-                        </div>
-                    </div>
-                </td>
-                <td style="background-color:#CFFEDA ;">
-                    <div class="col-md-10">
-                        <div class="mb-1 text-start">
-                            <input class="form-control designa" type="number" step="0.01" name="Prodnbbarrerestant[]" id="Prodnbbarrerestant" value="">
-                        </div>
-                    </div>
-                </td>
-                <td style="background-color:#CFFEDA ;">
-                    <div class="col-md-10">
-                        <div class="mb-1 text-start">
-                            <input class="form-control designa" type="number" step="0.01" name="Prodlongueurbarre[]" id="Prodlongueurbarre" value="">
+                            <input class="form-control designa" type="text" name="Prodnomenclature[]" id="Prodnomenclature" value="">
                         </div>
                     </div>
                 </td>
                 <td style="background-color:#CFFEDA ;">
                     <div class="">
-                        <div class="mb-1 text-start ">
-                            <select class="form-control designa" name="Prodnumerofin[]" id="numerofinProd`+j+`" required>
+                        <div class="mb-1 text-start">
+                            <select class="form-control" name="Prodnumerofin[]" id="numerofinProd`+j+`" required>
                                 <option></option> 
                                 <?php
                                     foreach($stockCranteuse as $stock){
                                 ?>      
-                                    <option value="<?php echo $stock['prodnumerofin'].'/'.$stock['idcranteuseq1production'].'/'.$stock['proddiametre'].'/'.$stock['prodpoids']; ?>"><?php echo $stock['prodnumerofin']; ?></option>                                                                                     
+                                    <option value="<?php echo $stock['numbobine'].'/'.$stock['epaisseur'].'/'.$stock['poidsdeclare']; ?>"> <?php echo $stock['numbobine']; ?></option>                                                                                     
                                 <?php
                                     }
                                 ?>
@@ -467,8 +488,8 @@
                             //Selected value
                             var inputValue = $(this).val();
                             var myArray = inputValue.split('/');
-                            document.getElementById("Proddiametre`+j+`").value = myArray[2];
-                            document.getElementById("Prodpoids`+j+`").value = myArray[3];
+                            document.getElementById("Proddiametre`+j+`").value = myArray[1];
+                            document.getElementById("Prodpoids`+j+`").value = myArray[2];
                         });
                     });
                 `+foo2+`
@@ -482,7 +503,21 @@
                 <td style="background-color:#CFFEDA ;">
                     <div class="col-md-10">
                         <div class="mb-1 text-start">
-                            <input class="form-control designa" type="number" step="0.01" name="Proddechet[]" id="example" value="" required>
+                            <input class="form-control designa" type="number" step="0.01" name="Echanlongueur[]" id="example" value="" placeholder="EXP : 30">
+                        </div>
+                    </div>
+                </td>
+                <td style="background-color:#CFFEDA ;">
+                    <div class="col-md-10">
+                        <div class="mb-1 text-start">
+                            <input class="form-control designa" type="number" step="0.01" name="Echanpoids[]" id="example" value="" placeholder="EXP : 30">
+                        </div>
+                    </div>
+                </td>
+                <td style="background-color:#CFFEDA ;">
+                    <div class="col-md-10">
+                        <div class="mb-1 text-start">
+                            <input class="form-control designa" type="text" name="Echandf[]" id="example" value="" placeholder="EXP : 30">
                         </div>
                     </div>
                 </td>
@@ -493,6 +528,40 @@
                 </td>
             </tr>`
             );});
+
+            $('#addEchantillons').click(function(){           
+            //alert('ok');           
+            i++;           
+            $('#dynamicaddEchantillons').append(`
+            <tr id="row'+i+'" class="rowClass">
+                <td style="background-color:#CFFEDA ;">
+                    <div class="col-md-10">
+                        <div class="mb-1 text-start">
+                            <input class="form-control designa" type="number" step="0.01" name="Echandiametre[]" id="" value="">
+                        </div>
+                    </div>
+                </td>
+                <td style="background-color:#CFFEDA ;">
+                    <div class="col-md-10">
+                        <div class="mb-1 text-start">
+                            <input class="form-control designa" type="number" step="0.01" name="Echanlongueur[]" id="" value="">
+                        </div>
+                    </div>
+                </td>
+                <td style="background-color:#CFFEDA ;">
+                    <div class="col-md-10">
+                        <div class="mb-1 text-start">
+                            <input class="form-control designa" type="text" name="Echandf[]" id="" value="">
+                        </div>
+                    </div>
+                </td>
+                <td style="background-color:#CFFEDA ;" class="text-center"> 
+                    <button class="btn btn-danger removeEchantillons"
+                        type="button">Enlever
+                    </button> 
+                </td>
+            </tr>`
+            );})
             ;}); 
     </script> 
 
@@ -526,7 +595,7 @@
                             <div class="modal-dialog-centered">
                                 <div class="modal-content col-lg-12">
                                     <div class="modal-header col-lg-12 bg-primary" >
-                                        <h5 class="modal-title" id="myExtraLargeModalLabel" style="color:white; text-align: center;">Ajout fiche de production dresseuse</h5>
+                                        <h5 class="modal-title" id="myExtraLargeModalLabel" style="color:white; text-align: center;">Ajout fiche de production cranteuse</h5>
                                     </div>
                                     <div class="modal-body">
                                         <form action="#" method="POST" enctype="multipart/form-data" class="row g-3">
@@ -553,19 +622,15 @@
                                                     <div class="col-md-2 mr-2 mt-3 mb-5 mr-4">
                                                         <div class="mb-1 text-start">
                                                             <label class="form-label font-weight-bold text-primary" for="nom">Nom complet du machiniste 2</label>
-                                                            <input class="form-control" id="validationDefault01" type="text" name="controleur2" value="" placeholder="Mettez le nom complet du machiniste 2">
+                                                            <input class="form-control" id="validationDefault01" type="text" name="controleur2" value="" placeholder="Mettez le nom complet du machiniste 2" required>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-2 mr-4 mt-3 mb-5">
+                                                    <div class="col-md-2 mr-4 mt-3 mb-5 ml-5">
                                                         <div class="mb-1 text-start">
                                                             <label class="form-label font-weight-bold text-primary" for="nom">Machine</label>
                                                             <select class="form-control" name="machine">
-                                                                <option>Dresseuse 1</option>
-                                                                <option>Dresseuse 2</option>
-                                                                <option>Dresseuse 4</option>
-                                                                <option>Dresseuse 5</option>
-                                                                <option>Dresseuse 6</option>
-                                                                <option>Dresseuse 7</option>
+                                                                <option>Cranteuse 1</option>
+                                                                <option>Cranteuse 2</option>
                                                             </select>                                                
                                                         </div>
                                                     </div>
@@ -587,7 +652,7 @@
                                                             <input class="form-control" id="validationDefault03" type="time" name="heurefinquart" value="" required>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-2 mr-4 mt-3 mb-5">
+                                                    <div class="col-md-2 mr-4 mt-3 mb-5 ml-5">
                                                         <div class="mb-1 text-start">
                                                             <label class="form-label font-weight-bold text-primary" for="nom">Quart</label>
                                                             <select class="form-control" name="quart">
@@ -604,7 +669,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <div class="col-lg-7 ">
+                                                    <div class="col-lg-7 mt-2">
                                                         <h5 class="modal-title mb-3 text-center font-weight-bold text-primary" id="myExtraLargeModalLabel">Consommations</h5>
                                                         <table class="table table-bordered" id="" width="100%" cellspacing="0">
                                                             <thead>
@@ -613,6 +678,7 @@
                                                                     <th>N° fil machine</th>
                                                                     <th>Heure montage</th>
                                                                     <th>Poids</th>
+                                                                    <th>Déchets</th>
                                                                     <th>Finir FM</th>
                                                                     <th>Supprimer ligne</th>
                                                                 </tr>
@@ -635,12 +701,12 @@
                                                                         <td style="background-color:#CFFEDA ;">
                                                                             <div class="">
                                                                                 <div class="mb-1 text-start">
-                                                                                    <select class="form-control" id="numerofin" name="numerofin[]" required> 
+                                                                                    <select class="form-control" id="numerofin" name="numerofin[]" required>
                                                                                         <option></option> 
                                                                                         <?php
                                                                                             foreach($stockCranteuse as $stock){
                                                                                         ?>   
-                                                                                           <option value="<?php echo $stock['prodnumerofin'].'/'.$stock['idcranteuseq1production'].'/'.$stock['proddiametre'].'/'.$stock['prodpoids']; ?>"> <?php echo $stock['prodnumerofin']; ?></option>                                                                                     
+                                                                                           <option value="<?php echo $stock['numbobine'].'/'.$stock['epaisseur'].'/'.$stock['poidsdeclare']; ?>"> <?php echo $stock['numbobine']; ?></option>                                                                                     
                                                                                         <?php
                                                                                             }
                                                                                         ?>
@@ -648,6 +714,17 @@
                                                                                 </div>
                                                                             </div>
                                                                         </td>
+                                                                        <script>
+                                                                            $(document).ready(function(){
+                                                                                $('#numerofin').change(function(){
+                                                                                    //Selected value
+                                                                                    var inputValue = $(this).val();
+                                                                                    var myArray = inputValue.split('/');
+                                                                                    document.getElementById("diametre").value = myArray[1];
+                                                                                    document.getElementById("poids").value = myArray[2];
+                                                                                });
+                                                                            });
+                                                                        </script>
                                                                         <td style="background-color:#CFFEDA ;">
                                                                             <div class="col-md-10">
                                                                                 <div class="mb-1 text-start">
@@ -659,6 +736,13 @@
                                                                             <div class="col-md-10">
                                                                                 <div class="mb-1 text-start">
                                                                                     <input class="form-control designa" type="number" step="0.01" name="poids[]" id="poids" value="" required>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td style="background-color:#CFFEDA ;">
+                                                                            <div class="col-md-10">
+                                                                                <div class="mb-1 text-start">
+                                                                                    <input class="form-control designa" type="number" step="0.01" name="dechet[]" id="example" value="" required>
                                                                                 </div>
                                                                             </div>
                                                                         </td>
@@ -681,17 +765,6 @@
                                                                 // }
                                                                 ?>
                                                             </tbody>
-                                                            <script>
-                                                                $(document).ready(function(){
-                                                                    $('#numerofin').change(function(){
-                                                                        //Selected value
-                                                                        var inputValue = $(this).val();
-                                                                        var myArray = inputValue.split('/');
-                                                                        document.getElementById("diametre").value = myArray[2];
-                                                                        document.getElementById("poids").value = myArray[3];
-                                                                    });
-                                                                });
-                                                            </script>
                                                         </table>
 
                                                         <div class="col-md-4  d-flex gap-2">
@@ -701,7 +774,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <div class="col-lg-5 ">
+                                                    <div class="col-lg-5 mt-2">
                                                         <h5 class="modal-title mb-3 text-center font-weight-bold text-primary" id="myExtraLargeModalLabel">Gestion des temps d'arret</h5>
                                                         <table class="table table-bordered" id="" width="100%" cellspacing="0">
                                                             <thead>
@@ -734,6 +807,17 @@
                                                                                 </div>
                                                                             </div>
                                                                         </td>
+                                                                        <!--<td style="background-color:#CFFEDA;">
+                                                                            <div class="col-md-10">
+                                                                                <div class="mb-1 text-start">
+                                                                                    <select class="form-control" name="raisonerreur[]">
+                                                                                        <option>Raison 1</option>
+                                                                                        <option>Raison 2</option>
+                                                                                        <option>Raison 3</option> 
+                                                                                    </select>                                                
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>!-->
                                                                         <td style="background-color:#CFFEDA;">
                                                                             <div class="col-md-10">
                                                                                 <div class="mb-1 text-start">
@@ -759,20 +843,19 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                            
+
                                                     <div class="col-lg-12">
                                                         <h5 class="modal-title mb-3 text-center font-weight-bold text-primary" id="myExtraLargeModalLabel">Productions</h5>
                                                         <table class="table table-bordered" id="" cellspacing="0">
                                                             <thead>
                                                                 <tr>       
                                                                     <th>Diametre</th>
-                                                                    <th>Nombre barres par colis</th>
-                                                                    <th>Nombre colis</th>
-                                                                    <th>barres restantes</th>
-                                                                    <th>Longueur barres</th>
+                                                                    <th>Nomenclature</th>
                                                                     <th>N° fil machine</th>
                                                                     <th>Poids</th>
-                                                                    <th>Déchets</th>
+                                                                    <th>Longueur échantillon (cm)</th>
+                                                                    <th>Poids échantillon</th>
+                                                                    <th>N° DF échantillon</th>
                                                                     <th>Supprimer ligne</th>
                                                                 </tr>
                                                             </thead>
@@ -794,28 +877,7 @@
                                                                         <td style="background-color:#CFFEDA ;">
                                                                             <div class="col-md-10">
                                                                                 <div class="mb-1 text-start">
-                                                                                    <input class="form-control designa" type="number" step="0.01" name="ProdnbBarreColis[]" id="ProdnbBarreColis" value="" required>
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
-                                                                        <td style="background-color:#CFFEDA ;">
-                                                                            <div class="col-md-10">
-                                                                                <div class="mb-1 text-start">
-                                                                                    <input class="form-control designa" type="number" step="0.01" name="Prodnbcolis[]" id="Prodnbcolis" value="" required>
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
-                                                                        <td style="background-color:#CFFEDA ;">
-                                                                            <div class="col-md-10">
-                                                                                <div class="mb-1 text-start">
-                                                                                    <input class="form-control designa" type="number" step="0.01" name="Prodnbbarrerestant[]" id="Prodnbbarrerestant" value="">
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
-                                                                        <td style="background-color:#CFFEDA ;">
-                                                                            <div class="col-md-10">
-                                                                                <div class="mb-1 text-start">
-                                                                                    <input class="form-control designa" type="number" step="0.01" name="Prodlongueurbarre[]" id="Prodlongueurbarre" value="">
+                                                                                    <input class="form-control designa" type="text" name="Prodnomenclature[]" id="Prodnomenclature" value="">
                                                                                 </div>
                                                                             </div>
                                                                         </td>
@@ -823,15 +885,15 @@
                                                                             <div class="">
                                                                                 <div class="mb-1 text-start">
                                                                                     <select class="form-control" name="Prodnumerofin[]" id="numerofinProd" required>
-                                                                                        <option></option>
+                                                                                        <option></option> 
                                                                                         <?php
                                                                                             foreach($stockCranteuse as $stock){
                                                                                         ?>                                                                                        
-                                                                                           <option value="<?php echo $stock['prodnumerofin'].'/'.$stock['proddiametre'].'/'.$stock['prodpoids']; ?>"><?php echo $stock['prodnumerofin']; ?></option>                                                                                     
+                                                                                           <option value="<?php echo $stock['numbobine'].'/'.$stock['epaisseur'].'/'.$stock['poidsdeclare']; ?>"> <?php echo $stock['numbobine']; ?></option>                                                                                     
                                                                                         <?php
                                                                                             }
                                                                                         ?>
-                                                                                    </select>                                              
+                                                                                    </select>                                                
                                                                                 </div>
                                                                             </div>
                                                                         </td>
@@ -856,7 +918,21 @@
                                                                         <td style="background-color:#CFFEDA ;">
                                                                             <div class="col-md-10">
                                                                                 <div class="mb-1 text-start">
-                                                                                    <input class="form-control designa" type="number" step="0.01" name="Proddechet[]" id="example" value="" required>
+                                                                                    <input class="form-control designa" type="number" step="0.01" name="Echanlongueur[]" id="example" value="" placeholder="EXP : 30">
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td style="background-color:#CFFEDA ;">
+                                                                            <div class="col-md-10">
+                                                                                <div class="mb-1 text-start">
+                                                                                    <input class="form-control designa" type="number" step="0.01" name="Echanpoids[]" id="example" value="" placeholder="EXP : 30">
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td style="background-color:#CFFEDA ;">
+                                                                            <div class="col-md-10">
+                                                                                <div class="mb-1 text-start">
+                                                                                    <input class="form-control designa" type="text" name="Echandf[]" id="example" value="" placeholder="EXP : 30">
                                                                                 </div>
                                                                             </div>
                                                                         </td>
@@ -900,19 +976,15 @@
                                                     <div class="col-md-2 mr-2 mt-3 mb-5 mr-4">
                                                         <div class="mb-1 text-start">
                                                             <label class="form-label font-weight-bold text-primary" for="nom">Nom complet du machiniste 2</label>
-                                                            <input class="form-control" id="validationDefault01" type="text" name="controleur2" value="<?php echo $_POST['controleur2']; ?>" placeholder="Mettez le nom complet du machiniste 2">
+                                                            <input class="form-control" id="validationDefault01" type="text" name="controleur2" value="<?php echo $_POST['controleur2']; ?>" placeholder="Mettez le nom complet du machiniste 2" required>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-2 mr-4 mt-3 mb-5">
+                                                    <div class="col-md-2 mr-4 mt-3 mb-5 ml-5">
                                                         <div class="mb-1 text-start">
                                                             <label class="form-label font-weight-bold text-primary" for="nom">Machine</label>
                                                             <select class="form-control" name="machine">
-                                                                <option <?php if ( $_POST['machine']=="Dresseuse 1") {echo "selected='selected'";} ?>>Dresseuse 1</option>
-                                                                <option <?php if ( $_POST['machine']=="Dresseuse 2") {echo "selected='selected'";} ?>>Dresseuse 2</option>
-                                                                <option <?php if ( $_POST['machine']=="Dresseuse 4") {echo "selected='selected'";} ?>>Dresseuse 4</option>
-                                                                <option <?php if ( $_POST['machine']=="Dresseuse 5") {echo "selected='selected'";} ?>>Dresseuse 5</option>
-                                                                <option <?php if ( $_POST['machine']=="Dresseuse 6") {echo "selected='selected'";} ?>>Dresseuse 6</option>
-                                                                <option <?php if ( $_POST['machine']=="Dresseuse 7") {echo "selected='selected'";} ?>>Dresseuse 7</option>
+                                                                <option <?php if ( $_POST['machine']=="Cranteuse 1") {echo "selected='selected'";} ?>>Cranteuse 1</option>
+                                                                <option <?php if ( $_POST['machine']=="Cranteuse 2") {echo "selected='selected'";} ?>>Cranteuse 2</option>
                                                             </select>                                                
                                                         </div>
                                                     </div>
@@ -934,13 +1006,13 @@
                                                             <input class="form-control" id="validationDefault03" type="time" name="heurefinquart" value="<?php echo $_POST['heurefinquart']; ?>" required>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-2 mr-4 mt-3 mb-5">
+                                                    <div class="col-md-2 mr-4 mt-3 mb-5 ml-5">
                                                         <div class="mb-1 text-start">
                                                             <label class="form-label font-weight-bold text-primary" for="nom">Quart</label>
                                                             <select class="form-control" name="quart">
                                                                 <option <?php if ( $_POST['quart']=="1") {echo "selected='selected'";} ?>>1</option>
-                                                                <option <?php if ( $_POST['quart']=="2") {echo "selected='selected'";} ?>>2</option>
-                                                                <option <?php if ( $_POST['quart']=="3") {echo "selected='selected'";} ?>>3</option>
+                                                                <option <?php if ( $_POST['quart']=="1") {echo "selected='selected'";} ?>>2</option>
+                                                                <option <?php if ( $_POST['quart']=="1") {echo "selected='selected'";} ?>>3</option>
                                                             </select>                                                
                                                         </div>
                                                     </div>
@@ -951,7 +1023,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <div class="col-lg-7 ">
+                                                    <div class="col-lg-7">
                                                         <h5 class="modal-title mb-3 text-center font-weight-bold text-primary" id="myExtraLargeModalLabel">Consommations</h5>
                                                         <table class="table table-bordered" id="" width="100%" cellspacing="0">
                                                             <thead>
@@ -960,6 +1032,7 @@
                                                                     <th>N° fil machine</th>
                                                                     <th>Heure montage</th>
                                                                     <th>Poids</th>
+                                                                    <th>Déchets</th>
                                                                     <th>Finir FM</th>
                                                                     <th>Supprimer ligne</th>
                                                                 </tr>
@@ -987,7 +1060,7 @@
                                                                                         <?php
                                                                                             foreach($stockCranteuse as $stock){
                                                                                         ?>                                                                                        
-                                                                                           <option value="<?php echo $stock['prodnumerofin'].'/'.$stock['idcranteuseq1production'].'/'.$stock['proddiametre'].'/'.$stock['prodpoids']; ?>"> <?php echo $stock['prodnumerofin']; ?></option>                                                                                     
+                                                                                           <option value="<?php echo $stock['numbobine'].'/'.$stock['epaisseur'].'/'.$stock['poidsdeclare']; ?>"> <?php echo $stock['numbobine']; ?></option>                                                                                     
                                                                                         <?php
                                                                                             }
                                                                                         ?>
@@ -1001,8 +1074,8 @@
                                                                                     //Selected value
                                                                                     var inputValue = $(this).val();
                                                                                     var myArray = inputValue.split('/');
-                                                                                    document.getElementById("diametre").value = myArray[2];
-                                                                                    document.getElementById("poids").value = myArray[3];
+                                                                                    document.getElementById("diametre").value = myArray[1];
+                                                                                    document.getElementById("poids").value = myArray[2];
                                                                                 });
                                                                             });
                                                                         </script>
@@ -1017,6 +1090,13 @@
                                                                             <div class="col-md-10">
                                                                                 <div class="mb-1 text-start">
                                                                                     <input class="form-control designa" type="number" step="0.01" name="poids[]" id="poids" value="<?php echo $_POST['poids'][$i]; ?>" required>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td style="background-color:#CFFEDA ;">
+                                                                            <div class="col-md-10">
+                                                                                <div class="mb-1 text-start">
+                                                                                    <input class="form-control designa" type="number" step="0.01" name="dechet[]" id="example" value="<?php echo $_POST['dechet'][$i]; ?>" required>
                                                                                 </div>
                                                                             </div>
                                                                         </td>
@@ -1105,20 +1185,19 @@
                                                             </tbody>
                                                         </table>
                                                     </div>
-                                     
+               
                                                     <div class="col-lg-12">
                                                         <h5 class="modal-title mb-3 text-center font-weight-bold text-primary" id="myExtraLargeModalLabel">Productions</h5>
                                                         <table class="table table-bordered" id="" width="100%" cellspacing="0">
                                                             <thead>
                                                                 <tr>       
                                                                     <th>Diametre</th>
-                                                                    <th>Nombre barres par colis</th>
-                                                                    <th>Nombre colis</th>
-                                                                    <th>barres restantes</th>
-                                                                    <th>Longueur barres</th>
+                                                                    <th>Nomenclature</th>
                                                                     <th>N° fil machine</th>
                                                                     <th>Poids</th>
-                                                                    <th>Déchets</th>
+                                                                    <th>Longueur échantillon (cm)</th>
+                                                                    <th>Poids échantillon</th>
+                                                                    <th>N° DF échantillon</th>
                                                                     <th>Supprimer ligne</th>
                                                                 </tr>
                                                             </thead>
@@ -1140,28 +1219,7 @@
                                                                         <td style="background-color:#CFFEDA ;">
                                                                             <div class="col-md-10">
                                                                                 <div class="mb-1 text-start">
-                                                                                    <input class="form-control designa" type="number" step="0.01" name="ProdnbBarreColis[]" id="ProdnbBarreColis" value="<?php echo $_POST['ProdnbBarreColis'][$i]; ?>" required>
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
-                                                                        <td style="background-color:#CFFEDA ;">
-                                                                            <div class="col-md-10">
-                                                                                <div class="mb-1 text-start">
-                                                                                    <input class="form-control designa" type="number" step="0.01" name="Prodnbcolis[]" id="Prodnbcolis" value="<?php echo $_POST['Prodnbcolis'][$i]; ?>" required>
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
-                                                                        <td style="background-color:#CFFEDA ;">
-                                                                            <div class="col-md-10">
-                                                                                <div class="mb-1 text-start">
-                                                                                    <input class="form-control designa" type="number" step="0.01" name="Prodnbbarrerestant[]" id="Prodnbbarrerestant" value="<?php echo $_POST['Prodnbbarrerestant'][$i]; ?>">
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
-                                                                        <td style="background-color:#CFFEDA ;">
-                                                                            <div class="col-md-10">
-                                                                                <div class="mb-1 text-start">
-                                                                                    <input class="form-control designa" type="number" step="0.01" name="Prodlongueurbarre[]" id="Prodlongueurbarre" value="<?php echo $_POST['Prodlongueurbarre'][$i]; ?>">
+                                                                                    <input class="form-control designa" type="text" name="Prodnomenclature[]" id="Prodnomenclature" value="<?php echo $_POST['Prodnomenclature'][$i]; ?>">
                                                                                 </div>
                                                                             </div>
                                                                         </td>
@@ -1173,7 +1231,7 @@
                                                                                         <?php
                                                                                             foreach($stockCranteuse as $stock){
                                                                                         ?>                                                                                        
-                                                                                           <option value="<?php echo $stock['prodnumerofin'].'/'.$stock['proddiametre'].'/'.$stock['prodpoids']; ?>"> <?php echo $stock['prodnumerofin']; ?></option>                                                                                     
+                                                                                           <option value="<?php echo $stock['numbobine'].'/'.$stock['epaisseur'].'/'.$stock['poidsdeclare']; ?>"> <?php echo $stock['numbobine']; ?></option>                                                                                     
                                                                                         <?php
                                                                                             }
                                                                                         ?>
@@ -1191,7 +1249,21 @@
                                                                         <td style="background-color:#CFFEDA ;">
                                                                             <div class="col-md-10">
                                                                                 <div class="mb-1 text-start">
-                                                                                    <input class="form-control designa" type="number" step="0.01" name="Proddechet[]" id="example" value="<?php echo $_POST['Proddechet'][$i]; ?>" required>
+                                                                                    <input class="form-control designa" type="number" step="0.01" name="Echanlongueur[]" id="example" value="<?php echo $_POST['Echanlongueur'][$i]; ?>">
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td style="background-color:#CFFEDA ;">
+                                                                            <div class="col-md-10">
+                                                                                <div class="mb-1 text-start">
+                                                                                    <input class="form-control designa" type="number" step="0.01" name="Echanpoids[]" id="example" value="<?php echo $_POST['Echanpoids'][$i]; ?>">
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td style="background-color:#CFFEDA ;">
+                                                                            <div class="col-md-10">
+                                                                                <div class="mb-1 text-start">
+                                                                                    <input class="form-control designa" type="text" name="Echandf[]" id="example" value="<?php echo $_POST['Echandf'][$i]; ?>">
                                                                                 </div>
                                                                             </div>
                                                                         </td>
@@ -1348,7 +1420,7 @@
                                                             </script> 
                                                         <?php } ?>
                                                         <div class="d-flex gap-2 pt-4">                           
-                                                            <a href="ficheDresseuse.php"><input class="btn btn-danger  w-lg bouton mr-3" name=""  value="Annuler"></a>
+                                                            <a href="ficheCranteuse.php"><input class="btn btn-danger  w-lg bouton mr-3" name=""  value="Annuler"></a>
                                                             <input class="btn btn-success  w-lg bouton mr-3" name="CreerFicheProduction" type="submit" value="ENREGISTRER">
                                                         </div>
                                                         <hr/>
@@ -1365,7 +1437,7 @@
                     <div class="col-lg-12 mt-5">
                         <div class="card position-relative">
                             <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary">Nombre de rouleau cranté et non encore utilisé à la machine Cranteuse : <?php echo sizeof($stockCranteuse); ?></h6>
+                                <h6 class="m-0 font-weight-bold text-primary">Nombre de bobine stocké à la machine Cranteuse : <?php echo $nbReception; ?></h6>
                             </div>
                             <div class="row m-2">
                                 <div class="table-responsive">
@@ -1393,12 +1465,10 @@
                                             <tr>       
                                                 <th>Numéro fil machine</th>                                                                                
                                                 <th>Epaisseur</th>
-                                                <th>Nomenclature</th>
                                                 <th>Nombre rouleaux</th>
                                                 <th>Poids déclaré</th>
-                                                <th>Londgueur échantillon</th>
-                                                <th>Poids échantillon</th>
-                                                <th>DF échantillon</th>
+                                                <th>Poids pesé</th>
+                                                <th>Etat bobine</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -1409,14 +1479,12 @@
                                                     //if($article['status'] == 'termine'){
                                             ?>
                                                 <tr>
-                                                    <td style="background-color:#4e73df ; color:white;"> <?= $stock['prodnumerofin'] ?> </td>
-                                                    <td style="background-color:#4e73df ; color:white;"> <?= $stock['proddiametre'] ?> </td>
-                                                    <td style="background-color:#4e73df ; color:white;"> <?= $stock['prodnomenclature'] ?> </td>
-                                                    <td style="background-color:#4e73df ; color:white;"><?= $stock['prodnbbobine'] ?></td>
-                                                    <td style="background-color:#4e73df ; color:white;"><?= $stock['prodpoids'] ?></td>
-                                                    <td style="background-color:#4e73df ; color:white;"><?= $stock['echanlongueur'] ?></td>
-                                                    <td style="background-color:#4e73df ; color:white;"><?= $stock['echanpoids'] ?></td>
-                                                    <td style="background-color:#4e73df ; color:white;"><?= $stock['echandf'] ?></td>
+                                                    <td style="background-color:#4e73df ; color:white;"> <?= $stock['numbobine'] ?> </td>
+                                                    <td style="background-color:#4e73df ; color:white;"> <?= $stock['epaisseur'] ?> </td>
+                                                    <td style="background-color:#4e73df ; color:white;"><?= $stock['nbbobineactuel'] ?></td>
+                                                    <td style="background-color:#4e73df ; color:white;"><?= $stock['poidsdeclare'] ?></td>
+                                                    <td style="background-color:#4e73df ; color:white;"><?= $stock['poidspese'] ?></td>
+                                                    <td style="background-color:#4e73df ; color:white;"><?= $stock['etatbobine'] ?></td>
                                                 </tr>
                                             <?php
                                                 }
