@@ -416,6 +416,191 @@ $mess2="";
                                 <p class="m-0 mt-3  h5 ml-3" style="color: white;"><span class="mr-5">Compteur Horaire Fin : </span> <?php echo $Cranteuseq1['compteurfin']; ; ?></p>
                             </div>
 
+                            <div class="table-responsive col-lg-12 mt-5">
+                                <div class="">
+                                    <p class="m-0 font-weight-bold text-center h4 text-uppercase mt-5 mb-3 text-primary" style="">Productions</p>
+                                </div>
+                                <table class="table table-bordered m-0" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>       
+                                            <th>Diamétre</th> 
+                                            <th>Nomenclature</th> 
+                                            <th>Numéro fil machine</th>
+                                            <th>poids</th>
+                                            <th>Longueur échantillon (cm)</th>
+                                            <th>Poids échantillon</th>
+                                            <th>N° DF échantillon</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+                                            $i=0;
+                                            foreach($production as $prod){
+                                                $i++;
+                                                //if($article['status'] == 'termine'){
+                                        ?>
+                                            <tr>
+                                                <td style="background-color:#4e73df ; color:white;"><a style="text-decoration: none; font-family: arial; font-size: 20px; color:white;" href="javascript:void(0);" data-toggle="modal" data-target="#Information<?php echo $i; ?>" title="Voir details du produit" class="link-offset-2 link-underline"><?= $prod['proddiametre'] ?></a></td>
+                                                <td style="background-color:#4e73df ; color:white;"><?= $prod['prodnomenclature'] ?></td>
+                                                <td style="background-color:#4e73df ; color:white;"><?= $prod['prodnumerofin'] ?></td>
+                                                <td style="background-color:#4e73df ; color:white;"><?= $prod['prodpoids'] ?></td>
+                                                <td style="background-color:#4e73df ; color:white;"><?= $prod['echanlongueur'] ?></td>
+                                                <td style="background-color:#4e73df ; color:white;"><?= $prod['echanpoids'] ?></td>
+                                                <td style="background-color:#4e73df ; color:white;"><?= $prod['echandf'] ?></td>
+                                            </tr>
+                                            <!-- Pour le sweetAlert approuveTransfert !--> 
+                                            <div class="modal fade " id="Information<?php echo $i; ?>" tabindex="-1" aria-labelledby="fileModalLabel" aria-hidden="true" >
+                                                <div class="modal-dialog modal-xl modal-dialog-centered" style="width=750px">
+                                                    <div class="modal-content">
+                                                        <div class="card">
+                                                            <div class="card-header bg-primary text-center">
+                                                                <h5 class="modal-title" id="fileModalLabel" style="color:white">Details du produit consommé correspondant :</h5>
+                                                            </div>
+                                                            <div class="card-body">
+                                                                <div class="col-lg-12 mt-5 mb-5">
+                                                                    <?php
+                                                                        $IDM = $prod['prodnumerofin'];
+                                                                        //** Debut select des receptions
+                                                                            $sql = "SELECT * FROM `matiere` where `numbobine`=$IDM;";
+                                                                
+                                                                            // On prépare la requête
+                                                                            $query = $db->prepare($sql);
+                                                                
+                                                                            // On exécute
+                                                                            $query->execute();
+                                                                
+                                                                            // On récupère les valeurs dans un tableau associatif
+                                                                            $Matiere = $query->fetch();
+                                                                        //** Fin select des receptions
+                                                                        
+                                                                        $IDR = $Matiere['idreception'];
+
+                                                                        $IdMatiere = $Matiere['idmatierereception'];
+
+                                                                        //** Debut select des receptions
+                                                                            $sql = "SELECT * FROM `matiere` where `idmatiere`=$IdMatiere;";
+                                                                    
+                                                                            // On prépare la requête
+                                                                            $query = $db->prepare($sql);
+                                                                
+                                                                            // On exécute
+                                                                            $query->execute();
+                                                                
+                                                                            // On récupère les valeurs dans un tableau associatif
+                                                                            $MatiereDepart = $query->fetch();
+                                                                        //** Fin select des receptions
+
+                                                                        //** Debut select des receptions
+                                                                            $sql = "SELECT * FROM `reception` where `actif`=1 and `idreception`=$IDR;";
+
+                                                                            // On prépare la requête
+                                                                            $query = $db->prepare($sql);
+
+                                                                            // On exécute
+                                                                            $query->execute();
+
+                                                                            // On récupère les valeurs dans un tableau associatif
+                                                                            $Reception = $query->fetch();
+                                                                        //** Fin select des receptions       
+                                                                    ?>
+                                                                    <div class="form-group row">
+                                                                        <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Nom de la DF : </span><?php echo $Reception['entetedf']; ?></h5></label>
+                                                                        <div class="col-sm-4">
+                                                                            <h5 style="color:blue;"></h5>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group row">
+                                                                        <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Date réception : </span><?php echo $Reception['datereception']; ?></h5></label>
+                                                                        <div class="col-sm-4">
+                                                                            <h5></h5>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group row">
+                                                                        <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Nombre de bobine : </span><?php echo $MatiereDepart['nbbobine']; ?></h5></label>
+                                                                        <div class="col-sm-4">
+                                                                            <h5></h5>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group row">
+                                                                        <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Poids des bobines : </span><?php echo $MatiereDepart['poidsdeclare']; ?> (KG)</h5></label>
+                                                                        <div class="col-sm-4">
+                                                                            <h5></h5>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group row">
+                                                                        <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Lieu de la réception : </span><?php echo $MatiereDepart['lieutransfert']; ?></h5></label>
+                                                                        <div class="col-sm-4">
+                                                                            <h5></h5>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group row">
+                                                                        <label for="staticEmail" class="col-sm-8 col-form-label"><h5 style="color: #199AF3">Commentaire associé lors de la réception : </h5></label><br>
+                                                                        <div class="col-sm-8 ml-5">
+                                                                            <h5><?php echo $Reception['commentaire']; ?></h5>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group row">
+                                                                        <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Nom du récepteur : </span> <?php echo $Reception['nomrecepteur']; ?></h5></label>
+                                                                        <div class="col-sm-6">
+                                                                            <h5></h5>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group row">
+                                                                        <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Matricule du camion : </span><?php echo $Reception['matriculecamion']; ?></h5></label>
+                                                                        <div class="col-sm-6">
+                                                                            <h5></h5>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group row">
+                                                                        <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Numéro de BL : </span><?php echo $Reception['bl']; ?></h5></label>
+                                                                        <div class="col-sm-6">
+                                                                            <h5></h5>
+                                                                        </div>
+                                                                    </div> <hr>
+                                                                    <div class="form-group row mt-5">
+                                                                        <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Code bobine : </span><?php echo "REC00".$Matiere['idreception']."-BOB0-".$MatiereDepart['idmatiere']; ?></h5></label>
+                                                                        <div class="col-sm-4">
+                                                                            <h5></h5>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group row">
+                                                                        <label for="staticEmail" class="col-sm-6 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Poids de la bobine déclaré lors du transfert : </span><?php echo $Matiere['poidsdeclare']; ?> (KG)</h5></label>
+                                                                        <div class="col-sm-4">
+                                                                            <h5></h5>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group row">
+                                                                        <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Etat bobine : </span> <?php echo $Matiere['etatbobine']; ?></h5></label>
+                                                                        <div class="col-sm-6">
+                                                                            <h5></h5>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col text-center">
+                                                                    <a href="" class="btn btn-primary text-center">Retour</a>
+                                                                </div>
+                                                            </div>
+                                                            <div class="card-footer bg-primary text-muted text-center">
+                                                                <h5 style="color:white">METAL *** AFRIQUE</h5>
+                                                            </div>
+                                                        </div>
+                                                    </div>    
+                                                </div>
+                                            </div>
+                                        <?php
+                                            }
+                                        ?> 
+                                    </tbody>
+                                </table>
+                                <!-- Bouton et pagnination--> 
+                                <?php 
+                                    //if($_SESSION['niveau']=='kemc'){
+                                ?>
+                                <?php
+                                    //}
+                                ?>
+                            </div>
+                            
                             <div class="row m-1 mb-3 col-lg-12 mt-5">
                                 <div class="table-responsive col-lg-7 mt-5">
                                     <div class="">
@@ -688,191 +873,6 @@ $mess2="";
                                 <!-- Tableau d'en bas -->
                             </div>
                             <!-- Tableau d'en bas -->
-
-                            <div class="table-responsive col-lg-12 mt-5 mb-2">
-                                <div class="">
-                                    <p class="m-0 font-weight-bold text-center h4 text-uppercase mt-5 mb-3 text-primary" style="">Productions</p>
-                                </div>
-                                <table class="table table-bordered m-0" width="100%" cellspacing="0">
-                                    <thead>
-                                        <tr>       
-                                            <th>Diamétre</th> 
-                                            <th>Nomenclature</th> 
-                                            <th>Numéro fil machine</th>
-                                            <th>poids</th>
-                                            <th>Longueur échantillon (cm)</th>
-                                            <th>Poids échantillon</th>
-                                            <th>N° DF échantillon</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php
-                                            $i=0;
-                                            foreach($production as $prod){
-                                                $i++;
-                                                //if($article['status'] == 'termine'){
-                                        ?>
-                                            <tr>
-                                                <td style="background-color:#4e73df ; color:white;"><a style="text-decoration: none; font-family: arial; font-size: 20px; color:white;" href="javascript:void(0);" data-toggle="modal" data-target="#Information<?php echo $i; ?>" title="Voir details du produit" class="link-offset-2 link-underline"><?= $prod['proddiametre'] ?></a></td>
-                                                <td style="background-color:#4e73df ; color:white;"><?= $prod['prodnomenclature'] ?></td>
-                                                <td style="background-color:#4e73df ; color:white;"><?= $prod['prodnumerofin'] ?></td>
-                                                <td style="background-color:#4e73df ; color:white;"><?= $prod['prodpoids'] ?></td>
-                                                <td style="background-color:#4e73df ; color:white;"><?= $prod['echanlongueur'] ?></td>
-                                                <td style="background-color:#4e73df ; color:white;"><?= $prod['echanpoids'] ?></td>
-                                                <td style="background-color:#4e73df ; color:white;"><?= $prod['echandf'] ?></td>
-                                            </tr>
-                                            <!-- Pour le sweetAlert approuveTransfert !--> 
-                                            <div class="modal fade " id="Information<?php echo $i; ?>" tabindex="-1" aria-labelledby="fileModalLabel" aria-hidden="true" >
-                                                <div class="modal-dialog modal-xl modal-dialog-centered" style="width=750px">
-                                                    <div class="modal-content">
-                                                        <div class="card">
-                                                            <div class="card-header bg-primary text-center">
-                                                                <h5 class="modal-title" id="fileModalLabel" style="color:white">Details du produit consommé correspondant :</h5>
-                                                            </div>
-                                                            <div class="card-body">
-                                                                <div class="col-lg-12 mt-5 mb-5">
-                                                                    <?php
-                                                                        $IDM = $prod['prodnumerofin'];
-                                                                        //** Debut select des receptions
-                                                                            $sql = "SELECT * FROM `matiere` where `numbobine`=$IDM;";
-                                                                
-                                                                            // On prépare la requête
-                                                                            $query = $db->prepare($sql);
-                                                                
-                                                                            // On exécute
-                                                                            $query->execute();
-                                                                
-                                                                            // On récupère les valeurs dans un tableau associatif
-                                                                            $Matiere = $query->fetch();
-                                                                        //** Fin select des receptions
-                                                                        
-                                                                        $IDR = $Matiere['idreception'];
-
-                                                                        $IdMatiere = $Matiere['idmatierereception'];
-
-                                                                        //** Debut select des receptions
-                                                                            $sql = "SELECT * FROM `matiere` where `idmatiere`=$IdMatiere;";
-                                                                    
-                                                                            // On prépare la requête
-                                                                            $query = $db->prepare($sql);
-                                                                
-                                                                            // On exécute
-                                                                            $query->execute();
-                                                                
-                                                                            // On récupère les valeurs dans un tableau associatif
-                                                                            $MatiereDepart = $query->fetch();
-                                                                        //** Fin select des receptions
-
-                                                                        //** Debut select des receptions
-                                                                            $sql = "SELECT * FROM `reception` where `actif`=1 and `idreception`=$IDR;";
-
-                                                                            // On prépare la requête
-                                                                            $query = $db->prepare($sql);
-
-                                                                            // On exécute
-                                                                            $query->execute();
-
-                                                                            // On récupère les valeurs dans un tableau associatif
-                                                                            $Reception = $query->fetch();
-                                                                        //** Fin select des receptions       
-                                                                    ?>
-                                                                    <div class="form-group row">
-                                                                        <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Nom de la DF : </span><?php echo $Reception['entetedf']; ?></h5></label>
-                                                                        <div class="col-sm-4">
-                                                                            <h5 style="color:blue;"></h5>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="form-group row">
-                                                                        <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Date réception : </span><?php echo $Reception['datereception']; ?></h5></label>
-                                                                        <div class="col-sm-4">
-                                                                            <h5></h5>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="form-group row">
-                                                                        <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Nombre de bobine : </span><?php echo $MatiereDepart['nbbobine']; ?></h5></label>
-                                                                        <div class="col-sm-4">
-                                                                            <h5></h5>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="form-group row">
-                                                                        <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Poids des bobines : </span><?php echo $MatiereDepart['poidsdeclare']; ?> (KG)</h5></label>
-                                                                        <div class="col-sm-4">
-                                                                            <h5></h5>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="form-group row">
-                                                                        <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Lieu de la réception : </span><?php echo $MatiereDepart['lieutransfert']; ?></h5></label>
-                                                                        <div class="col-sm-4">
-                                                                            <h5></h5>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="form-group row">
-                                                                        <label for="staticEmail" class="col-sm-8 col-form-label"><h5 style="color: #199AF3">Commentaire associé lors de la réception : </h5></label><br>
-                                                                        <div class="col-sm-8 ml-5">
-                                                                            <h5><?php echo $Reception['commentaire']; ?></h5>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="form-group row">
-                                                                        <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Nom du récepteur : </span> <?php echo $Reception['nomrecepteur']; ?></h5></label>
-                                                                        <div class="col-sm-6">
-                                                                            <h5></h5>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="form-group row">
-                                                                        <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Matricule du camion : </span><?php echo $Reception['matriculecamion']; ?></h5></label>
-                                                                        <div class="col-sm-6">
-                                                                            <h5></h5>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="form-group row">
-                                                                        <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Numéro de BL : </span><?php echo $Reception['bl']; ?></h5></label>
-                                                                        <div class="col-sm-6">
-                                                                            <h5></h5>
-                                                                        </div>
-                                                                    </div> <hr>
-                                                                    <div class="form-group row mt-5">
-                                                                        <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Code bobine : </span><?php echo "REC00".$Matiere['idreception']."-BOB0-".$MatiereDepart['idmatiere']; ?></h5></label>
-                                                                        <div class="col-sm-4">
-                                                                            <h5></h5>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="form-group row">
-                                                                        <label for="staticEmail" class="col-sm-6 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Poids de la bobine déclaré lors du transfert : </span><?php echo $Matiere['poidsdeclare']; ?> (KG)</h5></label>
-                                                                        <div class="col-sm-4">
-                                                                            <h5></h5>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="form-group row">
-                                                                        <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Etat bobine : </span> <?php echo $Matiere['etatbobine']; ?></h5></label>
-                                                                        <div class="col-sm-6">
-                                                                            <h5></h5>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col text-center">
-                                                                    <a href="" class="btn btn-primary text-center">Retour</a>
-                                                                </div>
-                                                            </div>
-                                                            <div class="card-footer bg-primary text-muted text-center">
-                                                                <h5 style="color:white">METAL *** AFRIQUE</h5>
-                                                            </div>
-                                                        </div>
-                                                    </div>    
-                                                </div>
-                                            </div>
-                                        <?php
-                                            }
-                                        ?> 
-                                    </tbody>
-                                </table>
-                                <!-- Bouton et pagnination--> 
-                                <?php 
-                                    //if($_SESSION['niveau']=='kemc'){
-                                ?>
-                                <?php
-                                    //}
-                                ?>
-                            </div>
                         </div>
                         <div class="card-footer py-3 mt-5 bg-primary">
                             <div class="mb-4 mt-3">
