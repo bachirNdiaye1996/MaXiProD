@@ -411,83 +411,6 @@ $TotalBarres = 0;
                                 <p class="m-0 mt-3  h5 ml-3" style="color: white;"><span class="mr-5">Compteur Horaire Fin : </span> <?php echo $Cranteuseq1['compteurfin']; ; ?></p>
                             </div>
                             <div class="row m-1 mb-3 col-lg-12">
-                                <div class="table-responsive col-lg-5">
-                                    <!-- Page Loader -->
-                                        <div id="loader">
-                                            <span class="lettre">M</span>
-                                            <span class="lettre">E</span>
-                                            <span class="lettre">T</span>
-                                            <span class="lettre">A</span>
-                                            <span class="lettre">L</span>
-                                            <span class="lettre">*</span>
-                                            <span class="lettre">*</span>
-                                            <span class="lettre">*</span>
-                                            <span class="lettre">A</span>
-                                            <span class="lettre">F</span>
-                                            <span class="lettre">R</span>
-                                            <span class="lettre">I</span>
-                                            <span class="lettre">Q</span>
-                                            <span class="lettre">U</span>
-                                            <span class="lettre">E</span>
-                                        </div>
-                                    <!-- Page Loader -->
-                                    <div class="">
-                                        <p class="m-0 font-weight-bold text-center h4 text-uppercase mt-5 mb-3 text-primary" style="">Géstion des temps d'arret</p>
-                                    </div>
-                                    <table class="table table-bordered m-0" width="100%" cellspacing="0">
-                                        <thead>
-                                            <tr>       
-                                                <th>Début arrets</th>                                                                                
-                                                <th>Fin arrets</th>
-                                                <th>Raisons</th>
-                                                <th>Durée</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <?php
-                                                $i=0;
-                                                $TotalArretH=0;
-                                                foreach($productioncrantq1 as $prodcrantq1){
-                                                    /*$heures = explode(":", $prodcrantq1['finarret']);
-                                                    $heureFinHeure = $heures[0]; 
-                                                    $heureFinMin = $heures[1]; 
-
-                                                    $heures = explode(":", $prodcrantq1['debutarret']);
-                                                    $heureDebutHeure = $heures[0]; 
-                                                    $heureDebutMin = $heures[1]; */
-
-                                                    //$TotalArretH +=  ($heureFinHeure - $heureDebutHeure); 
-                                                    if(((strtotime($prodcrantq1['finarret']) - strtotime($prodcrantq1['debutarret'])) > 0)){
-                                                        $TotalArretH +=  (strtotime($prodcrantq1['finarret']) - strtotime($prodcrantq1['debutarret']));
-                                                    }else{
-                                                        $TotalArretH +=  (-strtotime($prodcrantq1['debutarret']) + strtotime($prodcrantq1['finarret']));
-                                                    }
-
-                                                    $i++;
-                                                    //if($article['status'] == 'termine'){
-                                            ?>
-                                                <tr>
-                                                    <td style="background-color:#4e73df ; color:white;"><?= $prodcrantq1['debutarret'] ?></td>
-                                                    <td style="background-color:#4e73df ; color:white;"><?= $prodcrantq1['finarret'] ?></td>
-                                                    <td style="background-color:#4e73df ; color:white;"><?= $prodcrantq1['raison'] ?></td>
-                                                    <td style="background-color:#4e73df ; color:white;"><?php ?></td>
-                                                </tr>
-                                            <!-- Pour le sweetAlert approuveTransfert !--> 
-                                            <?php
-                                                }
-                                            ?> 
-                                        </tbody>
-                                    </table>
-                                    <!-- Bouton et pagnination--> 
-                                    <?php 
-                                        //if($_SESSION['niveau']=='kemc'){
-                                    ?>
-                                    <?php
-                                        //}
-                                    ?>
-                                </div>
-                            <!-- Tableau d'en bas -->
-
                                 <div class="table-responsive col-lg-7">
                                     <div class="">
                                         <p class="m-0 font-weight-bold text-center h4 text-uppercase mt-5 mb-3 text-primary" style="">Consommations</p>
@@ -655,6 +578,93 @@ $TotalBarres = 0;
                                                         </div>    
                                                     </div>
                                                 </div>
+                                            <?php
+                                                }
+                                            ?> 
+                                        </tbody>
+                                    </table>
+                                    <!-- Bouton et pagnination--> 
+                                    <?php 
+                                        //if($_SESSION['niveau']=='kemc'){
+                                    ?>
+                                    <?php
+                                        //}
+                                    ?>
+                                </div>
+                                <!-- Tableau d'en bas -->
+
+                                <div class="table-responsive col-lg-5">
+                                    <!-- Page Loader -->
+                                        <div id="loader">
+                                            <span class="lettre">M</span>
+                                            <span class="lettre">E</span>
+                                            <span class="lettre">T</span>
+                                            <span class="lettre">A</span>
+                                            <span class="lettre">L</span>
+                                            <span class="lettre">*</span>
+                                            <span class="lettre">*</span>
+                                            <span class="lettre">*</span>
+                                            <span class="lettre">A</span>
+                                            <span class="lettre">F</span>
+                                            <span class="lettre">R</span>
+                                            <span class="lettre">I</span>
+                                            <span class="lettre">Q</span>
+                                            <span class="lettre">U</span>
+                                            <span class="lettre">E</span>
+                                        </div>
+                                    <!-- Page Loader -->
+                                    <div class="">
+                                        <p class="m-0 font-weight-bold text-center h4 text-uppercase mt-5 mb-3 text-primary" style="">Géstion des temps d'arret</p>
+                                    </div>
+                                    <table class="table table-bordered m-0" width="100%" cellspacing="0">
+                                        <thead>
+                                            <tr>       
+                                                <th>Début arrets</th>                                                                                
+                                                <th>Fin arrets</th>
+                                                <th>Raisons</th>
+                                                <th>Durée</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php
+                                                $i=0;
+                                                $TotalArretH=0;
+                                                foreach($productioncrantq1 as $prodcrantq1){
+                                                    /*$heures = explode(":", $prodcrantq1['finarret']);
+                                                    $heureFinHeure = $heures[0]; 
+                                                    $heureFinMin = $heures[1]; 
+
+                                                    $heures = explode(":", $prodcrantq1['debutarret']);
+                                                    $heureDebutHeure = $heures[0]; 
+                                                    $heureDebutMin = $heures[1]; */
+
+                                                    //$TotalArretH +=  ($heureFinHeure - $heureDebutHeure); 
+                                                    if(((strtotime($prodcrantq1['finarret']) - strtotime($prodcrantq1['debutarret'])) > 0)){
+                                                        $TotalArretH +=  (strtotime($prodcrantq1['finarret']) - strtotime($prodcrantq1['debutarret']));
+                                                    }else{
+                                                        $TotalArretH +=  (-strtotime($prodcrantq1['debutarret']) + strtotime($prodcrantq1['finarret']));
+                                                    }
+
+                                                    $i++;
+                                                    //if($article['status'] == 'termine'){
+                                            ?>
+                                                <tr>
+                                                    <td style="background-color:#4e73df ; color:white;"><?= $prodcrantq1['debutarret'] ?></td>
+                                                    <td style="background-color:#4e73df ; color:white;"><?= $prodcrantq1['finarret'] ?></td>
+                                                    <td style="background-color:#4e73df ; color:white;"><?= $prodcrantq1['raison'] ?></td>
+                                                    <td style="background-color:#4e73df ; color:white;"><?php 
+                                                        $TotalArret = strtotime($prodcrantq1['finarret']) - strtotime($prodcrantq1['debutarret']);
+                                                        $TotalArret = explode(":",date("H:i",$TotalArret) );
+                                                        if(($TotalArret[0]-1) == 0){
+                                                            if($TotalArret[1] == 0){}else{echo $TotalArret[1]." minutes";}
+                                                        }else{
+                                                            echo ($TotalArret[0]-1)." Heures ";
+                                                            if($TotalArret[1] == 0){}else{echo $TotalArret[1]." minutes";}
+                                                        }
+                                                        ?>
+                                                    </td>
+                                                </tr>
+                                            <!-- Pour le sweetAlert approuveTransfert !--> 
                                             <?php
                                                 }
                                             ?> 
