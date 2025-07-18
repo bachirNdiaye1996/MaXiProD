@@ -456,6 +456,7 @@ include "./mailTransfert.php";
                                                 <tr>       
                                                     <th>Code transfert</th>                                                                                
                                                     <th>Epaisseur</th>
+                                                    <th>Numéro FM</th>
                                                     <th>Nombre bobine</th>
                                                     <th>Poids déclaré (KG)</th>
                                                     <th>Poids pesé (KG)</th>
@@ -477,6 +478,7 @@ include "./mailTransfert.php";
                                                             <a style="text-decoration: none; font-family: arial; font-size: 20px; color:white;" title="" href="" class="link-offset-2 link-underline"><?php echo "TRAN-0".$transfert['idtransfert']."-BOB-0".$transfert['idtransfertdetail'] ?></a>
                                                         </td>
                                                         <td style="<?php if($transfert['couleurhistorique'] == 1){ echo 'background-color:#D72708 ; color:white;';}elseif($transfert['couleurhistorique'] == 2){echo 'background-color:#E17B15 ; color:white;';}else{echo 'background-color:#4e73df ; color:white;';}?>"><?= $transfert['epaisseur'] ?></td>
+                                                        <td style="<?php if($transfert['couleurhistorique'] == 1){ echo 'background-color:#D72708 ; color:white;';}elseif($transfert['couleurhistorique'] == 2){echo 'background-color:#E17B15 ; color:white;';}else{echo 'background-color:#4e73df ; color:white;';}?>"><?= $transfert['numbobine'] ?></td>
                                                         <td style="<?php if($transfert['couleurhistorique'] == 1){ echo 'background-color:#D72708 ; color:white;';}elseif($transfert['couleurhistorique'] == 2){echo 'background-color:#E17B15 ; color:white;';}else{echo 'background-color:#4e73df ; color:white;';}?>"><?= $transfert['nbbobine'] ?></td>
                                                         <td style="<?php if($transfert['couleurhistorique'] == 1){ echo 'background-color:#D72708 ; color:white;';}elseif($transfert['couleurhistorique'] == 2){echo 'background-color:#E17B15 ; color:white;';}else{echo 'background-color:#4e73df ; color:white;';}?>"><?= $transfert['poidsdeclare'] ?></td>
                                                         <td style="<?php if($transfert['couleurhistorique'] == 1){ echo 'background-color:#D72708 ; color:white;';}elseif($transfert['couleurhistorique'] == 2){echo 'background-color:#E17B15 ; color:white;';}else{echo 'background-color:#4e73df ; color:white;';}?>"><?= $transfert['poidspese'] ?></td>
