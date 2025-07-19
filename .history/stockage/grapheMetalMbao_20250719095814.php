@@ -10,6 +10,7 @@ if(!$_SESSION){
 include "../connexion/conexiondb.php";
 
 /*
+
 //** Nombre des bobines total à Metal 1 
 $sql = "SELECT SUM(`3`) + SUM(`3.5`) + SUM(`4`) + SUM(`4.5`) + SUM(`5`) + SUM(`5.5`) + SUM(`6`) + SUM(`6.5`) + SUM(`7`) + SUM(`7.5`)
 + SUM(`8`) + SUM(`8.5`) + SUM(`9`) + SUM(`9.5`) + SUM(`10`) + SUM(`10.5`) + SUM(`11`) + SUM(`11.5`) + SUM(`12`) + SUM(`12.5`) + SUM(`13`) + SUM(`13.5`) + 
@@ -94,9 +95,9 @@ $result = $query->fetch();
 
 $nombreNiambour = (int) $result['nb_reception_total'];
 //** Fin nombre des bobines total Niambour  
- 
-*/
 
+*/
+ 
 /*
 $dataPoints = array( 
     array("label"=>"METAL 1", "symbol" => "M1","y"=>$nombreMetal1),
@@ -108,7 +109,7 @@ $dataPoints = array(
 
 // Niambour
     //** Debut select de stockage pour Niambour
-    $sqlepaisseur = "SELECT sum(nbbobineactuel) as som,epaisseur FROM `matiere` where `nbbobineactuel`>0 and `lieutransfert`='Niambour' GROUP BY epaisseur;";
+    $sqlepaisseur = "SELECT sum(nbbobineactuel) as som,epaisseur FROM `matiere` where `nbbobineactuel`>0 and `lieutransfert`='Metal Mbao' GROUP BY epaisseur;";
 
     // On prépare la requête
     $queryepaisseur = $db->prepare($sqlepaisseur);
@@ -178,12 +179,12 @@ $dataPoints = array(
             theme: "light2",
             animationEnabled: true,
             title: {
-                text: "La composition de stock des bobines de Niambour"
+                text: "La composition de stock des bobines de Metal Mbao"
             },
             data: [{
                 type: "doughnut",
                 indexLabel: "{symbol} - {y}",
-                yValueFormatString: "#,##0.0\"%\"",
+                yValueFormatString: "#,##0\" Rouleaux\"", 
                 showInLegend: true,
                 legendText: "{label} : {y}",
                 dataPoints: <?php echo json_encode($dataPoints, JSON_NUMERIC_CHECK); ?>
@@ -221,9 +222,10 @@ $dataPoints = array(
     <!-- Page Wrapper -->
     <div id="wrapper">
         
+        <?php $activeMB = "active"; ?>
         <!-- Sidebar -->
             <!-- Contient la nav bar gauche -->
-            <?php include "./navGaucheGraphe.php" ?>
+                <?php include "./navGaucheGraphe.php" ?>
             <!-- End  -->
         <!-- End of Sidebar -->
 

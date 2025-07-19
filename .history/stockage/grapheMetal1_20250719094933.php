@@ -185,7 +185,7 @@ $dataPoints = array(
             data: [{
                 type: "doughnut",
                 indexLabel: "{symbol} - {y}",
-                yValueFormatString: "#,##0.0\"%\"",
+                yValueFormatString: "#,##0.0\"R\"",
                 showInLegend: true,
                 legendText: "{label} : {y}",
                 dataPoints: <?php echo json_encode($dataPointsM1, JSON_NUMERIC_CHECK); ?>
@@ -222,10 +222,11 @@ $dataPoints = array(
 
     <!-- Page Wrapper -->
     <div id="wrapper">
-        
+
+        <?php $activeM1 = "active"; ?>
         <!-- Sidebar -->
             <!-- Contient la nav bar gauche -->
-                <?php include "./navGaucheReception.php" ?>
+                <?php include "./navGaucheGraphe.php" ?>
             <!-- End  -->
         <!-- End of Sidebar -->
 

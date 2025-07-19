@@ -185,7 +185,7 @@ $dataPoints = array(
             data: [{
                 type: "doughnut",
                 indexLabel: "{symbol} - {y}",
-                yValueFormatString: "#,##0.0\"%\"",
+                yValueFormatString: "#,##0\" Rouleaux\"",
                 showInLegend: true,
                 legendText: "{label} : {y}",
                 dataPoints: <?php echo json_encode($dataPointsM1, JSON_NUMERIC_CHECK); ?>

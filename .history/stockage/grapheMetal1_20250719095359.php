@@ -95,9 +95,9 @@ $result = $query->fetch();
 
 $nombreNiambour = (int) $result['nb_reception_total'];
 //** Fin nombre des bobines total Niambour  
-
-*/
  
+*/
+
 /*
 $dataPoints = array( 
     array("label"=>"METAL 1", "symbol" => "M1","y"=>$nombreMetal1),
@@ -107,9 +107,10 @@ $dataPoints = array(
     array("label"=>"TREFILAGE", "symbol" => "Tréf","y"=>$nombreTrefilage),
 );*/
 
-// Niambour
+
+// Metal1
     //** Debut select de stockage pour Niambour
-    $sqlepaisseur = "SELECT sum(nbbobineactuel) as som,epaisseur FROM `matiere` where `nbbobineactuel`>0 and `lieutransfert`='Metal Mbao' GROUP BY epaisseur;";
+    $sqlepaisseur = "SELECT sum(nbbobineactuel) as som,epaisseur FROM `matiere` where `nbbobineactuel`>0 and `lieutransfert`='Metal1' GROUP BY epaisseur;";
 
     // On prépare la requête
     $queryepaisseur = $db->prepare($sqlepaisseur);
@@ -118,13 +119,13 @@ $dataPoints = array(
     $queryepaisseur->execute();
 
     // On récupère les valeurs dans un tableau associatif
-    $stockNiambour = $queryepaisseur->fetchAll();
+    $stockMetal1 = $queryepaisseur->fetchAll();
     //** Fin select de stockage pour Metal1
 
-    foreach($stockNiambour as $stockM1 => $itemN){
-        $dataPoints[] = array("label"=>"$itemN[epaisseur]", "symbol" => "$itemN[epaisseur]","y"=>$itemN['som']);
+    foreach($stockMetal1 as $stockM1 => $itemM1){
+        $dataPointsM1[] = array("label"=>"$itemM1[epaisseur]", "symbol" => "$itemM1[epaisseur]","y"=>$itemM1['som']);
     }
-// Niambour
+// Metal 1
 
 ?>
 
@@ -179,15 +180,15 @@ $dataPoints = array(
             theme: "light2",
             animationEnabled: true,
             title: {
-                text: "La composition de stock des bobines de Metal Mbao"
+                text: "La composition de stock des bobines de Metal 1"
             },
             data: [{
                 type: "doughnut",
                 indexLabel: "{symbol} - {y}",
-                yValueFormatString: "#,##0.0\"%\"",
+                yValueFormatString: "#,##0\" Rouleaux\"",
                 showInLegend: true,
                 legendText: "{label} : {y}",
-                dataPoints: <?php echo json_encode($dataPoints, JSON_NUMERIC_CHECK); ?>
+                dataPoints: <?php echo json_encode($dataPointsM1, JSON_NUMERIC_CHECK); ?>
             }]
         });
         chart.render();
@@ -221,7 +222,7 @@ $dataPoints = array(
 
     <!-- Page Wrapper -->
     <div id="wrapper">
-        
+
         <?php $activeM1 = "active"; ?>
         <!-- Sidebar -->
             <!-- Contient la nav bar gauche -->

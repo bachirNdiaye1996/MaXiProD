@@ -10,6 +10,7 @@ if(!$_SESSION){
 include "../connexion/conexiondb.php";
 
 /*
+
 //** Nombre des bobines total à Metal 1 
 $sql = "SELECT SUM(`3`) + SUM(`3.5`) + SUM(`4`) + SUM(`4.5`) + SUM(`5`) + SUM(`5.5`) + SUM(`6`) + SUM(`6.5`) + SUM(`7`) + SUM(`7.5`)
 + SUM(`8`) + SUM(`8.5`) + SUM(`9`) + SUM(`9.5`) + SUM(`10`) + SUM(`10.5`) + SUM(`11`) + SUM(`11.5`) + SUM(`12`) + SUM(`12.5`) + SUM(`13`) + SUM(`13.5`) + 
@@ -106,9 +107,10 @@ $dataPoints = array(
     array("label"=>"TREFILAGE", "symbol" => "Tréf","y"=>$nombreTrefilage),
 );*/
 
-// Niambour
+
+// Metal1
     //** Debut select de stockage pour Niambour
-    $sqlepaisseur = "SELECT sum(nbbobineactuel) as som,epaisseur FROM `matiere` where `nbbobineactuel`>0 and `lieutransfert`='Niambour' GROUP BY epaisseur;";
+    $sqlepaisseur = "SELECT sum(nbbobineactuel) as som,epaisseur FROM `matiere` where `nbbobineactuel`>0 and `lieutransfert`='Metal1' GROUP BY epaisseur;";
 
     // On prépare la requête
     $queryepaisseur = $db->prepare($sqlepaisseur);
@@ -117,13 +119,13 @@ $dataPoints = array(
     $queryepaisseur->execute();
 
     // On récupère les valeurs dans un tableau associatif
-    $stockNiambour = $queryepaisseur->fetchAll();
+    $stockMetal1 = $queryepaisseur->fetchAll();
     //** Fin select de stockage pour Metal1
 
-    foreach($stockNiambour as $stockM1 => $itemN){
-        $dataPoints[] = array("label"=>"$itemN[epaisseur]", "symbol" => "$itemN[epaisseur]","y"=>$itemN['som']);
+    foreach($stockMetal1 as $stockM1 => $itemM1){
+        $dataPointsM1[] = array("label"=>"$itemM1[epaisseur]", "symbol" => "$itemM1[epaisseur]","y"=>$itemM1['som']);
     }
-// Niambour
+// Metal 1
 
 ?>
 
@@ -178,15 +180,15 @@ $dataPoints = array(
             theme: "light2",
             animationEnabled: true,
             title: {
-                text: "La composition de stock des bobines de Niambour"
+                text: "La composition de stock des bobines de Metal 1"
             },
             data: [{
                 type: "doughnut",
                 indexLabel: "{symbol} - {y}",
-                yValueFormatString: "#,##0.0\"%\"",
+                yValueFormatString: "#,##0\" Rouleaux\"",
                 showInLegend: true,
                 legendText: "{label} : {y}",
-                dataPoints: <?php echo json_encode($dataPoints, JSON_NUMERIC_CHECK); ?>
+                dataPoints: <?php echo json_encode($dataPointsM1, JSON_NUMERIC_CHECK); ?>
             }]
         });
         chart.render();
@@ -220,152 +222,12 @@ $dataPoints = array(
 
     <!-- Page Wrapper -->
     <div id="wrapper">
-        
+
+        <?php $activeM1 = "active"; ?>
         <!-- Sidebar -->
-        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
-
-            <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="../indexPage/accueil.php">
-                <div class="sidebar-brand-icon rotate-n-15">
-                    <i class="fas fa-laugh-wink"></i>
-                </div>
-                <div class="sidebar-brand-text mx-3">SB <?php echo $_SESSION['username'];?> <sup>2</sup></div>
-            </a>
-
-            <!-- Divider -->
-            <hr class="sidebar-divider my-0">
-
-            <!-- Nav Item - Dashboard -->
-            <li class="nav-item active">
-                <a class="nav-link" href="../indexPage/accueil.php">
-                    <i class="fas fa-fw fa-tachometer-alt"></i>
-                    <span>Accueil Dashboard</span></a>
-            </li>
-
-            <?php if($_SESSION['niveau']=='admin' || $_SESSION['niveau']=='pontbascule'){ ?>
-                <!-- Divider -->
-                <hr class="sidebar-divider">
-
-                <!-- Nav Item - Tables -->
-
-                <li class="nav-item active">
-                    <a class="nav-link" href="#" data-toggle="collapse" data-target="#collapseReception"
-                        aria-expanded="true" aria-controls="collapseUtilities">
-                        <i class="fa fa-book fa-fw"></i>
-                        <span>Pont Bascule</span>
-                    </a>
-                    <div id="collapseReception" class="collapse show" aria-labelledby="headingUtilities"
-                        data-parent="#accordionSidebar">
-                        <div class="bg-white py-2 collapse-inner rounded">
-                            <h6 class="collapse-header">Stockage :</h6>
-                            <a class="collapse-item" href="../stockage/reception.php">Réception</a>
-                            <a class="collapse-item" href="../stockage/receptionPlanifie.php">Réception planifiée</a>
-                            <a class="collapse-item" href="../stockage/transfert/transfert.php">Transfert</a>
-                            <a class="collapse-item" href="../stockage/Exportation/exportation.php">Export</a>
-                            <a class="collapse-item" href="../stockage/historique.php">Historique</a>
-                            <a class="collapse-item" href="../stockage/stockage/stockage.php">Stockage</a>
-                            <a class="collapse-item active" href="../stockage/graphe.php">Graphe Niambour</a>
-                            <a class="collapse-item" href="../stockage/grapheMetal1.php">Graphe Metal 1</a>
-                            <a class="collapse-item" href="../stockage/grapheMetalMbao.php">Graphe Metal Mbao</a>
-                        </div>
-                    </div>
-                </li>
-            <?php } ?>
-
-            <?php if($_SESSION['niveau'] != 'pontbascule'){ ?>
-                <!-- Divider -->
-                <hr class="sidebar-divider">
-
-
-                <!-- Nav Item - Tables -->
-
-                <li class="nav-item">
-                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
-                        aria-expanded="true" aria-controls="collapseUtilities">
-                        <span>Production Cranteuse</span>
-                    </a>
-                    <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"
-                        data-parent="#accordionSidebar">
-                        <div class="bg-white py-2 collapse-inner rounded">
-                            <h6 class="collapse-header">Les informations :</h6>
-                            <a class="collapse-item" href="../Production/Cranteuse/ficheCranteuse.php">Fiches Productions</a>
-                            <a class="collapse-item" href="../Production/Cranteuse/etatProduction.php">Etat Production</a>
-                            <a class="collapse-item" href="../historiqueCranteuse.php">Historiques</a>
-                        </div>
-                    </div>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" href="tables.php">
-                    <i class="fas fa-fw fa-table"></i>
-                    <span>Production</span></a>
-                </li>
-
-
-                <div class="sidebar-heading">
-                    Section 3
-                </div>
-
-                <!-- Divider -->
-                <hr class="sidebar-divider">
-
-
-                <!-- Nav Item - Tables -->
-                <li class="nav-item">
-                    <a class="nav-link" href="tables.php">
-                    <i class="fas fa-fw fa-table"></i>
-                    <span>Productions</span></a>
-                </li>
-
-
-                <div class="sidebar-heading">
-                    Section 4
-                </div>
-
-                <!-- Divider -->
-                <hr class="sidebar-divider">
-
-
-                <!-- Nav Item - Utilities Collapse Menu -->
-                <!--<li class="nav-item">
-                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
-                        aria-expanded="true" aria-controls="collapseUtilities">
-                        <i class="fas fa-fw fa-wrench"></i>
-                        <span>Utilities</span>
-                    </a>
-                    <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"
-                        data-parent="#accordionSidebar">
-                        <div class="bg-white py-2 collapse-inner rounded">
-                            <h6 class="collapse-header">Custom Utilities:</h6>
-                            <a class="collapse-item" href="utilities-color.html">Colors</a>
-                            <a class="collapse-item" href="utilities-border.html">Borders</a>
-                            <a class="collapse-item" href="utilities-animation.html">Animations</a>
-                            <a class="collapse-item" href="utilities-other.html">Other</a>
-                        </div>
-                    </div>
-                </li>-->
-
-                <!-- Nav Item - Tables -->
-                <li class="nav-item">
-                    <a class="nav-link" href="tables.php">
-                        <i class="fas fa-fw fa-table"></i>
-                        <span>Productions</span></a>
-                </li>
-
-                <div class="sidebar-heading">
-                    Section 5
-                </div>
-            <?php } ?>
-
-            <!-- Divider -->
-            <hr class="sidebar-divider d-none d-md-block">
-
-            <!-- Sidebar Toggler (Sidebar) -->
-            <div class="text-center d-none d-md-inline">
-                <button class="rounded-circle border-0" id="sidebarToggle"></button>
-            </div>
-
-        </ul>
+            <!-- Contient la nav bar gauche -->
+                <?php include "./navGaucheGraphe.php" ?>
+            <!-- End  -->
         <!-- End of Sidebar -->
 
         <!-- Content Wrapper -->
