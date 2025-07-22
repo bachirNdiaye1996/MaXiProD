@@ -404,7 +404,7 @@
                     });
                 `+foo2+`
                 <td style="background-color:#CFFEDA ;">
-                    <div class="col-md-12">
+                    <div class="col-md-10">
                         <div class="mb-1 text-start">
                             <input class="form-control designa" type="time" name="heuremontagebobine[]" id="example" value="" required>
                         </div>
@@ -1080,7 +1080,7 @@
                                                                             });
                                                                         </script>
                                                                         <td style="background-color:#CFFEDA ;">
-                                                                            <div class="col-md-12">
+                                                                            <div class="col-md-10">
                                                                                 <div class="mb-1 text-start">
                                                                                     <input class="form-control designa" type="time" name="heuremontagebobine[]" id="example" value="<?php echo $_POST['heuremontagebobine'][$i]; ?>">
                                                                                 </div>
