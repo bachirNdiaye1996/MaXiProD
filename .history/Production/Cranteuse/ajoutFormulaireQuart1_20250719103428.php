@@ -160,9 +160,9 @@
 
                     // Voir si FM est fini
                     if(isset($_POST['finirfm'.$i])){
-                        $insertUser=$db->prepare("INSERT INTO `cranteuseq1consommation` (`idcranteuseq1consommation`, `diametre`, `numerofin`, `poids`, `dechet`, `idfichecranteuseq1`, `actif`, `heuremontagebobine`,`finirfm`,`dateCreation`) 
-                        VALUES (NULL, ?, ?, ?, ?, ?, '1', ?, 1, ?);");
-                        $insertUser->execute(array($diametre,$numerofin,$poids,$dechet,$idfichecranteuseq1Max, $heuremontagebobine,$datecreationfiche));
+                        $insertUser=$db->prepare("INSERT INTO `cranteuseq1consommation` (`idcranteuseq1consommation`, `diametre`, `numerofin`, `poids`, `dechet`, `idfichecranteuseq1`, `actif`, `heuremontagebobine`,`finirfm`) 
+                        VALUES (NULL, ?, ?, ?, ?, ?, '1', ?, 1);");
+                        $insertUser->execute(array($diametre,$numerofin,$poids,$dechet,$idfichecranteuseq1Max, $heuremontagebobine));
     
                         // On enleve une bobine dans la table epaisseur
                         $req ="UPDATE epaisseur SET `$diametre`=`$diametre`-1 where `lieu`='Cranteuse';";
@@ -175,9 +175,9 @@
                         $reqtitre = $db->prepare($req);
                         $reqtitre->execute(array($numerofin));
                     }else{
-                        $insertUser=$db->prepare("INSERT INTO `cranteuseq1consommation` (`idcranteuseq1consommation`, `diametre`, `numerofin`, `poids`, `dechet`, `idfichecranteuseq1`, `actif`, `heuremontagebobine`,`dateCreation`) 
-                        VALUES (NULL, ?, ?, ?, ?, ?, '1', ?, ?);");
-                        $insertUser->execute(array($diametre,$numerofin,$poids,$dechet,$idfichecranteuseq1Max, $heuremontagebobine,$datecreationfiche));
+                        $insertUser=$db->prepare("INSERT INTO `cranteuseq1consommation` (`idcranteuseq1consommation`, `diametre`, `numerofin`, `poids`, `dechet`, `idfichecranteuseq1`, `actif`, `heuremontagebobine`) 
+                        VALUES (NULL, ?, ?, ?, ?, ?, '1', ?);");
+                        $insertUser->execute(array($diametre,$numerofin,$poids,$dechet,$idfichecranteuseq1Max, $heuremontagebobine));
     
                         /*// On enleve une bobine dans la table epaisseur
                         $req ="UPDATE epaisseur SET `$diametre`=`$diametre`-1 where `lieu`='Cranteuse';";

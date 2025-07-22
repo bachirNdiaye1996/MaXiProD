@@ -658,14 +658,14 @@
                             if(production[i] === undefined){
                             }else{
                                 var j = production[i]['jour'];
-                                Poids[j] = Number(production[i]['prodpoids']);
+                                Poids[j] = production[i]['prodpoids'];
                             }
 
                             // Pour dechets
                             if(dechet[i] === undefined){
                             }else{
                                 var t = dechet[i]['jour'];
-                                Dechet[t] = Number(dechet[i]['dechet']);
+                                Dechet[t] = dechet[i]['dechet'];
                             }
                         }
                         // On cherche les sommes (dechet et production)
@@ -726,26 +726,26 @@
                             if(production[i] === undefined){
                             }else{
                                 var j = production[i]['jour'];
-                                Poids[j] = Number(production[i]['prodpoids']);
+                                Poids[j] = production[i]['prodpoids'];
                             }
 
                             // Pour dechets
                             if(dechet[i] === undefined){
                             }else{
                                 var t = dechet[i]['jour'];
-                                Dechet[t] = Number(dechet[i]['dechet']);
+                                Dechet[t] = dechet[i]['dechet'];
                             }
                         }
                         // On cherche les sommes (dechet et production)
                         const TotalProduitDress = Poids.reduce(
-                            (accumulator, currentValue) => accumulator + currentValue,
+                        (accumulator, currentValue) => accumulator + currentValue,
                         );
                         const ProductDress = document.getElementById('ProductDress');
                         let htmlPD = "<span class='text-primary'> Total = "+TotalProduitDress+" KG</span>";
                         ProductDress.insertAdjacentHTML("afterend", htmlPD);
 
                         const TotalDechetDress = Dechet.reduce(
-                            (accumulator, currentValue) => accumulator + currentValue,
+                        (accumulator, currentValue) => accumulator + currentValue,
                         );
                         const DechetDress = document.getElementById('DechetDress');
                         let htmlDD = "<span class='text-primary'> Total = "+TotalDechetDress+" KG</span>";

@@ -658,19 +658,19 @@
                             if(production[i] === undefined){
                             }else{
                                 var j = production[i]['jour'];
-                                Poids[j] = Number(production[i]['prodpoids']);
+                                Poids[j] = production[i]['prodpoids'];
                             }
 
                             // Pour dechets
                             if(dechet[i] === undefined){
                             }else{
                                 var t = dechet[i]['jour'];
-                                Dechet[t] = Number(dechet[i]['dechet']);
+                                Dechet[t] = dechet[i]['dechet'];
                             }
                         }
                         // On cherche les sommes (dechet et production)
                         const TotalProduit = Poids.reduce(
-                            (accumulator, currentValue) => accumulator + currentValue,
+                            (accumulator, currentValue) => (int)accumulator + (int)currentValue,
                         );
                         const ProductCrant = document.getElementById('ProductCrant');
                         let htmlPC = "<span class='text-primary'> Total = "+TotalProduit+" KG</span>";
@@ -726,14 +726,14 @@
                             if(production[i] === undefined){
                             }else{
                                 var j = production[i]['jour'];
-                                Poids[j] = Number(production[i]['prodpoids']);
+                                Poids[j] = production[i]['prodpoids'];
                             }
 
                             // Pour dechets
                             if(dechet[i] === undefined){
                             }else{
                                 var t = dechet[i]['jour'];
-                                Dechet[t] = Number(dechet[i]['dechet']);
+                                Dechet[t] = dechet[i]['dechet'];
                             }
                         }
                         // On cherche les sommes (dechet et production)

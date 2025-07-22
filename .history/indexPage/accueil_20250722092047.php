@@ -29,7 +29,7 @@
     $dt = time();
     $dtm = date( "m", $dt );  // On extrait le mois courant.
 
-    //** Debut select des production cranteuse
+    //** Debut select des receptions
         $sql = "SELECT SUM(`prodpoids`) as prodpoids, DAY(`dateCreation`) as jour FROM `cranteuseq1production` WHERE `actif`=1 AND MONTH(`dateCreation`)=$dtm 
         GROUP BY DAY(`dateCreation`);";          // On tire les fiches du mois courant
     
@@ -41,35 +41,9 @@
     
         // On récupère les valeurs dans un tableau associatif
         $FichesCranteuse = $query->fetchAll();
-    //** Fin select des production cranteuse
+    //** Fin select des receptions
 
-    //** Debut select des dechet cranteuse
-        $sql = "SELECT SUM(`dechet`) as dechet, DAY(`dateCreation`) as jour FROM `cranteuseq1consommation` WHERE `actif`=1 AND MONTH(`dateCreation`)=$dtm 
-        GROUP BY DAY(`dateCreation`);";          // On tire les fiches du mois courant
-    
-        // On prépare la requête
-        $query = $db->prepare($sql);
-    
-        // On exécute
-        $query->execute();
-    
-        // On récupère les valeurs dans un tableau associatif
-        $FichesCranteuseDechet = $query->fetchAll();
-    //** Fin select des dechet cranteuse
-
-    //** Debut select des productions et dechet section dresseuse
-        $sql = "SELECT SUM(`prodpoids`) as prodpoids, SUM(`proddechet`) as dechet, DAY(`dateCreation`) as jour FROM `dresseuseproduction` WHERE `actif`=1 AND MONTH(`dateCreation`)=$dtm 
-        GROUP BY DAY(`dateCreation`);";          // On tire les fiches du mois courant
-    
-        // On prépare la requête
-        $query = $db->prepare($sql);
-    
-        // On exécute
-        $query->execute();
-    
-        // On récupère les valeurs dans un tableau associatif
-        $FichesDresseuse = $query->fetchAll();
-    //** Fin select des productions et dechet section dresseuse
+    //print_r($Fiches);
 ?>
 
 
@@ -603,6 +577,7 @@
                     </div>
 
                     <!-- Content Row -->
+
                     <div class="row mb-4 mt-5">
                         <!-- A mettre le body -->
                         <!-- Bar Chart -->
@@ -616,7 +591,7 @@
                                         <canvas id="myChartCranteuse"></canvas>
                                     </div>
                                     <hr>
-                                    Production <span id="ProductCrant" class="text-primary"></span>  et Dechet <span id="DechetCrant"></span>
+                                    Production
                                     <code>de ce mois</code> à la section cranteuse.
                                 </div>
                             </div>
@@ -625,15 +600,15 @@
                         <div class="col-xl-6 col-lg-5">
                             <div class="card shadow">
                                 <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">Section DRESSEUSE</h6>
+                                    <h6 class="m-0 font-weight-bold text-primary">Section CRANTEUSE</h6>
                                 </div>
                                 <div class="card-body">
                                     <div>
-                                        <canvas id="myChartDresseuse"></canvas>
+                                        <canvas id="myChartCranteuseDechet"></canvas>
                                     </div>
                                     <hr>
-                                    Production <span id="ProductDress" class="text-primary"></span>  et Dechet <span id="DechetDress"></span>
-                                    <code>de ce mois</code> à la section dresseuse.
+                                    Dechets
+                                    <code>de ce mois</code> à la section cranteuse.
                                 </div>
                             </div>
                         </div>
@@ -644,139 +619,154 @@
                     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
                     <script type="text/javascript">
-                        var dechet = <?php echo json_encode($FichesCranteuseDechet); ?>;
-                        var production = <?php echo json_encode($FichesCranteuse); ?>;
+                        var dechet = <?php echo json_encode($FichesCranteuse); ?>;
                         //console.log(test);
 
                         var Jours = [];
                         var Poids = [];
-                        var Dechet = [];
                         Jours = ["0","1", "2", "3", "4", "5", "6","7", "8", "9", "10", "11", "12","13", "14", "15", "16", "17", "18","19", "20", "21", "22", "23", "24","25", "26", "27", "28", "29", "30","31"];
-                        
                         for (let i = 0; i < 30; i++) {
-                            // Pour la production
-                            if(production[i] === undefined){
-                            }else{
-                                var j = production[i]['jour'];
-                                Poids[j] = Number(production[i]['prodpoids']);
-                            }
-
-                            // Pour dechets
                             if(dechet[i] === undefined){
+                                //Poids.push(0);
                             }else{
-                                var t = dechet[i]['jour'];
-                                Dechet[t] = Number(dechet[i]['dechet']);
+                                var j = dechet[i]['jour'];
+                                Poids[j] = dechet[i]['prodpoids'];
                             }
                         }
-                        // On cherche les sommes (dechet et production)
-                        const TotalProduit = Poids.reduce(
-                            (accumulator, currentValue) => accumulator + currentValue,
-                        );
-                        const ProductCrant = document.getElementById('ProductCrant');
-                        let htmlPC = "<span class='text-primary'> Total = "+TotalProduit+" KG</span>";
-                        ProductCrant.insertAdjacentHTML("afterend", htmlPC);
 
-                        const TotalDechet = Dechet.reduce(
-                            (accumulator, currentValue) => accumulator + currentValue,
-                        );
-                        const DechetCrant = document.getElementById('DechetCrant');
-                        let htmlCD = "<span class='text-primary'> Total = "+TotalDechet+" KG</span>";
-                        DechetCrant.insertAdjacentHTML("afterend", htmlCD);
+                        //console.log(Poids);
 
-                        const ctxDressProd = document.getElementById('myChartCranteuse');
+                        const ctxCranDechet = document.getElementById('myChartCranteuseDechet');
 
-                        new Chart(ctxDressProd, {
-                        type: "bar",
+                        new Chart(ctxCranDechet, {
+                            type: 'bar',
+                            data: {
+                                labels: Jours,
+                                datasets: [{
+                                    label: "Dechet",
+                                    backgroundColor: "#4e73df",
+                                    hoverBackgroundColor: "#2e59d9",
+                                    borderColor: "#4e73df",
+                                    data: Poids,
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                scales: {
+                                    y: {
+                                    beginAtZero: true
+                                    }
+                                }
+                            }
+                        });
+                    </script>
+
+                    <script type="text/javascript">
+                        var dechet = <?php echo json_encode($FichesCranteuse); ?>;
+                        //console.log(test);
+
+                        var Jours = [];
+                        var Poids = [];
+                        Jours = ["0","1", "2", "3", "4", "5", "6","7", "8", "9", "10", "11", "12","13", "14", "15", "16", "17", "18","19", "20", "21", "22", "23", "24","25", "26", "27", "28", "29", "30","31"];
+                        for (let i = 0; i < 30; i++) {
+                            if(dechet[i] === undefined){
+                                //Poids.push(0);
+                            }else{
+                                var j = dechet[i]['jour'];
+                                Poids[j] = dechet[i]['prodpoids'];
+                            }
+                        }
+
+                        new Chart("myChartCranteuseDechet", {
+                        type: "line",
                         data: {
                             labels: Jours,
                             datasets: [{
-                            label: "Production",
-                            data: Poids,
-                            backgroundColor: "#4e73df",
-                            hoverBackgroundColor: "#2e59d9",
-                            borderColor: "#4e73df",
-                            borderWidth: 1
+                            data: [860,1140,1060,1060,1070,1110,1330,2210,7830,2478],
+                            borderColor: "red",
+                            fill: false
                             },{
-                            label: "Dechet",
-                            data: Dechet,
-                            backgroundColor: "#2cbd33ff",
-                            hoverBackgroundColor: "#06d810ff",
-                            borderColor: "#2cbd33ff",
-                            borderWidth: 1
+                            data: [1600,1700,1700,1900,2000,2700,4000,5000,6000,7000],
+                            borderColor: "green",
+                            fill: false
+                            },{
+                            data: [300,700,2000,5000,6000,4000,2000,1000,200,100],
+                            borderColor: "blue",
+                            fill: false
                             }]
                         },
                         options: {
                             legend: {display: false}
                         }
                         });
+
+                        //console.log(Poids);
+
+                        const ctxCranDechet = document.getElementById('');
+
+                        new Chart(ctxCranDechet, {
+                            type: 'bar',
+                            data: {
+                                labels: Jours,
+                                datasets: [{
+                                    label: "Dechet",
+                                    backgroundColor: "#4e73df",
+                                    hoverBackgroundColor: "#2e59d9",
+                                    borderColor: "#4e73df",
+                                    data: Poids,
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                scales: {
+                                    y: {
+                                    beginAtZero: true
+                                    }
+                                }
+                            }
+                        });
                     </script>
 
                     <script type="text/javascript">
-                        var dechet = <?php echo json_encode($FichesDresseuse); ?>;
-                        var production = <?php echo json_encode($FichesDresseuse); ?>;
+                        var production = <?php echo json_encode($FichesCranteuse); ?>;
                         //console.log(test);
 
                         var Jours = [];
                         var Poids = [];
-                        var Dechet = [];
                         Jours = ["0","1", "2", "3", "4", "5", "6","7", "8", "9", "10", "11", "12","13", "14", "15", "16", "17", "18","19", "20", "21", "22", "23", "24","25", "26", "27", "28", "29", "30","31"];
-                        
                         for (let i = 0; i < 30; i++) {
-                            // Pour la production
                             if(production[i] === undefined){
+                                //Poids.push(0);
                             }else{
                                 var j = production[i]['jour'];
-                                Poids[j] = Number(production[i]['prodpoids']);
-                            }
-
-                            // Pour dechets
-                            if(dechet[i] === undefined){
-                            }else{
-                                var t = dechet[i]['jour'];
-                                Dechet[t] = Number(dechet[i]['dechet']);
+                                Poids[j] = production[i]['prodpoids'];
                             }
                         }
-                        // On cherche les sommes (dechet et production)
-                        const TotalProduitDress = Poids.reduce(
-                            (accumulator, currentValue) => accumulator + currentValue,
-                        );
-                        const ProductDress = document.getElementById('ProductDress');
-                        let htmlPD = "<span class='text-primary'> Total = "+TotalProduitDress+" KG</span>";
-                        ProductDress.insertAdjacentHTML("afterend", htmlPD);
 
-                        const TotalDechetDress = Dechet.reduce(
-                            (accumulator, currentValue) => accumulator + currentValue,
-                        );
-                        const DechetDress = document.getElementById('DechetDress');
-                        let htmlDD = "<span class='text-primary'> Total = "+TotalDechetDress+" KG</span>";
-                        DechetDress.insertAdjacentHTML("afterend", htmlDD);
+                        //console.log(Poids);
 
-
-                        const ctxCranProd = document.getElementById('myChartDresseuse');
+                        const ctxCranProd = document.getElementById('myChartCranteuse');
 
                         new Chart(ctxCranProd, {
-                        type: "bar",
-                        data: {
-                            labels: Jours,
-                            datasets: [{
-                            label: "Production",
-                            data: Poids,
-                            backgroundColor: "#4e73df",
-                            hoverBackgroundColor: "#2e59d9",
-                            borderColor: "#4e73df",
-                            borderWidth: 1
-                            },{
-                            label: "Dechet",
-                            data: Dechet,
-                            backgroundColor: "#2cbd33ff",
-                            hoverBackgroundColor: "#06d810ff",
-                            borderColor: "#2cbd33ff",
-                            borderWidth: 1
-                            }]
-                        },
-                        options: {
-                            legend: {display: false}
-                        }
+                            type: 'bar',
+                            data: {
+                                labels: Jours,
+                                datasets: [{
+                                    label: "Production",
+                                    backgroundColor: "#4e73df",
+                                    hoverBackgroundColor: "#2e59d9",
+                                    borderColor: "#4e73df",
+                                    data: Poids,
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                scales: {
+                                    y: {
+                                    beginAtZero: true
+                                    }
+                                }
+                            }
                         });
                     </script>
 

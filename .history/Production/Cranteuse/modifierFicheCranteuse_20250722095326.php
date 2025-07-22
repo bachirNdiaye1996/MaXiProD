@@ -8,11 +8,13 @@
     }
 
     include "../../connexion/conexiondb.php";
+    include "./mailProductionCranteuse.php";
+    include "../../variables.php";
+
 
 
     //Variables
     // Il faut savoir que metal3 est remplacer par niambour
-    $k = 0;
     $valideFiche="";
     $ProblemeQuart="";
     $ProblemeCompteur="";
@@ -20,202 +22,413 @@
     $ProblemeFicheExist="";
     $ProblemeFilMachine="";
 
+    $idsupfiche = $_GET['idsupfiche'];  // On recupére l'ID idcranteuseq1 par get
+    $quart = $_GET['quart'];
 
-    //Insertion une fiche
-    if(isset($_POST['CreerFicheProduction'])){
+    if($_SERVER["REQUEST_METHOD"]=='GET'){
+        if(!isset($_GET['idsupfiche'])){
+            header("location: ficheCranteuse.php");
+            exit;
+        }
+        $sql = "select * from fichecranteuseq1 where idfichecranteuseq1=$idsupfiche and actif = 1";
+        $result = $db->query($sql);
+        $rowEntete = $result->fetch();
 
-        $compteurdebut=htmlspecialchars( $_POST['compteurdebut']);
-        $compteurfin=htmlspecialchars( $_POST['compteurfin']);
-        $controleur1=htmlspecialchars( $_POST['controleur1']);
-        $controleur2=htmlspecialchars($_POST['controleur2']);
-        $machine=htmlspecialchars( $_POST['machine']);
-        $datecreationfiche=htmlspecialchars( $_POST['datecreationfiche']);
-        $observationdebut=htmlspecialchars($_POST['observationdebut']);
-        $heuredepartquart=htmlspecialchars($_POST['heuredepartquart']);
-        $heurefinquart=htmlspecialchars( $_POST['heurefinquart']);
-        $user=htmlspecialchars( $_POST['user']);
-        $quart=htmlspecialchars($_POST['quart']);
-        $vitesse=htmlspecialchars( $_POST['vitesse']);
-        $observationfin=htmlspecialchars($_POST['observationfin']);
-        $poidsestimetravaillenonnote=htmlspecialchars($_POST['poidsestimetravaillenonnote']);
+        $sql = "select * from cranteuseq1arret where idfichecranteuseq1=$idsupfiche and actif = 1";
+        $result = $db->query($sql);
+        $rowErreurs = $result->fetchAll();
 
-        // Vérifie si les heures du quart sont correctes
-            $heures = explode(":", $heuredepartquart);
-            $heuredepartquartHeure = $heures[0]; 
-            $heuredepartquartMin = $heures[1]; 
+        $sql = "select * from cranteuseq1consommation where idfichecranteuseq1=$idsupfiche and actif = 1";
+        $result = $db->query($sql);
+        $rowConsommations = $result->fetchAll();
 
-            $heures = explode(":", $heurefinquart);
-            $heurefinquartHeure = $heures[0]; 
-            $heurefinquartMin = $heures[1];
-        // Fin
+        $sql = "select * from cranteuseq1production where idfichecranteuseq1=$idsupfiche and actif = 1";
+        $result = $db->query($sql);
+        $rowProductions = $result->fetchAll();
 
-        //On verifie avant d'inserer
-            // Quart
+        while(!$rowEntete){
+            header("location: ficheCranteuse.php");
+            exit; 
+        }
+        if($rowEntete['accepteprodmodif'] == 0 && $rowEntete['actifapprouvprod'] == 0){
+            header("location: ficheCranteuse.php");
+            exit;
+        }
+    }else{  
+        //Update une fiche
+        if(isset($_POST['CreerFicheProduction'])){
+
+            // Pour obtenir le nombre de rowConsommations en cas d'erreur
+            $sql = "select * from cranteuseq1consommation where idfichecranteuseq1=$idsupfiche and actif = 1";
+            $result = $db->query($sql);
+            $rowConsommations = $result->fetchAll();
+
+            // Pour obtenir le nombre de rowErreurs en cas d'erreur
+            $sql = "select * from cranteuseq1arret where idfichecranteuseq1=$idsupfiche and actif = 1";
+            $result = $db->query($sql);
+            $rowErreurs = $result->fetchAll();
+
+            $compteurdebut=htmlspecialchars( $_POST['compteurdebut']);
+            $compteurfin=htmlspecialchars( $_POST['compteurfin']);
+            $controleur1=htmlspecialchars( $_POST['controleur1']);
+            $controleur2=htmlspecialchars($_POST['controleur2']);
+            $machine=htmlspecialchars( $_POST['machine']);
+            $datecreationfiche=htmlspecialchars( $_POST['datecreationfiche']);
+            $observationdebut=htmlspecialchars($_POST['observationdebut']);
+            $heuredepartquart=htmlspecialchars($_POST['heuredepartquart']);
+            $heurefinquart=htmlspecialchars( $_POST['heurefinquart']);
+            $user=htmlspecialchars( $_POST['user']);
+            $quart=htmlspecialchars($_POST['quart']);
+            $vitesse=htmlspecialchars( $_POST['vitesse']);
+            $observationfin=htmlspecialchars($_POST['observationfin']);
+            $poidsestimetravaillenonnote=htmlspecialchars($_POST['poidsestimetravaillenonnote']);
+
+            // Vérifie si les heures du quart sont correctes
+                $heures = explode(":", $heuredepartquart);
+                $heuredepartquartHeure = $heures[0]; 
+                $heuredepartquartMin = $heures[1]; 
+
+                $heures = explode(":", $heurefinquart);
+                $heurefinquartHeure = $heures[0]; 
+                $heurefinquartMin = $heures[1];
+            // Fin
+
+            //On verifie avant d'inserer
+                // Quart
                 if(($heurefinquartHeure > $heuredepartquartHeure) || (( $heurefinquartHeure == $heuredepartquartHeure)&&( $heurefinquartMin > $heuredepartquartMin))){
                 }else{
                     $ProblemeQuart="erreurProblemeQuart";
                 }
-            //
 
-            //On vérifie si la fiche existe ou pas
-                $sqlEpaisseur = "SELECT * FROM `fichecranteuseq1` WHERE `actif`=1 AND `quart`='$quart' AND `machine`='$machine' AND `dateCreation`='$datecreationfiche';";
-                // On prépare la requête
-                $queryEpaisseur = $db->prepare($sqlEpaisseur);
-                $queryEpaisseur->execute();
-                $resultEpaisseur = $queryEpaisseur->fetch();
-                
-                if($resultEpaisseur){
-                    $ProblemeFicheExist="erreurProblemeFicheExist";
-                }
-            // Fin
-
-            // Compteur
-            if(($ProblemeQuart != "erreurProblemeQuart") && ($ProblemeFicheExist != "erreurProblemeFicheExist")){
-                if(($compteurfin > $compteurdebut)){
-                    for ($i = 0; $i < count($_POST['debutarret']); $i++){
-                        $debutarret=htmlspecialchars( $_POST['debutarret'][$i]);
-                        $finarret=htmlspecialchars($_POST['finarret'][$i]);
-                        $raisonerreur=htmlspecialchars($_POST['raisonerreur'][$i]);
-
-                        $heures = explode(":", $finarret);
-                        $heureFinHeure = $heures[0]; 
-                        $heureFinMin = $heures[1]; 
-
-                        $heures = explode(":", $debutarret);
-                        $heureDebutHeure = $heures[0]; 
-                        $heureDebutMin = $heures[1]; 
-
-                        if(( $heureFinHeure > $heureDebutHeure) || (( $heureFinHeure == $heureDebutHeure)&&( $heureFinMin > $heureDebutMin))){
-                            //echo ($heureFinHeure-$heureDebutHeure).":".($heureFinMin-$heureDebutMin);
-                        }else{
-                            $ProblemeArret="erreurProblemeArret";
-                        }
+                //On vérifie si la fiche existe ou pas
+                    $sqlEpaisseur = "SELECT * FROM `fichecranteuseq1` WHERE `actif`=1 AND `quart`='$quart' AND `machine`='$machine' AND `dateCreation`='$datecreationfiche' AND `accepteprodmodif`=0 AND `actifapprouvprod`=0;";
+                    // On prépare la requête
+                    $queryEpaisseur = $db->prepare($sqlEpaisseur);
+                    $queryEpaisseur->execute();
+                    $resultEpaisseur = $queryEpaisseur->fetch();
+                    
+                    if($resultEpaisseur){
+                        $ProblemeFicheExist="erreurProblemeFicheExist";
                     }
-                }else{
-                    $ProblemeCompteur="erreurProblemeCompteur";
+                // Fin
+
+                // Compteur
+                if(($ProblemeQuart != "erreurProblemeQuart")){
+                    if(($compteurfin > $compteurdebut)){
+                        for ($i = 0; $i < count($_POST['debutarret']); $i++){
+                            $debutarret=htmlspecialchars( $_POST['debutarret'][$i]);
+                            $finarret=htmlspecialchars($_POST['finarret'][$i]);
+                            $raisonerreur=htmlspecialchars($_POST['raisonerreur'][$i]);
+
+                            $heures = explode(":", $finarret);
+                            $heureFinHeure = $heures[0]; 
+                            $heureFinMin = $heures[1]; 
+
+                            $heures = explode(":", $debutarret);
+                            $heureDebutHeure = $heures[0]; 
+                            $heureDebutMin = $heures[1]; 
+
+                            if(( $heureFinHeure > $heureDebutHeure) || (( $heureFinHeure == $heureDebutHeure)&&( $heureFinMin > $heureDebutMin))){
+                                //echo ($heureFinHeure-$heureDebutHeure).":".($heureFinMin-$heureDebutMin);
+                            }else{
+                                $ProblemeArret="erreurProblemeArret";
+                            }
+                        }
+                    }else{
+                        $ProblemeCompteur="erreurProblemeCompteur";
+                    }
                 }
-            }
 
-            //Consommations
-            for ($i = 0; $i < count($_POST['diametre']); $i++){   
-                $diametre=htmlspecialchars( $_POST['diametre'][$i]);
-                $numerofin=htmlspecialchars($_POST['numerofin'][$i]);
-                $heuremontagebobine=htmlspecialchars($_POST['heuremontagebobine'][$i]);
-                $poids=htmlspecialchars($_POST['poids'][$i]);
-                $dechet=htmlspecialchars($_POST['dechet'][$i]);
+                //Consommations
+                    for ($i = 0; $i < count($_POST['diametre']); $i++){   
+                        $diametre=htmlspecialchars( $_POST['diametre'][$i]);
+                        $numerofin=htmlspecialchars($_POST['numerofin'][$i]);
+                        $heuremontagebobine=htmlspecialchars($_POST['heuremontagebobine'][$i]);
+                        $poids=htmlspecialchars($_POST['poids'][$i]);
+                        $dechet=htmlspecialchars($_POST['dechet'][$i]);
 
-                if($numerofin == ""){
-                    $ProblemeFilMachine="erreurProblemeFilMachine";
-                }                 
-            }
+                        if($numerofin == ""){
+                            $ProblemeFilMachine="erreurProblemeFilMachine";
+                        }                 
+                    }
 
-            //Productions
-            for ($i = 0; $i < count($_POST['Proddiametre']); $i++){   
-                $diametre=htmlspecialchars( $_POST['Proddiametre'][$i]);
-                $numerofin=htmlspecialchars($_POST['Prodnumerofin'][$i]);
-                $poids=htmlspecialchars($_POST['Prodpoids'][$i]);
+                //Productions
+                for ($i = 0; $i < count($_POST['Proddiametre']); $i++){   
+                    $diametre=htmlspecialchars( $_POST['Proddiametre'][$i]);
+                    $numerofin=htmlspecialchars($_POST['Prodnumerofin'][$i]);
+                    $poids=htmlspecialchars($_POST['Prodpoids'][$i]);
 
-                if($numerofin == ""){
-                    $ProblemeFilMachine="erreurProblemeFilMachine";
-                } 
-            }
-        //Fin verification
-        
-        if($ProblemeArret != "erreurProblemeArret" && $ProblemeCompteur != "erreurProblemeCompteur" && $ProblemeQuart != "erreurProblemeQuart" && $ProblemeFilMachine != "erreurProblemeFilMachine" && ($ProblemeFicheExist != "erreurProblemeFicheExist")){            
-            $insertUser=$db->prepare("INSERT INTO `fichecranteuseq1` (`idfichecranteuseq1`, `user`, `dateajout`, `quart`, `actif`, `dateCreation`, `compteurdebut`,
-             `compteurfin`, `controleur1`, `controleur2`, `machine`, `observationdebut`, `heuredepartquart`, `heurefinquart`, `saisisseur`, `vitesse`,
-              `observationfin`, `poidsestimetravaillenonnote`, `accepteprodmodif`, `actifapprouvprod`) VALUES (NULL, ?, current_timestamp(), ?, '1', ?, ?,
-              ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '0', '0');");
-            $insertUser->execute(array($user,$quart,$datecreationfiche,$compteurdebut,$compteurfin,$controleur1,$controleur2,$machine,$observationdebut,$heuredepartquart,$heurefinquart,$user,$vitesse,$observationfin,$poidsestimetravaillenonnote));
+                    if($numerofin == ""){
+                        $ProblemeFilMachine="erreurProblemeFilMachine";
+                    } 
+                }
+            //Fin verification
+            
+            if($ProblemeArret != "erreurProblemeArret" && $ProblemeCompteur != "erreurProblemeCompteur" && $ProblemeQuart != "erreurProblemeQuart" && $ProblemeFicheExist != "erreurProblemeFicheExist" && $ProblemeFilMachine != "erreurProblemeFilMachine"){  
 
-            // Récuperer le dernier id de la fiche
-                $sqlEpaisseur = "SELECT MAX(idfichecranteuseq1)  AS idMax FROM `fichecranteuseq1`";
-                // On prépare la requête
-                $queryEpaisseur = $db->prepare($sqlEpaisseur);
-                $queryEpaisseur->execute();
-                $resultEpaisseur = $queryEpaisseur->fetch();
-                $idfichecranteuseq1Max = (int) $resultEpaisseur['idMax'];
-            // Fin
+                // Inserer dans le log
+                    $sql = "select * from fichecranteuseq1 where idfichecranteuseq1=$idsupfiche and actif = 1";
+                    $result = $db->query($sql);
+                    $rowEntete = $result->fetch();
+            
+                    $sql = "select * from cranteuseq1arret where idfichecranteuseq1=$idsupfiche and actif = 1";
+                    $result = $db->query($sql);
+                    $rowErreurs = $result->fetchAll();
+            
+                    $sql = "select * from cranteuseq1consommation where idfichecranteuseq1=$idsupfiche and actif = 1";
+                    $result = $db->query($sql);
+                    $rowConsommations = $result->fetchAll();
+            
+                    $sql = "select * from cranteuseq1production where idfichecranteuseq1=$idsupfiche and actif = 1";
+                    $result = $db->query($sql);
+                    $rowProductions = $result->fetchAll();
 
-            // Arrets
+                    $Rcompteurdebut=htmlspecialchars( $rowEntete['compteurdebut']);
+                    $Rcompteurfin=htmlspecialchars( $rowEntete['compteurfin']);
+                    $Rcontroleur1=htmlspecialchars( $rowEntete['controleur1']);
+                    $Rcontroleur2=htmlspecialchars($rowEntete['controleur2']);
+                    $Rmachine=htmlspecialchars( $rowEntete['machine']);
+                    $Rdatecreationfiche=htmlspecialchars( $rowEntete['dateCreation']);
+                    $Robservationdebut=htmlspecialchars($rowEntete['observationdebut']);
+                    $Rheuredepartquart=htmlspecialchars($rowEntete['heuredepartquart']);
+                    $Rheurefinquart=htmlspecialchars( $rowEntete['heurefinquart']);
+                    $Ruser=htmlspecialchars( $rowEntete['user']);
+                    $Rquart=htmlspecialchars($rowEntete['quart']);
+                    $Rvitesse=htmlspecialchars( $rowEntete['vitesse']);
+                    $Robservationfin=htmlspecialchars($rowEntete['observationfin']);
+                    $Rpoidsestimetravaillenonnote=htmlspecialchars($rowEntete['poidsestimetravaillenonnote']);
+
+                    $insertUser=$db->prepare("INSERT INTO `logfichecranteuse` (`idlogfichecranteuse`, `user`, `dateajout`, `quart`, `actif`, `dateCreation`, `compteurdebut`,
+                    `compteurfin`, `controleur1`, `controleur2`, `machine`, `observationdebut`, `heuredepartquart`, `heurefinquart`, `saisisseur`, `vitesse`,
+                     `observationfin`, `poidsestimetravaillenonnote`, `idcranteuseq1`, `accepteprodmodif`, `actifapprouvprod`) VALUES (NULL, ?, current_timestamp(), ?, '1', ?, ?,
+                     ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '0', '0');");
+                   $insertUser->execute(array($Ruser,$Rquart,$Rdatecreationfiche,$Rcompteurdebut,$Rcompteurfin,$Rcontroleur1,$Rcontroleur2,$Rmachine,$Robservationdebut,$Rheuredepartquart,$Rheurefinquart,$Ruser,$Rvitesse,$Robservationfin,$Rpoidsestimetravaillenonnote,$idsupfiche));
+
+                    // Récuperer le dernier id de la matiére
+                        $sqlEpaisseur = "SELECT MAX( idlogfichecranteuse )  AS idMax FROM `logfichecranteuse`";
+                        // On prépare la requête
+                        $queryEpaisseur = $db->prepare($sqlEpaisseur);
+                        $queryEpaisseur->execute();
+                        $resultEpaisseur = $queryEpaisseur->fetch();
+                        $idMax = (int) $resultEpaisseur['idMax'];
+                    // Fin
+
+                    // Arrets
+                        foreach($rowErreurs as $rowErreur => $key){
+                            $debutarret=htmlspecialchars( $key['debutarret']);
+                            $finarret=htmlspecialchars($key['finarret']);
+                            $raisonerreur=htmlspecialchars($key['raison']);
+
+                            $insertUser=$db->prepare("INSERT INTO `logcranteusearret` (`idlogcranteusearret`, `debutarret`, `finarret`, `raison`, `idfichecranteuseq1`, `actif`) 
+                            VALUES (NULL, ?, ?, ?, ?, '1');");
+                            $insertUser->execute(array($debutarret,$finarret,$raisonerreur,$idMax));
+                        }
+
+                    // Consommations
+                        foreach($rowConsommations as $rowConsommation => $key){
+                            $diametre=htmlspecialchars($key['diametre']);
+                            $numerofin=htmlspecialchars($key['numerofin']);
+                            $poids=htmlspecialchars($key['poids']);
+                            $dechet=htmlspecialchars($key['dechet']);
+                            $heuremontagebobine=htmlspecialchars($key['heuremontagebobine']);
+
+                            $insertUser=$db->prepare("INSERT INTO `logcranteuseconsommation` (`idlogcranteuseconsommation`, `diametre`, `numerofin`, `poids`, `dechet`, `idfichecranteuseq1`, `actif`,`heuremontagebobine`) 
+                            VALUES (NULL, ?, ?, ?, ?, ?, '1', ?);");
+                            $insertUser->execute(array($diametre,$numerofin,$poids,$dechet,$idMax,$heuremontagebobine));
+                        }
+
+                    // Productions
+                        foreach($rowProductions as $rowProduction => $key){
+                            $diametre=htmlspecialchars( $key['proddiametre']);
+                            $numerofin=htmlspecialchars($key['prodnumerofin']);
+                            $poids=htmlspecialchars($key['prodpoids']);
+                            $nomenclature=htmlspecialchars( $key['prodnomenclature']);
+                            $echanlongueur=htmlspecialchars( $key['echanlongueur']);
+                            $echanpoids=htmlspecialchars($key['echanpoids']);
+                            $echandf=htmlspecialchars($key['echandf']);
+
+                            $insertUser=$db->prepare("INSERT INTO `logcranteuseproduction` (`idlogcranteuseproduction`, `proddiametre`, `prodnumerofin`, `prodpoids`, `idfichecranteuseq1`, `actif`,`nomenclature`, `echanlongueur`, `echanpoids`, `echandf`) 
+                            VALUES (NULL, ?, ?, ?, ?, '1', ?, ?, ?, ?);");
+                            $insertUser->execute(array($diametre,$numerofin,$poids,$idMax,$nomenclature,$echanlongueur,$echanpoids,$echandf));
+                        }
+                    //
+                // Fin inserer dans le log
+
+
+                $insertUser=$db->prepare("UPDATE `fichecranteuseq1` SET `user`=?, `quart`=? ,`actifapprouvprod`= 0, `accepteprodmodif`= 0, `dateCreation`=?, `compteurdebut`=?,
+                `compteurfin`=?, `controleur1`=?, `controleur2`=?, `machine`=?, `observationdebut`=?, `heuredepartquart`=?, `heurefinquart`=?, `saisisseur`=?, `vitesse`=?, `couleurhistoriquemodif`=1,
+                `observationfin`=?, `poidsestimetravaillenonnote`=? where `idfichecranteuseq1`= $idsupfiche;");
+                $insertUser->execute(array($user,$quart,$datecreationfiche,$compteurdebut,$compteurfin,$controleur1,$controleur2,$machine,$observationdebut,$heuredepartquart,$heurefinquart,$user,$vitesse,$observationfin,$poidsestimetravaillenonnote));
+
+
+                // Arrets
                 for ($i = 0; $i < count($_POST['debutarret']); $i++){
                     $debutarret=htmlspecialchars( $_POST['debutarret'][$i]);
                     $finarret=htmlspecialchars($_POST['finarret'][$i]);
                     $raisonerreur=htmlspecialchars($_POST['raisonerreur'][$i]);
+                    $idErreur=htmlspecialchars($_POST['idErreur'][$i]);
 
-                    $insertUser=$db->prepare("INSERT INTO `cranteuseq1arret` (`idcranteuseq1arret`, `debutarret`, `finarret`, `raison`, `idfichecranteuseq1`, `actif`) 
-                    VALUES (NULL, ?, ?, ?, ?, '1');");
-                    $insertUser->execute(array($debutarret,$finarret,$raisonerreur,$idfichecranteuseq1Max));
+                    if($idErreur != ""){
+                        $insertUser=$db->prepare("UPDATE `cranteuseq1arret` SET `debutarret`=?, `finarret`=?, `raison`=? where `idcranteuseq1arret`=?;");
+                        $insertUser->execute(array($debutarret,$finarret,$raisonerreur,$idErreur));
+
+                        // Supprimer la ligne
+                        if(isset($_POST['suprimerArret'.$i])){
+                            $insertUser=$db->prepare("UPDATE `cranteuseq1arret` SET `actif`=0 where `idcranteuseq1arret`=?;");
+                            $insertUser->execute(array($idErreur));
+                        }
+                    }else{
+                        $insertUser=$db->prepare("INSERT INTO `cranteuseq1arret` (`idcranteuseq1arret`, `debutarret`, `finarret`, `raison`, `idfichecranteuseq1`, `actif`) 
+                        VALUES (NULL, ?, ?, ?, ?, '1');");
+                        $insertUser->execute(array($debutarret,$finarret,$raisonerreur,$idsupfiche));
+                    }
                 }
-            //
 
-            // Consommations
-                for ($i = 0; $i < count($_POST['diametre']); $i++){
+                // Consommations
+                for ($i = 0; $i < count($_POST['diametre']); $i++){    
                     $diametre=htmlspecialchars( $_POST['diametre'][$i]);
                     $numerofinString = explode("/", htmlspecialchars($_POST['numerofin'][$i]));
                     $numerofin=$numerofinString[0];
-                    $heuremontagebobine=htmlspecialchars($_POST['heuremontagebobine'][$i]);
                     $poids=htmlspecialchars($_POST['poids'][$i]);
                     $dechet=htmlspecialchars($_POST['dechet'][$i]);
+                    $heuremontagebobine=htmlspecialchars($_POST['heuremontagebobine'][$i]);
+                    $idConsommation=htmlspecialchars($_POST['idConsommation'][$i]);
 
                     // Voir si FM est fini
                     if(isset($_POST['finirfm'.$i])){
-                        $insertUser=$db->prepare("INSERT INTO `cranteuseq1consommation` (`idcranteuseq1consommation`, `diametre`, `numerofin`, `poids`, `dechet`, `idfichecranteuseq1`, `actif`, `heuremontagebobine`,`finirfm`,`dateCreation`) 
-                        VALUES (NULL, ?, ?, ?, ?, ?, '1', ?, 1, ?);");
-                        $insertUser->execute(array($diametre,$numerofin,$poids,$dechet,$idfichecranteuseq1Max, $heuremontagebobine,$datecreationfiche));
-    
-                        // On enleve une bobine dans la table epaisseur
-                        $req ="UPDATE epaisseur SET `$diametre`=`$diametre`-1 where `lieu`='Cranteuse';";
-                        //$db->query($req);
-                        $reqtitre = $db->prepare($req);
-                        $reqtitre->execute();
-    
-                        //On enleve une bobine dans la table matiere
-                        $req ="UPDATE matiere SET `nbbobineactuel` = `nbbobineactuel` - 1 where `numbobine`= ?;";
-                        $reqtitre = $db->prepare($req);
-                        $reqtitre->execute(array($numerofin));
+                        if($idConsommation != ""){
+                            $insertUser=$db->prepare("UPDATE `cranteuseq1consommation` SET `diametre`=?, `numerofin`=?, `poids`=?,
+                            `dechet`=?, `heuremontagebobine`=?, `finirfm`=1 where `idcranteuseq1consommation`=?;");
+                           $insertUser->execute(array($diametre,$numerofin,$poids,$dechet,$heuremontagebobine,$idConsommation));
+                                        
+                            // Supprimer la ligne
+                            if(isset($_POST['suprimerCons'.$i])){
+                                $insertUser=$db->prepare("UPDATE `cranteuseq1consommation` SET `actif`=0 where `idcranteuseq1consommation`=?;");
+                                $insertUser->execute(array($idConsommation));
+                            }else{
+                                // On enleve une bobine dans la table epaisseur
+                                $req ="UPDATE epaisseur SET `$diametre`=`$diametre`-1 where `lieu`='Cranteuse';"; 
+                                //$db->query($req);
+                                $reqtitre = $db->prepare($req);
+                                $reqtitre->execute();
+
+                                //On enleve une bobine dans la table matiere
+                                $req ="UPDATE matiere SET `nbbobineactuel` = `nbbobineactuel` - 1 where `numbobine`= ?;";
+                                $reqtitre = $db->prepare($req);
+                                $reqtitre->execute(array($numerofin));
+                            }
+                        }else{
+                            $insertUser=$db->prepare("INSERT INTO `cranteuseq1consommation` (`idcranteuseq1consommation`, `diametre`, `numerofin`, `poids`, `dechet`, `idfichecranteuseq1`, `actif`,`heuremontagebobine`,`finirfm`) 
+                            VALUES (NULL, ?, ?, ?, ?, ?, '1', ?, '1');");
+                            $insertUser->execute(array($diametre,$numerofin,$poids,$dechet,$idsupfiche,$heuremontagebobine));
+
+
+                            // On enleve une bobine dans la table epaisseur
+                            $req ="UPDATE epaisseur SET `$diametre`=`$diametre`-1 where `lieu`='Cranteuse';"; 
+                            //$db->query($req);
+                            $reqtitre = $db->prepare($req);
+                            $reqtitre->execute();
+
+                            //On enleve une bobine dans la table matiere
+                            $req ="UPDATE matiere SET `nbbobineactuel` = `nbbobineactuel` - 1 where `numbobine`= ?;";
+                            $reqtitre = $db->prepare($req);
+                            $reqtitre->execute(array($numerofin));
+                        }
                     }else{
-                        $insertUser=$db->prepare("INSERT INTO `cranteuseq1consommation` (`idcranteuseq1consommation`, `diametre`, `numerofin`, `poids`, `dechet`, `idfichecranteuseq1`, `actif`, `heuremontagebobine`,`dateCreation`) 
-                        VALUES (NULL, ?, ?, ?, ?, ?, '1', ?, ?);");
-                        $insertUser->execute(array($diametre,$numerofin,$poids,$dechet,$idfichecranteuseq1Max, $heuremontagebobine,$datecreationfiche));
-    
-                        /*// On enleve une bobine dans la table epaisseur
-                        $req ="UPDATE epaisseur SET `$diametre`=`$diametre`-1 where `lieu`='Cranteuse';";
-                        //$db->query($req);
-                        $reqtitre = $db->prepare($req);
-                        $reqtitre->execute();
-    
-                        //On enleve une bobine dans la table matiere
-                        $req ="UPDATE matiere SET `nbbobineactuel` = `nbbobineactuel` - 1 where `numbobine`= ?;";
-                        $reqtitre = $db->prepare($req);
-                        $reqtitre->execute(array($numerofin));*/
+                        if($idConsommation != ""){
+                            $insertUser=$db->prepare("UPDATE `cranteuseq1consommation` SET `diametre`=?, `numerofin`=?, `poids`=?,
+                            `dechet`=?, `heuremontagebobine`=?, `finirfm`=0 where `idcranteuseq1consommation`=?;");
+                           $insertUser->execute(array($diametre,$numerofin,$poids,$dechet,$heuremontagebobine,$idConsommation));
+
+                           // Supprimer la ligne
+                            if(isset($_POST['suprimerCons'.$i])){
+                                $insertUser=$db->prepare("UPDATE `cranteuseq1consommation` SET `actif`=0 where `idcranteuseq1consommation`=?;");
+                                $insertUser->execute(array($idConsommation));
+                            }
+                        }else{
+                            $insertUser=$db->prepare("INSERT INTO `cranteuseq1consommation` (`idcranteuseq1consommation`, `diametre`, `numerofin`, `poids`, `dechet`, `idfichecranteuseq1`, `actif`,`heuremontagebobine`) 
+                            VALUES (NULL, ?, ?, ?, ?, ?, '1', ?);");
+                            $insertUser->execute(array($diametre,$numerofin,$poids,$dechet,$idsupfiche,$heuremontagebobine));
+                        }
                     }
                 }
-            //
 
-            // Productions
-                for ($i = 0; $i < count($_POST['Proddiametre']); $i++){
-                    $diametre=htmlspecialchars( $_POST['Proddiametre'][$i]);
-                    $nomenclature=htmlspecialchars( $_POST['Prodnomenclature'][$i]);
-                    $numerofinString = explode("/", htmlspecialchars($_POST['Prodnumerofin'][$i]));
-                    $numerofin=$numerofinString[0];
-                    $poids=htmlspecialchars($_POST['Prodpoids'][$i]);
-                    // C'est pour les échantillons
-                    $echanlongueur=htmlspecialchars( $_POST['Echanlongueur'][$i]);
-                    $echanpoids=htmlspecialchars($_POST['Echanpoids'][$i]);
-                    $echandf=htmlspecialchars($_POST['Echandf'][$i]);
+                // Productions
+                    for ($i = 0; $i < count($_POST['Proddiametre']); $i++){   
+                        $diametre=htmlspecialchars( $_POST['Proddiametre'][$i]);
+                        $nomenclature=htmlspecialchars( $_POST['Prodnomenclature'][$i]);
+                        $numerofinString = explode("/", htmlspecialchars($_POST['Prodnumerofin'][$i]));
+                        $numerofin=$numerofinString[0];
+                        $poids=htmlspecialchars($_POST['Prodpoids'][$i]);
+                        // Pour l'échantillon :
+                        $echanlongueur=htmlspecialchars( $_POST['Echanlongueur'][$i]);
+                        $echanpoids=htmlspecialchars($_POST['Echanpoids'][$i]);
+                        $echandf=htmlspecialchars($_POST['Echandf'][$i]);
+                        $idcranteuseq1production=htmlspecialchars($_POST['idcranteuseq1production'][$i]);
+                        
+                        if($idcranteuseq1production != ""){
+                            $insertUser=$db->prepare("UPDATE `cranteuseq1production` SET `prodnomenclature`=?, `proddiametre`=?, `prodnumerofin`=?, 
+                            `prodpoids`=?, `echanlongueur`=?, `echanpoids`=?, `echandf`=?, `idfichecranteuseq1`=?, `dateCreation`=? where `idcranteuseq1production`=?;");
+                            $insertUser->execute(array($nomenclature,$diametre,$numerofin,$poids,$echanlongueur,$echanpoids,$echandf,$idsupfiche,$datecreationfiche,$idcranteuseq1production));
 
-                    $insertUser=$db->prepare("INSERT INTO `cranteuseq1production` (`idcranteuseq1production`, `proddiametre`, `prodnumerofin`, `prodpoids`, `idfichecranteuseq1`, `actif`,`prodnomenclature`,`echanlongueur`,`echanpoids`,`echandf`,`dateCreation`) 
-                    VALUES (NULL, ?, ?, ?, ?, '1', ?, ?, ?, ?, ?);");
-                    $insertUser->execute(array($diametre,$numerofin,$poids,$idfichecranteuseq1Max,$nomenclature,$echanlongueur,$echanpoids,$echandf,$datecreationfiche));
+                            // Si la ligne est supprimée
+                            if(isset($_POST['suprimerProd'.$i])){
+                                $insertUser=$db->prepare("UPDATE `cranteuseq1production` SET `actif`=0 where `idcranteuseq1production`=?;");
+                                $insertUser->execute(array($idcranteuseq1production));
+                            }
+                        }else{
+                            $insertUser=$db->prepare("INSERT INTO `cranteuseq1production` (`idcranteuseq1production`, `proddiametre`, `prodnumerofin`,
+                             `prodpoids`, `idfichecranteuseq1`, `actif`, `prodnomenclature`, `echanlongueur`, `echanpoids`, `echandf`, `dateCreation`) 
+                            VALUES (NULL, ?, ?, ?, ?, '1', ?, ?, ?, ?, ?);");
+                            $insertUser->execute(array($diametre,$numerofin,$poids,$idsupfiche,$nomenclature,$echanlongueur,$echanpoids,$echandf,$datecreationfiche));
+                        }
+                    }
+                //
+
+                $messageD = "
+                <html>
+                <head>
+                <meta http-equiv='Content-Type' content='text/html; charset=utf-8'/>
+                    <title>Nouveau compte</title>
+                </head>
+                <body>
+                    <div id='email-wrap' style='background: #3F5EFB; border-radius: 10px;'><br><br>
+                        <p align='center' style='margin-top:20px;'>
+                            <h2 align='center' style='color:white'>METAL * * * AFRIQUE</h2>
+                            <p align='center' style='color:white'>$_SESSION[nomcomplet] a modifié la fiche de production cranteuse (quart $quart) de code de production : <strong>CRAN-$idsupfiche</strong></p>
+                            <p align='center'><a href=$HOST style='color:white'>Cliquez ici pour y acceder.</a></p>
+                        </p>
+                        <br><br>
+                    </div>
+                </body>
+                </html>
+                    ";
+        
+                // Utilisateur admin seul
+                    $sql = "SELECT * FROM `utilisateur` where `actif`=1 and `niveau`='admin';";
+        
+                    // On prépare la requête
+                    $query = $db->prepare($sql);
+        
+                    // On exécute
+                    $query->execute();
+        
+                    // On récupère les valeurs dans un tableau associatif
+                    $UserMails = $query->fetchAll();
+                //** Fin select 
+                foreach($UserMails as $user => $item){
+                    envoie_mail("Gestion de production modification fiche",$item['email'],"Modification de la fiche de code CRAN-$idsupfiche",$messageD);
                 }
-            //
 
-            header("location: detailsCranteuseQ1.php?idfichecranteuseq1=$idfichecranteuseq1Max&quart=$quart");
-            exit;
+                header("location: detailsCranteuseQ1.php?idfichecranteuseq1=$idsupfiche&quart=$quart");
+                exit;
+            }
+        /*                
+        for ($i = 0; $i < count($_POST['diametre']); $i++){ 
+            print_r($_POST);
+        }*/  
+
         }
-
-        for ($i = 0; $i < count($_POST['diametre']); $i++){}
     }
 
     //** Nombre des bobines total
@@ -246,6 +459,7 @@
         // On récupère les valeurs dans un tableau associatif
         $stockCranteuse = $queryepaisseur->fetchAll();
     //** Fin select de stockage pour Metal1
+    
 
 ?>
 
@@ -327,12 +541,13 @@
         var foo2 = "</scr"+"ipt>";
 
         $(document).ready(function(){  
-            var i = 0; 
-            var j = 0; 
-            var k = 0;
+            var i = <?php echo sizeof($rowConsommations); ?>-1;
+            var j = <?php echo sizeof($rowProductions); ?>-1;
+            var k = <?php echo sizeof($rowErreurs); ?>-1;
+
             $('#addErreurs').click(function(){           
             //alert('ok');           
-            k++;           
+            k++;  
             $('#dynamicaddErreurs').append(`
             <tr id="row'+k+'" class="rowClass">
                 <td style="background-color:#CFFEDA ;">
@@ -361,7 +576,12 @@
                         type="button">Enlever
                     </button> 
                 </td>
-            </tr>`
+            </tr>
+            <div class="invisible">
+                <div class="">
+                    <input class="form-control designa" type="number" step="0.01" name="idErreur[]" id="example" value="">
+                </div>
+            </div>`
             );});
 
             $('#addConsommations').click(function(){           
@@ -373,11 +593,11 @@
                     <div class="col-md-10">
                         <div class="mb-1 text-start">
                             <input class="form-control designa" type="number" step="0.01" name="diametre[]" id="diametre`+i+`" value="" required>
-                        </div> 
+                        </div>
                     </div>
                 </td>
                 <td style="background-color:#CFFEDA ;">
-                    <div class="">
+                    <div class="col-md-10">
                         <div class="mb-1 text-start">
                             <select class="form-control" name="numerofin[]" id="numerofin`+i+`" required>
                                 <option></option> 
@@ -386,11 +606,11 @@
                                 ?>                                                                                        
                                     <option value="<?php echo $stock['numbobine'].'/'.$stock['epaisseur'].'/'.$stock['poidsdeclare']; ?>"> <?php echo $stock['numbobine']; ?></option>                                                                                     
                                 <?php
-                                    }  
-                                ?> 
+                                    }
+                                ?>
                             </select>                                                
                         </div>
-                    </div>     
+                    </div>
                 </td>
                 `+foo1+`
                     $(document).ready(function(){
@@ -443,15 +663,23 @@
                         type="button">Enlever
                     </button> 
                 </td>
-            </tr>`
-            );});  
-            
-            
+            </tr>
+            <div class="invisible">
+                <div class="">
+                    <input class="" type="number" step="0.01" name="idConsommation[]" id="example" value="">
+                </div>
+            </div>`
+            );});
+            $(document).on('click','.remove_row',function(){ 
+            var row_id = $(this).attr("id");          
+            $('#row'+row_id+'').remove();})
+
+
             $('#addProductions').click(function(){           
             //alert('ok');           
             j++;           
             $('#dynamicaddProductions').append(`
-            <tr id="row'+j+'" class="rowClass">
+            <tr id="row'+i+'" class="rowClass">
                 <td style="background-color:#CFFEDA ;">
                     <div class="col-md-10">
                         <div class="mb-1 text-start">
@@ -462,18 +690,18 @@
                 <td style="background-color:#CFFEDA ;">
                     <div class="col-md-10">
                         <div class="mb-1 text-start">
-                            <input class="form-control designa" type="text" name="Prodnomenclature[]" id="Prodnomenclature" value="">
+                            <input class="form-control designa" type="text" name="Prodnomenclature[]" id="Prodnomenclature" value="" required>
                         </div>
                     </div>
                 </td>
                 <td style="background-color:#CFFEDA ;">
-                    <div class="">
+                    <div class="col-md-10">
                         <div class="mb-1 text-start">
                             <select class="form-control" name="Prodnumerofin[]" id="numerofinProd`+j+`" required>
                                 <option></option> 
                                 <?php
                                     foreach($stockCranteuse as $stock){
-                                ?>      
+                                ?>                                                                                        
                                     <option value="<?php echo $stock['numbobine'].'/'.$stock['epaisseur'].'/'.$stock['poidsdeclare']; ?>"> <?php echo $stock['numbobine']; ?></option>                                                                                     
                                 <?php
                                     }
@@ -503,21 +731,21 @@
                 <td style="background-color:#CFFEDA ;">
                     <div class="col-md-10">
                         <div class="mb-1 text-start">
-                            <input class="form-control designa" type="number" step="0.01" name="Echanlongueur[]" id="example" value="" placeholder="EXP : 30">
+                            <input class="form-control designa" type="number" step="0.01" name="Echanlongueur[]" id="Echanlongueur" value="">
                         </div>
                     </div>
                 </td>
                 <td style="background-color:#CFFEDA ;">
                     <div class="col-md-10">
                         <div class="mb-1 text-start">
-                            <input class="form-control designa" type="number" step="0.01" name="Echanpoids[]" id="example" value="" placeholder="EXP : 30">
+                            <input class="form-control designa" type="number" step="0.01" name="Echanpoids[]" id="Echanpoids" value="">
                         </div>
                     </div>
                 </td>
                 <td style="background-color:#CFFEDA ;">
                     <div class="col-md-10">
                         <div class="mb-1 text-start">
-                            <input class="form-control designa" type="text" name="Echandf[]" id="example" value="" placeholder="EXP : 30">
+                            <input class="form-control designa" type="text" name="Echandf[]" id="Echandf" value="">
                         </div>
                     </div>
                 </td>
@@ -526,43 +754,14 @@
                         type="button">Enlever
                     </button> 
                 </td>
-            </tr>`
-            );});
-
-            $('#addEchantillons').click(function(){           
-            //alert('ok');           
-            i++;           
-            $('#dynamicaddEchantillons').append(`
-            <tr id="row'+i+'" class="rowClass">
-                <td style="background-color:#CFFEDA ;">
-                    <div class="col-md-10">
-                        <div class="mb-1 text-start">
-                            <input class="form-control designa" type="number" step="0.01" name="Echandiametre[]" id="" value="">
-                        </div>
-                    </div>
-                </td>
-                <td style="background-color:#CFFEDA ;">
-                    <div class="col-md-10">
-                        <div class="mb-1 text-start">
-                            <input class="form-control designa" type="number" step="0.01" name="Echanlongueur[]" id="" value="">
-                        </div>
-                    </div>
-                </td>
-                <td style="background-color:#CFFEDA ;">
-                    <div class="col-md-10">
-                        <div class="mb-1 text-start">
-                            <input class="form-control designa" type="text" name="Echandf[]" id="" value="">
-                        </div>
-                    </div>
-                </td>
-                <td style="background-color:#CFFEDA ;" class="text-center"> 
-                    <button class="btn btn-danger removeEchantillons"
-                        type="button">Enlever
-                    </button> 
-                </td>
-            </tr>`
+            </tr>
+            <div class="invisible">
+                <div class="">
+                    <input class="form-control designa" type="number" step="0.01" name="idcranteuseq1production[]" id="example" value="">
+                </div>
+            </div>`
             );})
-            ;}); 
+            ;});      
     </script> 
 
 </head>
@@ -595,81 +794,159 @@
                             <div class="modal-dialog-centered">
                                 <div class="modal-content col-lg-12">
                                     <div class="modal-header col-lg-12 bg-primary" >
-                                        <h5 class="modal-title" id="myExtraLargeModalLabel" style="color:white; text-align: center;">Ajout fiche de production cranteuse</h5>
+                                        <h5 class="modal-title" id="myExtraLargeModalLabel" style="color:white; text-align: center;">Modification de la fiche de production cranteuse</h5>
                                     </div>
                                     <div class="modal-body">
                                         <form action="#" method="POST" enctype="multipart/form-data" class="row g-3">
                                             <div class="row">
-                                                <?php if($valideFiche != "erreurFiche" && $ProblemeArret != "erreurProblemeArret" && $ProblemeFilMachine != "erreurProblemeFilMachine" && $ProblemeCompteur != "erreurProblemeCompteur" && $ProblemeQuart != "erreurProblemeQuart" && ($ProblemeFicheExist != "erreurProblemeFicheExist")){ // Lorsqu'il y a pas de erreur ?> 
+                                                <?php if($valideFiche != "erreurFiche" && $ProblemeArret != "erreurProblemeArret" && $ProblemeCompteur != "erreurProblemeCompteur" && $ProblemeQuart != "erreurProblemeQuart" && $ProblemeFicheExist != "erreurProblemeFicheExist" && $ProblemeFilMachine != "erreurProblemeFilMachine"){ // Lorsqu'il y a pas de erreur ?> 
                                                     <div class="col-md-2 ml-5 mt-3 mr-4">
                                                         <div class="mb-1 text-start">
                                                             <label class="form-label font-weight-bold text-primary" for="nom">Compteur début</label>
-                                                            <input class="form-control" id="validationDefault02" type="number" step="0.01" name="compteurdebut" value="" placeholder="Mettez le compteur du début" required>
+                                                            <input class="form-control" id="validationDefault02" type="number" step="0.01" name="compteurdebut" value="<?php echo $rowEntete['compteurdebut']; ?>" placeholder="Mettez le compteur du début" required>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-2 mt-3 mr-4">
                                                         <div class="mb-1 text-start">
                                                             <label class="form-label font-weight-bold text-primary" for="nom">Compteur fin</label>
-                                                            <input class="form-control" id="validationDefault02" type="number" step="0.01" name="compteurfin" value="" placeholder="Mettez le Compteur de la fin" required>
+                                                            <input class="form-control" id="validationDefault02" type="number" step="0.01" name="compteurfin" value="<?php echo $rowEntete['compteurfin']; ?>" placeholder="Mettez le Compteur de la fin" required>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-2 mr-2 mt-3 mb-5 mr-4">
                                                         <div class="mb-1 text-start">
-                                                            <label class="form-label font-weight-bold text-primary" for="nom">Nom complet du machiniste 1</label>
-                                                            <input class="form-control" id="validationDefault01" type="text" name="controleur1" value="" placeholder="Mettez le nom complet du machiniste 1" required>
+                                                            <label class="form-label font-weight-bold text-primary" for="nom">Nom complet du contrôleur 1</label>
+                                                            <input class="form-control" id="validationDefault01" type="text" name="controleur1" value="<?php echo $rowEntete['controleur1']; ?>" placeholder="Mettez le nom complet du contrôleur 1" required>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-2 mr-2 mt-3 mb-5 mr-4">
                                                         <div class="mb-1 text-start">
-                                                            <label class="form-label font-weight-bold text-primary" for="nom">Nom complet du machiniste 2</label>
-                                                            <input class="form-control" id="validationDefault01" type="text" name="controleur2" value="" placeholder="Mettez le nom complet du machiniste 2" required>
+                                                            <label class="form-label font-weight-bold text-primary" for="nom">Nom complet du contrôleur 2</label>
+                                                            <input class="form-control" id="validationDefault01" type="text" name="controleur2" value="<?php echo $rowEntete['controleur2']; ?>" placeholder="Mettez le nom complet du contrôleur 2" required>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-2 mr-4 mt-3 mb-5 ml-5">
                                                         <div class="mb-1 text-start">
                                                             <label class="form-label font-weight-bold text-primary" for="nom">Machine</label>
                                                             <select class="form-control" name="machine">
-                                                                <option>Cranteuse 1</option>
-                                                                <option>Cranteuse 2</option>
+                                                                <option <?php if ( $rowEntete['machine']=="Cranteuse 1") {echo "selected='selected'";} ?>>Cranteuse 1</option>
+                                                                <option <?php if ( $rowEntete['machine']=="Cranteuse 2") {echo "selected='selected'";} ?>>Cranteuse 2</option>
                                                             </select>                                                
                                                         </div>
                                                     </div>
                                                     <div class="col-md-2 mt-3 mr-4 ml-5">
                                                         <div class="mb-1 text-start">
                                                             <label class="form-label font-weight-bold text-primary" for="nom">Date de production</label>
-                                                            <input class="form-control" id="validationDefault03" type="date" name="datecreationfiche" value="" required>
+                                                            <input class="form-control" id="validationDefault03" type="date" name="datecreationfiche" value="<?= $rowEntete['dateCreation']; ?>" required>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-2 mt-3 mr-4">
                                                         <div class="mb-1 text-start">
                                                             <label class="form-label font-weight-bold text-primary" for="nom">Heure réelle départ du quart</label>
-                                                            <input class="form-control" id="validationDefault03" type="time" name="heuredepartquart" value="" required>
+                                                            <input class="form-control" id="validationDefault03" type="time" name="heuredepartquart" value="<?php echo $rowEntete['heuredepartquart']; ?>" required>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-2 mt-3 mr-4">
                                                         <div class="mb-1 text-start">
                                                             <label class="form-label font-weight-bold text-primary" for="nom">Heure réelle fin du quart</label>
-                                                            <input class="form-control" id="validationDefault03" type="time" name="heurefinquart" value="" required>
+                                                            <input class="form-control" id="validationDefault03" type="time" name="heurefinquart" value="<?php echo $rowEntete['heurefinquart']; ?>" required>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-2 mr-4 mt-3 mb-5 ml-5">
+                                                    <div class="col-md-2 mr-4 mt-3 mb-5">
                                                         <div class="mb-1 text-start">
                                                             <label class="form-label font-weight-bold text-primary" for="nom">Quart</label>
                                                             <select class="form-control" name="quart">
-                                                                <option>1</option>
-                                                                <option>2</option>
-                                                                <option>3</option>
+                                                                <option <?php if ( $rowEntete['quart']=="1") {echo "selected='selected'";} ?>>1</option>
+                                                                <option <?php if ( $rowEntete['quart']=="2") {echo "selected='selected'";} ?>>2</option>
+                                                                <option <?php if ( $rowEntete['quart']=="3") {echo "selected='selected'";} ?>>3</option>
                                                             </select>                                                
                                                         </div>
                                                     </div>
                                                     <div class="col-md-12 mt-5">
                                                         <div class="mb-5 float-right mr-5">
                                                             <label class="form-label font-weight-bold text-primary" for="commentaire" >Observations (début) </label>
-                                                            <textarea class="form-control" name="observationdebut" rows="4" cols="120"  placeholder="Mettez ici les observations ( pas obligatoire... )"></textarea>
+                                                            <textarea class="form-control" name="observationdebut" rows="4" cols="120"  placeholder="Mettez ici les observations ( pas obligatoire... )"><?php echo $rowEntete['observationdebut']; ?></textarea>
                                                         </div>
                                                     </div>
+                                                    <div class="col-lg-5 ">
+                                                        <h5 class="modal-title mb-3 text-center font-weight-bold text-primary" id="myExtraLargeModalLabel">Gestion des temps d'arret</h5>
+                                                        <table class="table table-bordered" id="" width="100%" cellspacing="0">
+                                                            <thead>
+                                                                <tr>       
+                                                                    <th>Début arrets</th>
+                                                                    <th>Fin arrets</th>
+                                                                    <th>Raisons</th>
+                                                                    <th>Supprimer ligne</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody id="dynamicaddErreurs">
+                                                                <?php
+                                                                    $i=-1;
+                                                                    //print_r($rowErreurs);
+                                                                    foreach($rowErreurs as $rowErreur){
+                                                                        $i++;
+                                                                        //if($article['status'] == 'termine'){
+                                                                ?>
+                                                                    <tr class="rowClass">
+                                                                        <td style="background-color:#CFFEDA;">
+                                                                            <div class="col-md-10">
+                                                                                <div class="mb-1 text-start">
+                                                                                    <input class="form-control" id="validationDefault04" type="time" value="<?php echo $rowErreur['debutarret']; ?>"  name="debutarret[]" required>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td style="background-color:#CFFEDA;">
+                                                                            <div class="col-md-10">
+                                                                                <div class="mb-1 text-start">
+                                                                                    <input class="form-control designa" type="time" name="finarret[]" value="<?php echo $rowErreur['finarret']; ?>"  required>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <!--<td style="background-color:#CFFEDA;">
+                                                                            <div class="col-md-10">
+                                                                                <div class="mb-1 text-start">
+                                                                                    <select class="form-control" name="raisonerreur[]">
+                                                                                        <option <?php if ( $rowErreur['raison']=="Raison 1") {echo "selected='selected'";} ?>>Raison 1</option>
+                                                                                        <option <?php if ( $rowErreur['raison']=="Raison 2") {echo "selected='selected'";} ?>>Raison 2</option>
+                                                                                        <option <?php if ( $rowErreur['raison']=="Raison 3") {echo "selected='selected'";} ?>>Raison 3</option> 
+                                                                                    </select>                                                
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>!-->
+                                                                        <td style="background-color:#CFFEDA;">
+                                                                            <div class="col-md-10">
+                                                                                <div class="mb-1 text-start">
+                                                                                    <input class="form-control" id="validationDefault01" type="text" name="raisonerreur[]" value="<?php echo $rowErreur['raison']; ?>" placeholder="Mettez la raison d'erreur" required>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td style="background-color:#CFFEDA ;">
+                                                                            <div class="col-md-10">
+                                                                                <div class="form-check-inline">
+                                                                                    <label class="form-check-label">
+                                                                                        <input type="checkbox" style="width: 25px; height: 25px;" class="form-check-input" name="suprimerArret<?php echo $i; ?>[]">
+                                                                                    </label>
+                                                                                </div>
+                                                                            </div>  
+                                                                        </td>
+                                                                    </tr>
+                                                                    <div class="invisible">
+                                                                        <div class="">
+                                                                            <input class="" type="number" step="0.01" name="idErreur[]" id="example" value="<?php echo $rowErreur['idcranteuseq1arret']; ?>">
+                                                                        </div>
+                                                                    </div>
+                                                                <?php
+                                                                    }
+                                                                ?>
+                                                            </tbody>
+                                                        </table>
 
-                                                    <div class="col-lg-7 mt-2">
+                                                        <div class="col-md-7  d-flex gap-2">
+                                                            <div class="mb-5 text-start d-flex gap-2 pt-4">
+                                                                <input class="btn btn-success  w-lg bouton mr-3" name="ChangerNombreLigne" id="addErreurs" type="button" value="Ajouter une ligne">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-7">
                                                         <h5 class="modal-title mb-3 text-center font-weight-bold text-primary" id="myExtraLargeModalLabel">Consommations</h5>
                                                         <table class="table table-bordered" id="" width="100%" cellspacing="0">
                                                             <thead>
@@ -685,28 +962,28 @@
                                                             </thead>
                                                             <tbody id="dynamicaddConsommations">
                                                                 <?php
-                                                                    $i=0;
-                                                                    //for ($i = 0; $i <= $NombreLigne; $i++){
-                                                                        //$i++;
+                                                                    $i=-1;
+                                                                    foreach($rowConsommations as $rowConsommation){
+                                                                        $i++;
                                                                         //if($article['status'] == 'termine'){
                                                                 ?>
                                                                     <tr class="rowClass">
                                                                         <td style="background-color:#CFFEDA ;">
                                                                             <div class="col-md-10">
                                                                                 <div class="mb-1 text-start">
-                                                                                    <input class="form-control designa" type="number" step="0.01" name="diametre[]" id="diametre" value="" required>
+                                                                                    <input class="form-control designa" type="number" step="0.01" name="diametre[]" id="diametre<?php echo $i; ?>" value="<?php echo $rowConsommation['diametre']; ?>" required>
                                                                                 </div>
                                                                             </div>
                                                                         </td>
                                                                         <td style="background-color:#CFFEDA ;">
-                                                                            <div class="">
+                                                                            <div class="col-md-10">
                                                                                 <div class="mb-1 text-start">
-                                                                                    <select class="form-control" id="numerofin" name="numerofin[]" required>
-                                                                                        <option></option> 
+                                                                                    <select class="form-control" name="numerofin[]" id="numerofin<?php echo $i; ?>" required>
+                                                                                        <option value="<?php echo $rowConsommation['numerofin'].'/' ?>"><?php $numerofinString = explode("/", $rowConsommation['numerofin']); echo $numerofinString[0]; ?></option> 
                                                                                         <?php
                                                                                             foreach($stockCranteuse as $stock){
-                                                                                        ?>   
-                                                                                           <option value="<?php echo $stock['numbobine'].'/'.$stock['epaisseur'].'/'.$stock['poidsdeclare']; ?>"> <?php echo $stock['numbobine']; ?></option>                                                                                     
+                                                                                        ?>                                                                                        
+                                                                                            <option value="<?php echo $stock['numbobine'].'/'.$stock['epaisseur'].'/'.$stock['poidsdeclare']; ?>"> <?php echo $stock['numbobine']; ?></option>                                                                                     
                                                                                         <?php
                                                                                             }
                                                                                         ?>
@@ -716,53 +993,62 @@
                                                                         </td>
                                                                         <script>
                                                                             $(document).ready(function(){
-                                                                                $('#numerofin').change(function(){
+                                                                                $('#numerofin<?php echo $i; ?>').change(function(){
                                                                                     //Selected value
                                                                                     var inputValue = $(this).val();
                                                                                     var myArray = inputValue.split('/');
-                                                                                    document.getElementById("diametre").value = myArray[1];
-                                                                                    document.getElementById("poids").value = myArray[2];
+                                                                                    document.getElementById("diametre<?php echo $i; ?>").value = myArray[1];
+                                                                                    document.getElementById("poids<?php echo $i; ?>").value = myArray[2];
                                                                                 });
                                                                             });
                                                                         </script>
                                                                         <td style="background-color:#CFFEDA ;">
                                                                             <div class="col-md-10">
                                                                                 <div class="mb-1 text-start">
-                                                                                    <input class="form-control designa" type="time" name="heuremontagebobine[]" id="example" value="">
+                                                                                    <input class="form-control designa" type="time" name="heuremontagebobine[]" id="example" value="<?php echo $rowConsommation['heuremontagebobine']; ?>" required>
                                                                                 </div>
                                                                             </div>
                                                                         </td>
                                                                         <td style="background-color:#CFFEDA ;">
                                                                             <div class="col-md-10">
                                                                                 <div class="mb-1 text-start">
-                                                                                    <input class="form-control designa" type="number" step="0.01" name="poids[]" id="poids" value="" required>
+                                                                                    <input class="form-control designa" type="number" step="0.01" name="poids[]" id="poids<?php echo $i; ?>" value="<?php echo $rowConsommation['poids']; ?>" required>
                                                                                 </div>
                                                                             </div>
                                                                         </td>
                                                                         <td style="background-color:#CFFEDA ;">
                                                                             <div class="col-md-10">
                                                                                 <div class="mb-1 text-start">
-                                                                                    <input class="form-control designa" type="number" step="0.01" name="dechet[]" id="example" value="">
+                                                                                    <input class="form-control designa" type="number" step="0.01" name="dechet[]" id="example" value="<?php echo $rowConsommation['dechet']; ?>">
                                                                                 </div>
                                                                             </div>
+                                                                        </td>
+                                                                        <td style="background-color:#CFFEDA ;">
+                                                                            <div class="col-md-10">
+                                                                                <div class="form-check-inline"> 
+                                                                                    <label class="form-check-label">
+                                                                                        <input type="checkbox" style="width: 25px; height: 25px;" class="form-check-input" name="finirfm<?php echo $i; ?>[]" <?php if($rowConsommation['finirfm'] == "1"){ echo "checked"; } ?> value="<?php echo $i; ?>">
+                                                                                    </label>
+                                                                                </div>
+                                                                            </div>  
                                                                         </td>
                                                                         <td style="background-color:#CFFEDA ;">
                                                                             <div class="col-md-10">
                                                                                 <div class="form-check-inline">
                                                                                     <label class="form-check-label">
-                                                                                        <input type="checkbox" style="width: 25px; height: 25px;" class="form-check-input" name="finirfm<?php echo $i;?>[]">
+                                                                                        <input type="checkbox" style="width: 25px; height: 25px;" class="form-check-input" name="suprimerCons<?php echo $i; ?>[]">
                                                                                     </label>
                                                                                 </div>
                                                                             </div>  
                                                                         </td>
-                                                                        <td style="background-color:#CFFEDA ;" class="text-center"> 
-                                                                            <button class="btn btn-danger removeConsommations"
-                                                                                type="button">Enlever
-                                                                            </button> 
-                                                                        </td>
                                                                     </tr>
+                                                                    <div class="invisible">
+                                                                        <div class="">
+                                                                            <input class="" type="number" step="0.01" name="idConsommation[]" id="example" value="<?php echo $rowConsommation['idcranteuseq1consommation']; ?>">
+                                                                        </div>
+                                                                    </div>
                                                                 <?php
-                                                                // }
+                                                                    }
                                                                 ?>
                                                             </tbody>
                                                         </table>
@@ -774,83 +1060,13 @@
                                                         </div>
                                                     </div>
 
-                                                    <div class="col-lg-5 mt-2">
-                                                        <h5 class="modal-title mb-3 text-center font-weight-bold text-primary" id="myExtraLargeModalLabel">Gestion des temps d'arret</h5>
+                                                    <div class="col-lg-12">
+                                                        <h5 class="modal-title mb-3 text-center font-weight-bold text-primary" id="myExtraLargeModalLabel">Productions</h5>
                                                         <table class="table table-bordered" id="" width="100%" cellspacing="0">
                                                             <thead>
                                                                 <tr>       
-                                                                    <th>Début arrets</th>
-                                                                    <th>Fin arrets</th>
-                                                                    <th>Raisons</th>
-                                                                    <th>Supprimer ligne</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody id="dynamicaddErreurs">
-                                                                <?php
-                                                                    //$i=0;
-                                                                    //for ($i = 0; $i <= $NombreLigne; $i++){
-                                                                        //$i++;
-                                                                        //if($article['status'] == 'termine'){
-                                                                ?>
-                                                                    <tr class="rowClass">
-                                                                        <td style="background-color:#CFFEDA;">
-                                                                            <div class="col-md-10">
-                                                                                <div class="mb-1 text-start">
-                                                                                    <input class="form-control" id="validationDefault04" type="time" name="debutarret[]" required>
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
-                                                                        <td style="background-color:#CFFEDA;">
-                                                                            <div class="col-md-10">
-                                                                                <div class="mb-1 text-start">
-                                                                                    <input class="form-control designa" type="time" name="finarret[]" value="" required>
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
-                                                                        <!--<td style="background-color:#CFFEDA;">
-                                                                            <div class="col-md-10">
-                                                                                <div class="mb-1 text-start">
-                                                                                    <select class="form-control" name="raisonerreur[]">
-                                                                                        <option>Raison 1</option>
-                                                                                        <option>Raison 2</option>
-                                                                                        <option>Raison 3</option> 
-                                                                                    </select>                                                
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>!-->
-                                                                        <td style="background-color:#CFFEDA;">
-                                                                            <div class="col-md-10">
-                                                                                <div class="mb-1 text-start">
-                                                                                    <input class="form-control" id="validationDefault01" type="text" name="raisonerreur[]" value="" placeholder="Mettez la raison d'erreur" required>
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
-                                                                        <td style="background-color:#CFFEDA;" class="text-center"> 
-                                                                            <button class="btn btn-danger removeErreurs"
-                                                                                type="button">Enlever
-                                                                            </button> 
-                                                                        </td>
-                                                                    </tr>
-                                                                <?php
-                                                                // }
-                                                                ?>
-                                                            </tbody>
-                                                        </table>
-
-                                                        <div class="col-md-7  d-flex gap-2">
-                                                            <div class="mb-5 text-start d-flex gap-2 pt-4">
-                                                                <input class="btn btn-success  w-lg bouton mr-3" name="ChangerNombreLigne" id="addErreurs" type="button" value="Ajouter une ligne">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-lg-12">
-                                                        <h5 class="modal-title mb-3 text-center font-weight-bold text-primary" id="myExtraLargeModalLabel">Productions</h5>
-                                                        <table class="table table-bordered" id="" cellspacing="0">
-                                                            <thead>
-                                                                <tr>       
                                                                     <th>Diametre</th>
-                                                                    <th>Nomenclature</th>
+                                                                    <th>Nomenclature</th> 
                                                                     <th>N° fil machine</th>
                                                                     <th>Poids</th>
                                                                     <th>Longueur échantillon (cm)</th>
@@ -861,31 +1077,31 @@
                                                             </thead>
                                                             <tbody id="dynamicaddProductions">
                                                                 <?php
-                                                                    //$i=0;
-                                                                    //for ($i = 0; $i <= $NombreLigne; $i++){
-                                                                        //$i++;
+                                                                    $i= -1;
+                                                                    foreach($rowProductions as $rowProduction){
+                                                                        $i++;
                                                                         //if($article['status'] == 'termine'){
                                                                 ?>
                                                                     <tr class="rowClass">
                                                                         <td style="background-color:#CFFEDA ;">
                                                                             <div class="col-md-10">
                                                                                 <div class="mb-1 text-start">
-                                                                                    <input class="form-control designa" type="number" step="0.01" name="Proddiametre[]" id="Proddiametre" value="" required>
+                                                                                    <input class="form-control designa" type="number" step="0.01" name="Proddiametre[]" id="Proddiametre<?php echo $i; ?>" value="<?php echo $rowProduction['proddiametre']; ?>" required>
                                                                                 </div>
                                                                             </div>
                                                                         </td>
                                                                         <td style="background-color:#CFFEDA ;">
                                                                             <div class="col-md-10">
                                                                                 <div class="mb-1 text-start">
-                                                                                    <input class="form-control designa" type="text" name="Prodnomenclature[]" id="Prodnomenclature" value="">
+                                                                                    <input class="form-control designa" type="text" name="Prodnomenclature[]" id="Prodnomenclature" value="<?php echo $rowProduction['prodnomenclature']; ?>" required>
                                                                                 </div>
                                                                             </div>
                                                                         </td>
                                                                         <td style="background-color:#CFFEDA ;">
-                                                                            <div class="">
+                                                                            <div class="col-md-10">
                                                                                 <div class="mb-1 text-start">
-                                                                                    <select class="form-control" name="Prodnumerofin[]" id="numerofinProd" required>
-                                                                                        <option></option> 
+                                                                                    <select class="form-control" name="Prodnumerofin[]" id="numerofinProd<?php echo $i; ?>" required>
+                                                                                        <option value="<?php echo $rowProduction['prodnumerofin'].'/'; ?>"><?php $numerofinString = explode("/", $rowProduction['prodnumerofin']); echo $numerofinString[0]; ?></option> 
                                                                                         <?php
                                                                                             foreach($stockCranteuse as $stock){
                                                                                         ?>                                                                                        
@@ -899,51 +1115,60 @@
                                                                         </td>
                                                                         <script>
                                                                             $(document).ready(function(){
-                                                                                $('#numerofinProd').change(function(){
+                                                                                $('#numerofinProd<?php echo $i; ?>').change(function(){
                                                                                     //Selected value
                                                                                     var inputValue = $(this).val();
                                                                                     var myArray = inputValue.split('/');
-                                                                                    document.getElementById("Proddiametre").value = myArray[1];
-                                                                                    document.getElementById("Prodpoids").value = myArray[2];
+                                                                                    document.getElementById("Proddiametre<?php echo $i; ?>").value = myArray[1];
+                                                                                    document.getElementById("Prodpoids<?php echo $i; ?>").value = myArray[2];
                                                                                 });
                                                                             });
                                                                         </script>
                                                                         <td style="background-color:#CFFEDA ;">
                                                                             <div class="col-md-10">
                                                                                 <div class="mb-1 text-start">
-                                                                                    <input class="form-control designa" type="number" step="0.01" name="Prodpoids[]" id="Prodpoids" value="" required>
+                                                                                    <input class="form-control designa" type="number" step="0.01" name="Prodpoids[]" id="Prodpoids<?php echo $i; ?>" value="<?php echo $rowProduction['prodpoids']; ?>" required>
                                                                                 </div>
                                                                             </div>
                                                                         </td>
                                                                         <td style="background-color:#CFFEDA ;">
                                                                             <div class="col-md-10">
                                                                                 <div class="mb-1 text-start">
-                                                                                    <input class="form-control designa" type="number" step="0.01" name="Echanlongueur[]" id="example" value="" placeholder="EXP : 30">
+                                                                                    <input class="form-control designa" type="number" step="0.01" name="Echanlongueur[]" id="example" value="<?php echo $rowProduction['echanlongueur']; ?>" placeholder="EXP : 30">
                                                                                 </div>
                                                                             </div>
                                                                         </td>
                                                                         <td style="background-color:#CFFEDA ;">
                                                                             <div class="col-md-10">
                                                                                 <div class="mb-1 text-start">
-                                                                                    <input class="form-control designa" type="number" step="0.01" name="Echanpoids[]" id="example" value="" placeholder="EXP : 30">
+                                                                                    <input class="form-control designa" type="number" step="0.01" name="Echanpoids[]" id="example" value="<?php echo $rowProduction['echanpoids']; ?>" placeholder="EXP : 30">
                                                                                 </div>
                                                                             </div>
                                                                         </td>
                                                                         <td style="background-color:#CFFEDA ;">
                                                                             <div class="col-md-10">
                                                                                 <div class="mb-1 text-start">
-                                                                                    <input class="form-control designa" type="text" name="Echandf[]" id="example" value="" placeholder="EXP : 30">
+                                                                                    <input class="form-control designa" type="text" name="Echandf[]" id="example" value="<?php echo $rowProduction['echandf']; ?>" placeholder="EXP : 30">
                                                                                 </div>
                                                                             </div>
                                                                         </td>
-                                                                        <td style="background-color:#CFFEDA ;" class="text-center"> 
-                                                                            <button class="btn btn-danger removeProductions"
-                                                                                type="button">Enlever
-                                                                            </button> 
+                                                                        <td style="background-color:#CFFEDA ;">
+                                                                            <div class="col-md-10">
+                                                                                <div class="form-check-inline">
+                                                                                    <label class="form-check-label">
+                                                                                        <input type="checkbox" style="width: 25px; height: 25px;" class="form-check-input" name="suprimerProd<?php echo $i; ?>[]">
+                                                                                    </label>
+                                                                                </div>
+                                                                            </div>  
                                                                         </td>
                                                                     </tr>
+                                                                    <div class="invisible">
+                                                                        <div class="">
+                                                                            <input class="" type="number" step="0.01" name="idcranteuseq1production[]" id="example" value="<?php echo $rowProduction['idcranteuseq1production']; ?>">
+                                                                        </div>
+                                                                    </div>
                                                                 <?php
-                                                                // }
+                                                                }
                                                                 ?>
                                                             </tbody>
                                                         </table>
@@ -969,14 +1194,14 @@
                                                     </div>
                                                     <div class="col-md-2 mr-2 mt-3 mb-5 mr-4">
                                                         <div class="mb-1 text-start">
-                                                            <label class="form-label font-weight-bold text-primary" for="nom">Nom complet du machiniste 1</label>
-                                                            <input class="form-control" id="validationDefault01" type="text" name="controleur1" value="<?php echo $_POST['controleur1']; ?>" placeholder="Mettez le nom complet du machiniste 1" required>
+                                                            <label class="form-label font-weight-bold text-primary" for="nom">Nom complet du contrôleur 1</label>
+                                                            <input class="form-control" id="validationDefault01" type="text" name="controleur1" value="<?php echo $_POST['controleur1']; ?>" placeholder="Mettez le nom complet du contrôleur 1" required>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-2 mr-2 mt-3 mb-5 mr-4">
                                                         <div class="mb-1 text-start">
-                                                            <label class="form-label font-weight-bold text-primary" for="nom">Nom complet du machiniste 2</label>
-                                                            <input class="form-control" id="validationDefault01" type="text" name="controleur2" value="<?php echo $_POST['controleur2']; ?>" placeholder="Mettez le nom complet du machiniste 2" required>
+                                                            <label class="form-label font-weight-bold text-primary" for="nom">Nom complet du contrôleur 2</label>
+                                                            <input class="form-control" id="validationDefault01" type="text" name="controleur2" value="<?php echo $_POST['controleur2']; ?>" placeholder="Mettez le nom complet du contrôleur 2" required>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-2 mr-4 mt-3 mb-5 ml-5">
@@ -1006,13 +1231,13 @@
                                                             <input class="form-control" id="validationDefault03" type="time" name="heurefinquart" value="<?php echo $_POST['heurefinquart']; ?>" required>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-2 mr-4 mt-3 mb-5 ml-5">
+                                                    <div class="col-md-2 mr-4 mt-3 mb-5">
                                                         <div class="mb-1 text-start">
                                                             <label class="form-label font-weight-bold text-primary" for="nom">Quart</label>
                                                             <select class="form-control" name="quart">
                                                                 <option <?php if ( $_POST['quart']=="1") {echo "selected='selected'";} ?>>1</option>
-                                                                <option <?php if ( $_POST['quart']=="1") {echo "selected='selected'";} ?>>2</option>
-                                                                <option <?php if ( $_POST['quart']=="1") {echo "selected='selected'";} ?>>3</option>
+                                                                <option <?php if ( $_POST['quart']=="2") {echo "selected='selected'";} ?>>2</option>
+                                                                <option <?php if ( $_POST['quart']=="3") {echo "selected='selected'";} ?>>3</option>
                                                             </select>                                                
                                                         </div>
                                                     </div>
@@ -1022,106 +1247,6 @@
                                                             <textarea class="form-control" name="observationdebut" rows="4" cols="120"  placeholder="Mettez ici les observations ( pas obligatoire... )"><?php echo $_POST['observationdebut']; ?></textarea>
                                                         </div>
                                                     </div>
-
-                                                    <div class="col-lg-7">
-                                                        <h5 class="modal-title mb-3 text-center font-weight-bold text-primary" id="myExtraLargeModalLabel">Consommations</h5>
-                                                        <table class="table table-bordered" id="" width="100%" cellspacing="0">
-                                                            <thead>
-                                                                <tr>       
-                                                                    <th>Diametre</th>
-                                                                    <th>N° fil machine</th>
-                                                                    <th>Heure montage</th>
-                                                                    <th>Poids</th>
-                                                                    <th>Déchets</th>
-                                                                    <th>Finir FM</th>
-                                                                    <th>Supprimer ligne</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody id="dynamicaddConsommations">
-                                                                <?php
-                                                                    //$i=0;
-                                                                    for ($i = 0; $i < count($_POST['diametre']); $i++){
-                                                                        //$i++;
-                                                                        //if($article['status'] == 'termine'){
-                                                                ?>
-                                                                    <tr class="rowClass">
-                                                                        <td style="background-color:#CFFEDA ;">
-                                                                            <div class="col-md-10">
-                                                                                <div class="mb-1 text-start">
-                                                                                    <input class="form-control designa" type="number" step="0.01" name="diametre[]" id="diametre" value="<?php echo $_POST['diametre'][$i]; ?>" required>
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
-                                                                        <td style="background-color:#CFFEDA ;">
-                                                                            <div class="">
-                                                                                <div class="mb-1 text-start">
-                                                                                    <select class="form-control" id="numerofin" name="numerofin[]" required>
-                                                                                        <option value="<?php echo $_POST['numerofin'][$i].'/' ?>"><?php $numerofinString = explode("/", $_POST['numerofin'][$i]); echo $numerofinString[0]; ?></option> 
-                                                                                        <?php
-                                                                                            foreach($stockCranteuse as $stock){
-                                                                                        ?>                                                                                        
-                                                                                           <option value="<?php echo $stock['numbobine'].'/'.$stock['epaisseur'].'/'.$stock['poidsdeclare']; ?>"> <?php echo $stock['numbobine']; ?></option>                                                                                     
-                                                                                        <?php
-                                                                                            }
-                                                                                        ?>
-                                                                                    </select>                                                
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
-                                                                        <script>
-                                                                            $(document).ready(function(){
-                                                                                $('#numerofin').change(function(){
-                                                                                    //Selected value
-                                                                                    var inputValue = $(this).val();
-                                                                                    var myArray = inputValue.split('/');
-                                                                                    document.getElementById("diametre").value = myArray[1];
-                                                                                    document.getElementById("poids").value = myArray[2];
-                                                                                });
-                                                                            });
-                                                                        </script>
-                                                                        <td style="background-color:#CFFEDA ;">
-                                                                            <div class="col-md-10">
-                                                                                <div class="mb-1 text-start">
-                                                                                    <input class="form-control designa" type="time" name="heuremontagebobine[]" id="example" value="<?php echo $_POST['heuremontagebobine'][$i]; ?>">
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
-                                                                        <td style="background-color:#CFFEDA ;">
-                                                                            <div class="col-md-10">
-                                                                                <div class="mb-1 text-start">
-                                                                                    <input class="form-control designa" type="number" step="0.01" name="poids[]" id="poids" value="<?php echo $_POST['poids'][$i]; ?>" required>
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
-                                                                        <td style="background-color:#CFFEDA ;">
-                                                                            <div class="col-md-10">
-                                                                                <div class="mb-1 text-start">
-                                                                                    <input class="form-control designa" type="number" step="0.01" name="dechet[]" id="example" value="<?php echo $_POST['dechet'][$i]; ?>">
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
-                                                                        <td style="background-color:#CFFEDA ;">
-                                                                            <div class="col-md-10">
-                                                                                <div class="form-check-inline">
-                                                                                    <label class="form-check-label">
-                                                                                        <input type="checkbox" style="width: 25px; height: 25px;" class="form-check-input" name="finirfm<?php echo $i;?>[]" <?php if(isset($_POST['finirfm'.$i])){ echo "checked"; } ?> >
-                                                                                    </label>
-                                                                                </div>
-                                                                            </div>  
-                                                                        </td>
-                                                                        <td style="background-color:#CFFEDA ;" class="text-center"> 
-                                                                            <button class="btn btn-danger removeConsommations"
-                                                                                type="button">Enlever
-                                                                            </button> 
-                                                                        </td>
-                                                                    </tr>
-                                                                <?php
-                                                                }
-                                                                ?>
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-
                                                     <div class="col-lg-5 ">
                                                         <h5 class="modal-title mb-3 text-center font-weight-bold text-primary" id="myExtraLargeModalLabel">Gestion des erreurs</h5>
                                                         <table class="table table-bordered" id="" width="100%" cellspacing="0">
@@ -1159,9 +1284,9 @@
                                                                             <div class="col-md-10">
                                                                                 <div class="mb-1 text-start">
                                                                                     <select class="form-control" name="raisonerreur[]">
-                                                                                        <option <?php if ( $_POST['raisonerreur'][$i]=="Raison 1") {echo "selected='selected'";} ?>>Raison 1</option>
-                                                                                        <option <?php if ( $_POST['raisonerreur'][$i]=="Raison 2") {echo "selected='selected'";} ?>>Raison 2</option>
-                                                                                        <option <?php if ( $_POST['raisonerreur'][$i]=="Raison 3") {echo "selected='selected'";} ?>>Raison 3</option> 
+                                                                                        <option <?php if ( $_POST['raisonerreur']=="Raison 1") {echo "selected='selected'";} ?>>Raison 1</option>
+                                                                                        <option <?php if ( $_POST['raisonerreur']=="Raison 2") {echo "selected='selected'";} ?>>Raison 2</option>
+                                                                                        <option <?php if ( $_POST['raisonerreur']=="Raison 3") {echo "selected='selected'";} ?>>Raison 3</option> 
                                                                                     </select>                                                
                                                                                 </div>
                                                                             </div>
@@ -1173,10 +1298,19 @@
                                                                                 </div>
                                                                             </div>
                                                                         </td>
-                                                                        <td style="background-color:#CFFEDA;" class="text-center"> 
-                                                                            <button class="btn btn-danger removeErreurs"
-                                                                                type="button">Enlever
-                                                                            </button> 
+                                                                        <div class="invisible">
+                                                                            <div class="">
+                                                                                <input class="" type="number" step="0.01" name="idErreur[]" id="example" value="<?php echo $_POST['idErreur'][$i]; ?>">
+                                                                            </div>
+                                                                        </div>
+                                                                        <td style="background-color:#CFFEDA ;">
+                                                                            <div class="col-md-10">
+                                                                                <div class="form-check-inline">
+                                                                                    <label class="form-check-label">
+                                                                                        <input type="checkbox" style="width: 25px; height: 25px;" class="form-check-input" name="suprimerArret<?php echo $i; ?>[]" <?php if(isset($_POST['suprimerArret'.$i])){ echo "checked";} ?>>
+                                                                                    </label>
+                                                                                </div>
+                                                                            </div> 
                                                                         </td>
                                                                     </tr>
                                                                 <?php
@@ -1185,7 +1319,113 @@
                                                             </tbody>
                                                         </table>
                                                     </div>
-               
+                                                    <div class="col-lg-7 ">
+                                                        <h5 class="modal-title mb-3 text-center font-weight-bold text-primary" id="myExtraLargeModalLabel">Consommations</h5>
+                                                        <table class="table table-bordered" id="" width="100%" cellspacing="0">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Diametre</th>
+                                                                    <th>N° fil machine</th>
+                                                                    <th>Heure montage</th>
+                                                                    <th>Poids</th>
+                                                                    <th>Déchets</th>
+                                                                    <th>Finir FM</th>
+                                                                    <th>Supprimer ligne</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody id="dynamicaddConsommations">
+                                                                <?php
+                                                                    //$i=0;
+                                                                    for ($i = 0; $i < count($_POST['diametre']); $i++){
+                                                                        //$i++;
+                                                                        //if($article['status'] == 'termine'){
+                                                                ?>
+                                                                    <tr class="rowClass">
+                                                                        <td style="background-color:#CFFEDA ;">
+                                                                            <div class="col-md-10">
+                                                                                <div class="mb-1 text-start">
+                                                                                    <input class="form-control designa" type="number" step="0.01" name="diametre[]" id="diametre<?php echo $i; ?>" value="<?php echo $_POST['diametre'][$i]; ?>" required>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td style="background-color:#CFFEDA ;">
+                                                                            <div class="col-md-10">
+                                                                                <div class="mb-1 text-start">
+                                                                                    <select class="form-control" name="numerofin[]" id="numerofin<?php echo $i; ?>" required>
+                                                                                        <option value="<?php echo $_POST['numerofin'][$i].'/' ?>"><?php $numerofinString = explode("/", $_POST['numerofin'][$i]); echo $numerofinString[0]; ?></option> 
+                                                                                        <?php
+                                                                                            foreach($stockCranteuse as $stock){
+                                                                                        ?>                                                                                        
+                                                                                           <option value="<?php echo $stock['numbobine'].'/'.$stock['epaisseur'].'/'.$stock['poidsdeclare']; ?>"> <?php echo $stock['numbobine']; ?></option>                                                                                     
+                                                                                        <?php
+                                                                                            }
+                                                                                        ?>
+                                                                                    </select>                                                
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <script>
+                                                                            $(document).ready(function(){
+                                                                                $('#numerofin').change(function(){
+                                                                                    //Selected value
+                                                                                    var inputValue = $(this).val();
+                                                                                    var myArray = inputValue.split('/');
+                                                                                    document.getElementById("diametre<?php echo $i; ?>").value = myArray[1];
+                                                                                    document.getElementById("poids<?php echo $i; ?>").value = myArray[2];
+                                                                                });
+                                                                            });
+                                                                        </script>
+                                                                        <td style="background-color:#CFFEDA ;">
+                                                                            <div class="col-md-10">
+                                                                                <div class="mb-1 text-start">
+                                                                                    <input class="form-control designa" type="time" name="heuremontagebobine[]" id="example" value="<?php echo $_POST['heuremontagebobine'][$i]; ?>" required>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td style="background-color:#CFFEDA ;">
+                                                                            <div class="col-md-10">
+                                                                                <div class="mb-1 text-start">
+                                                                                    <input class="form-control designa" type="number" step="0.01" name="poids[]" id="poids<?php echo $i; ?>" value="<?php echo $_POST['poids'][$i]; ?>" required>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td style="background-color:#CFFEDA ;">
+                                                                            <div class="col-md-10">
+                                                                                <div class="mb-1 text-start">
+                                                                                    <input class="form-control designa" type="number" step="0.01" name="dechet[]" id="example" value="<?php echo $_POST['dechet'][$i]; ?>">
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td style="background-color:#CFFEDA ;">
+                                                                            <div class="col-md-10">
+                                                                                <div class="form-check-inline">
+                                                                                    <label class="form-check-label">
+                                                                                        <input type="checkbox" style="width: 25px; height: 25px;" class="form-check-input" name="finirfm<?php echo $i; ?>[]" value="<?php echo $i; ?>" <?php if(isset($_POST['finirfm'.$i])){ echo "checked";} ?>>
+                                                                                    </label>
+                                                                                </div>
+                                                                            </div> 
+                                                                        </td>
+                                                                        <td style="background-color:#CFFEDA ;">
+                                                                            <div class="col-md-10">
+                                                                                <div class="form-check-inline">
+                                                                                    <label class="form-check-label">
+                                                                                        <input type="checkbox" style="width: 25px; height: 25px;" class="form-check-input" name="suprimerCons<?php echo $i; ?>[]" <?php if(isset($_POST['suprimerCons'.$i])){ echo "checked";} ?>>
+                                                                                    </label>
+                                                                                </div>
+                                                                            </div> 
+                                                                        </td>
+                                                                    </tr>
+                                                                    <div class="invisible">
+                                                                        <div class="">
+                                                                            <input class="" type="number" step="0.01" name="idConsommation[]" id="example" value="<?php echo $_POST['idConsommation'][$i]; ?>">
+                                                                        </div>
+                                                                    </div>
+                                                                <?php
+                                                                }
+                                                                ?>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
                                                     <div class="col-lg-12">
                                                         <h5 class="modal-title mb-3 text-center font-weight-bold text-primary" id="myExtraLargeModalLabel">Productions</h5>
                                                         <table class="table table-bordered" id="" width="100%" cellspacing="0">
@@ -1212,21 +1452,21 @@
                                                                         <td style="background-color:#CFFEDA ;">
                                                                             <div class="col-md-10">
                                                                                 <div class="mb-1 text-start">
-                                                                                    <input class="form-control designa" type="number" step="0.01" name="Proddiametre[]" id="Proddiametre" value="<?php echo $_POST['Proddiametre'][$i]; ?>" required>
+                                                                                    <input class="form-control designa" type="number" step="0.01" name="Proddiametre[]" id="Proddiametre<?php echo $i; ?>" value="<?php echo $_POST['Proddiametre'][$i]; ?>" required>
                                                                                 </div>
                                                                             </div>
                                                                         </td>
                                                                         <td style="background-color:#CFFEDA ;">
                                                                             <div class="col-md-10">
                                                                                 <div class="mb-1 text-start">
-                                                                                    <input class="form-control designa" type="text" name="Prodnomenclature[]" id="Prodnomenclature" value="<?php echo $_POST['Prodnomenclature'][$i]; ?>">
+                                                                                    <input class="form-control designa" type="text" name="Prodnomenclature[]" id="Prodnomenclature" value="<?php echo $_POST['Prodnomenclature'][$i]; ?>" required>
                                                                                 </div>
                                                                             </div>
                                                                         </td>
                                                                         <td style="background-color:#CFFEDA ;">
-                                                                            <div class="">
+                                                                            <div class="col-md-10">
                                                                                 <div class="mb-1 text-start">
-                                                                                    <select class="form-control" name="Prodnumerofin[]" id="numerofinProd" required>
+                                                                                    <select class="form-control" id="numerofinProd<?php echo $i; ?>" name="Prodnumerofin[]" required>
                                                                                         <option value="<?php echo $_POST['Prodnumerofin'][$i].'/'; ?>"><?php $numerofinString = explode("/", $_POST['Prodnumerofin'][$i]); echo $numerofinString[0]; ?></option> 
                                                                                         <?php
                                                                                             foreach($stockCranteuse as $stock){
@@ -1239,51 +1479,60 @@
                                                                                 </div>
                                                                             </div>
                                                                         </td>
-                                                                        <td style="background-color:#CFFEDA ;">
-                                                                            <div class="col-md-10">
-                                                                                <div class="mb-1 text-start">
-                                                                                    <input class="form-control designa" type="number" step="0.01" name="Prodpoids[]" id="Prodpoids" value="<?php echo $_POST['Prodpoids'][$i]; ?>" required>
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
-                                                                        <td style="background-color:#CFFEDA ;">
-                                                                            <div class="col-md-10">
-                                                                                <div class="mb-1 text-start">
-                                                                                    <input class="form-control designa" type="number" step="0.01" name="Echanlongueur[]" id="example" value="<?php echo $_POST['Echanlongueur'][$i]; ?>">
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
-                                                                        <td style="background-color:#CFFEDA ;">
-                                                                            <div class="col-md-10">
-                                                                                <div class="mb-1 text-start">
-                                                                                    <input class="form-control designa" type="number" step="0.01" name="Echanpoids[]" id="example" value="<?php echo $_POST['Echanpoids'][$i]; ?>">
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
-                                                                        <td style="background-color:#CFFEDA ;">
-                                                                            <div class="col-md-10">
-                                                                                <div class="mb-1 text-start">
-                                                                                    <input class="form-control designa" type="text" name="Echandf[]" id="example" value="<?php echo $_POST['Echandf'][$i]; ?>">
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
                                                                         <script>
                                                                             $(document).ready(function(){
-                                                                                $('#numerofinProd').change(function(){
+                                                                                $('#numerofinProd<?php echo $i; ?>').change(function(){
                                                                                     //Selected value
                                                                                     var inputValue = $(this).val();
                                                                                     var myArray = inputValue.split('/');
-                                                                                    document.getElementById("Proddiametre").value = myArray[1];
-                                                                                    document.getElementById("Prodpoids").value = myArray[2];
+                                                                                    document.getElementById("Proddiametre<?php echo $i; ?>").value = myArray[1];
+                                                                                    document.getElementById("Prodpoids<?php echo $i; ?>").value = myArray[2];
                                                                                 });
                                                                             });
                                                                         </script>
-                                                                        <td style="background-color:#CFFEDA ;" class="text-center"> 
-                                                                            <button class="btn btn-danger removeProductions"
-                                                                                type="button">Enlever
-                                                                            </button> 
+                                                                        <td style="background-color:#CFFEDA ;">
+                                                                            <div class="col-md-10">
+                                                                                <div class="mb-1 text-start">
+                                                                                    <input class="form-control designa" type="number" step="0.01" name="Prodpoids[]" id="Prodpoids<?php echo $i; ?>" value="<?php echo $_POST['Prodpoids'][$i]; ?>" required>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td style="background-color:#CFFEDA ;">
+                                                                            <div class="col-md-10">
+                                                                                <div class="mb-1 text-start">
+                                                                                    <input class="form-control designa" type="number" step="0.01" name="Echanlongueur[]" id="Echanlongueur" value="<?php echo $_POST['Echanlongueur'][$i]; ?>" required>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td style="background-color:#CFFEDA ;">
+                                                                            <div class="col-md-10">
+                                                                                <div class="mb-1 text-start">
+                                                                                    <input class="form-control designa" type="number" step="0.01" name="Echanpoids[]" id="Echanpoids" value="<?php echo $_POST['Echanpoids'][$i]; ?>" placeholder="EXP : 30">
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td style="background-color:#CFFEDA ;">
+                                                                            <div class="col-md-10">
+                                                                                <div class="mb-1 text-start">
+                                                                                    <input class="form-control designa" type="number" step="0.01" name="Echandf[]" id="Echandf" value="<?php echo $_POST['Echandf'][$i]; ?>" placeholder="EXP : 30">
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td style="background-color:#CFFEDA ;">
+                                                                            <div class="col-md-10">
+                                                                                <div class="form-check-inline">
+                                                                                    <label class="form-check-label">
+                                                                                        <input type="checkbox" style="width: 25px; height: 25px;" class="form-check-input" name="suprimerProd<?php echo $i; ?>[]" <?php if(isset($_POST['suprimerProd'.$i])){ echo "checked";} ?>>
+                                                                                    </label>
+                                                                                </div>
+                                                                            </div> 
                                                                         </td>
                                                                     </tr>
+                                                                    <div class="invisible">
+                                                                        <div class="">
+                                                                            <input class="form-control designa" type="number" step="0.01" name="idcranteuseq1production[]" id="example" value="<?php echo $_POST['idcranteuseq1production'][$i]; ?>">
+                                                                        </div>
+                                                                    </div>
                                                                 <?php
                                                                 }
                                                                 ?>
@@ -1300,23 +1549,23 @@
                                                         ?>" name="user" id="example-date-input2">
                                                     </div>
                                                 </div>
-                                                <?php if($valideFiche != "erreurFiche" && $ProblemeArret != "erreurProblemeArret" && $ProblemeFilMachine != "erreurProblemeFilMachine"  && $ProblemeCompteur != "erreurProblemeCompteur" && $ProblemeQuart != "erreurProblemeQuart" && ($ProblemeFicheExist != "erreurProblemeFicheExist")){ // Lorsqu'il y a pas de erreur ?> 
-                                                    <div class="col-md-2 mr-5 mt-3 mb-5">
+                                                <?php if($valideFiche != "erreurFiche" && $ProblemeArret != "erreurProblemeArret"  && $ProblemeCompteur != "erreurProblemeCompteur" && $ProblemeQuart != "erreurProblemeQuart" && $ProblemeFicheExist != "erreurProblemeFicheExist" && $ProblemeFilMachine != "erreurProblemeFilMachine"){ // Lorsqu'il y a pas de erreur ?> 
+                                                    <div class="col-md-2 mr-5 mt-3 mb-5 ml-5">
                                                         <div class="mb-1 text-start">
                                                             <label class="form-label font-weight-bold text-primary" for="nom">Vitésse</label>
-                                                            <input class="form-control" id="validationDefault01" type="number" step="0.01" name="vitesse" value="" placeholder="Mettez la vitesse" required>
+                                                            <input class="form-control" id="validationDefault01" type="number" step="0.01" name="vitesse" value="<?php echo $rowEntete['vitesse']; ?>" placeholder="Mettez la vitesse" required>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-2 mt-3 mr-5 mb-5 ">
+                                                    <div class="col-md-2 mt-3 mb-5 ">
                                                         <div class="mb-1 text-start">
                                                             <label class="form-label font-weight-bold text-primary" for="nom">Poids estimatif travaillé et non noté </label>
-                                                            <input class="form-control" id="validationDefault01" type="number" step="0.01" name="poidsestimetravaillenonnote" value="" placeholder="Mettez le poids">
+                                                            <input class="form-control" id="validationDefault01" type="number" step="0.01" name="poidsestimetravaillenonnote" value="<?php echo $rowEntete['poidsestimetravaillenonnote']; ?>" placeholder="Mettez le nom complet du contrôleur">
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6 ml-5">
-                                                        <div class="mb-1">
+                                                        <div class="mb-1 text-start">
                                                             <label class="form-label font-weight-bold text-primary" for="commentaire" >Observations (fin) </label>
-                                                            <textarea class="form-control" name="observationfin" rows="4" cols="90"  placeholder="Mettez ici les observations ( pas obligatoire... )"></textarea>
+                                                            <textarea class="form-control" name="observationfin" rows="4" cols="90"  placeholder="Mettez ici les observations ( pas obligatoire... )"><?php echo $rowEntete['observationfin']; ?></textarea>
                                                         </div>
                                                     </div> 
                                                 <?php }else{  // Lorsqu'il y a une erreur ?>
@@ -1329,11 +1578,11 @@
                                                     <div class="col-md-2 mr-2 mt-3 mb-5">
                                                         <div class="mb-1 text-start">
                                                             <label class="form-label font-weight-bold text-primary" for="nom">Poids estimatif travaillé et non noté </label>
-                                                            <input class="form-control" id="validationDefault01" type="number" step="0.01" name="poidsestimetravaillenonnote" value="<?php echo $_POST['poidsestimetravaillenonnote']; ?>" placeholder="Mettez le poids">
+                                                            <input class="form-control" id="validationDefault01" type="number" step="0.01" name="poidsestimetravaillenonnote" value="<?php echo $_POST['poidsestimetravaillenonnote']; ?>" placeholder="Mettez le nom complet du contrôleur">
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6 ml-5">
-                                                        <div class="mb-1">
+                                                        <div class="mb-1 text-start">
                                                             <label class="form-label font-weight-bold text-primary" for="commentaire" >Observations (fin) </label>
                                                             <textarea class="form-control" name="observationfin" rows="4" cols="90"  placeholder="Mettez ici les observations ( pas obligatoire... )"><?php echo $_POST['observationfin']; ?></textarea>
                                                         </div>
@@ -1357,7 +1606,7 @@
                                                                 });
                                                             </script> 
                                                         <?php } ?>
-                                                        <?php if($ProblemeQuart == "erreurProblemeQuart"){ ?>
+                                                        <?php if($ProblemeQuart == "erreurProblemeQuart"){ ?> 
                                                             <script>    
                                                                 Swal.fire({
                                                                     text: 'Veiller revoir les heures de depart et de fin du quart svp!',
@@ -1383,7 +1632,7 @@
                                                                 });
                                                             </script> 
                                                         <?php } ?>
-                                                        <?php if($ProblemeArret == "erreurProblemeArret"){ ?>
+                                                        <?php if($ProblemeArret == "erreurProblemeArret"){ ?> 
                                                             <script>    
                                                                 Swal.fire({
                                                                     text: "Veiller revoir les heures de depart et de fin des arrets svp!",
@@ -1465,7 +1714,7 @@
                                             <tr>       
                                                 <th>Numéro fil machine</th>                                                                                
                                                 <th>Epaisseur</th>
-                                                <th>Nombre rouleaux</th>
+                                                <th>Nombre bobine</th>
                                                 <th>Poids déclaré</th>
                                                 <th>Poids pesé</th>
                                                 <th>Etat bobine</th>
@@ -1479,7 +1728,10 @@
                                                     //if($article['status'] == 'termine'){
                                             ?>
                                                 <tr>
-                                                    <td style="background-color:#4e73df ; color:white;"> <?= $stock['numbobine'] ?> </td>
+                                                    <td style="background-color:#4e73df ; color:white;">
+                                                        <a style="text-decoration: none; font-family: arial; font-size: 20px; color:white;" href="javascript:void(0);" data-toggle="modal" data-target="#Information<?php echo $i; ?>" title="Voir details du produit" class="link-offset-2 link-underline"><?php echo $stock['numbobine']; ?></a>
+                                                        <!--<a style="text-decoration: none; font-family: arial; font-size: 20px; color:white;" title="Allez vers la reception planifiée correspondante" href="detailsReceptionPlanifie.php?idreception=<?= $stock['idreception'] ?>" class="link-offset-2 link-underline"><?php echo "REC-0".$stock['idreception']."-BOB-0".$stock['idmatiere'] ?></a>!-->
+                                                    </td>
                                                     <td style="background-color:#4e73df ; color:white;"> <?= $stock['epaisseur'] ?> </td>
                                                     <td style="background-color:#4e73df ; color:white;"><?= $stock['nbbobineactuel'] ?></td>
                                                     <td style="background-color:#4e73df ; color:white;"><?= $stock['poidsdeclare'] ?></td>

@@ -58,7 +58,7 @@
     //** Fin select des dechet cranteuse
 
     //** Debut select des productions et dechet section dresseuse
-        $sql = "SELECT SUM(`prodpoids`) as prodpoids, SUM(`proddechet`) as dechet, DAY(`dateCreation`) as jour FROM `dresseuseproduction` WHERE `actif`=1 AND MONTH(`dateCreation`)=$dtm 
+        $sql = "SELECT SUM(`prodpoids`) as prodpoids, DAY(`dateCreation`) as jour FROM `cranteuseq1production` WHERE `actif`=1 AND MONTH(`dateCreation`)=$dtm 
         GROUP BY DAY(`dateCreation`);";          // On tire les fiches du mois courant
     
         // On prépare la requête
@@ -68,7 +68,7 @@
         $query->execute();
     
         // On récupère les valeurs dans un tableau associatif
-        $FichesDresseuse = $query->fetchAll();
+        $FichesCranteuse = $query->fetchAll();
     //** Fin select des productions et dechet section dresseuse
 ?>
 
@@ -603,6 +603,7 @@
                     </div>
 
                     <!-- Content Row -->
+
                     <div class="row mb-4 mt-5">
                         <!-- A mettre le body -->
                         <!-- Bar Chart -->
@@ -616,7 +617,7 @@
                                         <canvas id="myChartCranteuse"></canvas>
                                     </div>
                                     <hr>
-                                    Production <span id="ProductCrant" class="text-primary"></span>  et Dechet <span id="DechetCrant"></span>
+                                    Production et Dechet
                                     <code>de ce mois</code> à la section cranteuse.
                                 </div>
                             </div>
@@ -629,10 +630,10 @@
                                 </div>
                                 <div class="card-body">
                                     <div>
-                                        <canvas id="myChartDresseuse"></canvas>
+                                        <canvas id="myChartCranteuseDechet"></canvas>
                                     </div>
                                     <hr>
-                                    Production <span id="ProductDress" class="text-primary"></span>  et Dechet <span id="DechetDress"></span>
+                                    Production et Dechet
                                     <code>de ce mois</code> à la section dresseuse.
                                 </div>
                             </div>
@@ -658,34 +659,20 @@
                             if(production[i] === undefined){
                             }else{
                                 var j = production[i]['jour'];
-                                Poids[j] = Number(production[i]['prodpoids']);
+                                Poids[j] = production[i]['prodpoids'];
                             }
 
                             // Pour dechets
                             if(dechet[i] === undefined){
                             }else{
                                 var t = dechet[i]['jour'];
-                                Dechet[t] = Number(dechet[i]['dechet']);
+                                Dechet[t] = dechet[i]['dechet'];
                             }
                         }
-                        // On cherche les sommes (dechet et production)
-                        const TotalProduit = Poids.reduce(
-                            (accumulator, currentValue) => accumulator + currentValue,
-                        );
-                        const ProductCrant = document.getElementById('ProductCrant');
-                        let htmlPC = "<span class='text-primary'> Total = "+TotalProduit+" KG</span>";
-                        ProductCrant.insertAdjacentHTML("afterend", htmlPC);
 
-                        const TotalDechet = Dechet.reduce(
-                            (accumulator, currentValue) => accumulator + currentValue,
-                        );
-                        const DechetCrant = document.getElementById('DechetCrant');
-                        let htmlCD = "<span class='text-primary'> Total = "+TotalDechet+" KG</span>";
-                        DechetCrant.insertAdjacentHTML("afterend", htmlCD);
+                        const ctxCranProd = document.getElementById('myChartCranteuse');
 
-                        const ctxDressProd = document.getElementById('myChartCranteuse');
-
-                        new Chart(ctxDressProd, {
+                        new Chart(ctxCranProd, {
                         type: "bar",
                         data: {
                             labels: Jours,
@@ -712,8 +699,8 @@
                     </script>
 
                     <script type="text/javascript">
-                        var dechet = <?php echo json_encode($FichesDresseuse); ?>;
-                        var production = <?php echo json_encode($FichesDresseuse); ?>;
+                        var dechet = <?php echo json_encode($FichesCranteuseDechet); ?>;
+                        var production = <?php echo json_encode($FichesCranteuse); ?>;
                         //console.log(test);
 
                         var Jours = [];
@@ -726,33 +713,18 @@
                             if(production[i] === undefined){
                             }else{
                                 var j = production[i]['jour'];
-                                Poids[j] = Number(production[i]['prodpoids']);
+                                Poids[j] = production[i]['prodpoids'];
                             }
 
                             // Pour dechets
                             if(dechet[i] === undefined){
                             }else{
                                 var t = dechet[i]['jour'];
-                                Dechet[t] = Number(dechet[i]['dechet']);
+                                Dechet[t] = dechet[i]['dechet'];
                             }
                         }
-                        // On cherche les sommes (dechet et production)
-                        const TotalProduitDress = Poids.reduce(
-                            (accumulator, currentValue) => accumulator + currentValue,
-                        );
-                        const ProductDress = document.getElementById('ProductDress');
-                        let htmlPD = "<span class='text-primary'> Total = "+TotalProduitDress+" KG</span>";
-                        ProductDress.insertAdjacentHTML("afterend", htmlPD);
 
-                        const TotalDechetDress = Dechet.reduce(
-                            (accumulator, currentValue) => accumulator + currentValue,
-                        );
-                        const DechetDress = document.getElementById('DechetDress');
-                        let htmlDD = "<span class='text-primary'> Total = "+TotalDechetDress+" KG</span>";
-                        DechetDress.insertAdjacentHTML("afterend", htmlDD);
-
-
-                        const ctxCranProd = document.getElementById('myChartDresseuse');
+                        const ctxCranProd = document.getElementById('myChartCranteuse');
 
                         new Chart(ctxCranProd, {
                         type: "bar",

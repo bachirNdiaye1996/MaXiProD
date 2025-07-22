@@ -616,7 +616,7 @@
                                         <canvas id="myChartCranteuse"></canvas>
                                     </div>
                                     <hr>
-                                    Production <span id="ProductCrant" class="text-primary"></span>  et Dechet <span id="DechetCrant"></span>
+                                    Production et Dechet
                                     <code>de ce mois</code> à la section cranteuse.
                                 </div>
                             </div>
@@ -658,30 +658,30 @@
                             if(production[i] === undefined){
                             }else{
                                 var j = production[i]['jour'];
-                                Poids[j] = Number(production[i]['prodpoids']);
+                                Poids[j] = production[i]['prodpoids'];
                             }
 
                             // Pour dechets
                             if(dechet[i] === undefined){
                             }else{
                                 var t = dechet[i]['jour'];
-                                Dechet[t] = Number(dechet[i]['dechet']);
+                                Dechet[t] = dechet[i]['dechet'];
                             }
                         }
                         // On cherche les sommes (dechet et production)
                         const TotalProduit = Poids.reduce(
-                            (accumulator, currentValue) => accumulator + currentValue,
+                        (accumulator, currentValue) => accumulator + currentValue,
                         );
-                        const ProductCrant = document.getElementById('ProductCrant');
+                        const ProductDress = document.getElementById('ProductDress');
                         let htmlPC = "<span class='text-primary'> Total = "+TotalProduit+" KG</span>";
-                        ProductCrant.insertAdjacentHTML("afterend", htmlPC);
+                        ProductDress.insertAdjacentHTML("afterend", htmlPD);
 
                         const TotalDechet = Dechet.reduce(
-                            (accumulator, currentValue) => accumulator + currentValue,
+                        (accumulator, currentValue) => accumulator + currentValue,
                         );
-                        const DechetCrant = document.getElementById('DechetCrant');
-                        let htmlCD = "<span class='text-primary'> Total = "+TotalDechet+" KG</span>";
-                        DechetCrant.insertAdjacentHTML("afterend", htmlCD);
+                        const DechetDress = document.getElementById('DechetDress');
+                        let htmlDC = "<span class='text-primary'> Total = "+TotalDechet+" KG</span>";
+                        DechetDress.insertAdjacentHTML("afterend", htmlDD);
 
                         const ctxDressProd = document.getElementById('myChartCranteuse');
 
@@ -690,14 +690,14 @@
                         data: {
                             labels: Jours,
                             datasets: [{
-                            label: "Production",
+                            label: "Production; Total = "+TotalProduit,
                             data: Poids,
                             backgroundColor: "#4e73df",
                             hoverBackgroundColor: "#2e59d9",
                             borderColor: "#4e73df",
                             borderWidth: 1
                             },{
-                            label: "Dechet",
+                            label: "Dechet; Total = "+TotalDechet,
                             data: Dechet,
                             backgroundColor: "#2cbd33ff",
                             hoverBackgroundColor: "#06d810ff",
@@ -726,26 +726,26 @@
                             if(production[i] === undefined){
                             }else{
                                 var j = production[i]['jour'];
-                                Poids[j] = Number(production[i]['prodpoids']);
+                                Poids[j] = production[i]['prodpoids'];
                             }
 
                             // Pour dechets
                             if(dechet[i] === undefined){
                             }else{
                                 var t = dechet[i]['jour'];
-                                Dechet[t] = Number(dechet[i]['dechet']);
+                                Dechet[t] = dechet[i]['dechet'];
                             }
                         }
                         // On cherche les sommes (dechet et production)
                         const TotalProduitDress = Poids.reduce(
-                            (accumulator, currentValue) => accumulator + currentValue,
+                        (accumulator, currentValue) => accumulator + currentValue,
                         );
                         const ProductDress = document.getElementById('ProductDress');
                         let htmlPD = "<span class='text-primary'> Total = "+TotalProduitDress+" KG</span>";
                         ProductDress.insertAdjacentHTML("afterend", htmlPD);
 
                         const TotalDechetDress = Dechet.reduce(
-                            (accumulator, currentValue) => accumulator + currentValue,
+                        (accumulator, currentValue) => accumulator + currentValue,
                         );
                         const DechetDress = document.getElementById('DechetDress');
                         let htmlDD = "<span class='text-primary'> Total = "+TotalDechetDress+" KG</span>";
@@ -759,14 +759,14 @@
                         data: {
                             labels: Jours,
                             datasets: [{
-                            label: "Production",
+                            label: "Production; Total = "+TotalProduitDress,
                             data: Poids,
                             backgroundColor: "#4e73df",
                             hoverBackgroundColor: "#2e59d9",
                             borderColor: "#4e73df",
                             borderWidth: 1
                             },{
-                            label: "Dechet",
+                            label: "Dechet; Total = "+TotalDechetDress,
                             data: Dechet,
                             backgroundColor: "#2cbd33ff",
                             hoverBackgroundColor: "#06d810ff",
