@@ -64,6 +64,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
                 // On récupère les valeurs dans un tableau associatif
                 $arretsD1Q1 = $query->fetchAll();
             //** Fin select de la production
+print_r($IdproductiondresD1Q1);
 
             $TotalArretH = null;
             // Calcul du temps d'arret
@@ -127,7 +128,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
             //** Fin select de la production 
 
             //** Debut select de la production (arret)
-                $sql = "SELECT * FROM `dresseusearret` where `actif`=1 and `idfichedresseuse`=$IdproductiondresD2Q1;";
+                $sql = "SELECT * FROM `dresseusearret` where `actif`=1 and `iddresseusearret`=$IdproductiondresD2Q1;";
 
                 // On prépare la requête
                 $query = $db->prepare($sql);
@@ -201,7 +202,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
             //** Fin select de la production 
 
             //** Debut select de la production (arret)
-                $sql = "SELECT * FROM `dresseusearret` where `actif`=1 and `idfichedresseuse`=$IdproductiondresD4Q1;";
+                $sql = "SELECT * FROM `dresseusearret` where `actif`=1 and `iddresseusearret`=$IdproductiondresD4Q1;";
 
                 // On prépare la requête
                 $query = $db->prepare($sql);
@@ -275,7 +276,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
             //** Fin select de la production 
 
             //** Debut select de la production (arret)
-                $sql = "SELECT * FROM `dresseusearret` where `actif`=1 and `idfichedresseuse`=$IdproductiondresD5Q1;";
+                $sql = "SELECT * FROM `dresseusearret` where `actif`=1 and `iddresseusearret`=$IdproductiondresD5Q1;";
 
                 // On prépare la requête
                 $query = $db->prepare($sql);
@@ -349,7 +350,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
             //** Fin select de la production 
 
             //** Debut select de la production (arret)
-                $sql = "SELECT * FROM `dresseusearret` where `actif`=1 and `idfichedresseuse`=$IdproductiondresD6Q1;";
+                $sql = "SELECT * FROM `dresseusearret` where `actif`=1 and `iddresseusearret`=$IdproductiondresD6Q1;";
 
                 // On prépare la requête
                 $query = $db->prepare($sql);
@@ -423,7 +424,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
             //** Fin select de la production 
 
             //** Debut select de la production (arret)
-                $sql = "SELECT * FROM `dresseusearret` where `actif`=1 and `idfichedresseuse`=$IdproductiondresD7Q1;";
+                $sql = "SELECT * FROM `dresseusearret` where `actif`=1 and `iddresseusearret`=$IdproductiondresD7Q1;";
 
                 // On prépare la requête
                 $query = $db->prepare($sql);
@@ -500,7 +501,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
         //** Fin select de la production 
 
         //** Debut select de la production (arret)
-            $sql = "SELECT * FROM `dresseusearret` where `actif`=1 and `idfichedresseuse`=$IdproductiondresD1Q2;";
+            $sql = "SELECT * FROM `dresseusearret` where `actif`=1 and `iddresseusearret`=$IdproductiondresD1Q2;";
 
             // On prépare la requête
             $query = $db->prepare($sql);
@@ -574,7 +575,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
             //** Fin select de la production 
 
             //** Debut select de la production (arret)
-                $sql = "SELECT * FROM `dresseusearret` where `actif`=1 and `idfichedresseuse`=$IdproductiondresD2Q2;";
+                $sql = "SELECT * FROM `dresseusearret` where `actif`=1 and `iddresseusearret`=$IdproductiondresD2Q2;";
 
                 // On prépare la requête
                 $query = $db->prepare($sql);
@@ -648,7 +649,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
             //** Fin select de la production 
 
             //** Debut select de la production (arret)
-                $sql = "SELECT * FROM `dresseusearret` where `actif`=1 and `idfichedresseuse`=$IdproductiondresD4Q2;";
+                $sql = "SELECT * FROM `dresseusearret` where `actif`=1 and `iddresseusearret`=$IdproductiondresD4Q2;";
 
                 // On prépare la requête
                 $query = $db->prepare($sql);
@@ -722,7 +723,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
             //** Fin select de la production 
 
             //** Debut select de la production (arret)
-                $sql = "SELECT * FROM `dresseusearret` where `actif`=1 and `idfichedresseuse`=$IdproductiondresD5Q2;";
+                $sql = "SELECT * FROM `dresseusearret` where `actif`=1 and `iddresseusearret`=$IdproductiondresD5Q2;";
 
                 // On prépare la requête
                 $query = $db->prepare($sql);
@@ -796,7 +797,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
             //** Fin select de la production 
 
             //** Debut select de la production (arret)
-                $sql = "SELECT * FROM `dresseusearret` where `actif`=1 and `idfichedresseuse`=$IdproductiondresD6Q2;";
+                $sql = "SELECT * FROM `dresseusearret` where `actif`=1 and `iddresseusearret`=$IdproductiondresD6Q2;";
 
                 // On prépare la requête
                 $query = $db->prepare($sql);
@@ -870,7 +871,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
             //** Fin select de la production 
 
             //** Debut select de la production (arret)
-                $sql = "SELECT * FROM `dresseusearret` where `actif`=1 and `idfichedresseuse`=$IdproductiondresD7Q2;";
+                $sql = "SELECT * FROM `dresseusearret` where `actif`=1 and `iddresseusearret`=$IdproductiondresD7Q2;";
 
                 // On prépare la requête
                 $query = $db->prepare($sql);
@@ -947,7 +948,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
         //** Fin select de la production 
 
         //** Debut select de la production (arret)
-            $sql = "SELECT * FROM `dresseusearret` where `actif`=1 and `idfichedresseuse`=$IdproductiondresD1Q3;";
+            $sql = "SELECT * FROM `dresseusearret` where `actif`=1 and `iddresseusearret`=$IdproductiondresD1Q3;";
 
             // On prépare la requête
             $query = $db->prepare($sql);
@@ -1021,7 +1022,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
         //** Fin select de la production 
 
         //** Debut select de la production (arret)
-            $sql = "SELECT * FROM `dresseusearret` where `actif`=1 and `idfichedresseuse`=$IdproductiondresD2Q3;";
+            $sql = "SELECT * FROM `dresseusearret` where `actif`=1 and `iddresseusearret`=$IdproductiondresD2Q3;";
 
             // On prépare la requête
             $query = $db->prepare($sql);
@@ -1095,7 +1096,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
         //** Fin select de la production 
 
         //** Debut select de la production (arret)
-            $sql = "SELECT * FROM `dresseusearret` where `actif`=1 and `idfichedresseuse`=$IdproductiondresD4Q3;";
+            $sql = "SELECT * FROM `dresseusearret` where `actif`=1 and `iddresseusearret`=$IdproductiondresD4Q3;";
 
             // On prépare la requête
             $query = $db->prepare($sql);
@@ -1169,7 +1170,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
         //** Fin select de la production 
 
         //** Debut select de la production (arret)
-            $sql = "SELECT * FROM `dresseusearret` where `actif`=1 and `idfichedresseuse`=$IdproductiondresD5Q3;";
+            $sql = "SELECT * FROM `dresseusearret` where `actif`=1 and `iddresseusearret`=$IdproductiondresD5Q3;";
 
             // On prépare la requête
             $query = $db->prepare($sql);
@@ -1243,7 +1244,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
             //** Fin select de la production 
 
             //** Debut select de la production (arret)
-                $sql = "SELECT * FROM `dresseusearret` where `actif`=1 and `idfichedresseuse`=$IdproductiondresD6Q3;";
+                $sql = "SELECT * FROM `dresseusearret` where `actif`=1 and `iddresseusearret`=$IdproductiondresD6Q3;";
 
                 // On prépare la requête
                 $query = $db->prepare($sql);
@@ -1317,7 +1318,7 @@ $datefichedresseuse = $_GET['dateCreation'];  // On recupére l'ID de la récept
             //** Fin select de la production 
 
             //** Debut select de la production (arret)
-                $sql = "SELECT * FROM `dresseusearret` where `actif`=1 and `idfichedresseuse`=$IdproductiondresD7Q3;";
+                $sql = "SELECT * FROM `dresseusearret` where `actif`=1 and `iddresseusearret`=$IdproductiondresD7Q3;";
 
                 // On prépare la requête
                 $query = $db->prepare($sql);
