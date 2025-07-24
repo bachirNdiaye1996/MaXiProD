@@ -279,11 +279,11 @@
                             </div>
                         </div>
                     </form>
-                    <div class="mb-3">
-                        <div class="col-xl-9 col-md-8 mb-1">
-                        <img src="../image/logoAppli.jpg" class="img-fluid mx-auto d-block text-center" alt="" style="border-radius: 50%; margin:20px; opacity: 0.9;" width="200">
+                        <div class="">
+                            <div class="col-xl-8 col-md-6 mb-1" style="border-radius: 20%; margin-top:-3%; opacity: 0.9;">
+                            <img src="../image/logoAppli.jpg" class="img-fluid mx-auto d-block text-center" alt="" style="border-radius: 50%; margin:20px; opacity: 0.7;" width="200">
+                            </div>
                         </div>
-                    </div>
 
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
@@ -505,7 +505,7 @@
                 <!-- End of Topbar -->
 
                 <!-- Begin Page Content -->
-                <div class="container-fluid mt-5">
+                <div class="container-fluid">
                     <!-- Page Heading -->
                     <!-- DataTales Example -->
 
@@ -513,7 +513,7 @@
                     <div class="row">
                         <!-- Earnings (Monthly) Card Example -->
                         <div class="col-xl-3 col-md-6 mb-4">
-                            <a href="tempsArret.php" class="text-decoration-none">
+                            <a href="tempsArret.php">
                                 <div class="card border-left-primary shadow h-100 py-2">
                                     <div class="card-body">
                                         <div class="row no-gutters align-items-center">
