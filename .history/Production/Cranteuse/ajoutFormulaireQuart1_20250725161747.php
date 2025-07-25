@@ -143,8 +143,8 @@
                     $finarret=htmlspecialchars($_POST['finarret'][$i]);
                     $raisonerreur=htmlspecialchars($_POST['raisonerreur'][$i]);
 
-                    $insertUser=$db->prepare("INSERT INTO `cranteuseq1arret` (`idcranteuseq1arret`, `debutarret`, `finarret`, `raison`, `idfichecranteuseq1`, `actif`, `dateCreation`) 
-                    VALUES (NULL, ?, ?, ?, ?, '1', ?);");
+                    $insertUser=$db->prepare("INSERT INTO `cranteuseq1arret` (`idcranteuseq1arret`, `debutarret`, `finarret`, `raison`, `idfichecranteuseq1`, `actif`,`dateCreation`) 
+                    VALUES (NULL, ?, ?, ?, ?, '1');");
                     $insertUser->execute(array($debutarret,$finarret,$raisonerreur,$idfichecranteuseq1Max,$datecreationfiche));
                 }
             //
