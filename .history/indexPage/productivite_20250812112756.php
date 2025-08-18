@@ -9,8 +9,6 @@
     include "../connexion/conexiondb.php";
     //Variables
     
-    
-    
     //** Debut select des receptions
         $sql = "SELECT * FROM `utilisateur` where `actif`=1 ORDER BY `id` DESC;";
     
@@ -30,8 +28,7 @@
     $dtm = date( "m", $dt );  // On extrait le mois courant.
 
     //** Debut select des production cranteuse
-        $sql = "SELECT SUM(`prodpoids`) as prodpoids, DAY(`dateCreation`) as jour FROM `cranteuseq1production` WHERE `actif`=1 AND MONTH(`dateCreation`)=$dtm 
-        GROUP BY DAY(`dateCreation`);";          // On tire les fiches du mois courant
+        $sql = "SELECT * FROM `fichecranteuseq1` WHERE `actif`=1 AND MONTH(`dateCreation`)='07';";          // On tire les fiches du mois courant
     
         // On prépare la requête
         $query = $db->prepare($sql);
@@ -43,9 +40,8 @@
         $FichesCranteuse = $query->fetchAll();
     //** Fin select des production cranteuse
 
-    //** Debut select des dechet cranteuse
-        $sql = "SELECT SUM(`dechet`) as dechet, DAY(`dateCreation`) as jour FROM `cranteuseq1consommation` WHERE `actif`=1 AND MONTH(`dateCreation`)=$dtm 
-        GROUP BY DAY(`dateCreation`);";          // On tire les fiches du mois courant
+    //** Debut select des production (Poids,...)
+        $sql = "SELECT SUM(prodpoids) as prodpoids, idfichecranteuseq1 as idfichecranteuseq1 FROM `cranteuseq1production` WHERE `actif`=1 AND MONTH(`dateCreation`)='07' GROUP BY `idfichecranteuseq1`;";          
     
         // On prépare la requête
         $query = $db->prepare($sql);
@@ -54,12 +50,11 @@
         $query->execute();
     
         // On récupère les valeurs dans un tableau associatif
-        $FichesCranteuseDechet = $query->fetchAll();
-    //** Fin select des dechet cranteuse
+        $CrantProduction = $query->fetchAll();
+    //** Fin select des production (Poids,...)
 
-    //** Debut select des productions et dechet section dresseuse
-        $sql = "SELECT SUM(`prodpoids`) as prodpoids, SUM(`proddechet`) as dechet, DAY(`dateCreation`) as jour FROM `dresseuseproduction` WHERE `actif`=1 AND MONTH(`dateCreation`)=$dtm 
-        GROUP BY DAY(`dateCreation`);";          // On tire les fiches du mois courant
+    //** Debut select des temps d'arret (duree,...)
+        $sql = "SELECT SUM(duree) as duree, idfichecranteuseq1 as idfichecranteuseq1 FROM `cranteuseq1arret` WHERE `actif`=1 AND MONTH(`dateCreation`)='07' GROUP BY `idfichecranteuseq1`;";          
     
         // On prépare la requête
         $query = $db->prepare($sql);
@@ -68,11 +63,78 @@
         $query->execute();
     
         // On récupère les valeurs dans un tableau associatif
-        $FichesDresseuse = $query->fetchAll();
-    //** Fin select des productions et dechet section dresseuse
+        $CrantTempsArret = $query->fetchAll();
+    //** Fin select des temps d'arret (duree,...)
+
+    
+    $controleur1 = array_unique(array_column($FichesCranteuse,'controleur1'));
+    $controleur2 = array_unique(array_column($FichesCranteuse,'controleur2'));
+    $array3 = $controleur1 + $controleur2;
+
+    $unions = array_unique(array_merge($controleur1,$controleur2));
+
+    // Récupération des fiches par controleur
+    $ArrayFichesParControleur = array(array());
+    $IdFichesCranteuse = array(array());
+    $CompteurFichesCranteuse = array(array());
+    foreach($unions as $union){
+        foreach($FichesCranteuse as $fichesCranteuse){
+            if($fichesCranteuse['controleur1']=="$union" || $fichesCranteuse['controleur2']=="$union"){
+                $ArrayFichesParControleur["$union"][] = $fichesCranteuse;
+                $IdFichesCranteuse["$union"][] = $fichesCranteuse['idfichecranteuseq1'];
+                $CompteurFichesCranteuse["$union"][] = $fichesCranteuse['compteurfin']-$fichesCranteuse['compteurdebut'];
+            }
+        }
+    }
+
+    // Récupération des productions par controleur
+    $i=0;
+    //$ProductionParControleur = array(array());
+    $ProductionParControleur = array (
+    "poids" => array(), 
+    "tempsarret" => array()
+    );
+    foreach($IdFichesCranteuse as $key => $idFichesCranteuses){
+        $tempProductionParControleur=null;
+        foreach($idFichesCranteuses as $idFichesCranteuse){
+            //printf($compteurFichesCranteuse." ");
+            foreach($CrantProduction as $crantProduction){
+                if($crantProduction['idfichecranteuseq1'] == $idFichesCranteuse){
+                    $tempProductionParControleur += $crantProduction['prodpoids'];
+                }
+            }
+        }
+        $tempProductionParControleur=null;
+        foreach($idFichesCranteuses as $idFichesCranteuse){
+            //printf($compteurFichesCranteuse." ");
+            foreach($CrantProduction as $crantProduction){
+                if($crantProduction['idfichecranteuseq1'] == $idFichesCranteuse){
+                    $tempProductionParControleur += $crantProduction['prodpoids'];
+                }
+            }
+        }
+        $ProductionParControleur[$key][$i] = $tempProductionParControleur;
+        $i++;
+    }
+
+    /*foreach($unions as $union){
+        //print_r($arrayFichesParControleur[3]);
+        $ProductionParPersonne;
+        foreach($ArrayFichesParControleur as $arrayFichesParControleur){
+            if($arrayFichesParControleur["$union"]=$union || $fichesCranteuse['controleur2']=$union){
+                $ArrayFichesParControleur[$union][] = $fichesCranteuse;
+            }
+        }
+    }*/
+            /*foreach($CompteurFichesCranteuse as $compteurFichesCranteuse){
+                //print_r($compteurFichesCranteuse['Bachir Ndiaye']);
+                //print_r($compteurFichesCranteuse);
+            }*/
+    //print_r(($ProductionParControleur));
+
 ?>
 
-
+ 
 <!DOCTYPE html>
 <html lang="en">
 
@@ -95,6 +157,9 @@
 
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
+        <!-- Custom styles for this page -->
+    <link href="vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+
     <style>
 
     </style>
@@ -532,7 +597,7 @@
                         </div>
                         <!-- Earnings (Monthly) Card Example -->
                         <div class="col-xl-3 col-md-6 mb-4">
-                            <a href="./Productivite/productiviteCrant.php" class="text-decoration-none">
+                            <a href="productivite.php" class="text-decoration-none">
                                 <div class="card border-left-success shadow h-100 py-2">
                                     <div class="card-body">
                                         <div class="row no-gutters align-items-center">
@@ -606,184 +671,71 @@
                         ?>
                     </div>
 
-                    <!-- Content Row -->
-                    <div class="row mb-4 mt-5">
-                        <!-- A mettre le body -->
-                        <!-- Bar Chart -->
-                        <div class="col-xl-6 col-lg-5">
-                            <div class="card shadow">
-                                <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">Section CRANTEUSE</h6>
-                                </div>
-                                <div class="card-body">
-                                    <div>
-                                        <canvas id="myChartCranteuse"></canvas>
-                                    </div>
-                                    <hr>
-                                    Production <span id="ProductCrant" class="text-primary"></span>  et Dechet <span id="DechetCrant"></span>
-                                    <code>de ce mois</code> à la section cranteuse.
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-xl-6 col-lg-5">
-                            <div class="card shadow">
-                                <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">Section DRESSEUSE</h6>
-                                </div>
-                                <div class="card-body">
-                                    <div>
-                                        <canvas id="myChartDresseuse"></canvas>
-                                    </div>
-                                    <hr>
-                                    Production <span id="ProductDress" class="text-primary"></span>  et Dechet <span id="DechetDress"></span>
-                                    <code>de ce mois</code> à la section dresseuse.
-                                </div>
-                            </div>
-                        </div>
+                    <div class="col-lg-12 mr-5">
+                        <ul class="row list-group-horizontal mt-4 ml-5">
+                            <li class="list-group mr-4"><a href="productiviteCrant.php" class="list-group-item list-group-item-action active" aria-current="true">CRANTEUSE</a></li>
+                            <li class="list-group mr-4"><a href="productiviteDress.php" class="list-group-item list-group-item-action">DRESSEUSE</a></li>
+                            <li class="list-group mr-4"><a href="productiviteTref.php" class="list-group-item list-group-item-action">TREFILAGE</a></li>
+                        </ul>
                     </div>
 
-                    
+                    <!-- Content Row -->
+                    <div class="row">
+                        <!-- A mettre le body -->
+                        <?php  if($ProductionParControleur){ ?>
+                            <div class="col-lg-12">
+                            <div class="card position-relative mt-5">
+                                <div class="card-header py-3 mb-4">
+                                    <h6 class="m-0 font-weight-bold text-primary">Voici la productivité des opérateurs dans la période de ... à la machine cranteuse.</h6>
+                                </div>
+                                <div class="row m-2">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                            <thead>
+                                                <tr>      
+                                                    <th>Prenom et Nom opérateur</th>    
+                                                    <th>Poids produit par opérateur (KG)</th>   
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php
+                                                    $i=0;
+                                                    //$ProductionParControleurJson = json_encode($ProductionParControleur);
+                                                    //print_r($ProductionParControleurJson);
+                                                    foreach($ProductionParControleur as $key => $productionParControleur){
+                                                        if($i>0){
+                                                ?>
+                                                    <tr>
+                                                        <td class="">
+                                                            <?= $key ?>                                                    
+                                                        </td>
+                                                        <td class="">
+                                                            <?= $productionParControleur[$i] ?>                                                    
+                                                        </td>
+                                                    </tr>    
+                                                <?php
+                                                    }
+                                                        $i++;
+                                                    }
+                                                ?>
+                                            </tbody>
+                                        </table>
+                                        <!-- Bouton et pagnination--> 
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                        <?php  } ?>
+                    </div>
+
 
                     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
                     <script type="text/javascript">
-                        var dechet = <?php echo json_encode($FichesCranteuseDechet); ?>;
-                        var production = <?php echo json_encode($FichesCranteuse); ?>;
-                        //console.log(test);
+                        var production = <?php echo json_encode($ProductionParControleur); ?>;
+                        console.log(production[1]);
 
-                        var Jours = [];
-                        var Poids = [];
-                        var Dechet = [];
-                        Jours = ["0","1", "2", "3", "4", "5", "6","7", "8", "9", "10", "11", "12","13", "14", "15", "16", "17", "18","19", "20", "21", "22", "23", "24","25", "26", "27", "28", "29", "30","31"];
-                        
-                        for (let i = 0; i < 31; i++) {
-                            // Pour la production
-                            if(production[i] === undefined){
-                            }else{
-                                var j = production[i]['jour'];
-                                Poids[j] = Number(production[i]['prodpoids']);
-                            }
-
-                            // Pour dechets
-                            if(dechet[i] === undefined){
-                            }else{
-                                var t = dechet[i]['jour'];
-                                Dechet[t] = Number(dechet[i]['dechet']);
-                            }
-                        }
-                        // On cherche les sommes (dechet et production)
-                        const TotalProduit = Poids.reduce(
-                            (accumulator, currentValue) => accumulator + currentValue,
-                        );
-                        const ProductCrant = document.getElementById('ProductCrant');
-                        let htmlPC = "<span class='text-primary'> Total = "+TotalProduit+" KG</span>";
-                        ProductCrant.insertAdjacentHTML("afterend", htmlPC);
-
-                        const TotalDechet = Dechet.reduce(
-                            (accumulator, currentValue) => accumulator + currentValue,
-                        );
-                        const DechetCrant = document.getElementById('DechetCrant');
-                        let htmlCD = "<span class='text-primary'> Total = "+TotalDechet+" KG</span>";
-                        DechetCrant.insertAdjacentHTML("afterend", htmlCD);
-
-                        const ctxDressProd = document.getElementById('myChartCranteuse');
-
-                        new Chart(ctxDressProd, {
-                        type: "bar",
-                        data: {
-                            labels: Jours,
-                            datasets: [{
-                            label: "Production",
-                            data: Poids,
-                            backgroundColor: "#4e73df",
-                            hoverBackgroundColor: "#2e59d9",
-                            borderColor: "#4e73df",
-                            borderWidth: 1
-                            },{
-                            label: "Dechet",
-                            data: Dechet,
-                            backgroundColor: "#2cbd33ff",
-                            hoverBackgroundColor: "#06d810ff",
-                            borderColor: "#2cbd33ff",
-                            borderWidth: 1
-                            }]
-                        },
-                        options: {
-                            legend: {display: false}
-                        }
-                        });
                     </script>
-
-                    <script type="text/javascript">
-                        var dechet = <?php echo json_encode($FichesDresseuse); ?>;
-                        var production = <?php echo json_encode($FichesDresseuse); ?>;
-                        //console.log(test);
-
-                        var Jours = [];
-                        var Poids = [];
-                        var Dechet = [];
-                        Jours = ["0","1", "2", "3", "4", "5", "6","7", "8", "9", "10", "11", "12","13", "14", "15", "16", "17", "18","19", "20", "21", "22", "23", "24","25", "26", "27", "28", "29", "30","31"];
-                        
-                        for (let i = 0; i < 31; i++) {
-                            // Pour la production
-                            if(production[i] === undefined){
-                            }else{
-                                var j = production[i]['jour'];
-                                Poids[j] = Number(production[i]['prodpoids']);
-                            }
-
-                            // Pour dechets
-                            if(dechet[i] === undefined){
-                            }else{
-                                var t = dechet[i]['jour'];
-                                Dechet[t] = Number(dechet[i]['dechet']);
-                            }
-                        }
-                        // On cherche les sommes (dechet et production)
-                        const TotalProduitDress = Poids.reduce(
-                            (accumulator, currentValue) => accumulator + currentValue,
-                        );
-                        const ProductDress = document.getElementById('ProductDress');
-                        let htmlPD = "<span class='text-primary'> Total = "+TotalProduitDress+" KG</span>";
-                        ProductDress.insertAdjacentHTML("afterend", htmlPD);
-
-                        const TotalDechetDress = Dechet.reduce(
-                            (accumulator, currentValue) => accumulator + currentValue,
-                        );
-                        const DechetDress = document.getElementById('DechetDress');
-                        let htmlDD = "<span class='text-primary'> Total = "+TotalDechetDress+" KG</span>";
-                        DechetDress.insertAdjacentHTML("afterend", htmlDD);
-
-
-                        const ctxCranProd = document.getElementById('myChartDresseuse');
-
-                        new Chart(ctxCranProd, {
-                        type: "bar",
-                        data: {
-                            labels: Jours,
-                            datasets: [{
-                            label: "Production",
-                            data: Poids,
-                            backgroundColor: "#4e73df",
-                            hoverBackgroundColor: "#2e59d9",
-                            borderColor: "#4e73df",
-                            borderWidth: 1
-                            },{
-                            label: "Dechet",
-                            data: Dechet,
-                            backgroundColor: "#2cbd33ff",
-                            hoverBackgroundColor: "#06d810ff",
-                            borderColor: "#2cbd33ff",
-                            borderWidth: 1
-                            }]
-                        },
-                        options: {
-                            legend: {display: false}
-                        }
-                        });
-                    </script>
-
+                    
                 </div>
                 <!-- /.container-fluid -->
 
@@ -829,120 +781,12 @@
 
     <script src="js/demo/diagrammes.js"></script>
 
-    <script type="module" src="">
-        // Set new default font family and font color to mimic Bootstrap's default styling
-        Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
-        Chart.defaults.global.defaultFontColor = '#858796';
+    <!-- Page level plugins -->
+    <script src="vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
 
-        //console.log(<?php print_r($Utilisateurs); ?>);
-        function number_format(number, decimals, dec_point, thousands_sep) {
-        // *     example: number_format(1234.56, 2, ',', ' ');
-        // *     return: '1 234,56'
-        number = (number + '').replace(',', '').replace(' ', '');
-        var n = !isFinite(+number) ? 0 : +number,
-            prec = !isFinite(+decimals) ? 0 : Math.abs(decimals),
-            sep = (typeof thousands_sep === 'undefined') ? ',' : thousands_sep,
-            dec = (typeof dec_point === 'undefined') ? '.' : dec_point,
-            s = '',
-            toFixedFix = function(n, prec) {
-            var k = Math.pow(10, prec);
-            return '' + Math.round(n * k) / k;
-            };
-        // Fix for IE parseFloat(0.55).toFixed(0) = 0;
-        s = (prec ? toFixedFix(n, prec) : '' + Math.round(n)).split('.');
-        if (s[0].length > 3) {
-            s[0] = s[0].replace(/\B(?=(?:\d{3})+(?!\d))/g, sep);
-        }
-        if ((s[1] || '').length < prec) {
-            s[1] = s[1] || '';
-            s[1] += new Array(prec - s[1].length + 1).join('0');
-        }
-        return s.join(dec);
-        }
-
-        // Bar Chart Example
-        var ctx = document.getElementById("myBarChart");
-        var myBarChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ["1", "2", "3", "4", "5", "6","7", "8", "9", "10", "11", "12","13", "14", "15", "16", "17", "18","19", "20", "21", "22", "23", "24","25", "26", "27", "28", "29", "30","31"],
-            datasets: [{
-            label: "Production",
-            backgroundColor: "#4e73df",
-            hoverBackgroundColor: "#2e59d9",
-            borderColor: "#4e73df",
-            data: [4215, 5312, 6251, 7841, 9821, 14984,4215, 5312, 6251, 7841, 9821, 14984,4215, 5312, 6251, 7841, 9821, 14984,4215, 5312, 6251, 7841, 9821, 14984,4215, 5312, 6251, 7841, 9821, 14984, 14984],
-            }],
-        },
-        options: {
-            maintainAspectRatio: false,
-            layout: {
-            padding: {
-                left: 10,
-                right: 25,
-                top: 25,
-                bottom: 0
-            }
-            },
-            scales: {
-            xAxes: [{
-                time: {
-                unit: 'day'
-                },
-                gridLines: {
-                display: false,
-                drawBorder: false
-                },
-                ticks: {
-                maxTicksLimit: 6
-                },
-                maxBarThickness: 25,
-            }],
-            yAxes: [{
-                ticks: {
-                min: 0,
-                max: 15000,
-                maxTicksLimit: 5,
-                padding: 10,
-                // Include a dollar sign in the ticks
-                callback: function(value, index, values) {
-                    return number_format(value) + 'KG';
-                }
-                },
-                gridLines: {
-                color: "rgb(234, 236, 244)",
-                zeroLineColor: "rgb(234, 236, 244)",
-                drawBorder: false,
-                borderDash: [2],
-                zeroLineBorderDash: [2]
-                }
-            }],
-            },
-            legend: {
-            display: false
-            },
-            tooltips: {
-            titleMarginBottom: 10,
-            titleFontColor: '#6e707e',
-            titleFontSize: 14,
-            backgroundColor: "rgb(255,255,255)",
-            bodyFontColor: "#858796",
-            borderColor: '#dddfeb',
-            borderWidth: 1,
-            xPadding: 15,
-            yPadding: 15,
-            displayColors: false,
-            caretPadding: 10,
-            callbacks: {
-                label: function(tooltipItem, chart) {
-                var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
-                return datasetLabel + ' : ' + number_format(tooltipItem.yLabel) +' Kg ';
-                }
-            }
-            },
-        }
-        });
-    </script>
+    <!-- Page level custom scripts -->
+    <script src="js/demo/datatables-demo.js"></script>
 
 </body>
 

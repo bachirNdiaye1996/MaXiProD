@@ -7,10 +7,10 @@
     }
 
     include "../connexion/conexiondb.php";
+
     //Variables
-    
-    
-    
+    $Periode="'Aucun travailleur'";
+
     //** Debut select des receptions
         $sql = "SELECT * FROM `utilisateur` where `actif`=1 ORDER BY `id` DESC;";
     
@@ -23,56 +23,152 @@
         // On récupère les valeurs dans un tableau associatif
         $Utilisateurs = $query->fetchAll();
     //** Fin select des receptions
-
     $NBUSERS = count($Utilisateurs);
 
-    $dt = time();
-    $dtm = date( "m", $dt );  // On extrait le mois courant.
 
-    //** Debut select des production cranteuse
-        $sql = "SELECT SUM(`prodpoids`) as prodpoids, DAY(`dateCreation`) as jour FROM `cranteuseq1production` WHERE `actif`=1 AND MONTH(`dateCreation`)=$dtm 
-        GROUP BY DAY(`dateCreation`);";          // On tire les fiches du mois courant
-    
-        // On prépare la requête
-        $query = $db->prepare($sql);
-    
-        // On exécute
-        $query->execute();
-    
-        // On récupère les valeurs dans un tableau associatif
-        $FichesCranteuse = $query->fetchAll();
-    //** Fin select des production cranteuse
+    if($_SERVER["REQUEST_METHOD"]=='POST'){
+    //Recherche une fiche
+        if(isset($_POST['ChercheTempsArret'])){
+            $dateFiche=htmlspecialchars($_POST['dateFiche']); 
 
-    //** Debut select des dechet cranteuse
-        $sql = "SELECT SUM(`dechet`) as dechet, DAY(`dateCreation`) as jour FROM `cranteuseq1consommation` WHERE `actif`=1 AND MONTH(`dateCreation`)=$dtm 
-        GROUP BY DAY(`dateCreation`);";          // On tire les fiches du mois courant
-    
-        // On prépare la requête
-        $query = $db->prepare($sql);
-    
-        // On exécute
-        $query->execute();
-    
-        // On récupère les valeurs dans un tableau associatif
-        $FichesCranteuseDechet = $query->fetchAll();
-    //** Fin select des dechet cranteuse
+            //** Debut select des production cranteuse
+                $sql = "SELECT * FROM `fichedresseuse` WHERE `actif`=1 AND MONTH(`dateCreation`)='$dateFiche';";          // On tire les fiches du mois courant
+            
+                // On prépare la requête
+                $query = $db->prepare($sql);
+            
+                // On exécute
+                $query->execute();
+            
+                // On récupère les valeurs dans un tableau associatif
+                $FichesDresseuse = $query->fetchAll();
+            //** Fin select des production cranteuse
 
-    //** Debut select des productions et dechet section dresseuse
-        $sql = "SELECT SUM(`prodpoids`) as prodpoids, SUM(`proddechet`) as dechet, DAY(`dateCreation`) as jour FROM `dresseuseproduction` WHERE `actif`=1 AND MONTH(`dateCreation`)=$dtm 
-        GROUP BY DAY(`dateCreation`);";          // On tire les fiches du mois courant
+            //** Debut select des production (Poids,...)
+                $sql = "SELECT SUM(prodpoids) as prodpoids, idfichedresseuse as idfichedresseuse FROM `dresseuseproduction` WHERE `actif`=1 AND MONTH(`dateCreation`)='$dateFiche' GROUP BY `idfichedresseuse`;";          
+            
+                // On prépare la requête
+                $query = $db->prepare($sql);
+            
+                // On exécute
+                $query->execute();
+            
+                // On récupère les valeurs dans un tableau associatif
+                $DressProduction = $query->fetchAll();
+            //** Fin select des production (Poids,...)
+
+            //** Debut select des temps d'arret (duree,...)
+                $sql = "SELECT SUM(duree) as duree, idfichedresseuse as idfichedresseuse, dateCreation as dateCreation FROM `dresseusearret` WHERE `actif`=1 AND MONTH(`dateCreation`)='$dateFiche' GROUP BY `idfichedresseuse`;";          
+            
+                // On prépare la requête
+                $query = $db->prepare($sql);
+            
+                // On exécute
+                $query->execute();
+            
+                // On récupère les valeurs dans un tableau associatif
+                $DressTempsArret = $query->fetchAll();
+            //** Fin select des temps d'arret (duree,...)
+
+        }
+    }else{
+        $dt = time();
+        $dtm = date( "m", $dt );  // On extrait le mois courant.
+
+        //** Debut select des production cranteuse
+            $sql = "SELECT * FROM `fichedresseuse` WHERE `actif`=1 AND MONTH(`dateCreation`)='$dtm';";          // On tire les fiches du mois courant
+        
+            // On prépare la requête
+            $query = $db->prepare($sql);
+        
+            // On exécute
+            $query->execute();
+        
+            // On récupère les valeurs dans un tableau associatif
+            $FichesDresseuse = $query->fetchAll();
+        //** Fin select des production cranteuse
+
+        //** Debut select des production (Poids,...)
+            $sql = "SELECT SUM(prodpoids) as prodpoids, idfichedresseuse as idfichedresseuse FROM `dresseuseproduction` WHERE `actif`=1 AND MONTH(`dateCreation`)='$dtm' GROUP BY `idfichedresseuse`;";          
+        
+            // On prépare la requête
+            $query = $db->prepare($sql);
+        
+            // On exécute
+            $query->execute();
+        
+            // On récupère les valeurs dans un tableau associatif
+            $DressProduction = $query->fetchAll();
+        //** Fin select des production (Poids,...)
+
+        //** Debut select des temps d'arret (duree,...)
+            $sql = "SELECT SUM(duree) as duree, idfichedresseuse as idfichedresseuse, dateCreation as dateCreation FROM `dresseusearret` WHERE `actif`=1 AND MONTH(`dateCreation`)='$dtm' GROUP BY `idfichedresseuse`;";          
+        
+            // On prépare la requête
+            $query = $db->prepare($sql);
+        
+            // On exécute
+            $query->execute();
+        
+            // On récupère les valeurs dans un tableau associatif
+            $DressTempsArret = $query->fetchAll();
+        //** Fin select des temps d'arret (duree,...)
+    }
+
     
-        // On prépare la requête
-        $query = $db->prepare($sql);
-    
-        // On exécute
-        $query->execute();
-    
-        // On récupère les valeurs dans un tableau associatif
-        $FichesDresseuse = $query->fetchAll();
-    //** Fin select des productions et dechet section dresseuse
+    $controleur1 = array_unique(array_column($FichesDresseuse,'controleur1'));
+    $controleur2 = array_unique(array_column($FichesDresseuse,'controleur2'));
+    //$array3 = $controleur1 + $controleur2;
+
+    $unions = array_unique(array_merge($controleur1,$controleur2));
+
+    // Récupération des fiches par controleur
+    $ArrayFichesParControleur = array(array());
+    $IdFichesDresseuse = array(array());
+    $CompteurFichesDresseuse = array(array());
+    foreach($unions as $union){
+        foreach($FichesDresseuse as $fichesDresseuse){
+            if($fichesDresseuse['controleur1']=="$union" || $fichesDresseuse['controleur2']=="$union"){
+                $ArrayFichesParControleur["$union"][] = $fichesDresseuse;
+                $IdFichesDresseuse["$union"][] = $fichesDresseuse['idfichedresseuse'];
+                $CompteurFichesDresseuse["$union"][] = $fichesDresseuse['compteurfin']-$fichesDresseuse['compteurdebut'];
+            }
+        }
+    }
+
+    // Récupération des productions par controleur
+    $i=0;
+    //$ProductionParControleur = array(array());
+    $ProductionParControleur = array ( array ());
+    foreach($IdFichesDresseuse as $key => $idFichesDresseuses){
+        $tempProductionParControleur=null;
+        foreach($idFichesDresseuses as $idFichesDresseuse){
+            foreach($DressProduction as $dressProduction){
+                if($dressProduction['idfichedresseuse'] == $idFichesDresseuse){
+                    $tempProductionParControleur += $dressProduction['prodpoids'];
+                }
+            }
+        }
+        $tempTempsArretParControleur=null;
+        foreach($idFichesDresseuses as $idFichesDresseuse){
+            foreach($DressTempsArret as $dressTempsArret){
+                if($dressTempsArret['idfichedresseuse'] == $idFichesDresseuse){
+                    $tempTempsArretParControleur += $dressTempsArret['duree'];
+                }
+                // Prendre le mois
+                $Periode = $dressTempsArret['dateCreation'];
+            }
+        }
+        $ProductionParControleur[$key]["poids"] = $tempProductionParControleur;
+        $ProductionParControleur[$key]["tempsarret"] = $tempTempsArretParControleur;
+        $i++;
+    }
+
+    //print_r(($ProductionParControleur));
+
 ?>
 
-
+ 
 <!DOCTYPE html>
 <html lang="en">
 
@@ -95,6 +191,9 @@
 
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
+        <!-- Custom styles for this page -->
+    <link href="vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+
     <style>
 
     </style>
@@ -532,7 +631,7 @@
                         </div>
                         <!-- Earnings (Monthly) Card Example -->
                         <div class="col-xl-3 col-md-6 mb-4">
-                            <a href="./Productivite/productiviteCrant.php" class="text-decoration-none">
+                            <a href="productiviteCrant.php" class="text-decoration-none">
                                 <div class="card border-left-success shadow h-100 py-2">
                                     <div class="card-body">
                                         <div class="row no-gutters align-items-center">
@@ -606,184 +705,111 @@
                         ?>
                     </div>
 
-                    <!-- Content Row -->
-                    <div class="row mb-4 mt-5">
-                        <!-- A mettre le body -->
-                        <!-- Bar Chart -->
-                        <div class="col-xl-6 col-lg-5">
-                            <div class="card shadow">
-                                <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">Section CRANTEUSE</h6>
-                                </div>
-                                <div class="card-body">
-                                    <div>
-                                        <canvas id="myChartCranteuse"></canvas>
-                                    </div>
-                                    <hr>
-                                    Production <span id="ProductCrant" class="text-primary"></span>  et Dechet <span id="DechetCrant"></span>
-                                    <code>de ce mois</code> à la section cranteuse.
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-xl-6 col-lg-5">
-                            <div class="card shadow">
-                                <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">Section DRESSEUSE</h6>
-                                </div>
-                                <div class="card-body">
-                                    <div>
-                                        <canvas id="myChartDresseuse"></canvas>
-                                    </div>
-                                    <hr>
-                                    Production <span id="ProductDress" class="text-primary"></span>  et Dechet <span id="DechetDress"></span>
-                                    <code>de ce mois</code> à la section dresseuse.
-                                </div>
-                            </div>
-                        </div>
+                    <div class="col-lg-12 mr-5">
+                        <ul class="row list-group-horizontal mt-4 ml-5">
+                            <li class="list-group mr-4"><a href="productiviteCrant.php" class="list-group-item list-group-item-action" aria-current="true">CRANTEUSE</a></li>
+                            <li class="list-group mr-4"><a href="productiviteDress.php" class="list-group-item list-group-item-action active">DRESSEUSE</a></li>
+                            <li class="list-group mr-4"><a href="productiviteTref.php" class="list-group-item list-group-item-action">TREFILAGE</a></li>
+                        </ul>
                     </div>
 
-                    
+                    <!-- RECHERCHE -->
+                        <div class="mt-5 mr-3">
+                            <form action="#" method="POST" enctype="multipart/form-data" class="row g-3">
+                                <div class="col-md-2 mt-3">
+                                    <div class="mb-1 text-start">
+                                        <select class="form-control" name="dateFiche">
+                                            <option value="01">Janvier</option>
+                                            <option value="02">Fevrier</option>
+                                            <option value="03">Mars</option>
+                                            <option value="04">Avril</option>
+                                            <option value="05">Mai</option>
+                                            <option value="06">Juin</option>
+                                            <option value="07">Juillet</option>
+                                            <option value="08">Aout</option>
+                                            <option value="09">Septembre</option>
+                                            <option value="10">Octobre</option>
+                                            <option value="11">Novembre</option>
+                                            <option value="12">Décembre</option>
+                                        </select>                                                
+                                    </div>
+                                </div>
+                                <div class="mt-3">                           
+                                    <input class="btn btn-success bouton mr-3 ml-5" name="ChercheTempsArret" type="submit" value="RECHERCHER">
+                                </div>
+                                <hr/>
+                            </form> 
+                        </div>
+                    <!-- RECHERCHE -->
+
+                    <!-- Content Row -->
+                    <div class="row">
+                        <!-- A mettre le body -->
+                        <?php  if($ProductionParControleur){ ?>
+                            <div class="col-lg-12">
+                            <div class="card position-relative mt-4">
+                                <div class="card-header py-3 mb-4">
+                                    <h6 class="m-0 font-weight-bold text-primary"><span class="h4">La productivité</span> des opérateurs dans la période du <code class="h4"><?= implode('-',array_reverse  (explode('-',$Periode))); ?></code> à la machine <span class="h4">cranteuse</span>.</h6>
+                                </div>
+                                <div class="row m-2">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                            <thead>
+                                                <tr>      
+                                                    <th>Prenom et Nom opérateur</th>    
+                                                    <th>Poids produit par opérateur (KG)</th>  
+                                                    <th>Temps arret par opérateur (KG)</th> 
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php
+                                                    $i=0;
+                                                    foreach($ProductionParControleur as $key  => $productionParControleur){
+                                                        if($i>0){
+                                                ?>
+                                                    <tr>
+                                                        <td class="">
+                                                            <?= $key ?>                                                    
+                                                        </td>
+                                                        <td class="">
+                                                            <?= $productionParControleur["poids"] ?>                                                    
+                                                        </td>
+                                                        <td class="">
+                                                            <?php 
+                                                                $TotalArret = $productionParControleur["tempsarret"];
+                                                                $TotalArret = explode(":",date("H:i",$TotalArret) );
+                                                                if(($TotalArret[0]-1) == 0){
+                                                                    if($TotalArret[1] == 0){}else{echo $TotalArret[1]." minutes";}
+                                                                }else{
+                                                                    echo ($TotalArret[0]-1)." Heures ";
+                                                                    if($TotalArret[1] == 0){}else{echo $TotalArret[1]." minutes";}
+                                                                }
+                                                            ?>
+                                                        </td>
+                                                    </tr>    
+                                                <?php
+                                                        }
+                                                        $i++;
+                                                    }
+                                                ?>
+                                            </tbody>
+                                        </table>
+                                        <!-- Bouton et pagnination--> 
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                        <?php  } ?>
+                    </div>
+
 
                     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
                     <script type="text/javascript">
-                        var dechet = <?php echo json_encode($FichesCranteuseDechet); ?>;
-                        var production = <?php echo json_encode($FichesCranteuse); ?>;
-                        //console.log(test);
+                        var production = <?php echo json_encode($ProductionParControleur); ?>;
+                        console.log(production[1]);
 
-                        var Jours = [];
-                        var Poids = [];
-                        var Dechet = [];
-                        Jours = ["0","1", "2", "3", "4", "5", "6","7", "8", "9", "10", "11", "12","13", "14", "15", "16", "17", "18","19", "20", "21", "22", "23", "24","25", "26", "27", "28", "29", "30","31"];
-                        
-                        for (let i = 0; i < 31; i++) {
-                            // Pour la production
-                            if(production[i] === undefined){
-                            }else{
-                                var j = production[i]['jour'];
-                                Poids[j] = Number(production[i]['prodpoids']);
-                            }
-
-                            // Pour dechets
-                            if(dechet[i] === undefined){
-                            }else{
-                                var t = dechet[i]['jour'];
-                                Dechet[t] = Number(dechet[i]['dechet']);
-                            }
-                        }
-                        // On cherche les sommes (dechet et production)
-                        const TotalProduit = Poids.reduce(
-                            (accumulator, currentValue) => accumulator + currentValue,
-                        );
-                        const ProductCrant = document.getElementById('ProductCrant');
-                        let htmlPC = "<span class='text-primary'> Total = "+TotalProduit+" KG</span>";
-                        ProductCrant.insertAdjacentHTML("afterend", htmlPC);
-
-                        const TotalDechet = Dechet.reduce(
-                            (accumulator, currentValue) => accumulator + currentValue,
-                        );
-                        const DechetCrant = document.getElementById('DechetCrant');
-                        let htmlCD = "<span class='text-primary'> Total = "+TotalDechet+" KG</span>";
-                        DechetCrant.insertAdjacentHTML("afterend", htmlCD);
-
-                        const ctxDressProd = document.getElementById('myChartCranteuse');
-
-                        new Chart(ctxDressProd, {
-                        type: "bar",
-                        data: {
-                            labels: Jours,
-                            datasets: [{
-                            label: "Production",
-                            data: Poids,
-                            backgroundColor: "#4e73df",
-                            hoverBackgroundColor: "#2e59d9",
-                            borderColor: "#4e73df",
-                            borderWidth: 1
-                            },{
-                            label: "Dechet",
-                            data: Dechet,
-                            backgroundColor: "#2cbd33ff",
-                            hoverBackgroundColor: "#06d810ff",
-                            borderColor: "#2cbd33ff",
-                            borderWidth: 1
-                            }]
-                        },
-                        options: {
-                            legend: {display: false}
-                        }
-                        });
                     </script>
-
-                    <script type="text/javascript">
-                        var dechet = <?php echo json_encode($FichesDresseuse); ?>;
-                        var production = <?php echo json_encode($FichesDresseuse); ?>;
-                        //console.log(test);
-
-                        var Jours = [];
-                        var Poids = [];
-                        var Dechet = [];
-                        Jours = ["0","1", "2", "3", "4", "5", "6","7", "8", "9", "10", "11", "12","13", "14", "15", "16", "17", "18","19", "20", "21", "22", "23", "24","25", "26", "27", "28", "29", "30","31"];
-                        
-                        for (let i = 0; i < 31; i++) {
-                            // Pour la production
-                            if(production[i] === undefined){
-                            }else{
-                                var j = production[i]['jour'];
-                                Poids[j] = Number(production[i]['prodpoids']);
-                            }
-
-                            // Pour dechets
-                            if(dechet[i] === undefined){
-                            }else{
-                                var t = dechet[i]['jour'];
-                                Dechet[t] = Number(dechet[i]['dechet']);
-                            }
-                        }
-                        // On cherche les sommes (dechet et production)
-                        const TotalProduitDress = Poids.reduce(
-                            (accumulator, currentValue) => accumulator + currentValue,
-                        );
-                        const ProductDress = document.getElementById('ProductDress');
-                        let htmlPD = "<span class='text-primary'> Total = "+TotalProduitDress+" KG</span>";
-                        ProductDress.insertAdjacentHTML("afterend", htmlPD);
-
-                        const TotalDechetDress = Dechet.reduce(
-                            (accumulator, currentValue) => accumulator + currentValue,
-                        );
-                        const DechetDress = document.getElementById('DechetDress');
-                        let htmlDD = "<span class='text-primary'> Total = "+TotalDechetDress+" KG</span>";
-                        DechetDress.insertAdjacentHTML("afterend", htmlDD);
-
-
-                        const ctxCranProd = document.getElementById('myChartDresseuse');
-
-                        new Chart(ctxCranProd, {
-                        type: "bar",
-                        data: {
-                            labels: Jours,
-                            datasets: [{
-                            label: "Production",
-                            data: Poids,
-                            backgroundColor: "#4e73df",
-                            hoverBackgroundColor: "#2e59d9",
-                            borderColor: "#4e73df",
-                            borderWidth: 1
-                            },{
-                            label: "Dechet",
-                            data: Dechet,
-                            backgroundColor: "#2cbd33ff",
-                            hoverBackgroundColor: "#06d810ff",
-                            borderColor: "#2cbd33ff",
-                            borderWidth: 1
-                            }]
-                        },
-                        options: {
-                            legend: {display: false}
-                        }
-                        });
-                    </script>
-
+                    
                 </div>
                 <!-- /.container-fluid -->
 
@@ -829,120 +855,12 @@
 
     <script src="js/demo/diagrammes.js"></script>
 
-    <script type="module" src="">
-        // Set new default font family and font color to mimic Bootstrap's default styling
-        Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
-        Chart.defaults.global.defaultFontColor = '#858796';
+    <!-- Page level plugins -->
+    <script src="vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
 
-        //console.log(<?php print_r($Utilisateurs); ?>);
-        function number_format(number, decimals, dec_point, thousands_sep) {
-        // *     example: number_format(1234.56, 2, ',', ' ');
-        // *     return: '1 234,56'
-        number = (number + '').replace(',', '').replace(' ', '');
-        var n = !isFinite(+number) ? 0 : +number,
-            prec = !isFinite(+decimals) ? 0 : Math.abs(decimals),
-            sep = (typeof thousands_sep === 'undefined') ? ',' : thousands_sep,
-            dec = (typeof dec_point === 'undefined') ? '.' : dec_point,
-            s = '',
-            toFixedFix = function(n, prec) {
-            var k = Math.pow(10, prec);
-            return '' + Math.round(n * k) / k;
-            };
-        // Fix for IE parseFloat(0.55).toFixed(0) = 0;
-        s = (prec ? toFixedFix(n, prec) : '' + Math.round(n)).split('.');
-        if (s[0].length > 3) {
-            s[0] = s[0].replace(/\B(?=(?:\d{3})+(?!\d))/g, sep);
-        }
-        if ((s[1] || '').length < prec) {
-            s[1] = s[1] || '';
-            s[1] += new Array(prec - s[1].length + 1).join('0');
-        }
-        return s.join(dec);
-        }
-
-        // Bar Chart Example
-        var ctx = document.getElementById("myBarChart");
-        var myBarChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ["1", "2", "3", "4", "5", "6","7", "8", "9", "10", "11", "12","13", "14", "15", "16", "17", "18","19", "20", "21", "22", "23", "24","25", "26", "27", "28", "29", "30","31"],
-            datasets: [{
-            label: "Production",
-            backgroundColor: "#4e73df",
-            hoverBackgroundColor: "#2e59d9",
-            borderColor: "#4e73df",
-            data: [4215, 5312, 6251, 7841, 9821, 14984,4215, 5312, 6251, 7841, 9821, 14984,4215, 5312, 6251, 7841, 9821, 14984,4215, 5312, 6251, 7841, 9821, 14984,4215, 5312, 6251, 7841, 9821, 14984, 14984],
-            }],
-        },
-        options: {
-            maintainAspectRatio: false,
-            layout: {
-            padding: {
-                left: 10,
-                right: 25,
-                top: 25,
-                bottom: 0
-            }
-            },
-            scales: {
-            xAxes: [{
-                time: {
-                unit: 'day'
-                },
-                gridLines: {
-                display: false,
-                drawBorder: false
-                },
-                ticks: {
-                maxTicksLimit: 6
-                },
-                maxBarThickness: 25,
-            }],
-            yAxes: [{
-                ticks: {
-                min: 0,
-                max: 15000,
-                maxTicksLimit: 5,
-                padding: 10,
-                // Include a dollar sign in the ticks
-                callback: function(value, index, values) {
-                    return number_format(value) + 'KG';
-                }
-                },
-                gridLines: {
-                color: "rgb(234, 236, 244)",
-                zeroLineColor: "rgb(234, 236, 244)",
-                drawBorder: false,
-                borderDash: [2],
-                zeroLineBorderDash: [2]
-                }
-            }],
-            },
-            legend: {
-            display: false
-            },
-            tooltips: {
-            titleMarginBottom: 10,
-            titleFontColor: '#6e707e',
-            titleFontSize: 14,
-            backgroundColor: "rgb(255,255,255)",
-            bodyFontColor: "#858796",
-            borderColor: '#dddfeb',
-            borderWidth: 1,
-            xPadding: 15,
-            yPadding: 15,
-            displayColors: false,
-            caretPadding: 10,
-            callbacks: {
-                label: function(tooltipItem, chart) {
-                var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
-                return datasetLabel + ' : ' + number_format(tooltipItem.yLabel) +' Kg ';
-                }
-            }
-            },
-        }
-        });
-    </script>
+    <!-- Page level custom scripts -->
+    <script src="js/demo/datatables-demo.js"></script>
 
 </body>
 

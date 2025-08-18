@@ -7,9 +7,10 @@
     }
 
     include "../connexion/conexiondb.php";
+    
     //Variables
-    
-    
+    $FichesMachine = null;
+    $TempsArret = null;
     
     //** Debut select des receptions
         $sql = "SELECT * FROM `utilisateur` where `actif`=1 ORDER BY `id` DESC;";
@@ -23,53 +24,277 @@
         // On récupère les valeurs dans un tableau associatif
         $Utilisateurs = $query->fetchAll();
     //** Fin select des receptions
-
     $NBUSERS = count($Utilisateurs);
 
-    $dt = time();
-    $dtm = date( "m", $dt );  // On extrait le mois courant.
 
-    //** Debut select des production cranteuse
-        $sql = "SELECT SUM(`prodpoids`) as prodpoids, DAY(`dateCreation`) as jour FROM `cranteuseq1production` WHERE `actif`=1 AND MONTH(`dateCreation`)=$dtm 
-        GROUP BY DAY(`dateCreation`);";          // On tire les fiches du mois courant
-    
-        // On prépare la requête
-        $query = $db->prepare($sql);
-    
-        // On exécute
-        $query->execute();
-    
-        // On récupère les valeurs dans un tableau associatif
-        $FichesCranteuse = $query->fetchAll();
-    //** Fin select des production cranteuse
+    // Pour les graphes
+        $dt = time();
+        $dtm = date( "m", $dt );  // On extrait le mois courant.
+        //** Debut select des production cranteuse
+            $sql = "SELECT SUM(duree) as duree, DAY(`dateCreation`) as jour FROM `cranteuseq1arret` WHERE `actif`=1 AND MONTH(`dateCreation`)=$dtm GROUP BY `jour`;";          // On tire les fiches du mois courant
+        
+            // On prépare la requête
+            $query = $db->prepare($sql);
+        
+            // On exécute
+            $query->execute();
+        
+            // On récupère les valeurs dans un tableau associatif
+            $ArretCranteuse = $query->fetchAll();
+        //** Fin select des production cranteuse
 
-    //** Debut select des dechet cranteuse
-        $sql = "SELECT SUM(`dechet`) as dechet, DAY(`dateCreation`) as jour FROM `cranteuseq1consommation` WHERE `actif`=1 AND MONTH(`dateCreation`)=$dtm 
-        GROUP BY DAY(`dateCreation`);";          // On tire les fiches du mois courant
-    
-        // On prépare la requête
-        $query = $db->prepare($sql);
-    
-        // On exécute
-        $query->execute();
-    
-        // On récupère les valeurs dans un tableau associatif
-        $FichesCranteuseDechet = $query->fetchAll();
-    //** Fin select des dechet cranteuse
+        //** Debut select des dechet cranteuse
+            $sql = "SELECT  SUM(duree) as duree, DAY(`dateCreation`) as jour FROM `dresseusearret` WHERE `actif`=1 AND MONTH(`dateCreation`)=$dtm GROUP BY `jour`;";          // On tire les fiches du mois courant
+        
+            // On prépare la requête
+            $query = $db->prepare($sql);
+        
+            // On exécute
+            $query->execute();
+        
+            // On récupère les valeurs dans un tableau associatif
+            $ArretDresseuse = $query->fetchAll();
+        //** Fin select des dechet cranteuse
+    // Pour les graphes
 
-    //** Debut select des productions et dechet section dresseuse
-        $sql = "SELECT SUM(`prodpoids`) as prodpoids, SUM(`proddechet`) as dechet, DAY(`dateCreation`) as jour FROM `dresseuseproduction` WHERE `actif`=1 AND MONTH(`dateCreation`)=$dtm 
-        GROUP BY DAY(`dateCreation`);";          // On tire les fiches du mois courant
-    
-        // On prépare la requête
-        $query = $db->prepare($sql);
-    
-        // On exécute
-        $query->execute();
-    
-        // On récupère les valeurs dans un tableau associatif
-        $FichesDresseuse = $query->fetchAll();
-    //** Fin select des productions et dechet section dresseuse
+    if($_SERVER["REQUEST_METHOD"]=='POST'){
+        //Insertion une fiche
+        if(isset($_POST['ChercheTempsArret'])){
+            $machine=htmlspecialchars($_POST['machine']);
+            $dateFiche=htmlspecialchars($_POST['dateFiche']);  
+                
+            if($machine == "Cranteuse 1" || $machine == "Cranteuse 2"){
+                //** Debut select des fiches
+                    $sql = "SELECT * FROM `fichecranteuseq1` WHERE `actif`=1 AND `dateCreation`='$dateFiche' AND `machine`='$machine';";          // On tire les fiches du mois courant
+                
+                    // On prépare la requête
+                    $query = $db->prepare($sql);
+                
+                    // On exécute
+                    $query->execute();
+                
+                    // On récupère les valeurs dans un tableau associatif
+                    $FichesMachine = $query->fetchAll();
+                //** Fin select des fiches
+ 
+                $FichesMachineID = [];
+                $FichesMachineID[1] = null;
+                $FichesMachineID[2] = null;
+                $FichesMachineID[3] = null;
+                $FichesMachineDetails = [];
+                $i=1;
+                foreach($FichesMachine as $fichesMachine){ 
+                    if($fichesMachine['quart'] == "1"){
+                        $FichesMachineID[$i] = $fichesMachine['idfichecranteuseq1'];
+                        $FichesMachineDetails[$i] = $fichesMachine;
+                    }elseif($fichesMachine['quart'] == "2"){
+                        $FichesMachineID[$i] = $fichesMachine['idfichecranteuseq1'];
+                        $FichesMachineDetails[$i] = $fichesMachine;
+                    }elseif($fichesMachine['quart'] == "3"){
+                        $FichesMachineID[$i] = $fichesMachine['idfichecranteuseq1'];
+                        $FichesMachineDetails[$i] = $fichesMachine;
+                    }
+                    $i++;
+                }
+                if($FichesMachineID[1]){          // Pour quart 1
+                    //** Debut select des temps
+                        $sql = "SELECT * FROM `cranteuseq1arret` WHERE `actif`=1 AND `idfichecranteuseq1`='$FichesMachineID[1]';";          // On tire les fiches du mois courant
+                    
+                        // On prépare la requête
+                        $query = $db->prepare($sql);
+                    
+                        // On exécute
+                        $query->execute();
+                    
+                        // On récupère les valeurs dans un tableau associatif
+                        $TempsArret1 = $query->fetchAll();
+                    //** Fin select des temps
+                }
+                if($FichesMachineID[2]){          // Pour quart 2
+                    //** Debut select des temps
+                        $sql = "SELECT * FROM `cranteuseq1arret` WHERE `actif`=1 AND `idfichecranteuseq1`='$FichesMachineID[2]';";          // On tire les fiches du mois courant
+                    
+                        // On prépare la requête
+                        $query = $db->prepare($sql);
+                    
+                        // On exécute
+                        $query->execute();
+                    
+                        // On récupère les valeurs dans un tableau associatif
+                        $TempsArret2 = $query->fetchAll();
+                    //** Fin select des temps
+                }
+                if($FichesMachineID[3]){           // Pour quart 3
+                    //** Debut select des temps
+                        $sql = "SELECT * FROM `cranteuseq1arret` WHERE `actif`=1 AND `idfichecranteuseq1`='$FichesMachineID[3]';";          // On tire les fiches du mois courant
+                    
+                        // On prépare la requête
+                        $query = $db->prepare($sql);
+                    
+                        // On exécute
+                        $query->execute();
+                    
+                        // On récupère les valeurs dans un tableau associatif
+                        $TempsArret3 = $query->fetchAll();
+                    //** Fin select des temps
+                }
+
+            }elseif($machine == "Dresseuse 1" || $machine == "Dresseuse 2" || $machine == "Dresseuse 4" || $machine == "Dresseuse 5" || $machine == "Dresseuse 6" || $machine == "Dresseuse 7"){
+                //** Debut select des fiches
+                    $sql = "SELECT * FROM `fichedresseuse` WHERE `actif`=1 AND `dateCreation`='$dateFiche' AND `machine`='$machine';";          // On tire les fiches du mois courant
+                
+                    // On prépare la requête
+                    $query = $db->prepare($sql);
+                
+                    // On exécute
+                    $query->execute();
+                
+                    // On récupère les valeurs dans un tableau associatif
+                    $FichesMachine = $query->fetchAll();
+                //** Fin select des fiches
+
+                $FichesMachineID = [];
+                $FichesMachineID[1] = null;
+                $FichesMachineID[2] = null;
+                $FichesMachineID[3] = null;
+                $FichesMachineDetails = [];
+                $i=1;
+                foreach($FichesMachine as $fichesMachine){ 
+                    if($fichesMachine['quart'] == "1"){
+                        $FichesMachineID[$i] = $fichesMachine['idfichedresseuse'];
+                        $FichesMachineDetails[$i] = $fichesMachine;
+                    }elseif($fichesMachine['quart'] == "2"){
+                        $FichesMachineID[$i] = $fichesMachine['idfichedresseuse'];
+                        $FichesMachineDetails[$i] = $fichesMachine;
+                    }elseif($fichesMachine['quart'] == "3"){
+                        $FichesMachineID[$i] = $fichesMachine['idfichedresseuse'];
+                        $FichesMachineDetails[$i] = $fichesMachine;
+                    }
+                    $i++;
+                }
+                if($FichesMachineID[1]){          // Pour quart 1
+                    //** Debut select des temps
+                        $sql = "SELECT * FROM `dresseusearret` WHERE `actif`=1 AND `idfichedresseuse`='$FichesMachineID[1]';";          // On tire les fiches du mois courant
+                    
+                        // On prépare la requête
+                        $query = $db->prepare($sql);
+                    
+                        // On exécute
+                        $query->execute();
+                    
+                        // On récupère les valeurs dans un tableau associatif
+                        $TempsArret1 = $query->fetchAll();
+                    //** Fin select des temps
+                }
+                if($FichesMachineID[2]){          // Pour quart 2
+                    //** Debut select des temps
+                        $sql = "SELECT * FROM `dresseusearret` WHERE `actif`=1 AND `idfichedresseuse`='$FichesMachineID[2]';";          // On tire les fiches du mois courant
+                    
+                        // On prépare la requête
+                        $query = $db->prepare($sql);
+                    
+                        // On exécute
+                        $query->execute();
+                    
+                        // On récupère les valeurs dans un tableau associatif
+                        $TempsArret2 = $query->fetchAll();
+                    //** Fin select des temps
+                }
+                if($FichesMachineID[3]){           // Pour quart 3
+                    //** Debut select des temps
+                        $sql = "SELECT * FROM `dresseusearret` WHERE `actif`=1 AND `idfichedresseuse`='$FichesMachineID[3]';";          // On tire les fiches du mois courant
+                    
+                        // On prépare la requête
+                        $query = $db->prepare($sql);
+                    
+                        // On exécute
+                        $query->execute();
+                    
+                        // On récupère les valeurs dans un tableau associatif
+                        $TempsArret3 = $query->fetchAll();
+                    //** Fin select des temps
+                }
+            }
+        }
+    }else{  
+        $dt = time();
+        $dtm = date( "Y-m-d", $dt );
+
+        //** Debut select des fiches
+            $sql = "SELECT * FROM `fichecranteuseq1` WHERE `actif`=1 AND `dateCreation`='$dtm' AND `machine`='Cranteuse 1';";          // On tire les fiches du mois courant
+        
+            // On prépare la requête
+            $query = $db->prepare($sql);
+        
+            // On exécute
+            $query->execute();
+        
+            // On récupère les valeurs dans un tableau associatif
+            $FichesMachine = $query->fetchAll();
+        //** Fin select des fiches 
+
+        $FichesMachineID = [];
+        $FichesMachineID[1] = null;
+        $FichesMachineID[2] = null;
+        $FichesMachineID[3] = null;
+        $FichesMachineDetails = [];
+        $i=1;
+        foreach($FichesMachine as $fichesMachine){ 
+            if($fichesMachine['quart'] == "1"){
+                $FichesMachineID[$i] = $fichesMachine['idfichecranteuseq1'];
+                $FichesMachineDetails[$i] = $fichesMachine;
+            }elseif($fichesMachine['quart'] == "2"){
+                $FichesMachineID[$i] = $fichesMachine['idfichecranteuseq1'];
+                $FichesMachineDetails[$i] = $fichesMachine;
+            }elseif($fichesMachine['quart'] == "3"){
+                $FichesMachineID[$i] = $fichesMachine['idfichecranteuseq1'];
+                $FichesMachineDetails[$i] = $fichesMachine;
+            }
+            $i++;
+        }
+        if($FichesMachineID[1]){          // Pour quart 1
+            //** Debut select des temps
+                $sql = "SELECT * FROM `cranteuseq1arret` WHERE `actif`=1 AND `idfichecranteuseq1`='$FichesMachineID[1]';";          // On tire les fiches du mois courant
+            
+                // On prépare la requête
+                $query = $db->prepare($sql);
+            
+                // On exécute
+                $query->execute();
+            
+                // On récupère les valeurs dans un tableau associatif
+                $TempsArret1 = $query->fetchAll();
+            //** Fin select des temps
+        }
+        if($FichesMachineID[2]){          // Pour quart 2
+            //** Debut select des temps
+                $sql = "SELECT * FROM `cranteuseq1arret` WHERE `actif`=1 AND `idfichecranteuseq1`='$FichesMachineID[2]';";          // On tire les fiches du mois courant
+            
+                // On prépare la requête
+                $query = $db->prepare($sql);
+            
+                // On exécute
+                $query->execute();
+            
+                // On récupère les valeurs dans un tableau associatif
+                $TempsArret2 = $query->fetchAll();
+            //** Fin select des temps
+        }
+        if($FichesMachineID[3]){           // Pour quart 3
+            //** Debut select des temps
+                $sql = "SELECT * FROM `cranteuseq1arret` WHERE `actif`=1 AND `idfichecranteuseq1`='$FichesMachineID[3]';";          // On tire les fiches du mois courant
+            
+                // On prépare la requête
+                $query = $db->prepare($sql);
+            
+                // On exécute
+                $query->execute();
+            
+                // On récupère les valeurs dans un tableau associatif
+                $TempsArret3 = $query->fetchAll();
+            //** Fin select des temps
+        }
+    }
 ?>
 
 
@@ -532,7 +757,7 @@
                         </div>
                         <!-- Earnings (Monthly) Card Example -->
                         <div class="col-xl-3 col-md-6 mb-4">
-                            <a href="./Productivite/productiviteCrant.php" class="text-decoration-none">
+                            <a href="productivite.php" class="text-decoration-none">
                                 <div class="card border-left-success shadow h-100 py-2">
                                     <div class="card-body">
                                         <div class="row no-gutters align-items-center">
@@ -607,102 +832,291 @@
                     </div>
 
                     <!-- Content Row -->
-                    <div class="row mb-4 mt-5">
-                        <!-- A mettre le body -->
-                        <!-- Bar Chart -->
-                        <div class="col-xl-6 col-lg-5">
-                            <div class="card shadow">
-                                <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">Section CRANTEUSE</h6>
-                                </div>
-                                <div class="card-body">
-                                    <div>
-                                        <canvas id="myChartCranteuse"></canvas>
+                    <div class="mb-4 mt-5 col-lg-12">
+                        <!-- RECHERCHE -->
+                            <div class="mb-4">
+                                <form action="#" method="POST" enctype="multipart/form-data" class="row g-3">
+                                    <div class="col-md-2 mt-3">
+                                        <div class="mb-1 text-start">
+                                            <select class="form-control" name="machine">
+                                                <option>Cranteuse 1</option>
+                                                <option>Cranteuse 2</option>
+                                                <option>Dresseuse 1</option>
+                                                <option>Dresseuse 2</option>
+                                                <option>Dresseuse 4</option>
+                                                <option>Dresseuse 5</option>
+                                                <option>Dresseuse 6</option>
+                                                <option>Dresseuse 7</option>
+                                            </select>                                                
+                                        </div>
                                     </div>
-                                    <hr>
-                                    Production <span id="ProductCrant" class="text-primary"></span>  et Dechet <span id="DechetCrant"></span>
-                                    <code>de ce mois</code> à la section cranteuse.
+                                    <div class="col-md-2 mt-3 ml-2">
+                                        <div class="mb-1 text-start">
+                                            <input class="form-control" id="validationDefault03" type="date" name="dateFiche" value="" required>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3">                           
+                                        <input class="btn btn-success bouton mr-3 ml-5" name="ChercheTempsArret" type="submit" value="RECHERCHER">
+                                    </div>
+                                    <hr/>
+                                </form> 
+                            </div>
+                        <!-- RECHERCHE -->
+                        <?php  if($FichesMachineID[1]){ ?>
+                            <div class="card position-relative mt-5">
+                                <div class="card-header py-3 mb-4">
+                                    <h6 class="m-0 font-weight-bold text-primary">Temps d'arret de la machine <code class="h4"><?= $FichesMachineDetails[1]['machine'] ?></code> du <code class="h4"><?= implode('-',array_reverse  (explode('-',$FichesMachineDetails[1]['dateCreation']))); ?></code> enregistré par <sapn class="h4"><?= $FichesMachineDetails[1]['user'] ?></span> <code class="h4">( QUART <?= $FichesMachineDetails[1]['quart'] ?> )</code></h6>
+                                </div>
+                                <div class="row m-2">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                            <thead>
+                                                <tr>      
+                                                    <th>Heure départ</th>    
+                                                    <th>Heure fin</th>
+                                                    <th>Raison arret</th>  
+                                                    <th>Durée</th>    
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php
+                                                    $i=0;
+                                                    $TotalArretH=0;
+                                                    foreach($TempsArret1 as $tempsArret){
+                                                        if(((strtotime($tempsArret['finarret']) - strtotime($tempsArret['debutarret'])) > 0)){
+                                                            $TotalArretH +=  (strtotime($tempsArret['finarret']) - strtotime($tempsArret['debutarret']));
+                                                        }else{
+                                                            $TotalArretH +=  (-strtotime($tempsArret['debutarret']) + strtotime($tempsArret['finarret']));
+                                                        }
+                                                        $i++;
+                                                ?>
+                                                    <tr>
+                                                        <td class="">
+                                                            <?= $tempsArret['debutarret'] ?>                                                    
+                                                        </td>
+                                                        <td class="">
+                                                            <?= $tempsArret['finarret'] ?>                                                    
+                                                        </td>
+                                                        <td class="">
+                                                            <?= $tempsArret['raison'] ?>                                                    
+                                                        </td>
+                                                        <td>
+                                                            <?php 
+                                                            $TotalArret = strtotime($tempsArret['finarret']) - strtotime($tempsArret['debutarret']);
+                                                            $TotalArret = explode(":",date("H:i",$TotalArret) );
+                                                            if(($TotalArret[0]-1) == 0){
+                                                                if($TotalArret[1] == 0){}else{echo $TotalArret[1]." minutes";}
+                                                            }else{
+                                                                echo ($TotalArret[0]-1)." Heures ";
+                                                                if($TotalArret[1] == 0){}else{echo $TotalArret[1]." minutes";}
+                                                            }
+                                                            ?>
+                                                        </td>
+                                                    </tr>    
+                                                <?php
+                                                    }
+                                                ?>
+                                            </tbody>
+                                        </table>
+                                        <!-- Bouton et pagnination--> 
+                                    </div>
+                                </div>
+                                <div class="card-footer py-3 mt-4">
+                                    <h6 class="m-0 font-weight-bold text-primary">Temps d'arret total =  <code class="h4"><?php  $TotalArretHReel = explode(":",date("H:i",$TotalArretH) ); echo ($TotalArretHReel[0]-1)." Heures ".$TotalArretHReel[1]." minutes"; ?></code> fait par les opérateurs : <span class="h4"><?= $FichesMachineDetails[1]['controleur1'] ?></span> et <span class="h4"><?= $FichesMachineDetails[1]['controleur2'] ?></span></h6>
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="col-xl-6 col-lg-5">
-                            <div class="card shadow">
-                                <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">Section DRESSEUSE</h6>
+                        <?php  } ?>
+                        <?php  if($FichesMachineID[2]){ ?>
+                            <div class="card position-relative mt-5">
+                                <div class="card-header py-3 mb-4">
+                                    <h6 class="m-0 font-weight-bold text-primary">Temps d'arret de la machine <code class="h4"><?= $FichesMachineDetails[2]['machine'] ?></code>  du <code class="h4"><?= implode('-',array_reverse  (explode('-',$FichesMachineDetails[2]['dateCreation']))); ?></code> enregistré par <sapn class="h4"><?= $FichesMachineDetails[2]['user'] ?></span> <code class="h4">( QUART <?= $FichesMachineDetails[2]['quart'] ?> )</code></h6>
                                 </div>
-                                <div class="card-body">
-                                    <div>
-                                        <canvas id="myChartDresseuse"></canvas>
+                                <div class="row m-2">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                            <thead>
+                                                <tr>      
+                                                    <th>Heure départ</th>    
+                                                    <th>Heure fin</th>
+                                                    <th>Raison arret</th>  
+                                                    <th>Durée</th>    
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php
+                                                    $i=0;
+                                                    $TotalArretH=0;
+                                                    foreach($TempsArret2 as $tempsArret){
+                                                        if(((strtotime($tempsArret['finarret']) - strtotime($tempsArret['debutarret'])) > 0)){
+                                                            $TotalArretH +=  (strtotime($tempsArret['finarret']) - strtotime($tempsArret['debutarret']));
+                                                        }else{
+                                                            $TotalArretH +=  (-strtotime($tempsArret['debutarret']) + strtotime($tempsArret['finarret']));
+                                                        }
+                                                        $i++;
+                                                ?>
+                                                    <tr>
+                                                        <td class="">
+                                                            <?= $tempsArret['debutarret'] ?>                                                    
+                                                        </td>
+                                                        <td class="">
+                                                            <?= $tempsArret['finarret'] ?>                                                    
+                                                        </td>
+                                                        <td class="">
+                                                            <?= $tempsArret['raison'] ?>                                                    
+                                                        </td>
+                                                        <td>
+                                                            <?php 
+                                                            $TotalArret = strtotime($tempsArret['finarret']) - strtotime($tempsArret['debutarret']);
+                                                            $TotalArret = explode(":",date("H:i",$TotalArret) );
+                                                            if(($TotalArret[0]-1) == 0){
+                                                                if($TotalArret[1] == 0){}else{echo $TotalArret[1]." minutes";}
+                                                            }else{
+                                                                echo ($TotalArret[0]-1)." Heures ";
+                                                                if($TotalArret[1] == 0){}else{echo $TotalArret[1]." minutes";}
+                                                            }
+                                                            ?>
+                                                        </td>
+                                                    </tr>    
+                                                <?php
+                                                    }
+                                                ?>
+                                            </tbody>
+                                        </table>
+                                        <!-- Bouton et pagnination--> 
                                     </div>
-                                    <hr>
-                                    Production <span id="ProductDress" class="text-primary"></span>  et Dechet <span id="DechetDress"></span>
-                                    <code>de ce mois</code> à la section dresseuse.
                                 </div>
+                                <div class="card-footer py-3 mt-4">
+                                    <h6 class="m-0 font-weight-bold text-primary">Temps d'arret total =  <code class="h4"><?php  $TotalArretHReel = explode(":",date("H:i",$TotalArretH) ); echo ($TotalArretHReel[0]-1)." Heures ".$TotalArretHReel[1]." minutes"; ?></code> fait par les opérateurs : <span class="h4"><?= $FichesMachineDetails[2]['controleur1'] ?></span> et <span class="h4"><?= $FichesMachineDetails[2]['controleur2'] ?></span></h6>
+                                </div>
+                            </div>
+                        <?php  } ?>
+                        <?php  if($FichesMachineID[3]){ ?>
+                            <div class="card position-relative mt-5">
+                                <div class="card-header py-3 mb-4">
+                                    <h6 class="m-0 font-weight-bold text-primary">Temps d'arret de la machine <code class="h4"><?= $FichesMachineDetails[3]['machine'] ?></code>  du <code class="h4"><?= implode('-',array_reverse  (explode('-',$FichesMachineDetails[3]['dateCreation']))); ?></code> enregistré par <sapn class="h4"><?= $FichesMachineDetails[3]['user'] ?></span> <code class="h4">( QUART <?= $FichesMachineDetails[3]['quart'] ?> )</code></h6>
+                                </div>
+                                <div class="row m-2">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                            <thead>
+                                                <tr>      
+                                                    <th>Heure départ</th>    
+                                                    <th>Heure fin</th>
+                                                    <th>Raison arret</th>  
+                                                    <th>Durée</th>    
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php
+                                                    $i=0;
+                                                    $TotalArretH=0;
+                                                    foreach($TempsArret3 as $tempsArret){
+                                                        if(((strtotime($tempsArret['finarret']) - strtotime($tempsArret['debutarret'])) > 0)){
+                                                            $TotalArretH +=  (strtotime($tempsArret['finarret']) - strtotime($tempsArret['debutarret']));
+                                                        }else{
+                                                            $TotalArretH +=  (-strtotime($tempsArret['debutarret']) + strtotime($tempsArret['finarret']));
+                                                        }
+                                                        $i++;
+                                                ?>
+                                                    <tr>
+                                                        <td class="">
+                                                            <?= $tempsArret['debutarret'] ?>                                                    
+                                                        </td>
+                                                        <td class="">
+                                                            <?= $tempsArret['finarret'] ?>                                                    
+                                                        </td>
+                                                        <td class="">
+                                                            <?= $tempsArret['raison'] ?>                                                    
+                                                        </td>
+                                                        <td>
+                                                            <?php 
+                                                            $TotalArret = strtotime($tempsArret['finarret']) - strtotime($tempsArret['debutarret']);
+                                                            $TotalArret = explode(":",date("H:i",$TotalArret) );
+                                                            if(($TotalArret[0]-1) == 0){
+                                                                if($TotalArret[1] == 0){}else{echo $TotalArret[1]." minutes";}
+                                                            }else{
+                                                                echo ($TotalArret[0]-1)." Heures ";
+                                                                if($TotalArret[1] == 0){}else{echo $TotalArret[1]." minutes";}
+                                                            }
+                                                            ?>
+                                                        </td>
+                                                    </tr>    
+                                                <?php
+                                                    }
+                                                ?>
+                                            </tbody>
+                                        </table>
+                                        <!-- Bouton et pagnination--> 
+                                    </div>
+                                </div>
+                                <div class="card-footer py-3 mt-4">
+                                    <h6 class="m-0 font-weight-bold text-primary">Temps d'arret total =  <code class="h4"><?php  $TotalArretHReel = explode(":",date("H:i",$TotalArretH) ); echo ($TotalArretHReel[0]-1)." Heures ".$TotalArretHReel[1]." minutes"; ?></code> fait par les opérateurs : <span class="h4"><?= $FichesMachineDetails[3]['controleur1'] ?></span> et <span class="h4"><?= $FichesMachineDetails[3]['controleur2'] ?></span></h6>
+                                </div>
+                            </div>
+                        <?php  } ?>
+                    </div>
+
+                    <div class="col-xl-10 col-lg-8 ml-5">
+                        <div class="card shadow">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Temps d'arret de ce mois ( en minutes ) </h6>
+                            </div>
+                            <div class="card-body">
+                                <div>
+                                    <canvas id="myChartTempsArret"></canvas>
+                                </div>
+                                <hr>
+                                Temps d'arret <span id="ProductCrant" class="text-primary"></span>
+                                <code>de ce mois</code> à la section cranteuse et dresseuse en <code>minutes</code>.
                             </div>
                         </div>
                     </div>
 
-                    
-
                     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
                     <script type="text/javascript">
-                        var dechet = <?php echo json_encode($FichesCranteuseDechet); ?>;
-                        var production = <?php echo json_encode($FichesCranteuse); ?>;
+                        var arretCrant = <?php echo json_encode($ArretCranteuse); ?>;
+                        var arretDress = <?php echo json_encode($ArretDresseuse); ?>;
+                            //console.log(arretCrant);
                         //console.log(test);
 
                         var Jours = [];
-                        var Poids = [];
-                        var Dechet = [];
+                        var ArretCrant = [];
+                        var ArretDress = [];
                         Jours = ["0","1", "2", "3", "4", "5", "6","7", "8", "9", "10", "11", "12","13", "14", "15", "16", "17", "18","19", "20", "21", "22", "23", "24","25", "26", "27", "28", "29", "30","31"];
                         
                         for (let i = 0; i < 31; i++) {
-                            // Pour la production
-                            if(production[i] === undefined){
+                            // Pour les temps d'arret Crant
+                            if(arretCrant[i] === undefined){
                             }else{
-                                var j = production[i]['jour'];
-                                Poids[j] = Number(production[i]['prodpoids']);
+                                var j = arretCrant[i]['jour'];
+                                ArretCrant[j] = Number(arretCrant[i]['duree'])/60;
                             }
 
-                            // Pour dechets
-                            if(dechet[i] === undefined){
+                            // Pour les temps d'arret Dress
+                            if(arretDress[i] === undefined){
                             }else{
-                                var t = dechet[i]['jour'];
-                                Dechet[t] = Number(dechet[i]['dechet']);
+                                var j = arretDress[i]['jour'];
+                                ArretDress[j] = Number(arretDress[i]['duree'])/60;
                             }
                         }
-                        // On cherche les sommes (dechet et production)
-                        const TotalProduit = Poids.reduce(
-                            (accumulator, currentValue) => accumulator + currentValue,
-                        );
-                        const ProductCrant = document.getElementById('ProductCrant');
-                        let htmlPC = "<span class='text-primary'> Total = "+TotalProduit+" KG</span>";
-                        ProductCrant.insertAdjacentHTML("afterend", htmlPC);
 
-                        const TotalDechet = Dechet.reduce(
-                            (accumulator, currentValue) => accumulator + currentValue,
-                        );
-                        const DechetCrant = document.getElementById('DechetCrant');
-                        let htmlCD = "<span class='text-primary'> Total = "+TotalDechet+" KG</span>";
-                        DechetCrant.insertAdjacentHTML("afterend", htmlCD);
-
-                        const ctxDressProd = document.getElementById('myChartCranteuse');
+                        const ctxDressProd = document.getElementById('myChartTempsArret');
 
                         new Chart(ctxDressProd, {
                         type: "bar",
                         data: {
                             labels: Jours,
                             datasets: [{
-                            label: "Production",
-                            data: Poids,
+                            label: "Temps d'arret Cranteuse",
+                            data: ArretCrant,
                             backgroundColor: "#4e73df",
                             hoverBackgroundColor: "#2e59d9",
                             borderColor: "#4e73df",
                             borderWidth: 1
                             },{
-                            label: "Dechet",
-                            data: Dechet,
+                            label: "Temps d'arret Dresseuse",
+                            data: ArretDress,
                             backgroundColor: "#2cbd33ff",
                             hoverBackgroundColor: "#06d810ff",
                             borderColor: "#2cbd33ff",
@@ -714,76 +1128,6 @@
                         }
                         });
                     </script>
-
-                    <script type="text/javascript">
-                        var dechet = <?php echo json_encode($FichesDresseuse); ?>;
-                        var production = <?php echo json_encode($FichesDresseuse); ?>;
-                        //console.log(test);
-
-                        var Jours = [];
-                        var Poids = [];
-                        var Dechet = [];
-                        Jours = ["0","1", "2", "3", "4", "5", "6","7", "8", "9", "10", "11", "12","13", "14", "15", "16", "17", "18","19", "20", "21", "22", "23", "24","25", "26", "27", "28", "29", "30","31"];
-                        
-                        for (let i = 0; i < 31; i++) {
-                            // Pour la production
-                            if(production[i] === undefined){
-                            }else{
-                                var j = production[i]['jour'];
-                                Poids[j] = Number(production[i]['prodpoids']);
-                            }
-
-                            // Pour dechets
-                            if(dechet[i] === undefined){
-                            }else{
-                                var t = dechet[i]['jour'];
-                                Dechet[t] = Number(dechet[i]['dechet']);
-                            }
-                        }
-                        // On cherche les sommes (dechet et production)
-                        const TotalProduitDress = Poids.reduce(
-                            (accumulator, currentValue) => accumulator + currentValue,
-                        );
-                        const ProductDress = document.getElementById('ProductDress');
-                        let htmlPD = "<span class='text-primary'> Total = "+TotalProduitDress+" KG</span>";
-                        ProductDress.insertAdjacentHTML("afterend", htmlPD);
-
-                        const TotalDechetDress = Dechet.reduce(
-                            (accumulator, currentValue) => accumulator + currentValue,
-                        );
-                        const DechetDress = document.getElementById('DechetDress');
-                        let htmlDD = "<span class='text-primary'> Total = "+TotalDechetDress+" KG</span>";
-                        DechetDress.insertAdjacentHTML("afterend", htmlDD);
-
-
-                        const ctxCranProd = document.getElementById('myChartDresseuse');
-
-                        new Chart(ctxCranProd, {
-                        type: "bar",
-                        data: {
-                            labels: Jours,
-                            datasets: [{
-                            label: "Production",
-                            data: Poids,
-                            backgroundColor: "#4e73df",
-                            hoverBackgroundColor: "#2e59d9",
-                            borderColor: "#4e73df",
-                            borderWidth: 1
-                            },{
-                            label: "Dechet",
-                            data: Dechet,
-                            backgroundColor: "#2cbd33ff",
-                            hoverBackgroundColor: "#06d810ff",
-                            borderColor: "#2cbd33ff",
-                            borderWidth: 1
-                            }]
-                        },
-                        options: {
-                            legend: {display: false}
-                        }
-                        });
-                    </script>
-
                 </div>
                 <!-- /.container-fluid -->
 
