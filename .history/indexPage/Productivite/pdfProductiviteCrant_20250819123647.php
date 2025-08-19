@@ -11,13 +11,11 @@
     include "../../connexion/conexiondb.php";
 
     require '../../fpdf/fpdf.php';
-    
-    //Variables
-    $PeriodeReel = "'Aucun travailleur'";
+
 
     if($_SERVER["REQUEST_METHOD"]=='GET'){
         //Recherche une fiche
-        $dateFiche=htmlspecialchars($_GET['mois']); 
+        $dateFiche=htmlspecialchars($_POST['dateFiche']); 
 
         //** Debut select des production cranteuse
             $sql = "SELECT * FROM `fichecranteuseq1` WHERE `actif`=1 AND MONTH(`dateCreation`)='$dateFiche';";          // On tire les fiches du mois courant
@@ -149,47 +147,45 @@
         $i++;
     } 
  
-    //
-    if(isset($Periode)){
-        $mois = explode( "-", $Periode); 
-        switch ($mois[1]) {
-            case "01":
-                $PeriodeReel = "Janvier";
-                break;
-            case "02":
-                $PeriodeReel = "Fevrier";
-                break;
-            case "03":
-                $PeriodeReel = "Mars";
-                break;
-            case "04":
-                $PeriodeReel = "Avril";
-                break;
-            case "05":
-                $PeriodeReel = "Mai";
-                break;
-            case "06":
-                $PeriodeReel = "Juin";
-                break;
-            case "07":
-                $PeriodeReel = "Juillet";
-                break;
-            case "08":
-                $PeriodeReel = "Aout";
-                break;
-            case "09":
-                $PeriodeReel = "Septembre";
-                break;
-            case "10":
-                $PeriodeReel = "Octobre";
-                break;
-            case "11":
-                $PeriodeReel = "Novembre";
-                break;
-            case "12":
-                $PeriodeReel = "Decembre";
-                break;
-        }
+
+    $mois = explode( "-", $Periode); 
+    switch ($mois[1]) {
+        case "01":
+            $PeriodeReel = "Janvier";
+            break;
+        case "02":
+            $PeriodeReel = "Fevrier";
+            break;
+        case "03":
+            $PeriodeReel = "Mars";
+            break;
+        case "04":
+            $PeriodeReel = "Avril";
+            break;
+        case "05":
+            $PeriodeReel = "Mai";
+            break;
+        case "06":
+            $PeriodeReel = "Juin";
+            break;
+        case "07":
+            $PeriodeReel = "Juillet";
+            break;
+        case "08":
+            $PeriodeReel = "Aout";
+            break;
+        case "09":
+            $PeriodeReel = "Septembre";
+            break;
+        case "10":
+            $PeriodeReel = "Octobre";
+            break;
+        case "11":
+            $PeriodeReel = "Novembre";
+            break;
+        case "12":
+            $PeriodeReel = "Decembre";
+            break;
     }
 
 

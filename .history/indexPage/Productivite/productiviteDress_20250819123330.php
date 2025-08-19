@@ -760,7 +760,7 @@
 
                     <!-- RECHERCHE -->
                         <div class="mt-5 mr-3">
-                            <form method="POST" enctype="multipart/form-data" class="row g-3">
+                            <form action="#" method="POST" enctype="multipart/form-data" class="row g-3">
                                 <div class="col-md-2 mt-3">
                                     <div class="mb-1 text-start">
                                         <select class="form-control" name="dateFiche">

@@ -9,9 +9,9 @@
     include "../../connexion/conexiondb.php";
 
     //Variables
-    $PeriodeReel = "'Aucun travailleur'";
+    $Periode="'Aucun travailleur'";
     $dt = time();
-    $moisPourPDF = date( "m", $dt );  // On extrait le mois courant.
+    $moisSansGetPourPDF = date( "m", $dt );  // On extrait le mois courant.
 
     //** Debut select des receptions
         $sql = "SELECT * FROM `utilisateur` where `actif`=1 ORDER BY `id` DESC;";
@@ -760,7 +760,7 @@
 
                     <!-- RECHERCHE -->
                         <div class="mt-5 mr-3">
-                            <form method="POST" enctype="multipart/form-data" class="row g-3">
+                            <form action="#" method="POST" enctype="multipart/form-data" class="row g-3">
                                 <div class="col-md-2 mt-3">
                                     <div class="mb-1 text-start">
                                         <select class="form-control" name="dateFiche">
@@ -783,8 +783,13 @@
                                     <input class="btn btn-success bouton mr-3 ml-5" name="ChercheTempsArret" type="submit" value="RECHERCHER">
                                 </div>
                                 <hr/>
-                                    <a href="pdfProductiviteDress.php?mois=<?= $moisPourPDF; ?>" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+                                <?php  if(!isset($_GET['mois'])){ ?>
+                                    <a href="pdfProductiviteDress.php?mois=<?=  $moisSansGetPourPDF; ?>" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
                                     class="fas fa-download fa-sm text-white-60"></i> Génerer en PDF</a>
+                                <?php  }else{ ?>
+                                    <a href="pdfProductiviteDress.php,mois=<?=  $moisAvecGetPDF; ?>" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+                                    class="fas fa-download fa-sm text-white-60"></i> Génerer en PDF</a>
+                                <?php  } ?>
                             </form> 
                         </div>
                     <!-- RECHERCHE -->

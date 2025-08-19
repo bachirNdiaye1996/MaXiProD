@@ -9,7 +9,7 @@
     include "../../connexion/conexiondb.php";
 
     //Variables
-    $PeriodeReel = "'Aucun travailleur'";
+    $Periode="'Aucun travailleur'";
     $dt = time();
     $moisPourPDF = date( "m", $dt );  // On extrait le mois courant.
 
@@ -36,7 +36,7 @@
             $moisPourPDF = $mois[0]; 
 
             //** Debut select des production cranteuse
-                $sql = "SELECT * FROM `fichedresseuse` WHERE `actif`=1 AND MONTH(`dateCreation`)='$dateFiche';";          // On tire les fiches du mois courant
+                $sql = "SELECT * FROM `fichecranteuseq1` WHERE `actif`=1 AND MONTH(`dateCreation`)='$dateFiche';";          // On tire les fiches du mois courant
             
                 // On prépare la requête
                 $query = $db->prepare($sql);
@@ -45,11 +45,11 @@
                 $query->execute();
             
                 // On récupère les valeurs dans un tableau associatif
-                $FichesDresseuse = $query->fetchAll();
+                $FichesCranteuse = $query->fetchAll();
             //** Fin select des production cranteuse
 
             //** Debut select des production (Poids,...)
-                $sql = "SELECT SUM(prodpoids) as prodpoids, idfichedresseuse as idfichedresseuse FROM `dresseuseproduction` WHERE `actif`=1 AND MONTH(`dateCreation`)='$dateFiche' GROUP BY `idfichedresseuse`;";          
+                $sql = "SELECT SUM(prodpoids) as prodpoids, idfichecranteuseq1 as idfichecranteuseq1 FROM `cranteuseq1production` WHERE `actif`=1 AND MONTH(`dateCreation`)='$dateFiche' GROUP BY `idfichecranteuseq1`;";          
             
                 // On prépare la requête
                 $query = $db->prepare($sql);
@@ -58,11 +58,11 @@
                 $query->execute();
             
                 // On récupère les valeurs dans un tableau associatif
-                $DressProduction = $query->fetchAll();
+                $CrantProduction = $query->fetchAll();
             //** Fin select des production (Poids,...)
 
             //** Debut select des temps d'arret (duree,...)
-                $sql = "SELECT SUM(duree) as duree, idfichedresseuse as idfichedresseuse, dateCreation as dateCreation FROM `dresseusearret` WHERE `actif`=1 AND MONTH(`dateCreation`)='$dateFiche' GROUP BY `idfichedresseuse`;";          
+                $sql = "SELECT SUM(duree) as duree, idfichecranteuseq1 as idfichecranteuseq1, dateCreation as dateCreation FROM `cranteuseq1arret` WHERE `actif`=1 AND MONTH(`dateCreation`)='$dateFiche' GROUP BY `idfichecranteuseq1`;";          
             
                 // On prépare la requête
                 $query = $db->prepare($sql);
@@ -71,16 +71,15 @@
                 $query->execute();
             
                 // On récupère les valeurs dans un tableau associatif
-                $DressTempsArret = $query->fetchAll();
+                $CrantTempsArret = $query->fetchAll();
             //** Fin select des temps d'arret (duree,...)
-
         }
     }else{
         $dt = time();
         $dtm = date( "m", $dt );  // On extrait le mois courant.
 
         //** Debut select des production cranteuse
-            $sql = "SELECT * FROM `fichedresseuse` WHERE `actif`=1 AND MONTH(`dateCreation`)='$dtm';";          // On tire les fiches du mois courant
+            $sql = "SELECT * FROM `fichecranteuseq1` WHERE `actif`=1 AND MONTH(`dateCreation`)='$dtm';";          // On tire les fiches du mois courant
         
             // On prépare la requête
             $query = $db->prepare($sql);
@@ -89,11 +88,11 @@
             $query->execute();
         
             // On récupère les valeurs dans un tableau associatif
-            $FichesDresseuse = $query->fetchAll();
+            $FichesCranteuse = $query->fetchAll();
         //** Fin select des production cranteuse
 
         //** Debut select des production (Poids,...)
-            $sql = "SELECT SUM(prodpoids) as prodpoids, idfichedresseuse as idfichedresseuse FROM `dresseuseproduction` WHERE `actif`=1 AND MONTH(`dateCreation`)='$dtm' GROUP BY `idfichedresseuse`;";          
+            $sql = "SELECT SUM(prodpoids) as prodpoids, idfichecranteuseq1 as idfichecranteuseq1 FROM `cranteuseq1production` WHERE `actif`=1 AND MONTH(`dateCreation`)='$dtm' GROUP BY `idfichecranteuseq1`;";          
         
             // On prépare la requête
             $query = $db->prepare($sql);
@@ -102,11 +101,11 @@
             $query->execute();
         
             // On récupère les valeurs dans un tableau associatif
-            $DressProduction = $query->fetchAll();
+            $CrantProduction = $query->fetchAll();
         //** Fin select des production (Poids,...)
 
         //** Debut select des temps d'arret (duree,...)
-            $sql = "SELECT SUM(duree) as duree, idfichedresseuse as idfichedresseuse, dateCreation as dateCreation FROM `dresseusearret` WHERE `actif`=1 AND MONTH(`dateCreation`)='$dtm' GROUP BY `idfichedresseuse`;";          
+            $sql = "SELECT SUM(duree) as duree, idfichecranteuseq1 as idfichecranteuseq1, dateCreation as dateCreation FROM `cranteuseq1arret` WHERE `actif`=1 AND MONTH(`dateCreation`)='$dtm' GROUP BY `idfichecranteuseq1`;";          
         
             // On prépare la requête
             $query = $db->prepare($sql);
@@ -115,52 +114,51 @@
             $query->execute();
         
             // On récupère les valeurs dans un tableau associatif
-            $DressTempsArret = $query->fetchAll();
+            $CrantTempsArret = $query->fetchAll();
         //** Fin select des temps d'arret (duree,...)
     }
 
     
-    $controleur1 = array_unique(array_column($FichesDresseuse,'controleur1'));
-    $controleur2 = array_unique(array_column($FichesDresseuse,'controleur2'));
+    $controleur1 = array_unique(array_column($FichesCranteuse,'controleur1'));
+    $controleur2 = array_unique(array_column($FichesCranteuse,'controleur2'));
     //$array3 = $controleur1 + $controleur2;
 
     $unions = array_unique(array_merge($controleur1,$controleur2));
 
     // Récupération des fiches par controleur
     $ArrayFichesParControleur = array(array());
-    $IdFichesDresseuse = array(array());
-    $CompteurFichesDresseuse = array(array());
+    $IdFichesCranteuse = array(array());
+    $CompteurFichesCranteuse = array(array());
     foreach($unions as $union){
-        foreach($FichesDresseuse as $fichesDresseuse){
-            if($fichesDresseuse['controleur1']=="$union" || $fichesDresseuse['controleur2']=="$union"){
-                $ArrayFichesParControleur["$union"][] = $fichesDresseuse;
-                $IdFichesDresseuse["$union"][] = $fichesDresseuse['idfichedresseuse'];
-                $CompteurFichesDresseuse["$union"][] = $fichesDresseuse['compteurfin']-$fichesDresseuse['compteurdebut'];
+        foreach($FichesCranteuse as $fichesCranteuse){
+            if($fichesCranteuse['controleur1']=="$union" || $fichesCranteuse['controleur2']=="$union"){
+                $ArrayFichesParControleur["$union"][] = $fichesCranteuse;
+                $IdFichesCranteuse["$union"][] = $fichesCranteuse['idfichecranteuseq1'];
+                $CompteurFichesCranteuse["$union"][] = $fichesCranteuse['compteurfin']-$fichesCranteuse['compteurdebut'];
             }
         }
     }
 
     // Récupération des productions par controleur
     $i=0;
-    //$ProductionParControleur = array(array());
     $ProductionParControleur = array ( array ());
-    foreach($IdFichesDresseuse as $key => $idFichesDresseuses){
+    foreach($IdFichesCranteuse as $key => $idFichesCranteuses){
         $tempProductionParControleur=null;
-        foreach($idFichesDresseuses as $idFichesDresseuse){
-            foreach($DressProduction as $dressProduction){
-                if($dressProduction['idfichedresseuse'] == $idFichesDresseuse){
-                    $tempProductionParControleur += $dressProduction['prodpoids'];
+        foreach($idFichesCranteuses as $idFichesCranteuse){
+            foreach($CrantProduction as $crantProduction){
+                if($crantProduction['idfichecranteuseq1'] == $idFichesCranteuse){
+                    $tempProductionParControleur += $crantProduction['prodpoids'];
                 }
             }
         }
         $tempTempsArretParControleur=null;
-        foreach($idFichesDresseuses as $idFichesDresseuse){
-            foreach($DressTempsArret as $dressTempsArret){
-                if($dressTempsArret['idfichedresseuse'] == $idFichesDresseuse){
-                    $tempTempsArretParControleur += $dressTempsArret['duree'];
+        foreach($idFichesCranteuses as $idFichesCranteuse){
+            foreach($CrantTempsArret as $crantTempsArret){
+                if($crantTempsArret['idfichecranteuseq1'] == $idFichesCranteuse){
+                    $tempTempsArretParControleur += $crantTempsArret['duree'];
                 }
                 // Prendre le mois
-                $Periode = $dressTempsArret['dateCreation'];
+                $Periode = $crantTempsArret['dateCreation'];
             }
         }
         $ProductionParControleur[$key]["poids"] = $tempProductionParControleur;
@@ -168,7 +166,8 @@
         $i++;
     }
 
-    if(isset($Periode)){
+    //
+    if($Periode === "'Aucun travailleur'"){
         $mois = explode( "-", $Periode); 
         switch ($mois[1]) {
             case "01":
@@ -209,7 +208,9 @@
                 break;
         }
     }
-    //print_r(($ProductionParControleur));
+
+
+    //print_r(($moisPourPDF));
 
 ?>
 
@@ -580,7 +581,7 @@
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo $_SESSION['nomcomplet']; ?></span>
                                 <img class="img-profile rounded-circle"
-                                    src="../img/undraw_profile.svg">
+                                    src="img/undraw_profile.svg">
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
@@ -589,7 +590,7 @@
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Profile
                                 </a>
-                                <a class="dropdown-item" href="../Utilisateur/ParametreUtilisateur.php?idUser=<?php echo $_SESSION['id']; ?>">
+                                <a class="dropdown-item" href="../Utilisateur/ParametreUtilisateur.sphp?idUser=<?php echo $_SESSION['id']; ?>">
                                     <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Changer paramétres
                                 </a>
@@ -752,15 +753,15 @@
 
                     <div class="col-lg-12 mr-5">
                         <ul class="row list-group-horizontal mt-4 ml-5">
-                            <li class="list-group mr-4"><a href="productiviteCrant.php" class="list-group-item list-group-item-action" aria-current="true">CRANTEUSE</a></li>
-                            <li class="list-group mr-4"><a href="productiviteDress.php" class="list-group-item list-group-item-action active">DRESSEUSE</a></li>
+                            <li class="list-group mr-4"><a href="productiviteCrant.php" class="list-group-item list-group-item-action active" aria-current="true">CRANTEUSE</a></li>
+                            <li class="list-group mr-4"><a href="productiviteDress.php" class="list-group-item list-group-item-action">DRESSEUSE</a></li>
                             <li class="list-group mr-4"><a href="productiviteTref.php" class="list-group-item list-group-item-action">TREFILAGE</a></li>
                         </ul>
                     </div>
 
                     <!-- RECHERCHE -->
                         <div class="mt-5 mr-3">
-                            <form method="POST" enctype="multipart/form-data" class="row g-3">
+                            <form action="#" method="POST" enctype="multipart/form-data" class="row g-3">
                                 <div class="col-md-2 mt-3">
                                     <div class="mb-1 text-start">
                                         <select class="form-control" name="dateFiche">
@@ -783,7 +784,7 @@
                                     <input class="btn btn-success bouton mr-3 ml-5" name="ChercheTempsArret" type="submit" value="RECHERCHER">
                                 </div>
                                 <hr/>
-                                    <a href="pdfProductiviteDress.php?mois=<?= $moisPourPDF; ?>" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+                                    <a href="pdfProductiviteCrant.php?mois=<?=  $moisPourPDF; ?>" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
                                     class="fas fa-download fa-sm text-white-60"></i> Génerer en PDF</a>
                             </form> 
                         </div>
@@ -796,7 +797,7 @@
                             <div class="col-lg-12">
                             <div class="card position-relative mt-4">
                                 <div class="card-header py-3 mb-4">
-                                    <h6 class="m-0 font-weight-bold text-primary"><span class="h4">La productivité</span> des opérateurs durant le mois de <code class="h4"><?= $PeriodeReel; ?></code> à la machine <span class="h4">dresseuse</span>.</h6>
+                                    <h6 class="m-0 font-weight-bold text-primary"><span class="h4">La productivité</span> des opérateurs durant le mois de <code class="h4"><?= $PeriodeReel; ?></code> à la machine <span class="h4">cranteuse</span>.</h6>
                                 </div>
                                 <div class="row m-2">
                                     <div class="table-responsive">

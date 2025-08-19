@@ -11,9 +11,7 @@
     include "../../connexion/conexiondb.php";
 
     require '../../fpdf/fpdf.php';
-    
-    //Variables
-    $PeriodeReel = "'Aucun travailleur'";
+
 
     if($_SERVER["REQUEST_METHOD"]=='GET'){
         //Recherche une fiche

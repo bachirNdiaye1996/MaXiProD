@@ -9,9 +9,9 @@
     include "../../connexion/conexiondb.php";
 
     //Variables
-    $PeriodeReel = "'Aucun travailleur'";
+    $Periode="'Aucun travailleur'";
     $dt = time();
-    $moisPourPDF = date( "m", $dt );  // On extrait le mois courant.
+    $moisSansGetPourPDF = date( "m", $dt );  // On extrait le mois courant.
 
     //** Debut select des receptions
         $sql = "SELECT * FROM `utilisateur` where `actif`=1 ORDER BY `id` DESC;";
@@ -32,8 +32,6 @@
     //Recherche une fiche
         if(isset($_POST['ChercheTempsArret'])){
             $dateFiche=htmlspecialchars($_POST['dateFiche']); 
-            $mois = explode( "-", $dateFiche); 
-            $moisPourPDF = $mois[0]; 
 
             //** Debut select des production cranteuse
                 $sql = "SELECT * FROM `fichedresseuse` WHERE `actif`=1 AND MONTH(`dateCreation`)='$dateFiche';";          // On tire les fiches du mois courant
@@ -168,47 +166,47 @@
         $i++;
     }
 
-    if(isset($Periode)){
-        $mois = explode( "-", $Periode); 
-        switch ($mois[1]) {
-            case "01":
-                $PeriodeReel = "Janvier";
-                break;
-            case "02":
-                $PeriodeReel = "Fevrier";
-                break;
-            case "03":
-                $PeriodeReel = "Mars";
-                break;
-            case "04":
-                $PeriodeReel = "Avril";
-                break;
-            case "05":
-                $PeriodeReel = "Mai";
-                break;
-            case "06":
-                $PeriodeReel = "Juin";
-                break;
-            case "07":
-                $PeriodeReel = "Juillet";
-                break;
-            case "08":
-                $PeriodeReel = "Aout";
-                break;
-            case "09":
-                $PeriodeReel = "Septembre";
-                break;
-            case "10":
-                $PeriodeReel = "Octobre";
-                break;
-            case "11":
-                $PeriodeReel = "Novembre";
-                break;
-            case "12":
-                $PeriodeReel = "Decembre";
-                break;
-        }
+
+    $mois = explode( "-", $Periode); 
+    switch ($mois[1]) {
+        case "01":
+            $PeriodeReel = "Janvier";
+            break;
+        case "02":
+            $PeriodeReel = "Fevrier";
+            break;
+        case "03":
+            $PeriodeReel = "Mars";
+            break;
+        case "04":
+            $PeriodeReel = "Avril";
+            break;
+        case "05":
+            $PeriodeReel = "Mai";
+            break;
+        case "06":
+            $PeriodeReel = "Juin";
+            break;
+        case "07":
+            $PeriodeReel = "Juillet";
+            break;
+        case "08":
+            $PeriodeReel = "Aout";
+            break;
+        case "09":
+            $PeriodeReel = "Septembre";
+            break;
+        case "10":
+            $PeriodeReel = "Octobre";
+            break;
+        case "11":
+            $PeriodeReel = "Novembre";
+            break;
+        case "12":
+            $PeriodeReel = "Decembre";
+            break;
     }
+
     //print_r(($ProductionParControleur));
 
 ?>
@@ -760,7 +758,7 @@
 
                     <!-- RECHERCHE -->
                         <div class="mt-5 mr-3">
-                            <form method="POST" enctype="multipart/form-data" class="row g-3">
+                            <form action="#" method="POST" enctype="multipart/form-data" class="row g-3">
                                 <div class="col-md-2 mt-3">
                                     <div class="mb-1 text-start">
                                         <select class="form-control" name="dateFiche">
@@ -783,8 +781,13 @@
                                     <input class="btn btn-success bouton mr-3 ml-5" name="ChercheTempsArret" type="submit" value="RECHERCHER">
                                 </div>
                                 <hr/>
-                                    <a href="pdfProductiviteDress.php?mois=<?= $moisPourPDF; ?>" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+                                <?php  if(!isset($_GET['mois'])){ ?>
+                                    <a href="pdfProductiviteDress.php?mois=<?=  $moisSansGetPourPDF; ?>" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
                                     class="fas fa-download fa-sm text-white-60"></i> Génerer en PDF</a>
+                                <?php  }else{ ?>
+                                    <a href="pdfProductiviteDress.php,mois=<?=  $moisAvecGetPDF; ?>" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+                                    class="fas fa-download fa-sm text-white-60"></i> Génerer en PDF</a>
+                                <?php  } ?>
                             </form> 
                         </div>
                     <!-- RECHERCHE -->

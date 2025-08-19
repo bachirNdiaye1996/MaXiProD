@@ -9,9 +9,7 @@
     include "../../connexion/conexiondb.php";
 
     //Variables
-    $PeriodeReel = "'Aucun travailleur'";
-    $dt = time();
-    $moisPourPDF = date( "m", $dt );  // On extrait le mois courant.
+    $Periode="'Aucun travailleur'";
 
     //** Debut select des receptions
         $sql = "SELECT * FROM `utilisateur` where `actif`=1 ORDER BY `id` DESC;";
@@ -32,8 +30,6 @@
     //Recherche une fiche
         if(isset($_POST['ChercheTempsArret'])){
             $dateFiche=htmlspecialchars($_POST['dateFiche']); 
-            $mois = explode( "-", $dateFiche); 
-            $moisPourPDF = $mois[0]; 
 
             //** Debut select des production cranteuse
                 $sql = "SELECT * FROM `fichedresseuse` WHERE `actif`=1 AND MONTH(`dateCreation`)='$dateFiche';";          // On tire les fiches du mois courant
@@ -168,47 +164,47 @@
         $i++;
     }
 
-    if(isset($Periode)){
-        $mois = explode( "-", $Periode); 
-        switch ($mois[1]) {
-            case "01":
-                $PeriodeReel = "Janvier";
-                break;
-            case "02":
-                $PeriodeReel = "Fevrier";
-                break;
-            case "03":
-                $PeriodeReel = "Mars";
-                break;
-            case "04":
-                $PeriodeReel = "Avril";
-                break;
-            case "05":
-                $PeriodeReel = "Mai";
-                break;
-            case "06":
-                $PeriodeReel = "Juin";
-                break;
-            case "07":
-                $PeriodeReel = "Juillet";
-                break;
-            case "08":
-                $PeriodeReel = "Aout";
-                break;
-            case "09":
-                $PeriodeReel = "Septembre";
-                break;
-            case "10":
-                $PeriodeReel = "Octobre";
-                break;
-            case "11":
-                $PeriodeReel = "Novembre";
-                break;
-            case "12":
-                $PeriodeReel = "Decembre";
-                break;
-        }
+    
+    $mois = explode( "-", $Periode); 
+    switch ($mois[1]) {
+        case "01":
+            $PeriodeReel = "Janvier";
+            break;
+        case "02":
+            $PeriodeReel = "Fevrier";
+            break;
+        case "03":
+            $PeriodeReel = "Mars";
+            break;
+        case "04":
+            $PeriodeReel = "Avril";
+            break;
+        case "05":
+            $PeriodeReel = "Mai";
+            break;
+        case "06":
+            $PeriodeReel = "Juin";
+            break;
+        case "07":
+            $PeriodeReel = "Juillet";
+            break;
+        case "08":
+            $PeriodeReel = "Aout";
+            break;
+        case "09":
+            $PeriodeReel = "Septembre";
+            break;
+        case "10":
+            $PeriodeReel = "Octobre";
+            break;
+        case "11":
+            $PeriodeReel = "Novembre";
+            break;
+        case "12":
+            $PeriodeReel = "Decembre";
+            break;
     }
+
     //print_r(($ProductionParControleur));
 
 ?>
@@ -656,7 +652,7 @@
                     <div class="row">
                         <!-- Earnings (Monthly) Card Example -->
                         <div class="col-xl-3 col-md-6 mb-4">
-                            <a href="../tempsArret.php" class="text-decoration-none">
+                            <a href="tempsArret.php" class="text-decoration-none">
                                 <div class="card border-left-primary shadow h-100 py-2">
                                     <div class="card-body">
                                         <div class="row no-gutters align-items-center">
@@ -760,7 +756,7 @@
 
                     <!-- RECHERCHE -->
                         <div class="mt-5 mr-3">
-                            <form method="POST" enctype="multipart/form-data" class="row g-3">
+                            <form action="#" method="POST" enctype="multipart/form-data" class="row g-3">
                                 <div class="col-md-2 mt-3">
                                     <div class="mb-1 text-start">
                                         <select class="form-control" name="dateFiche">
@@ -783,8 +779,8 @@
                                     <input class="btn btn-success bouton mr-3 ml-5" name="ChercheTempsArret" type="submit" value="RECHERCHER">
                                 </div>
                                 <hr/>
-                                    <a href="pdfProductiviteDress.php?mois=<?= $moisPourPDF; ?>" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
-                                    class="fas fa-download fa-sm text-white-60"></i> Génerer en PDF</a>
+                                <a href="pdfProductiviteDress.php" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+                                class="fas fa-download fa-sm text-white-60"></i> Génerer en PDF</a>
                             </form> 
                         </div>
                     <!-- RECHERCHE -->
@@ -796,7 +792,7 @@
                             <div class="col-lg-12">
                             <div class="card position-relative mt-4">
                                 <div class="card-header py-3 mb-4">
-                                    <h6 class="m-0 font-weight-bold text-primary"><span class="h4">La productivité</span> des opérateurs durant le mois de <code class="h4"><?= $PeriodeReel; ?></code> à la machine <span class="h4">dresseuse</span>.</h6>
+                                    <h6 class="m-0 font-weight-bold text-primary"><span class="h4">La productivité</span> des opérateurs dans la période du <code class="h4"><?= implode('-',array_reverse  (explode('-',$Periode))); ?></code> à la machine <span class="h4">dresseuse</span>.</h6>
                                 </div>
                                 <div class="row m-2">
                                     <div class="table-responsive">
