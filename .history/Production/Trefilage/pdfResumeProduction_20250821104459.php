@@ -250,15 +250,15 @@ require '../../fpdf/fpdf.php';
     /* Pour l'entete */
 
     $pdf->SetTextColor(50,60,100);
-    $pdf->Cell(55,29,'      METAL AFRIQUE',1,0);
+    $pdf->Cell(55,29,'METAL AFRIQUE',1,0);
     $pdf->SetFont('Arial','B',8);
     $pdf->Cell(139,8,utf8_decode('                          Systéme de Management Intégré                                       ').utf8_decode("DATE : $_GET[dateCreation]"),0,1);
     $pdf->SetFont('Arial','B',19);
     $pdf->Cell(55,28,'           * * *',0,0);
     $pdf->SetFont('Arial','B',8);    
     $pdf->Cell(139,8,utf8_decode('                                                                                                                         '.utf8_decode("QUART : Les 3")/*.$_POST['date']*/),0,1);
-    $pdf->SetFont('Arial','B',8);
-    $pdf->Cell(148,13,"                                                                      RESUME PAR DIAMETRE PRODUIT ET PAR QUART AU TREFILAGE",0,0,'C');
+    $pdf->SetFont('Arial','B',9);
+    $pdf->Cell(148,13,"                                            RESUME PAR DIAMETRE PRODUIT ET PAR QUART AU TREFILAGE",0,0,'C');
     $pdf->Line(160,39,19,39);
     $pdf->Line(160,26,65,26);
     $pdf->Line(204,18,158,18);

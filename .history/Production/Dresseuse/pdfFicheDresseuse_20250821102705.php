@@ -81,7 +81,7 @@
     /* Pour l'entete */
 
     $pdf->SetTextColor(50,60,100);
-    $pdf->Cell(55,29,'  METAL AFRIQUE',1,0);
+    $pdf->Cell(55,29,'METAL AFRIQUE',1,0);
     $pdf->SetFont('Arial','B',8);
     $pdf->Cell(139,8,utf8_decode('                          Systéme de Management Intégré                                       ').utf8_decode("DATE : $Cranteuse[dateCreation]"),0,1);
     $pdf->SetFont('Arial','B',19);
@@ -106,7 +106,15 @@
     $pdf->SetTextColor(50,60,100);
     $pdf->Cell(190,14,utf8_decode(""),0,1,'C');
     $pdf->Cell(190,14,utf8_decode("     OPERATEURS : $Cranteuse[controleur1] ET $Cranteuse[controleur2]        "."HORAIRES : $Cranteuse[heuredepartquart]  -  $Cranteuse[heurefinquart]"),0,1,'C');
-   
+
+
+    $pdf->SetTextColor(50,60,100);
+    $pdf->Cell(190,5,"FICHE DE PRODUCTION $Cranteuse[machine]",0,1,'C');
+    $pdf->SetFont('Arial','B',10);
+    $pdf->SetTextColor(50,60,100);
+    $pdf->Cell(190,14,utf8_decode(""),0,1,'C');
+    $pdf->Cell(190,14,utf8_decode("DATE : $Cranteuse[dateCreation]          QUART : $Cranteuse[quart]            CONTROLEURS : $Cranteuse[controleur1] ET $Cranteuse[controleur2]"),0,1,'C');
+    $pdf->Cell(190,2,utf8_decode("HORAIRES : $Cranteuse[heuredepartquart]  -  $Cranteuse[heurefinquart]            "),0,1,'C');
 
 
     //Pour les arrets

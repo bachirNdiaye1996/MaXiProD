@@ -250,7 +250,7 @@ require '../../fpdf/fpdf.php';
     /* Pour l'entete */
 
     $pdf->SetTextColor(50,60,100);
-    $pdf->Cell(55,29,'      METAL AFRIQUE',1,0);
+    $pdf->Cell(55,29,'  METAL AFRIQUE',1,0);
     $pdf->SetFont('Arial','B',8);
     $pdf->Cell(139,8,utf8_decode('                          Systéme de Management Intégré                                       ').utf8_decode("DATE : $_GET[dateCreation]"),0,1);
     $pdf->SetFont('Arial','B',19);

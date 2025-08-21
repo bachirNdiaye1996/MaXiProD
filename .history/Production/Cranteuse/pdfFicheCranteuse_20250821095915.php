@@ -9,16 +9,15 @@
     }
 
     include "../../connexion/conexiondb.php";
+    include "./mailProductionCranteuse.php";
 
     require '../../fpdf/fpdf.php';
 
-    // Variables
-    $idfichedresseuse = $_GET['idfichedresseuse']; 
-    $TotalPoids = 0;
-    $TotalBarres = 0;
+
+    $idfichecranteuse = $_GET['idfichecranteuse']; 
 
     //** Debut select de la production (arret)
-        $sql = "SELECT * FROM `dresseusearret` where `actif`=1 and `idfichedresseuse`=$idfichedresseuse ORDER BY `iddresseusearret` DESC;";
+        $sql = "SELECT * FROM `cranteuseq1arret` where `actif`=1 and `idfichecranteuseq1`=$idfichecranteuse ORDER BY `idcranteuseq1arret` DESC;";
 
         // On prépare la requête
         $query = $db->prepare($sql);
@@ -31,7 +30,7 @@
     //** Fin select de la production 
 
     //** Debut select de la production (consommation)
-        $sql = "SELECT * FROM `dresseuseconsommation` where `actif`=1 and `idfichedresseuse`=$idfichedresseuse ORDER BY `iddresseuseconsommation` DESC;";
+        $sql = "SELECT * FROM `cranteuseq1consommation` where `actif`=1 and `idfichecranteuseq1`=$idfichecranteuse ORDER BY `idcranteuseq1consommation` DESC;";
 
         // On prépare la requête
         $query = $db->prepare($sql);
@@ -44,7 +43,7 @@
     //** Fin select de la production 
 
     //** Debut select de la production (consommation)
-        $sql = "SELECT * FROM `dresseuseproduction` where `actif`=1 and `idfichedresseuse`=$idfichedresseuse ORDER BY `iddresseuseproduction` DESC;";
+        $sql = "SELECT * FROM `cranteuseq1production` where `actif`=1 and `idfichecranteuseq1`=$idfichecranteuse ORDER BY `idcranteuseq1production` DESC;";
 
         // On prépare la requête
         $query = $db->prepare($sql);
@@ -56,9 +55,8 @@
         $productions = $query->fetchAll(); 
     //** Fin select de la production 
 
-
     //** Debut select de la production
-        $sql = "SELECT * FROM `fichedresseuse` where `actif`=1 and `idfichedresseuse`=$idfichedresseuse";
+        $sql = "SELECT * FROM `fichecranteuseq1` where `actif`=1 and `idfichecranteuseq1`=$idfichecranteuse";
 
         // On prépare la requête
         $query = $db->prepare($sql);
@@ -81,13 +79,17 @@
     /* Pour l'entete */
 
     $pdf->SetTextColor(50,60,100);
-    $pdf->Cell(55,29,'  METAL AFRIQUE',1,0);
+    $pdf->Cell(55,29,'METAL AFRIQUE',1,0);
     $pdf->SetFont('Arial','B',8);
-    $pdf->Cell(139,8,utf8_decode('                          Systéme de Management Intégré                                       ').utf8_decode("DATE : $Cranteuse[dateCreation]"),0,1);
+    $pdf->Cell(139,8,utf8_decode('                          Systéme de Management Intégré                                       ').utf8_decode('Création : '),0,1);
     $pdf->SetFont('Arial','B',19);
     $pdf->Cell(55,28,'           * * *',0,0);
     $pdf->SetFont('Arial','B',8);    
-    $pdf->Cell(139,8,utf8_decode('                                                                                                                         '.utf8_decode("QUART : $Cranteuse[quart]")/*.$_POST['date']*/),0,1);
+    if(empty($articleDA['datelivraison'])){
+        $pdf->Cell(139,8,utf8_decode('                                                                                                                         '.utf8_decode('Livraison : ')."En attente livraison"/*.$_POST['date']*/),0,1);
+    }else{
+        $pdf->Cell(139,8,utf8_decode('                                                                                                                         '.utf8_decode('Livraison : ')/*.$_POST['date']*/),0,1);
+    }
     $pdf->SetFont('Arial','B',12);
     $pdf->Cell(148,13,"                                              FICHE DE PRODUCTION $Cranteuse[machine]",0,0,'C');
     $pdf->Line(160,39,19,39);
@@ -102,11 +104,12 @@
     $pdf->SetTextColor(0,0,0);
 
     $pdf->SetTextColor(50,60,100);
+    $pdf->Cell(190,5,"",0,1,'C');
     $pdf->SetFont('Arial','B',10);
     $pdf->SetTextColor(50,60,100);
     $pdf->Cell(190,14,utf8_decode(""),0,1,'C');
-    $pdf->Cell(190,14,utf8_decode("     OPERATEURS : $Cranteuse[controleur1] ET $Cranteuse[controleur2]        "."HORAIRES : $Cranteuse[heuredepartquart]  -  $Cranteuse[heurefinquart]"),0,1,'C');
-   
+    $pdf->Cell(190,14,utf8_decode("DATE : $Cranteuse[dateCreation]          QUART : $Cranteuse[quart]            OPERATEURS : $Cranteuse[controleur1] ET $Cranteuse[controleur2]"),0,1,'C');
+    $pdf->Cell(190,2,utf8_decode("HORAIRES : $Cranteuse[heuredepartquart]  -  $Cranteuse[heurefinquart]             "),0,1,'C');
 
 
     //Pour les arrets
@@ -139,55 +142,46 @@
     $pdf->SetFont('Arial','B',9);
     $pdf->Cell(190,10,'',0,1);
     $pdf->SetTextColor(50,60,100);
-    $pdf->Cell(152,8,utf8_decode("Consommations"),0,1,'C');
-    $pdf->SetFont('Arial','B',7); 
+    $pdf->Cell(190,8,utf8_decode("Consommations"),0,1,'C');
+    $pdf->SetFont('Arial','B',7);
 
     $pdf->SetTextColor(0,0,0);
     $pdf->SetFont('Arial','B',8);
     $pdf->Cell(38,5,utf8_decode('Diamétre'),1,0,'C');
     $pdf->Cell(38,5,utf8_decode('Numéro fil machine'),1,0,'C');
     $pdf->Cell(38,5,utf8_decode('Poids'),1,0,'C');
-    $pdf->Cell(38,5,utf8_decode('Heure de montage'),1,1,'C');
+    $pdf->Cell(38,5,utf8_decode('Heure de montage'),1,0,'C');
+    $pdf->Cell(38,5,utf8_decode('Déchet'),1,1,'C');
     foreach($consommations as $consommation){        
         $pdf->Cell(38,5,utf8_decode($consommation['diametre']),1,0,'C');
         $pdf->Cell(38,5,utf8_decode($consommation['numerofin']),1,0,'C');
         $pdf->Cell(38,5,utf8_decode($consommation['poids']),1,0,'C');
-        $pdf->Cell(38,5,utf8_decode($consommation['heuremontagebobine']),1,1,'C');
+        $pdf->Cell(38,5,utf8_decode($consommation['heuremontagebobine']),1,0,'C');
+        $pdf->Cell(38,5,utf8_decode($consommation['dechet']),1,1,'C');
     }
 
     //Pour les productions
     $pdf->SetFont('Arial','B',9);
     $pdf->Cell(194,10,'',0,1);
     $pdf->SetTextColor(50,60,100);
-    $pdf->Cell(190,8,utf8_decode("Productions"),0,1,'C');
+    $pdf->Cell(194,8,utf8_decode("Productions"),0,1,'C');
     $pdf->SetFont('Arial','B',7);
 
     $pdf->SetTextColor(0,0,0);
-    $pdf->SetFont('Arial','B',6);
-    $pdf->Cell(21,5,utf8_decode('Diamétre'),1,0,'C');
-    $pdf->Cell(21,5,utf8_decode('N° fil machine'),1,0,'C');
-    $pdf->Cell(21,5,utf8_decode('Nbre barres / colis'),1,0,'C');
-    $pdf->Cell(21,5,utf8_decode('Nbre de colis'),1,0,'C');
-    $pdf->Cell(22,5,utf8_decode('Nbre barres restant'),1,0,'C');
-    $pdf->Cell(21,5,utf8_decode('Longueur barres'),1,0,'C');
-    $pdf->Cell(21,5,utf8_decode('Total barres'),1,0,'C');
-    $pdf->Cell(21,5,utf8_decode('Poids'),1,0,'C');
-    $pdf->Cell(21,5,utf8_decode('Déchet (KG)'),1,1,'C');
     $pdf->SetFont('Arial','B',8);
-    foreach($productions as $production){ 
-        // On calcule les valeurs totales
-        $TotalPoids += $production['prodpoids'];
-        $TotalBarres += ($production['prodnbBarreColis']*$production['prodnbcolis'])+$production['prodnbbarrerestant'];       
-
-        $pdf->Cell(21,5,utf8_decode($production['proddiametre']),1,0,'C');
-        $pdf->Cell(21,5,utf8_decode($production['prodnumerofin']),1,0,'C');
-        $pdf->Cell(21,5,utf8_decode($production['prodnbBarreColis']),1,0,'C');
-        $pdf->Cell(21,5,utf8_decode($production['prodnbcolis']),1,0,'C');
-        $pdf->Cell(22,5,utf8_decode($production['prodnbbarrerestant']),1,0,'C');
-        $pdf->Cell(21,5,utf8_decode($production['prodlongueurbarre']),1,0,'C');
-        $pdf->Cell(21,5,utf8_decode(($production['prodnbBarreColis']*$production['prodnbcolis'])+$production['prodnbbarrerestant']),1,0,'C');
-        $pdf->Cell(21,5,utf8_decode($production['prodpoids']),1,0,'C');
-        $pdf->Cell(21,5,utf8_decode($production['proddechet']),1,1,'C');
+    $pdf->Cell(32,5,utf8_decode('Diamétre'),1,0,'C');
+    $pdf->Cell(32,5,utf8_decode('Numéro fil machine'),1,0,'C');
+    $pdf->Cell(32,5,utf8_decode('Poids'),1,0,'C');
+    $pdf->Cell(32,5,utf8_decode('Echantillon Longueur'),1,0,'C');
+    $pdf->Cell(32,5,utf8_decode('Echantillon Poids'),1,0,'C');
+    $pdf->Cell(32,5,utf8_decode('Echantillon N° DF'),1,1,'C');
+    foreach($productions as $production){        
+        $pdf->Cell(32,5,utf8_decode($production['proddiametre']),1,0,'C');
+        $pdf->Cell(32,5,utf8_decode($production['prodnumerofin']),1,0,'C');
+        $pdf->Cell(32,5,utf8_decode($production['prodpoids']),1,0,'C');
+        $pdf->Cell(32,5,utf8_decode($production['echanlongueur']),1,0,'C');
+        $pdf->Cell(32,5,utf8_decode($production['echanpoids']),1,0,'C');
+        $pdf->Cell(32,5,utf8_decode($production['echandf']),1,1,'C');
     }
 
 
@@ -208,8 +202,8 @@
     $pdf->SetFont('Arial','B',10);
     $pdf->SetTextColor(50,60,100);
     $pdf->Cell(190,15,utf8_decode(""),0,1,'C');
-    $pdf->Cell(190,8,utf8_decode("Total arret : $TotalArretHReelH Heures $TotalArretHReel[1] minutes    Total poids produit : $TotalPoids     Vitesse : $Cranteuse[vitesse]"),0,1,'C');
-    $pdf->Cell(190,8,utf8_decode("Temps de fonction : $TotalHeureTravaillerelleH Heures $TotalHeureTravaillerelle[1] min     Total barres produites : $TotalBarres      Poids estimatif travaillé et non noté : $Cranteuse[poidsestimetravaillenonnote] "),0,1,'C');
+    $pdf->Cell(190,13,utf8_decode("Total arret : $TotalArretHReelH Heures $TotalArretHReel[1] minutes          Vitesse : $Cranteuse[vitesse]          Poids estimatif travaillé et non noté : $Cranteuse[poidsestimetravaillenonnote] "),0,1,'C');
+    $pdf->Cell(190,2,utf8_decode("Temps de fonction : $TotalHeureTravaillerelleH Heures $TotalHeureTravaillerelle[1] min   "),0,1,'C');
 
 
     $pdf->Output();
