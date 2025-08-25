@@ -206,13 +206,13 @@
     $pdf->SetTextColor(50,60,100);
     $pdf->Cell(55,29,'  METAL AFRIQUE',1,0);
     $pdf->SetFont('Arial','B',8);
-    $pdf->Cell(139,8,utf8_decode('                          Systéme de Management Intégré                                       ').utf8_decode("MOIS : $PeriodeReel"),0,1);
+    $pdf->Cell(139,8,utf8_decode('                          Systéme de Management Intégré                                       ').utf8_decode("DATE : $PeriodeReel"),0,1);
     $pdf->SetFont('Arial','B',19);
     $pdf->Cell(55,28,'           * * *',0,0);
     $pdf->SetFont('Arial','B',8);    
-    $pdf->Cell(139,8,utf8_decode('                                                                                                                         '.utf8_decode("MACHINE : Dresseuse")/*.$_POST['date']*/),0,1);
+    $pdf->Cell(139,8,utf8_decode('                                                                                                                         '.utf8_decode("")/*.$_POST['date']*/),0,1);
     $pdf->SetFont('Arial','B',12);
-    $pdf->Cell(148,13,"                                              PRODUCTIVITE DES OPERATEURS",0,0,'C');
+    $pdf->Cell(148,13,"                                              DETAILS PRODUCTION",0,0,'C');
     $pdf->Line(160,39,19,39);
     $pdf->Line(160,26,65,26);
     $pdf->Line(204,18,158,18);
@@ -228,18 +228,11 @@
     $pdf->SetFont('Arial','B',10);
     $pdf->SetTextColor(50,60,100);
     $pdf->Cell(190,14,utf8_decode(""),0,1,'C');
-    $pdf->Cell(190,14,utf8_decode(""),0,1,'C');
+    $pdf->Cell(190,14,utf8_decode("La productivité des opérateurs durant le mois de $PeriodeReel à la machine dresseuse"),0,1,'C');
 
-
-    //Pour les consommations
-    $pdf->SetFont('Arial','B',9);
-    $pdf->Cell(190,10,'',0,1);
-    $pdf->SetTextColor(50,60,100);
-    $pdf->Cell(190,8,utf8_decode(""),0,1,'C');
-    $pdf->SetFont('Arial','B',7);
 
     $pdf->SetTextColor(0,0,0);
-    $pdf->SetFont('Arial','B',8);
+    $pdf->SetFont('Arial','B',10);
     $pdf->Cell(60,7,utf8_decode('Prenom et Nom opérateur'),1,0,'C');
     $pdf->Cell(60,7,utf8_decode('Poids produit par opérateur (KG)'),1,0,'C');
     $pdf->Cell(60,7,utf8_decode('Temps arret par opérateur'),1,1,'C');
