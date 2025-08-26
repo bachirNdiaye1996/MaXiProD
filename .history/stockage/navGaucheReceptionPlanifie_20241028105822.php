@@ -1,54 +1,55 @@
 <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
-<!-- Sidebar - Brand -->
-<a class="sidebar-brand d-flex align-items-center justify-content-center" href="../indexPage/accueil.php">
-   <div class="sidebar-brand-icon rotate-n-15">
-       <i class="fas fa-laugh-wink"></i>
-   </div>
-   <div class="sidebar-brand-text mx-3">SB <?php echo $_SESSION['username'];?> <sup>2</sup></div>
-</a>
+             <!-- Sidebar - Brand -->
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="../indexPage/accueil.php">
+                <div class="sidebar-brand-icon rotate-n-15">
+                    <i class="fas fa-laugh-wink"></i>
+                </div>
+                <div class="sidebar-brand-text mx-3">SB <?php echo $_SESSION['username'];?> <sup>2</sup></div>
+            </a>
 
-<!-- Divider -->
-<hr class="sidebar-divider my-0">
+            <!-- Divider -->
+            <hr class="sidebar-divider my-0">
 
-<!-- Nav Item - Dashboard -->
-<li class="nav-item active">
-   <a class="nav-link" href="../indexPage/accueil.php">
-       <i class="fas fa-fw fa-tachometer-alt"></i>
-       <span>Accueil Dashboard</span></a>
-</li>
+            <!-- Nav Item - Dashboard -->
+            <li class="nav-item active">
+                <a class="nav-link" href="../indexPage/accueil.php">
+                    <i class="fas fa-fw fa-tachometer-alt"></i>
+                    <span>Accueil Dashboard</span></a>
+            </li>
 
-<?php if($_SESSION['niveau']=='admin' || $_SESSION['niveau']=='pontbascule' || $_SESSION['niveau']=='chefquart' || $_SESSION['niveau']=='invite'){ ?>
-   <!-- Divider -->
-   <hr class="sidebar-divider">
+            <?php if($_SESSION['niveau']=='admin' || $_SESSION['niveau']=='pontbascule' || $_SESSION['niveau']=='chefquart'){ ?>
+                <!-- Divider -->
+                <hr class="sidebar-divider">
 
-   <!-- Nav Item - Tables -->
+                <!-- Nav Item - Tables -->
 
-   <li class="nav-item active">
-       <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseReception"
-           aria-expanded="true" aria-controls="collapseUtilities">
-           <i class="fa fa-book fa-fw"></i>
-           <span>Pont Bascule</span>
-       </a>
-       <div id="collapseReception" class="collapse show" aria-labelledby="headingUtilities"
-           data-parent="#accordionSidebar">
-           <div class="bg-white py-2 collapse-inner rounded">
-               <h6 class="collapse-header">Stockage :</h6>
-               <a class="collapse-item" href="../stockage/reception.php">Réception</a>
-               <a class="collapse-item" href="../stockage/receptionPlanifie.php">Réception planifiée</a>
-               <a class="collapse-item" href="../stockage/transfert/transfert.php">Transfert</a>
-               <a class="collapse-item" href="../stockage/Exportation/exportation.php">Export</a>
-               <a class="collapse-item" href="../stockage/historique.php">Historique</a>
-               <a class="collapse-item" href="../stockage/stockage/stockage.php">Stockage</a>
-               <a class="collapse-item <?php if(isset($active)){ echo 'active'; } ?>" href="../stockage/graphe.php">Graphe Niambour</a>
-               <a class="collapse-item <?php if(isset($activeM1)){ echo 'active'; } ?>" href="../stockage/grapheMetal1.php">Graphe Metal 1</a>
-               <a class="collapse-item <?php if(isset($activeMB)){ echo 'active'; } ?>" href="../stockage/grapheMetalMbao.php">Graphe Metal Mbao</a>
-           </div>
-       </div>
-   </li>
-<?php } ?>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-toggle="collapse" data-target="#collapseReception"
+                        aria-expanded="true" aria-controls="collapseUtilities">
+                        <i class="fa fa-book fa-fw"></i>
+                        <span>Pont Bascule</span>
+                    </a>
+                    <div id="collapseReception" class="collapse show" aria-labelledby="headingUtilities"
+                        data-parent="#accordionSidebar">
+                        <div class="bg-white py-2 collapse-inner rounded">
+                            <h6 class="collapse-header">Stockage :</h6>
+                            <a class="collapse-item" href="../stockage/reception.php">Réception</a>
+                            <a class="collapse-item active" href="../stockage/receptionPlanifie.php">Réception planifiée</a>
+                            <a class="collapse-item" href="../stockage/transfert/transfert.php">Transfert</a>
+                            <a class="collapse-item" href="../stockage/Exportation/exportation.php">Export</a>
+                            <a class="collapse-item" href="../stockage/historique.php">Historique</a>
+                            <a class="collapse-item" href="../stockage/stockage/stockage.php">Stockage</a>
+                            <a class="collapse-item" href="../stockage/graphe.php">Graphe Niambour</a>
+                            <a class="collapse-item" href="../stockage/grapheMetal1.php">Graphe Metal 1</a>
+                            <a class="collapse-item" href="../stockage/grapheMetalMbao.php">Graphe Metal Mbao</a>
+                        </div>
+                    </div>
+                </li>
+            <?php } ?>
 
-<?php if($_SESSION['niveau'] != 'pontbascule'){ ?>
+
+            <?php if($_SESSION['niveau'] != 'pontbascule'){ ?>
     <!-- Divider -->
     <hr class="sidebar-divider">
     

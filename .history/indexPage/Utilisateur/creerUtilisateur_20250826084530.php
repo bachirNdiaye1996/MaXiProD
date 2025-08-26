@@ -159,7 +159,7 @@
                                     <input class="form-check-input mr-2" type="radio" name="niveau" id="inlineRadio2" value="maintenance" required>
                                     <label class="form-check-label mr-5" for="inlineRadio2">Maintenance</label>
                                 </div>
-                                <div class="form-check form-check-inline ml-5 mt-3">
+                                <div class="form-check form-check-inline ml-5 mt-2">
                                     <input class="form-check-input mr-2" type="radio" name="niveau" id="inlineRadio2" value="invite" required>
                                     <label class="form-check-label mr-5" for="inlineRadio2">Invite</label>
                                 </div>

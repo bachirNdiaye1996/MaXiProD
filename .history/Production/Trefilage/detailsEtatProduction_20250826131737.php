@@ -580,15 +580,17 @@ include "../../connexion/conexiondb.php";
                 <!-- Begin Page Content -->
 
                 <div class="container-fluid">
-                    <!-- Page Heading -->
+                    <!-- Page Heading 
                     <div class="row">
                         <div class="col-xl-3 col-md-6 mb-1">
                             <img src="../../image/trefilet.jpg" class="img-fluid" alt="" style="border-radius: 50%; margin:20px; opacity: 1;" width="200">
                         </div>
                     </div>
-                    
+                    -->
 
                     <div class="d-sm-flex align-items-end justify-content-end mb-4 mr-3 mr-5">
+                        <a href="pdfEtatCranteuse.php?dateCreation=<?php echo $_GET['dateCreation'];?>" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm mr-5"><i
+                        class="fas fa-download fa-sm text-white-50"></i> Génerer en PDF</a>
                         <a href="pdfResumeProduction.php?dateCreation=<?php echo $_GET['dateCreation'];?>" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
                         class="fas fa-download fa-sm text-white-50"></i> Résumé production en PDF</a>
                     </div>

@@ -589,6 +589,8 @@ include "../../connexion/conexiondb.php";
                     
 
                     <div class="d-sm-flex align-items-end justify-content-end mb-4 mr-3 mr-5">
+                        <a href="pdfEtatCranteuse.php?dateCreation=<?php echo $_GET['dateCreation'];?>" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm mr-5"><i
+                        class="fas fa-download fa-sm text-white-50"></i> Génerer en PDF</a>
                         <a href="pdfResumeProduction.php?dateCreation=<?php echo $_GET['dateCreation'];?>" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
                         class="fas fa-download fa-sm text-white-50"></i> Résumé production en PDF</a>
                     </div>
