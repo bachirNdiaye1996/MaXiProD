@@ -412,7 +412,7 @@ include "../../connexion/conexiondb.php";
                                 <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Profile
                                 </a>
-                                <a class="dropdown-item" href="../../indexPage/Utilisateur/ParametreUtilisateur.php?idUser=<?php echo $_SESSION['id']; ?>">
+                                <a class="dropdown-item" href="../../indexPage/Utilisateur/?php echo $_SESSION['id']; ?>">
                                     <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Changer paramétres
                                 </a>
