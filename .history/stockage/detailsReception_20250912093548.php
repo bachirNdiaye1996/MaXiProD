@@ -159,7 +159,7 @@ if(isset($_POST['approuveReceptionRectifie'])){
 //Fin send mail approuveReceptionRectifie
 
 //** Debut select des receptions
-    $sql = "SELECT * FROM `matiere` where `actif`=1 and `numbobine` IS NULL and `idreception`=$idreception ORDER BY `idmatiere` DESC;";
+    $sql = "SELECT * FROM `matiere` where `actif`=1 and `idreception`=$idreception and `numbobine`='NULL' ORDER BY `idmatiere` DESC;";
 
     // On prépare la requête
     $query = $db->prepare($sql);

@@ -72,6 +72,18 @@
                 $ProblemeUnicite="erreurProblemeUnicite";
             //$ligneErreurProblemeUnicite = $i+1;
         }else {
+            //Rechercher le nombre de piéces sur le lieu de depart
+                $sqlEpaisseur = "SELECT * FROM `matiere` where `actif`=1;";
+                // On prépare la requête
+                $queryEpaisseur = $db->prepare($sqlEpaisseur);
+
+                // On exécute
+                $queryEpaisseur->execute();
+
+                // On récupère le nombre d'articles
+                $ResultEpaisseur = $queryEpaisseur->fetchAll();
+            //Fin Rechercher le nombre de piéces 
+
             for ($i = 0; $i < count($_POST['epaisseur']); $i++){
                 $epaisseur=htmlspecialchars( $_POST['epaisseur'][$i]);
                 //$largeur=htmlspecialchars($_POST['largeur']);
@@ -88,19 +100,15 @@
                 }
                 //$codereception=htmlspecialchars($_POST['codereception'][$i]);
                 $numbobine=htmlspecialchars($_POST['numbobine'][$i]);
-    
 
-                //Rechercher le nombre de piéces sur le lieu de depart
-                    $sqlEpaisseur = "SELECT * FROM `matiere` where `actif`=1 AND `lieutransfert`='$pointdepart' and `epaisseur`='$epaisseur' and `nbbobineactuel` != 0 and `nbbobineactuel`>=$nbbobine LIMIT 1;";
-                    // On prépare la requête
-                    $queryEpaisseur = $db->prepare($sqlEpaisseur);
-    
-                    // On exécute
-                    $queryEpaisseur->execute();
-    
-                    // On récupère le nombre d'articles
-                    $resultEpaisseur = $queryEpaisseur->fetch();
-                //Fin Rechercher le nombre de piéces 
+                foreach($ResultEpaisseur as $resultEpaisseur){
+                    if($resultEpaisseur['lieutransfert'] == $pointdepart && $resultEpaisseur['epaisseur'] == $epaisseur && $resultEpaisseur['nbbobineactuel'] != 0 && $resultEpaisseur['nbbobineactuel'] >= $nbbobine){
+                    
+                    }else{
+                        $ProblemeNbBobineDepart="erreurProblemeNbDepart";
+                        $ligneErreur = $i+1;
+                    }
+                }
     
                 //Rechercher le nombre de piéces sur le lieu de depart
                     $sqlEpaisseur = "SELECT * FROM `matiere` where `actif`=1 AND `numbobine`='$numbobine' LIMIT 1;";
@@ -131,12 +139,6 @@
                 if( $pointdepart === $pointarrive ){ 
                     $ProblemeLieu="erreurProblemeLieu";
                     $ligneErreurLieu = $i+1;
-                }
-    
-                if($resultEpaisseur){ 
-                }else{
-                    $ProblemeNbBobineDepart="erreurProblemeNbDepart";
-                    $ligneErreur = $i+1;
                 }
             }
         }

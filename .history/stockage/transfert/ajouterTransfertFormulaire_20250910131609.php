@@ -52,8 +52,7 @@
 
     //Insertion des réceptions
     if(isset($_POST['CreerTransfert'])){
-
-        $idtransfert=htmlspecialchars($_POST['idtransfert']);
+        /*$idtransfert=htmlspecialchars($_POST['idtransfert']);
         $saisisseur=htmlspecialchars( $_POST['saisisseur']);
         $datetransfert=htmlspecialchars( $_POST['datetransfert']);
         $transporteur=htmlspecialchars( $_POST['transporteur']);
@@ -88,10 +87,10 @@
                 }
                 //$codereception=htmlspecialchars($_POST['codereception'][$i]);
                 $numbobine=htmlspecialchars($_POST['numbobine'][$i]);
-    
 
+                
                 //Rechercher le nombre de piéces sur le lieu de depart
-                    $sqlEpaisseur = "SELECT * FROM `matiere` where `actif`=1 AND `lieutransfert`='$pointdepart' and `epaisseur`='$epaisseur' and `nbbobineactuel` != 0 and `nbbobineactuel`>=$nbbobine LIMIT 1;";
+                    $sqlEpaisseur = "SELECT * FROM `matiere` where `lieutransfert`='$pointdepart' and `epaisseur`='$epaisseur' and `nbbobineactuel` != 0 and `nbbobineactuel`>=$nbbobine LIMIT 1;";
                     // On prépare la requête
                     $queryEpaisseur = $db->prepare($sqlEpaisseur);
     
@@ -103,7 +102,7 @@
                 //Fin Rechercher le nombre de piéces 
     
                 //Rechercher le nombre de piéces sur le lieu de depart
-                    $sqlEpaisseur = "SELECT * FROM `matiere` where `actif`=1 AND `numbobine`='$numbobine' LIMIT 1;";
+                    $sqlEpaisseur = "SELECT * FROM `matiere` where `numbobine`='$numbobine' LIMIT 1;";
                     // On prépare la requête
                     $queryEpaisseur = $db->prepare($sqlEpaisseur);
     
@@ -139,9 +138,9 @@
                     $ligneErreur = $i+1;
                 }
             }
-        }
+        }*/
 
-        if($ProblemeNbBobineDepart != "erreurProblemeNbDepart" && $ProblemeNumeroBobine != "erreurProblemeNumeroBobine" && $ProblemeLieu != "erreurProblemeLieu" && $ProblemeUnicite != "erreurProblemeUnicite" && $ProblemeUniciteExist != "erreurProblemeUniciteExist"){
+        if(0){
             $sql = "UPDATE `transfert` SET `datetransfert` = '$datetransfert', `transporteur` = '$transporteur', `commentaire` = '$commentaire', `saisisseur` = '$saisisseur' WHERE `idtransfert` = ?;";
             //$result = $db->query($sql);
             $sth = $db->prepare($sql);    
@@ -173,7 +172,7 @@
                 */
 
                 //Rechercher le nombre de piéces sur le lieu de depart
-                    $sqlEpaisseur = "SELECT * FROM `matiere` where `actif`=1 AND `lieutransfert`='$pointdepart' and `epaisseur`='$epaisseur' and `nbbobineactuel` != 0 and `nbbobineactuel`>=$nbbobine LIMIT 1;";
+                    $sqlEpaisseur = "SELECT * FROM `matiere` where `lieutransfert`='$pointdepart' and `epaisseur`='$epaisseur' and `nbbobineactuel` != 0 and `nbbobineactuel`>=$nbbobine LIMIT 1;";
                     // On prépare la requête
                     $queryEpaisseur = $db->prepare($sqlEpaisseur);
 

@@ -89,9 +89,10 @@
                 //$codereception=htmlspecialchars($_POST['codereception'][$i]);
                 $numbobine=htmlspecialchars($_POST['numbobine'][$i]);
     
+                $dbh->beginTransaction();         // On commence la transaction
 
                 //Rechercher le nombre de piéces sur le lieu de depart
-                    $sqlEpaisseur = "SELECT * FROM `matiere` where `actif`=1 AND `lieutransfert`='$pointdepart' and `epaisseur`='$epaisseur' and `nbbobineactuel` != 0 and `nbbobineactuel`>=$nbbobine LIMIT 1;";
+                    $sqlEpaisseur = "SELECT * FROM `matiere` where `lieutransfert`='$pointdepart' and `epaisseur`='$epaisseur' and `nbbobineactuel` != 0 and `nbbobineactuel`>=$nbbobine LIMIT 1;";
                     // On prépare la requête
                     $queryEpaisseur = $db->prepare($sqlEpaisseur);
     
@@ -101,9 +102,15 @@
                     // On récupère le nombre d'articles
                     $resultEpaisseur = $queryEpaisseur->fetch();
                 //Fin Rechercher le nombre de piéces 
+
+                // Enlever le nombre de bobine dans le lieu de depart
+                    $req ="UPDATE matiere SET `nbbobineactuel` = `nbbobineactuel` - ? where `idmatiere`='$resultEpaisseur[idmatiere]';";
+                    $reqtitre = $db->prepare($req);
+                    $reqtitre->execute(array($nbbobine));
+                // Fin enlever le nombre de bobine dans le lieu de depart
     
                 //Rechercher le nombre de piéces sur le lieu de depart
-                    $sqlEpaisseur = "SELECT * FROM `matiere` where `actif`=1 AND `numbobine`='$numbobine' LIMIT 1;";
+                    $sqlEpaisseur = "SELECT * FROM `matiere` where `numbobine`='$numbobine' LIMIT 1;";
                     // On prépare la requête
                     $queryEpaisseur = $db->prepare($sqlEpaisseur);
     
@@ -173,7 +180,7 @@
                 */
 
                 //Rechercher le nombre de piéces sur le lieu de depart
-                    $sqlEpaisseur = "SELECT * FROM `matiere` where `actif`=1 AND `lieutransfert`='$pointdepart' and `epaisseur`='$epaisseur' and `nbbobineactuel` != 0 and `nbbobineactuel`>=$nbbobine LIMIT 1;";
+                    $sqlEpaisseur = "SELECT * FROM `matiere` where `lieutransfert`='$pointdepart' and `epaisseur`='$epaisseur' and `nbbobineactuel` != 0 and `nbbobineactuel`>=$nbbobine LIMIT 1;";
                     // On prépare la requête
                     $queryEpaisseur = $db->prepare($sqlEpaisseur);
 
