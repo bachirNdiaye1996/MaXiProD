@@ -83,7 +83,7 @@
             //$codereception=htmlspecialchars($_POST['codereception'][$i]);
 
             //Rechercher le nombre de piéces sur le lieu de depart
-                $sqlEpaisseur = "SELECT * FROM `matiere` where `actif` = 1 and `lieutransfert`='$pointdepart' and `epaisseur`='$epaisseur' and `nbbobineactuel` != 0 and `nbbobineactuel`>=$nbbobine LIMIT 1;";
+                $sqlEpaisseur = "SELECT * FROM `matiere` where actif = 1 and `lieutransfert`='$pointdepart' and `epaisseur`='$epaisseur' and `nbbobineactuel` != 0 and `nbbobineactuel`>=$nbbobine LIMIT 1;";
                 // On prépare la requête
                 $queryEpaisseur = $db->prepare($sqlEpaisseur);
 
@@ -139,7 +139,7 @@
                 */
 
                 //Rechercher le nombre de piéces sur le lieu de depart
-                    $sqlEpaisseur = "SELECT * FROM `matiere` where `actif` = 1 and `lieutransfert`='$pointdepart' and `epaisseur`='$epaisseur' and `nbbobineactuel` != 0 and `nbbobineactuel`>=$nbbobine LIMIT 1;";
+                    $sqlEpaisseur = "SELECT * FROM `matiere` where actif = 1 and `lieutransfert`='$pointdepart' and `epaisseur`='$epaisseur' and `nbbobineactuel` != 0 and `nbbobineactuel`>=$nbbobine LIMIT 1;";
                     // On prépare la requête
                     $queryEpaisseur = $db->prepare($sqlEpaisseur);
 
