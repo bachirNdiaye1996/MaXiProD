@@ -84,11 +84,7 @@
                     $tempValeursParEpaisseur  = 0;
                     for ($i = 0; $i < count($_POST['epaisseur']); $i++){
                         $epaisseur=htmlspecialchars( $_POST['epaisseur'][$i]); 
-                        if(empty($_POST['nbbobine'][$i])){
-                            $nbbobine=1;
-                        }else{
-                            $nbbobine=htmlspecialchars($_POST['nbbobine'][$i]);
-                        }
+                        $nbbobine=htmlspecialchars( $_POST['nbbobine'][$i]); 
                         
                         if($epaisseur === $contenu){
                             $tempValeursParEpaisseur += $nbbobine;
