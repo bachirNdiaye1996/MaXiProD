@@ -100,7 +100,7 @@
 
                 foreach($ValeursParEpaisseur as $key => $contenu){ 
                     //Depart epaisseur
-                        $sqlEpaisseur = "SELECT `$epaisseur` AS epaisseurVeriDepart FROM `epaisseur` where `lieu`='Metal1' AND `$key`>=$contenu;";
+                        $sqlEpaisseur = "SELECT `$epaisseur` AS epaisseurVeriDepart FROM `epaisseur` where `lieu`='Metal1' AND `$key`<=$contenu;";
                         // On prépare la requête
                         $queryEpaisseur = $db->prepare($sqlEpaisseur);
 
