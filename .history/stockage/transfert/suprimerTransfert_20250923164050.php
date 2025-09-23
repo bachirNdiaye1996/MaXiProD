@@ -20,7 +20,7 @@
         $db->query($sql);
 
         // Enlever le num bobine
-            $req ="UPDATE matiere SET `numbobine` = '', `actif` = 0 where `numbobine`=?;";
+            $req ="UPDATE matiere SET `numbobine` = '' where `numbobine`=?;";
             $reqtitre = $db->prepare($req);
             $reqtitre->execute(array($numbobine));
         // Fin enlever le num bobine

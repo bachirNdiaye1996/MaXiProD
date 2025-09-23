@@ -13,9 +13,17 @@
 
     if(isset($_GET['idsuptransfert'])){
         $id = $_GET['idsuptransfert'];
+        $numbobine=$_GET['numbobine'];
         $idtransfertsup = $_GET['idtransfertsup'];
-        $sql = "UPDATE `transfertdetails` set `actif`=0 where idtransfertdetail=$idtransfertsup";
+
+        $sql = "UPDATE `transfertdetails` set `actif`=0, `couleurhistorique`=1 where idtransfertdetail=$idtransfertsup";
         $db->query($sql);
+
+        // Enlever le num bobine
+            $req ="UPDATE matiere SET `numbobine` = '' where `numbobine`='$numbobine';";
+            $reqtitre = $db->prepare($req);
+            $reqtitre->execute(array($nbbobine));
+        // Fin enlever le num bobine
 
         header("location: detailTransfert.php?idtransfert=$id");
         exit;
@@ -27,7 +35,7 @@
         $db->query($sql);
 
         //Pour suprimer tous les details de ce transfert
-        $sql = "DELETE from `transfertdetails` where idtransfert=$id";
+        $sql = "UPDATE `transfertdetails` set `actif`=0, `couleurhistorique`=1 where idtransfert=$id";
         $db->query($sql);
         
         header("location: transfert.php");

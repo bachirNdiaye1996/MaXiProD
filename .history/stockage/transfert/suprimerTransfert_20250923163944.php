@@ -20,9 +20,9 @@
         $db->query($sql);
 
         // Enlever le num bobine
-            $req ="UPDATE matiere SET `numbobine` = '', `actif` = 0 where `numbobine`=?;";
+            $req ="UPDATE matiere SET `numbobine` = '' where `numbobine`='$resultEpaisseur[idmatiere]';";
             $reqtitre = $db->prepare($req);
-            $reqtitre->execute(array($numbobine));
+            $reqtitre->execute(array($nbbobine));
         // Fin enlever le num bobine
 
         header("location: detailTransfert.php?idtransfert=$id");

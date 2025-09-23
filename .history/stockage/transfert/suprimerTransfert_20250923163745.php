@@ -17,6 +17,12 @@
         $sql = "UPDATE `transfertdetails` set `actif`=0, `couleurhistorique`=1 where idtransfertdetail=$idtransfertsup";
         $db->query($sql);
 
+        // Enlever le num bobine
+            $req ="UPDATE matiere SET `nbbobineactuel` = `nbbobineactuel` - ? where `idmatiere`='$resultEpaisseur[idmatiere]';";
+            $reqtitre = $db->prepare($req);
+            $reqtitre->execute(array($nbbobine));
+        // Fin enlever le num bobine
+
         header("location: detailTransfert.php?idtransfert=$id");
         exit;
     }
@@ -27,7 +33,7 @@
         $db->query($sql);
 
         //Pour suprimer tous les details de ce transfert
-        $sql = "DELETE from `transfertdetails` set `actif`=0, `couleurhistorique`=1 where idtransfert=$id";
+        $sql = "UPDATE `transfertdetails` set `actif`=0, `couleurhistorique`=1 where idtransfert=$id";
         $db->query($sql);
         
         header("location: transfert.php");
