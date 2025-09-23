@@ -2,14 +2,13 @@
 
 session_start(); 
 
-if(!$_SESSION){
-    header("location: ../../404.php");
-    return 0;
+if(!$_SESSION['niveau']){
+    header('Location: ../../../404.php');
 }
 
-include "../../connexion/conexiondb.php";
-include "./mailTransfert.php";
-include "../../variables.php";
+include "../connexion/conexiondb.php";
+include "./mailReception.php";
+include "../variables.php";
 
 
 
@@ -17,7 +16,34 @@ include "../../variables.php";
 // Il faut savoir que metal3 est remplacer par niambour
 $valideTransfert="";
 $idmatierearrive="";
-$idtransfert = $_GET['idtransfert'];  // On recupére l'ID de la réception par get
+$idreception = $_GET['idreception'];  // On recupére l'ID de la réception par get
+
+//** Debut select des receptions planifiées
+    $sql = "SELECT * FROM `receptionplanifiee` where `idreception`=$idreception;";
+
+    // On prépare la requête
+    $query = $db->prepare($sql);
+
+    // On exécute
+    $query->execute();
+
+    // On récupère les valeurs dans un tableau associatif
+    $ReceptionPlani = $query->fetch();
+//** Fin select des receptions planifiées
+
+//** Debut select des receptions
+    $sql = "SELECT * FROM `matiereplanifie` where `actif`=1 and `idreception`=$idreception ORDER BY `idmatiereplanifie` DESC;";
+
+    // On prépare la requête
+    $query = $db->prepare($sql);
+
+    // On exécute
+    $query->execute();
+
+    // On récupère les valeurs dans un tableau associatif
+    $ReceptionPlanifie = $query->fetchAll();
+//** Fin select des receptions
+
 
 // Pour insertion details reception
     if(isset($_POST['CreerReception'])){
@@ -52,93 +78,88 @@ $idtransfert = $_GET['idtransfert'];  // On recupére l'ID de la réception par 
     }
 //Fin insertion details reception
 
-//Pour send mail approuveTransfertRectifie
-    if(isset($_POST['approuveTransfertRectifie'])){
-        if(!empty($_POST['motifRectifier'])){
-            $idtransfertDemandeRectifier=htmlspecialchars($_POST['idtransfertDemandeRectifier']);
-            $idmatiereDemandeRectifier=htmlspecialchars($_POST['idmatiereDemandeRectifier']);
-            $epaisseur=htmlspecialchars($_POST['epaisseur']);
-            $nombrebobine=htmlspecialchars($_POST['nombrebobine']);
-            $user=htmlspecialchars($_POST['user']);
-            $idtransfert=htmlspecialchars($_POST['idtransfert']);
-            $pointdepart=htmlspecialchars($_POST['pointdepart']);
-            $poidspese=htmlspecialchars($_POST['poidspese']);
-            $pointarrive=htmlspecialchars($_POST['pointarrive']);
-            $motifRectifier=htmlspecialchars($_POST['motifRectifier']);
-            //$idmatierearrive=htmlspecialchars($_POST['idmatierearrive']);
 
-            //Rechercher le nombre de piéces sur le lieu d'arrive
-                $sqlEpaisseur = "SELECT * FROM `matiere` where `lieutransfert`='$pointarrive' and `epaisseur`='$epaisseur' and `nbbobineactuel` != 0 and `nbbobineactuel`>=$nombrebobine LIMIT 1;";
+//Pour send mail approuveReceptionRectifie
+if(isset($_POST['approuveReceptionRectifie'])){
+    if(!empty($_POST['motifRectifier'])){
+        $idreceptionDemandeRectifier=htmlspecialchars($_POST['idreceptionDemandeRectifier']);
+        $idmatiereDemandeRectifier=htmlspecialchars($_POST['idmatiereDemandeRectifier']);
+        $epaisseur=htmlspecialchars($_POST['epaisseur']);
+        $nombrebobine=htmlspecialchars($_POST['nombrebobine']);
+        $user=htmlspecialchars($_POST['user']);
+        $lieutransfert=htmlspecialchars($_POST['lieutransfert']);
+        $motifRectifier=htmlspecialchars($_POST['motifRectifier']);
+            
+        //Rechercher le nombre de piéces sur le lieu d'arrive
+            $sqlEpaisseur = "SELECT * FROM `matiere` where `lieutransfert`='$lieutransfert' and `epaisseur`='$epaisseur' and `nbbobineactuel` != 0 and `nbbobineactuel`>=$nombrebobine LIMIT 1;";
+            // On prépare la requête
+            $queryEpaisseur = $db->prepare($sqlEpaisseur);
+
+            // On exécute
+            $queryEpaisseur->execute();
+
+            // On récupère le nombre d'articles
+            $resultMatiereArrive = $queryEpaisseur->fetch();
+        //Fin Rechercher le nombre de piéces d'arrive
+
+        if($resultMatiereArrive){
+            $sql1 = "UPDATE `matiere` set `actifapprouvreception`=1 where idmatiere=$idmatiereDemandeRectifier";
+            $db->query($sql1);
+    
+            //Pour enlever la couleur rouge
+            $sql1 = "UPDATE `matiere` set `acceptereceptionmodif`=1 where idmatiere=$idmatiereDemandeRectifier";
+            $db->query($sql1);
+
+            $messageD = "
+            <html>  
+            <head>
+            <meta http-equiv='Content-Type' content='text/html; charset=utf-8' />
+                <title>Nouveau compte</title>
+            </head>
+            <body>
+                <div id='email-wrap' style='background: #3F5EFB; border-radius: 10px;'><br><br>
+                    <p align='center' style='margin-top:20px;'>
+                        <h2 align='center' style='color:white'>METAL * * * AFRIQUE</h2>
+                        <p align='center' style='color:white'>$_SESSION[nomcomplet] vous demande l'autorisation de modifier ou de supprimer une reception de code de reception : <strong>REC00-$idreceptionDemandeRectifier </strong></p>
+                        <p align='center' style='color:white'>Avec comme motif : <strong>$motifRectifier</strong></p>
+                        <p align='center'><a href=$HOST style='color:white'>Cliquez ici pour y acceder.</a></p>
+                    </p>
+                    <br><br>
+                </div>
+            </body>
+            </html>
+                ";
+
+            // Utilisateur admin seul
+                $sql = "SELECT * FROM `utilisateur` where `actif`=1 and `niveau`='admin';";
+
                 // On prépare la requête
-                $queryEpaisseur = $db->prepare($sqlEpaisseur);
+                $query = $db->prepare($sql);
 
                 // On exécute
-                $queryEpaisseur->execute();
+                $query->execute();
 
-                // On récupère le nombre d'articles
-                $resultMatiereArrive = $queryEpaisseur->fetch();
-            //Fin Rechercher le nombre de piéces d'arrive
-
-            if($resultMatiereArrive){
-                $sql1 = "UPDATE `transfertdetails` set `actifapprouvtransfert`=1 where idtransfertdetail=$idtransfertDemandeRectifier";
-                $db->query($sql1);
-    
-                //Pour enlever la couleur rouge
-                $sql1 = "UPDATE `transfertdetails` set `acceptereceptionmodif`=1 where idtransfertdetail=$idtransfertDemandeRectifier";
-                $db->query($sql1);
-
-                $messageD = "
-                <html>
-                <head>
-                <meta http-equiv='Content-Type' content='text/html; charset=utf-8' />
-                    <title>Nouveau compte</title>
-                </head>
-                <body>
-                    <div id='email-wrap' style='background: #3F5EFB; border-radius: 10px;'><br><br>
-                        <p align='center' style='margin-top:20px;'>
-                            <h2 align='center' style='color:white'>METAL * * * AFRIQUE</h2>
-                            <p align='center' style='color:white'>$_SESSION[nomcomplet] vous demande l'autorisation de modifier ou supprimer un transfert de code de transfert : <strong>TRAN00-$idtransfert </strong></p>
-                            <p align='center' style='color:white'>Avec comme motif : <strong>$motifRectifier</strong></p>
-                            <p align='center'><a href=$HOST style='color:white'>Cliquez ici pour y acceder.</a></p>
-                        </p>
-                        <br><br>
-                    </div>
-                </body>
-                </html>
-                    ";
-
-                // Utilisateur admin seul
-                    $sql = "SELECT * FROM `utilisateur` where `actif`=1 and `niveau`='admin';";
-
-                    // On prépare la requête
-                    $query = $db->prepare($sql);
-
-                    // On exécute
-                    $query->execute();
-
-                    // On récupère les valeurs dans un tableau associatif
-                    $UserMails = $query->fetchAll();
-                //** Fin select 
-                foreach($UserMails as $user => $item){
-                    envoie_mail("Gestion de production réctification",$item['email'],"Demande de réctification pour le transfert de code TRAN00-$idtransfert",$messageD);
-                }
-
-                
-                header("location: detailTransfert.php?idtransfert=$idmatiereDemandeRectifier");
-                exit;
-            }else{
-                $idmatierearrive="erreurIdmatierearrive";
+                // On récupère les valeurs dans un tableau associatif
+                $UserMails = $query->fetchAll();
+            //** Fin select 
+            foreach($UserMails as $user => $item){
+                envoie_mail("Gestion de production réctification",$item['email'],"Demande de réctification pour la réception de code REC00-$idreceptionDemandeRectifier",$messageD);
             }
-
+    
+            header("location: detailsReception.php?idreception=$idreceptionDemandeRectifier");
+            exit;
         }else{
-            $valideTransfert="erreurInsertion";
+            $idmatierearrive="erreurIdmatierearrive";
         }
-    }
-//Fin send mail approuveTransfertRectifie
 
+    }else{
+        $valideTransfert="erreurInsertion";
+    }
+}
+//Fin send mail approuveReceptionRectifie
 
 //** Debut select des receptions
-    $sql = "SELECT * FROM `transfertdetails` where `actif`=1 and `idtransfert`=$idtransfert ORDER BY `idtransfertdetail` DESC;";
+    $sql = "SELECT * FROM `matiere` where `actif`=1 and `numbobine` IS NULL and `idreception`=$idreception ORDER BY `idmatiere` DESC;";
 
     // On prépare la requête
     $query = $db->prepare($sql);
@@ -147,7 +168,7 @@ $idtransfert = $_GET['idtransfert'];  // On recupére l'ID de la réception par 
     $query->execute();
 
     // On récupère les valeurs dans un tableau associatif
-    $Transfert = $query->fetchAll();
+    $Reception = $query->fetchAll();
 //** Fin select des receptions
 
 
@@ -375,27 +396,27 @@ $ReceptionStock = $query->fetchAll();
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <link rel="shortcut icon" href="../../image/iconOnglet.png" />
+    <link rel="shortcut icon" href="../image/iconOnglet.png" />
     <title>METAL AFRIQUE</title>
 
     <!-- Custom fonts for this template -->
-    <link href="../../indexPage/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="../indexPage/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link
         href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
         rel="stylesheet">
 
     <!-- Sweet Alert -->
-    <link href="../../libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css"/>
-    <script src="../../libs/sweetalert2/sweetalert2.min.js"></script>
-    <script src="../../libs/sweetalert2/jquery-1.12.4.js"></script>
+    <link href="../libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css"/>
+    <script src="../libs/sweetalert2/sweetalert2.min.js"></script>
+    <script src="../libs/sweetalert2/jquery-1.12.4.js"></script>
 
     <!-- Custom styles for this template -->
-    <link href="../../indexPage/css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="../indexPage/css/sb-admin-2.min.css" rel="stylesheet">
 
     <!-- Custom styles for this page -->
-    <link href="../../indexPage/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <link href="../indexPage/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 
-    <link href="../../StyleLoad.css" rel="stylesheet">
+    <link href="../StyleLoad.css" rel="stylesheet">
 
     <script>
         // Pour le loading
@@ -419,8 +440,8 @@ $ReceptionStock = $query->fetchAll();
     <div id="wrapper">
 
         <!-- Contient la nav bar gauche -->
-            <?php include "./navGaucheTransfert.php" ?>
-        <!-- End  -->
+            <?php include "./navGaucheReception.php" ?>
+        <!-- End  --> 
 
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
@@ -449,7 +470,7 @@ $ReceptionStock = $query->fetchAll();
                     </form>
                     <div class="mb-3">
                         <div class="col-xl-9 col-md-8 mb-1">
-                        <img src="../../image/logoAppli.jpg" class="img-fluid mx-auto d-block text-center" alt="" style="border-radius: 50%; margin:20px; opacity: 1;" width="200">
+                        <img src="../image/logoAppli.jpg" class="img-fluid mx-auto d-block text-center" alt="" style="border-radius: 50%; margin:20px; opacity: 1;" width="200">
                         </div>
                     </div>
 
@@ -547,7 +568,7 @@ $ReceptionStock = $query->fetchAll();
                                 </h6>
                                 <a class="dropdown-item d-flex align-items-center" href="#">
                                     <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="../../indexPage/img/undraw_profile_1.svg"
+                                        <img class="rounded-circle" src="../indexPage/img/undraw_profile_1.svg"
                                             alt="...">
                                         <div class="status-indicator bg-success"></div>
                                     </div>
@@ -559,7 +580,7 @@ $ReceptionStock = $query->fetchAll();
                                 </a>
                                 <a class="dropdown-item d-flex align-items-center" href="#">
                                     <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="../../indexPage/img/undraw_profile_2.svg"
+                                        <img class="rounded-circle" src="../indexPage/img/undraw_profile_2.svg"
                                             alt="...">
                                         <div class="status-indicator"></div>
                                     </div>
@@ -571,7 +592,7 @@ $ReceptionStock = $query->fetchAll();
                                 </a>
                                 <a class="dropdown-item d-flex align-items-center" href="#">
                                     <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="../../indexPage/img/undraw_profile_3.svg"
+                                        <img class="rounded-circle" src="../indexPage/img/undraw_profile_3.svg"
                                             alt="...">
                                         <div class="status-indicator bg-warning"></div>
                                     </div>
@@ -605,7 +626,7 @@ $ReceptionStock = $query->fetchAll();
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo $_SESSION['nomcomplet']; ?></span>
                                 <img class="img-profile rounded-circle"
-                                    src="../../indexPage/img/undraw_profile.svg">
+                                    src="../indexPage/img/undraw_profile.svg">
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
@@ -614,22 +635,22 @@ $ReceptionStock = $query->fetchAll();
                                 <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Profile
                                 </a>
+                                <a class="dropdown-item" href="../indexPage/Utilisateur/ParametreUtilisateur.php?idUser=<?php echo $_SESSION['id']; ?>">
+                                    <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Changer paramétres
+                                </a>
                                 <?php if($_SESSION['niveau']=='admin'){ ?>
-                                    <a class="dropdown-item" href="../../indexPage/Utilisateur/ParametreUtilisateur.php?idUser=<?php echo $_SESSION['id']; ?>">
+                                    <a class="dropdown-item" href="../indexPage/Utilisateur/utilisateur.php">
                                         <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
-                                        Changer paramétres
+                                        Gestion des utilisateurs
                                     </a>
                                 <?php } ?>
-                                <a class="dropdown-item" href="../../indexPage/Utilisateur/utilisateur.php">
-                                    <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Gestion des utilisateurs
-                                </a>
                                 <a class="dropdown-item" href="#">
                                     <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Activités
                                 </a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="../../index.php">
+                                <a class="dropdown-item" href="../index.php">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Déconnexion
                                 </a>
@@ -645,7 +666,7 @@ $ReceptionStock = $query->fetchAll();
                                     <div class="card-header bg-primary">
                                     </div>
                                     <div class="card-body">
-                                        <img src="../../image/avatar.jpg" class="img-fluid mx-auto d-block text-center" alt="" style="border-radius: 45%; margin-top:-3%; opacity: 0.9;" width="150">
+                                        <img src="../image/avatar.jpg" class="img-fluid mx-auto d-block text-center" alt="" style="border-radius: 45%; margin-top:-3%; opacity: 0.9;" width="150">
                                         <h5 class="card-title mt-2 mb-5 text-center"><?php echo $_SESSION['nomcomplet']; ?></h5>
                                         <p class="card-text"><h6 class="d-inline mr-3">Email :</h6><?php echo $_SESSION['email']; ?></p>
                                         <p class="card-text"><h6 class="d-inline mr-3">Section :</h6> <?php echo $_SESSION['section']; ?></p>
@@ -670,10 +691,11 @@ $ReceptionStock = $query->fetchAll();
                 <!-- Begin Page Content -->
 
                 <div class="container-fluid">
+
                     <!-- Page Heading -->
                     <div class="row">
                         <div class="col-xl-3 col-md-6 mb-1">
-                            <img src="../../image/stockage/ferabeton.jpg" class="img-fluid" alt="" style="border-radius: 50%; margin:20px; opacity: 0.7;" width="200">
+                            <img src="../image/stockage/ferabeton.jpg" class="img-fluid" alt="" style="border-radius: 50%; margin:20px; opacity: 0.7;" width="200">
                         </div>
                     </div>
                     <!-- DataTales Example -->
@@ -681,7 +703,7 @@ $ReceptionStock = $query->fetchAll();
                        <div class="col-lg-12">
                             <div class="card position-relative">
                                 <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">Liste des bobines transportés</h6>
+                                    <h6 class="m-0 font-weight-bold text-primary">Liste des bobines réceptionnées</h6>
                                 </div>
                                 <div class="row m-2">
                                     <div class="table-responsive">
@@ -707,55 +729,85 @@ $ReceptionStock = $query->fetchAll();
                                         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                             <thead>
                                                 <tr>       
-                                                    <th>Code transfert</th>                                                                                
+                                                    <th>Code bobine</th>                                                                                
                                                     <th>Epaisseur</th>
                                                     <th>Nombre bobine</th>
-                                                    <th>Numéro FM</th>
-                                                    <th>Poids déclaré (KG)</th>
-                                                    <th>Poids pesé (KG)</th>
+                                                    <th>Poids déclaré</th>
+                                                    <th>Poids pesé</th>
                                                     <th>Etat bobine</th>
-                                                    <th>Point de départ</th>
-                                                    <th>Point d'arrivée</th>
+                                                    <th>Lieu de réception</th>
                                                     <th>Derniére modification</th>
-                                                    <th>Option</th>
+                                                    <th colspan="2">Option</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <?php
                                                     $i=0;
-                                                    foreach($Transfert as $transfert){
+                                                    foreach($Reception as $reception){
                                                         $i++;
                                                         //if($article['status'] == 'termine'){
                                                 ?>
                                                     <tr>
-                                                        <td style="<?php if($transfert['actifapprouvtransfert'] == 1){ echo 'background-color:#D72708 ; color:white;';}else{echo 'background-color:#4e73df ; color:white;';}?>">
-                                                            <a style="text-decoration: none; font-family: arial; font-size: 20px; color:white;" title="Allez vers la reception planifiée correspondante" href="" class="link-offset-2 link-underline"><?php echo "TRAN-0".$transfert['idtransfert']."-BOB-0".$transfert['idtransfertdetail'] ?></a>
+                                                        <td style="<?php if($reception['actifapprouvreception'] == 1){ echo 'background-color:#D72708 ; color:white;';}else{echo 'background-color:#4e73df ; color:white;';}?>">
+                                                            <a style="text-decoration: none; font-family: arial; font-size: 20px; color:white;" href="javascript:void(0);" data-toggle="modal" data-target="#Information" title="Voir détails" class="link-offset-2 link-underline"><?php echo "REC-0".$reception['idreception']."-BOB-0".$reception['idmatiere'] ?></a>
+                                                            <!--<a style="text-decoration: none; font-family: arial; font-size: 20px; color:white;" title="Allez vers la reception planifiée correspondante" href="detailsReceptionPlanifie.php?idreception=<?= $reception['idreception'] ?>" class="link-offset-2 link-underline"><?php echo "REC-0".$reception['idreception']."-BOB-0".$reception['idmatiere'] ?></a>!-->
                                                         </td>
-                                                        <td style="<?php if($transfert['actifapprouvtransfert'] == 1){ echo 'background-color:#D72708 ; color:white;';}else{echo 'background-color:#4e73df ; color:white;';}?>"><?= $transfert['epaisseur'] ?></td>
-                                                        <td style="<?php if($transfert['actifapprouvtransfert'] == 1){ echo 'background-color:#D72708 ; color:white;';}else{echo 'background-color:#4e73df ; color:white;';}?>"><?= $transfert['nbbobine'] ?></td>
-                                                        <td style="<?php if($transfert['actifapprouvtransfert'] == 1){ echo 'background-color:#D72708 ; color:white;';}else{echo 'background-color:#4e73df ; color:white;';}?>"><?php if($transfert['nbbobine'] == 1){echo $transfert['numbobine'];} ?></td>
-                                                        <td style="<?php if($transfert['actifapprouvtransfert'] == 1){ echo 'background-color:#D72708 ; color:white;';}else{echo 'background-color:#4e73df ; color:white;';}?>"><?= $transfert['poidsdeclare'] ?></td>
-                                                        <td style="<?php if($transfert['actifapprouvtransfert'] == 1){ echo 'background-color:#D72708 ; color:white;';}else{echo 'background-color:#4e73df ; color:white;';}?>"><?= $transfert['poidspese'] ?></td>
-                                                        <td style="<?php if($transfert['actifapprouvtransfert'] == 1){ echo 'background-color:#D72708 ; color:white;';}else{echo 'background-color:#4e73df ; color:white;';}?>"><?= $transfert['etatbobine'] ?></td>
-                                                        <td style="<?php if($transfert['actifapprouvtransfert'] == 1){ echo 'background-color:#D72708 ; color:white;';}else{echo 'background-color:#4e73df ; color:white;';}?>"><?= $transfert['pointdepart'] ?></td>
-                                                        <td style="<?php if($transfert['actifapprouvtransfert'] == 1){ echo 'background-color:#D72708 ; color:white;';}else{echo 'background-color:#4e73df ; color:white;';}?>"><?= $transfert['pointarrive'] ?></td>
-                                                        <td style="<?php if($transfert['actifapprouvtransfert'] == 1){ echo 'background-color:#D72708 ; color:white;';}else{echo 'background-color:#4e73df ; color:white;';}?>"><?= $transfert['dateajout'] ?></td>
-                                                        <td >
-                                                            <?php if($transfert['actifapprouvtransfert'] == 0 && $_SESSION['niveau']=='pontbascule'){ ?>
-                                                                <a href="javascript:void(0);" data-toggle="modal" data-target=".approuveReceptionRectifie<?= $i ?>" class="px-2" title="Demander l'autorisation de modifier ou suprimer ce transfert au prêt du DSI">
+                                                        <td style="<?php if($reception['actifapprouvreception'] == 1){ echo 'background-color:#D72708 ; color:white;';}else{echo 'background-color:#4e73df ; color:white;';}?>"> <?= $reception['epaisseur'] ?> </td>
+                                                        <td style="<?php if($reception['actifapprouvreception'] == 1){ echo 'background-color:#D72708 ; color:white;';}else{echo 'background-color:#4e73df ; color:white;';}?>"><?= $reception['nbbobine'] ?></td>
+                                                        <td style="<?php if($reception['actifapprouvreception'] == 1){ echo 'background-color:#D72708 ; color:white;';}else{echo 'background-color:#4e73df ; color:white;';}?>"><?= $reception['poidsdeclare'] ?></td>
+                                                        <td style="<?php if($reception['actifapprouvreception'] == 1){ echo 'background-color:#D72708 ; color:white;';}else{echo 'background-color:#4e73df ; color:white;';}?>"><?= $reception['poidspese'] ?></td>
+                                                        <td style="<?php if($reception['actifapprouvreception'] == 1){ echo 'background-color:#D72708 ; color:white;';}else{echo 'background-color:#4e73df ; color:white;';}?>"><?= $reception['etatbobine'] ?></td>
+                                                        <td style="<?php if($reception['actifapprouvreception'] == 1){ echo 'background-color:#D72708 ; color:white;';}else{echo 'background-color:#4e73df ; color:white;';}?>"><?= $reception['lieutransfert'] ?></td>
+                                                        <td style="<?php if($reception['actifapprouvreception'] == 1){ echo 'background-color:#D72708 ; color:white;';}else{echo 'background-color:#4e73df ; color:white;';}?>"><?= $reception['dateajout'] ?></td>
+                                                        <td style="text-align: center;" class="text-center d-print-none">
+                                                            <?php if($reception['actifapprouvreception'] == 0 && $_SESSION['niveau']=='pontbascule'){ ?>
+                                                                <a href="javascript:void(0);" data-toggle="modal" data-target=".approuveReceptionRectifie<?= $i ?>" class="px-2" title="Demander l'autorisation de modifier au pret du DSI">
                                                                 <i class="fas fa-file-signature"></i></a>
                                                             <?php }?>
-                                                            <?php if($transfert['acceptereceptionmodif'] == 1 && $_SESSION['niveau']=='admin'){ ?>
-                                                                <a href="javascript:void(0);" class="accepteTransfertmod<?= $i ?> px-2" class="px-2" title="Permettre au responsable du pont bascule de modifier ou suprimer ce transfert">
+                                                            <?php if($reception['acceptereceptionmodif'] == 1 && $_SESSION['niveau']=='admin'){ ?>
+                                                                <a href="javascript:void(0);" class="acceptereceptionmod<?= $i ?> px-2" class="px-2" title="Permettre au responsable du pont bascule de modifier ou suprimer cette reception">
                                                                 <i class="fas fa-paper-plane"></i></a>
                                                             <?php }?>
-                                                            <?php if(($transfert['acceptereceptionmodif'] == 0) && ($transfert['actifapprouvtransfert'] == 1) && $_SESSION['niveau']=='pontbascule'){ ?>
-                                                                <a href="modifierTransfert.php?idtransfert=<?= $_GET['idtransfert'] ?>&idtransfertModifSimp=<?= $transfert['idtransfertdetail'] ?>&epaisseur=<?= $transfert['epaisseur'] ?>&nombrebobine=<?= $transfert['nbbobine'] ?>&idPointdepart=<?= $transfert['idmatieredepart'] ?>&idPointarrive=<?= $transfert['idmatierearrive'] ?>" class="px-2" title="Modifier le transfert"><i class="far fa-edit"></i></a>
+                                                            <?php if(($reception['acceptereceptionmodif'] == 0) && ($reception['actifapprouvreception'] == 1) && ($_SESSION['niveau']=='pontbascule')){ ?>
+                                                                <a href="modifierReception.php?idreception=<?= $_GET['idreception'] ?>&idmatiereModifSimp=<?= $reception['idmatiere'] ?>&epaisseur=<?= $reception['epaisseur'] ?>&nombrebobine=<?= $reception['nbbobine'] ?>&lieutransfert=<?= $reception['lieutransfert'] ?>" class="px-2" title="Modifier la réception">
+                                                                <i class="far fa-edit"></i></a>
                                                             <?php }?>
-                                                            <?php if(($transfert['acceptereceptionmodif'] == 0) && ($transfert['actifapprouvtransfert'] == 1) && $_SESSION['niveau']=='pontbascule'){ ?>
-                                                                <a href="javascript:void(0);" id="suprimerTransfert<?= $i ?>" class=" px-2 text-danger" title="Suprimer le transfert"><i class="fa fa-cut"></i></a>
+                                                            <?php if(($reception['acceptereceptionmodif'] == 0) && ($reception['actifapprouvreception'] == 1) && ($_SESSION['niveau']=='pontbascule')){ ?>
+                                                                <a href="javascript:void(0);" class="suprimerReception<?= $i ?> px-2 text-danger" title="Suprimer la réception"><i class="fa fa-cut"></i></a>
                                                             <?php }?>
                                                         </td>
+                                                        <?php if($i<=1){ ?>
+                                                            <form method="post" name="resultsForm" id="resultsForm_465586843" class="ajax">
+                                                        <?php }?>
+                                                        <?php if($_SESSION['niveau']=='pontbascule'){ ?>
+                                                            <td class="text-center d-print-none"><span>
+                                                                <input type="checkbox" class="multi_checkbox checkall" style="width: 20px; height: 20px;" id="id_rows_to_delete0_left" name="rows_to_delete[0]" value="`matiere`.`idmatiere` = 1">
+                                                                </span>
+                                                            </td>
+                                                        <?php }?>
+                                                        <?php if($_SESSION['niveau']=='admin'){ ?>
+                                                            <td class="text-center d-print-none"><span>
+                                                                <input type="checkbox" class="multi_checkbox checkall" style="width: 20px; height: 20px;" id="id_rows_to_delete0_left" name="rows_to_delete[0]" value="`matiere`.`idmatiere` = 1">
+                                                                </span>
+                                                            </td>
+                                                        <?php }?>
+                                                        <?php if($i<=1){ ?>
+                                                                <div class="mb-3 ml-5">
+                                                                    <input type="checkbox" id="resultsForm_465586843_checkall" class="checkall_box" title="Tout cocher">
+                                                                    <label for="resultsForm_465586843_checkall">Tout cocher</label>
+                                                                    <em class="with-selected">Avec la sélection :</em>
+
+                                                                    <button class="btn btn-link mult_submit" type="submit" name="submit_mult" value="edit" title="Éditer">
+                                                                        <span class="fas fa-file-signature"><img src="themes/dot.gif" title="Éditer" alt="" class="icon ic_b_edit">&nbsp;Approuver</span>
+                                                                    </button>
+
+                                                                    <button class="btn btn-link mult_submit" type="submit" name="submit_mult" value="delete" title="Supprimer">
+                                                                        <span class="text-nowrap"><img src="themes/dot.gif" title="Supprimer" alt="" class="icon ic_b_drop">&nbsp;Supprimer</span>
+                                                                    </button>
+                                                                    <i class="fas fa-arrow-down" ></i>
+                                                                </div>
+                                                            </form>
+                                                        <?php }?>
                                                     </tr>
 
                                                     <!-- Pour la rectification des receptions !-->
@@ -764,67 +816,48 @@ $ReceptionStock = $query->fetchAll();
                                                             <div class="modal-content">
                                                                 <div class="card">
                                                                     <div class="card-header bg-primary text-center">
-                                                                        <h5 class="modal-title" id="myExtraLargeModalLabel" style="color:white">Demander la rectification de ce transfert au prét de l'administrateur</h5>
+                                                                        <h5 class="modal-title" id="myExtraLargeModalLabel" style="color:white">Demander la rectification de cette reception au prét de l'administrateur</h5>
                                                                     </div>
                                                                     <div class="card-body">
                                                                         <form action="#" method="POST" enctype="multipart/form-data">
                                                                             <div class="row">
-                                                                                <div class="invisible">
+                                                                                <div class=" invisible">
                                                                                     <div class="">
-                                                                                        <input class="" type="text" value="<?= $transfert['idtransfertdetail'] ?>" name="idtransfertDemandeRectifier">
+                                                                                        <input class="form-control" type="text" value="<?= $reception['idreception'] ?>" name="idreceptionDemandeRectifier">
                                                                                     </div>
                                                                                 </div> 
+                                                                                <div class=" invisible">
+                                                                                    <div class="">
+                                                                                        <input class="form-control" type="text" value="<?= $reception['idmatiere'] ?>" name="idmatiereDemandeRectifier">
+                                                                                    </div>
+                                                                                </div> 
+                                                                                <div class=" invisible">
+                                                                                    <div class="">
+                                                                                        <input class="form-control" type="text" value="<?= $reception['epaisseur'] ?>" name="epaisseur">
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class=" invisible">
+                                                                                    <div class="">
+                                                                                        <input class="form-control" type="text" value="<?= $reception['nbbobine'] ?>" name="nombrebobine">
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class=" invisible">
+                                                                                    <div class="">
+                                                                                        <input class="form-control" type="text" value="<?= $reception['lieutransfert'] ?>" name="lieutransfert">
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="invisible">
+                                                                                    <div class="text-start">
+                                                                                        <input class="form-control " type="text" value="<?php echo $_SESSION['nomcomplet'];?>" name="user" id="example-date-input">
+                                                                                    </div>
+                                                                                </div>
                                                                                 <div class="col-md-12">
                                                                                     <label class="form-label fw-bold" for="rectification"><h4>Motif de la rectification</h4></label>
                                                                                     <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="motifRectifier" placeholder="Mettez en quelques mots le motif de la rectification qui sera recu par le DSI comme courrier MAIL."></textarea>
                                                                                 </div>
-                                                                                <div class="invisible">
-                                                                                    <div class="">
-                                                                                        <input class="" type="text" value="<?= $transfert['idtransfert'] ?>" name="idmatiereDemandeRectifier">
-                                                                                    </div>
-                                                                                </div> 
-                                                                                <div class="invisible">
-                                                                                    <div class="">
-                                                                                        <input class="" type="text" value="<?= $transfert['epaisseur'] ?>" name="epaisseur">
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div class="invisible">
-                                                                                    <div class="">
-                                                                                        <input class="" type="text" value="<?= $_GET['idtransfert'] ?>" name="idtransfert">
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div class="invisible">
-                                                                                    <div class="">
-                                                                                        <input class="" type="text" value="<?= $transfert['idmatierearrive'] ?>" name="idmatierearrive">
-                                                                                    </div>
-                                                                                <div class="invisible">
-                                                                                    <div class="">
-                                                                                        <input class="" type="text" value="<?= $transfert['nbbobine'] ?>" name="nombrebobine">
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div class="invisible">
-                                                                                    <div class="">
-                                                                                        <input class="" type="text" value="<?= $transfert['pointarrive'] ?>" name="pointarrive">
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div class="invisible">
-                                                                                    <div class="">
-                                                                                        <input class="" type="text" value="<?= $transfert['pointdepart'] ?>" name="pointdepart">
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div class="invisible">
-                                                                                    <div class="">
-                                                                                        <input class="" type="text" value="<?= $transfert['poidspese'] ?>" name="poidspese">
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div class="invisible">
-                                                                                    <div class="">
-                                                                                        <input class="" type="text" value="<?php echo $_SESSION['nomcomplet'];?>" name="user" id="example-date-input">
-                                                                                    </div>
-                                                                                </div>
                                                                             </div>
                                                                             <div class="row mt-2">
-                                                                                <div class="col-md-10">
+                                                                                <div class="col-md-12 text-end">
                                                                                     <?php 
                                                                                         if($valideTransfert == "erreurInsertion"){ 
                                                                                     ?> 
@@ -851,82 +884,41 @@ $ReceptionStock = $query->fetchAll();
                                                                                     <?php
                                                                                         } 
                                                                                     ?>
-                                                                                    <div class="d-flex gap-2 pt-4">
+                                                                                    <div class="d-flex gap-2 pt-4">                           
                                                                                         <a href=""><input class="btn btn-danger  w-lg bouton" name="" type="submit" value="Annuler"></a>
-                                                                                        <input class="btn btn-success  w-lg bouton ml-5" name="approuveTransfertRectifie" type="submit" value="Enregistrer">
+                                                                                        <input class="btn btn-success  w-lg bouton ml-3" name="approuveReceptionRectifie" type="submit" value="Enregistrer">
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
                                                                         </form>                
                                                                     </div>
-                                                                </div>
-                                                                <div class="card-footer bg-primary text-muted text-center">
-                                                                    <h5 style="color:white">METAL *** AFRIQUE</h5>
+                                                                    <div class="card-footer bg-primary text-muted text-center">
+                                                                        <h5 style="color:white">METAL *** AFRIQUE</h5>
+                                                                    </div>
                                                                 </div>
                                                             </div> 
                                                         </div>
                                                     </div><!-- /.modal --> 
-
-                                                    <!-- Pour le sweetAlert approuveTransfert transfert !-->
-                                                    <script>
-                                                        console.log("approuveTransfert.php?idtransfertDemandeAccepter=<?= $_GET['idtransfert'] ?>&idmatiereDemandeAccepter=<?= $transfert['idtransfertdetail'] ?>&epaisseur=<?= $transfert['epaisseur'] ?>&nombrebobine=<?= $transfert['nbbobine'] ?>&pointdepart=<?= $transfert['pointdepart'] ?>&pointarrive=<?= $transfert['pointarrive'] ?>&idPointdepart=<?= $transfert['idmatieredepart'] ?>&idPointarrive=<?= $transfert['idmatierearrive'] ?>");
-                                                        $(document).ready( function(){
-                                                            $('.accepteTransfertmod<?= $i ?>').click(function(e) {
-                                                                e.preventDefault();
-                                                                Swal.fire({
-                                                                title: 'En es-tu sure?',
-                                                                text: 'Voulez-vous vraiment permettre au responsable du pont bascule de modifier ou suprimer ce transfert?',
-                                                                icon: 'warning',
-                                                                showCancelButton: true,
-                                                                confirmButtonColor: '#3085d6',
-                                                                cancelButtonColor: '#d33',
-                                                                confirmButtonText: "Permettre la modification",
-                                                                }).then((result) => {
-                                                                    if (result.isConfirmed) {                                                                                                                  
-                                                                        $.ajax({
-                                                                                type: "POST",
-                                                                                url: "approuveTransfert.php?idtransfertDemandeAccepter=<?= $_GET['idtransfert'] ?>&idmatiereDemandeAccepter=<?= $transfert['idtransfertdetail'] ?>&epaisseur=<?= $transfert['epaisseur'] ?>&nombrebobine=<?= $transfert['nbbobine'] ?>&pointdepart=<?= $transfert['pointdepart'] ?>&pointarrive=<?= $transfert['pointarrive'] ?>&idPointdepart=<?= $transfert['idmatieredepart'] ?>&idPointarrive=<?= $transfert['idmatierearrive'] ?>",
-                                                                                //data: str,
-                                                                                success: function( response ) {
-                                                                                    Swal.fire({
-                                                                                        text: 'Transfert approuvé avec succes!',
-                                                                                        icon: 'success',
-                                                                                        timer: 3000,
-                                                                                        showConfirmButton: false,
-                                                                                    });
-                                                                                    location.reload();
-                                                                                },
-                                                                                error: function( response ) {
-                                                                                    $('#status').text('Impossible approuver ce transfert : '+ response.status + " " + response.statusText);
-                                                                                    //console.log( response );
-                                                                                }						
-                                                                        });
-                                                                    }
-                                                                });
-                                                            });
-                                                        });
-                                                    </script>
-                                                    <!-- Pour le sweetAlert approuveTransfert transfert !--> 
-
-                                                    <!-- Pour le sweetAlert suprimer transfert !-->
+                                                                                          
+                                                    <!-- Pour le sweetAlert Suprimer transfert !-->
                                                     <script>
                                                         //console.log(<?= $i ?>);
                                                         $(document).ready( function(){
-                                                            $('#suprimerTransfert<?= $i ?>').click(function(e) {
+                                                            $('.suprimerReception<?= $i ?>').click(function(e) {
                                                                 e.preventDefault();
                                                                 Swal.fire({
                                                                 title: 'En es-tu sure?',
-                                                                text: 'Voulez-vous vraiment suprimer ce transfert ?',
+                                                                text: 'Voulez-vous vraiment suprimer cette réception ?',
                                                                 icon: 'warning',
                                                                 showCancelButton: true,
                                                                 confirmButtonColor: '#3085d6',
                                                                 cancelButtonColor: '#d33',
-                                                                confirmButtonText: "Suprimer le transfert",
+                                                                confirmButtonText: "Suprimer la réception",
                                                                 }).then((result) => {
                                                                     if (result.isConfirmed) {                                                                                                                  
                                                                         $.ajax({
                                                                                 type: "POST",
-                                                                                url: "suprimerTransfert.php?idsuptransfert=<?=  $_GET['idtransfert'] ?>&idtransfertsup=<?= $transfert['idtransfertdetail'] ?>&epaisseur=<?= $transfert['epaisseur'] ?>&lieuDepart=<?= $transfert['pointdepart'] ?>&nombrebobine=<?= $transfert['nbbobine'] ?>",
+                                                                                url: 'supressionReception.php?idsupreceptionDetail=<?= $reception['idmatiere'] ?>&idreceptionDemandeAccepter=<?= $_GET['idreception'] ?>&epaisseur=<?= $reception['epaisseur'] ?>&nombrebobine=<?= $reception['nbbobine'] ?>&lieutransfert=<?= $reception['lieutransfert'] ?>',
                                                                                 //data: str,
                                                                                 success: function( response ) {
                                                                                     Swal.fire({
@@ -939,6 +931,47 @@ $ReceptionStock = $query->fetchAll();
                                                                                 },
                                                                                 error: function( response ) {
                                                                                     $('#status').text('Impossible de supprimer cette réception : '+ response.status + " " + response.statusText);
+                                                                                    //console.log( response );
+                                                                                }						
+                                                                        });
+                                                                    }
+                                                                });
+                                                            });
+                                                        });
+                                                    </script>
+                                                <!-- Pour le sweetAlert Suprimer transfert !--> 
+
+                                                <!-- Pour le sweetAlert Suprimer transfert !-->
+                                                    <script>
+                                                        //console.log(<?= $i ?>);
+                                                        $(document).ready( function(){
+                                                            $('.acceptereceptionmod<?= $i ?>').click(function(e) {
+                                                                e.preventDefault();
+                                                                Swal.fire({
+                                                                title: 'En es-tu sure?',
+                                                                text: 'Voulez-vous vraiment permettre au responsable du pont bascule de modifier  ou suprimer cette réception ?',
+                                                                icon: 'warning',
+                                                                showCancelButton: true,
+                                                                confirmButtonColor: '#3085d6',
+                                                                cancelButtonColor: '#d33',
+                                                                confirmButtonText: "Permettre la modification",
+                                                                }).then((result) => {
+                                                                    if (result.isConfirmed) {                                                                                                                  
+                                                                        $.ajax({
+                                                                                type: "POST",
+                                                                                url: 'approuveReception.php?idreceptionDemandeAccepter=<?= $_GET['idreception'] ?>&idmatiereDemandeAccepter=<?= $reception['idmatiere'] ?>&epaisseur=<?= $reception['epaisseur'] ?>&nombrebobine=<?= $reception['nbbobine'] ?>&lieutransfert=<?= $reception['lieutransfert'] ?>',
+                                                                                //data: str,
+                                                                                success: function( response ) {
+                                                                                    Swal.fire({
+                                                                                        text: 'Réception approuvée avec succes!',
+                                                                                        icon: 'success',
+                                                                                        timer: 3000,
+                                                                                        showConfirmButton: false,
+                                                                                    });
+                                                                                    location.reload();
+                                                                                },
+                                                                                error: function( response ) {
+                                                                                    $('#status').text('Impossible approuver cette réception : '+ response.status + " " + response.statusText);
                                                                                     //console.log( response );
                                                                                 }						
                                                                         });
@@ -967,7 +1000,7 @@ $ReceptionStock = $query->fetchAll();
                                                                 if (result.isConfirmed) {                                                                                                                  
                                                                     $.ajax({
                                                                             type: "POST",
-                                                                            url: 'approuveReception.php?idappreception=<?= $transfert['idtransfert']?>',
+                                                                            url: 'approuveReception.php?idappreception=<?= $reception['idmatiere']?>',
                                                                             //data: str,
                                                                             success: function( response ) {
                                                                                 Swal.fire({
@@ -1002,21 +1035,29 @@ $ReceptionStock = $query->fetchAll();
                                                 <div class="d-flex gap-2 pt-4">
                                                     <?php
                                                         if($_SESSION['niveau']=='pontbascule'){
-                                                            /*$id = $_GET['idreception'];
+                                                            $id = $_GET['idreception'];
                                                             $sql = "select * from reception where idreception=$id";
                                                             $result = $db->query($sql);
                                                             $row = $result->fetch();
-                                                            if($row ['actifapprouvreception']== 1){*/
+                                                            if($row ['actifapprouvreception']== 1){
                                                     ?>
-                                                        <a href="ajouterTransfertFormulaire.php?idtransfert=<?= $_GET['idtransfert']?>&NombreLigne=0" class="btn btn-success w-lg bouton mr-3"><i class="fa fa-plus me-1"></i> Ajouter transfert</a>
-                                                        <a href="ajouterTransfertFormulaireComplexe.php?idtransfert=<?= $_GET['idtransfert']?>&NombreLigne=0" class="btn btn-primary w-lg bouton mr-3"><i class="fa fa-plus me-1"></i> Ajouter transfert rapide</a>
-                                                        <a href="ajouterTransfertExterneFormulaire.php?idtransfert=<?= $_GET['idtransfert']?>&NombreLigne=0" class="btn btn-success w-lg bouton mr-3"><i class="fa fa-plus me-1"></i> Ajouter transfert externe</a>
-                                                        <a href="ajouterTransfertFormulaireInverse.php?idtransfert=<?= $_GET['idtransfert']?>&NombreLigne=0" class="btn btn-primary w-lg bouton mr-3"><i class="fa fa-plus me-1"></i> Ajouter transfert inverse</a>
+                                                        <a href="ajouterReceptionFormulaire.php?idreception=<?= $_GET['idreception']?>&NombreLigne=0" class="btn btn-success w-lg bouton"><i class="fa fa-plus me-1"></i> Compléter reception</a>
                                                     <?php
-                                                            //} 
+                                                            } 
                                                         }
                                                     ?>
-                                                        <a href="transfert.php" class="btn btn-danger w-lg bouton ml-3"><i class="fa fa-angle-double-left mr-2"></i>Retour</a>
+                                                        <a href="reception.php" class="btn btn-danger w-lg bouton mr-3 ml-3"><i class="fa fa-angle-double-left mr-2"></i>Retour</a>
+                                                    <?php
+                                                        /*$id = $_GET['idreception'];
+                                                        $sql = "select * from reception where idreception=$id";
+                                                        $result = $db->query($sql);
+                                                        $row = $result->fetch();*/
+                                                        if($_SESSION['niveau']=='' && $row['status'] != 'Terminée'){
+                                                    ?>
+                                                        <a href="javascript:void(0);" title="Ceci permet de mettre fin cette reception" class="changerStatus btn btn-warning w-lg bouton"><i class="fas fa-remove-format me-1"></i> Terminer reception</a>
+                                                    <?php
+                                                        } 
+                                                    ?>
                                                 </div>
                                             </div>
                                         <?php
@@ -1027,6 +1068,137 @@ $ReceptionStock = $query->fetchAll();
                                 <!-- Tableau d'en bas -->
                             </div>
                         </div>
+
+                        
+                        <!-- Pour le status !-->
+                        <script>
+                            console.log(<?= $i ?>);
+                            $(document).ready( function(){
+                                $('.changerStatus').click(function(e) {
+                                    e.preventDefault();
+                                    Swal.fire({
+                                    title: 'En es-tu sure?',
+                                    text: 'Voulez-vous vraiment terminer cette réception ?',
+                                    icon: 'warning',
+                                    showCancelButton: true,
+                                    confirmButtonColor: '#3085d6',
+                                    cancelButtonColor: '#d33',
+                                    confirmButtonText: "Terminer la réception",
+                                    }).then((result) => {
+                                        if (result.isConfirmed) {                                                                                                                  
+                                            $.ajax({
+                                                    type: "POST",
+                                                    url: 'supressionReception.php?idStatusReception=<?= $_GET['idreception']?>',
+                                                    //data: str,
+                                                    success: function( response ) {
+                                                        Swal.fire({
+                                                            text: 'Réception terminée avec succes!',
+                                                            icon: 'success',
+                                                            timer: 3000,
+                                                            showConfirmButton: false,
+                                                        });
+                                                        location.reload();
+                                                    },
+                                                    error: function( response ) {
+                                                        $('#status').text('Impossible de terminer cette réception : '+ response.status + " " + response.statusText);
+                                                        //console.log( response );
+                                                    }						
+                                            });
+                                        }
+                                    });
+                                });
+                            });
+                        </script>
+                        
+                        <!-- Pour le status !--> 
+                        <div class="modal fade " id="Information" tabindex="-1" aria-labelledby="fileModalLabel" aria-hidden="true" >
+                            <div class="modal-dialog modal-xl modal-dialog-centered" style="width=750px">
+                                <div class="modal-content">
+                                    <div class="card">
+                                        <div class="card-header bg-primary text-center">
+                                            <h5 class="modal-title" id="fileModalLabel" style="color:white">Details de la reception planifiée correspondante :</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="col-lg-12 mt-5 mb-5">
+                                                    <div class="form-group row">
+                                                        <label for="staticEmail" class="col-sm-4 col-form-label"><h5>Nom de la DF :</h5></label>
+                                                        <div class="col-sm-4">
+                                                            <h5 style="color:blue;"><?= $ReceptionPlani['entetedf'] ?></h5>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label for="staticEmail" class="col-sm-4 col-form-label"><h5>Code réception :</h5></label>
+                                                        <div class="col-sm-4">
+                                                            <h5 style=""><?= "REC00-".$reception['idreception'] ?></h5>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label for="staticEmail" class="col-sm-4 col-form-label"><h5>Date réception planifiée :</h5></label>
+                                                        <div class="col-sm-4">
+                                                            <h5><?= $ReceptionPlani['datereception'] ?></h5>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group row">
+                                                        <label for="staticEmail" class="col-sm-4 col-form-label"><h5>Commentaire associé :</h5></label>
+                                                        <div class="col-sm-6">
+                                                            <h5><?= $ReceptionPlani['commentaire'] ?></h5>
+                                                        </div>
+                                                    </div>
+                                                <div class="card position-relative">
+                                                    <div class="card-header py-3">
+                                                        <h6 class="m-0 font-weight-bold text-primary">Liste des bobines planifiées</h6>
+                                                    </div>
+                                                    <div class="row m-2">
+                                                        <div class="table-responsive">
+                                                            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                                                <thead>
+                                                                    <tr>       
+                                                                        <th>Code bobine</th>                                                                                
+                                                                        <th>Epaisseur</th>
+                                                                        <th>Nombre bobine</th>
+                                                                        <th>Poids déclaré</th>
+                                                                        <th>Poids brut</th>
+                                                                        <th>Derniére modification</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <?php
+                                                                        $i=0;
+                                                                        foreach($ReceptionPlanifie as $reception){
+                                                                            $i++;
+                                                                            //if($article['status'] == 'termine'){
+                                                                    ?>
+                                                                        <tr>
+                                                                            <td style="background-color:#CFFEDA ; text-align: center;">
+                                                                                <a style="text-decoration: none; font-family: arial; font-size: 20px;" title="Allez vers la reception correspondante" href="detailsReception.php?idreception=<?= $reception['idreception'] ?>" class="link-offset-2 link-underline"><?php echo "REC-0".$reception['idreception']."-BOB-0".$reception['idmatiereplanifie'] ?></a>
+                                                                            </td>
+                                                                            <td style="background-color:#CFFEDA ;"><?php echo "DIA ".$reception['epaisseur']." MM" ?></td>
+                                                                            <td style="background-color:#CFFEDA ;"><?= $reception['nbbobine'] ?></td>
+                                                                            <td style="background-color:#CFFEDA ;"><?= $reception['poidsdeclare'] ?></td>
+                                                                            <td style="background-color:#CFFEDA ;"><?= $reception['poidsbrut'] ?></td>
+                                                                            <td style="background-color:#CFFEDA ;"><?= $reception['dateajout'] ?></td>
+                                                                        </tr>
+                                                                    <?php
+                                                                        }
+                                                                    ?> 
+                                                                </tbody>
+                                                            </table>
+                                                        </div>                                                                
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col text-center">
+                                                <a href="" class="btn btn-primary text-center">Retour</a>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer bg-primary text-muted text-center">
+                                            <h5 style="color:white">METAL *** AFRIQUE</h5>
+                                        </div>
+                                    </div>
+                                </div>    
+                            </div>
+                        </div>
+
                         <!-- Modale pour ajouter reception -->
                         <div class="modal fade add-new" id="add-new" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
                             <div class="modal-dialog modal-xl modal-dialog-centered">
@@ -1434,21 +1606,21 @@ $ReceptionStock = $query->fetchAll();
 
 
     <!-- Bootstrap core JavaScript-->
-    <script src="../../indexPage/vendor/jquery/jquery.min.js"></script>
-    <script src="../../indexPage/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../indexPage/vendor/jquery/jquery.min.js"></script>
+    <script src="../indexPage/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
     <!-- Core plugin JavaScript-->
-    <script src="../../indexPage/vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="../indexPage/vendor/jquery-easing/jquery.easing.min.js"></script>
 
     <!-- Custom scripts for all pages-->
-    <script src="../../indexPage/js/sb-admin-2.min.js"></script>
+    <script src="../indexPage/js/sb-admin-2.min.js"></script>
 
     <!-- Page level plugins -->
-    <script src="../../indexPage/vendor/datatables/jquery.dataTables.min.js"></script>
-    <script src="../../indexPage/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="../indexPage/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="../indexPage/vendor/datatables/dataTables.bootstrap4.min.js"></script>
 
     <!-- Page level custom scripts -->
-    <script src="../../indexPage/js/demo/datatables-demo.js"></script>
+    <script src="../indexPage/js/demo/datatables-demo.js"></script>
 
 </body>
 
