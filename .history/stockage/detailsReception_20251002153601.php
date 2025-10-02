@@ -89,7 +89,19 @@ if(isset($_POST['approuveReceptionRectifie'])){
         $user=htmlspecialchars($_POST['user']);
         $lieutransfert=htmlspecialchars($_POST['lieutransfert']);
         $motifRectifier=htmlspecialchars($_POST['motifRectifier']);
+            
+        //** Debut select des epaisseurs pour Tref
+            $sqlepaisseur = "SELECT * FROM `epaisseur` where `id`=5;";
 
+            // On prépare la requête
+            $queryepaisseur = $db->prepare($sqlepaisseur);
+
+            // On exécute
+            $queryepaisseur->execute();
+
+            // On récupère les valeurs dans un tableau associatif
+            $EpaisseurTref = $queryepaisseur->fetch();
+        //** Fin select des epaisseurs pour Tref
         //Rechercher le nombre de piéces sur le lieu d'arrive
             $sqlEpaisseur = "SELECT * FROM `matiere` where `actif`=1 AND `lieutransfert`='$lieutransfert' and `epaisseur`='$epaisseur' and `nbbobineactuel` != 0 and `nbbobineactuel`>=$nombrebobine LIMIT 1;";
             // On prépare la requête
