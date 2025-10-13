@@ -57,7 +57,7 @@ include "../connexion/conexiondb.php";
             $etatbobine=$_POST['etatbobine'];
             $lieutransfert=$_POST['lieutransfert'];
             $poidsdeclare=$_POST['poidsdeclare'];
-            $entetedf=$_POST['entetedf'];
+            //$produitfini=$_POST['produitfini'];
             //$idlot=$_POST['idlot'];
             //$annee=$_POST['annee'];trans
             //$numprod=$_POST['numprod'];
@@ -65,7 +65,7 @@ include "../connexion/conexiondb.php";
             //$user=$_POST['user'];
             $nbbobine=$_POST['nbbobine'];
 
-            $sql = "UPDATE `matiere` SET `poidspese` = '$poidspese', `entetedf` = '$entetedf', `etatbobine` = '$etatbobine', `epaisseur` = '$epaisseur',`lieutransfert` = '$lieutransfert',`poidsdeclare` = '$poidsdeclare'
+            $sql = "UPDATE `matiere` SET `poidspese` = '$poidspese', `etatbobine` = '$etatbobine', `epaisseur` = '$epaisseur',`lieutransfert` = '$lieutransfert',`poidsdeclare` = '$poidsdeclare'
             , `nbbobine` = '$nbbobine', `nbbobineactuel` = '$nbbobine', `couleurhistorique` = '2' WHERE `idmatiere` = ?;";
             //$result = $db->query($sql); 
             $sth = $db->prepare($sql);    
@@ -477,7 +477,7 @@ include "../connexion/conexiondb.php";
                                             <div class="col-md-6 mt-3">
                                                 <div class="mb-6 text-start">
                                                     <label class="form-label fw-bold" for="df" >DF</label>
-                                                    <input class="form-control designa" type="text" id="validationDefault02" value="<?php echo $row['entetedf'];?>" name="entetedf" id="entetedf"  placeholder="Taper l entete DF" required>
+                                                    <input class="form-control designa" type="text" id="validationDefault02" value="<?php echo $row['poidsdeclare'];?>" name="poidsdeclare" id="example"  placeholder="Taper le poids déclaré" required>
                                                 </div>
                                             </div>
                                         </div>

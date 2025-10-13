@@ -15,7 +15,7 @@ include "../../connexion/conexiondb.php";
 //** Nombre des bobines total
     $sql = "SELECT SUM(`3`) + SUM(`3.5`) + SUM(`4`) + SUM(`4.5`) + SUM(`5`) + SUM(`5.5`) + SUM(`6`) + SUM(`6.5`) + SUM(`7`) + SUM(`7.5`)
     + SUM(`8`) + SUM(`8.5`) + SUM(`9`) + SUM(`9.5`) + SUM(`10`) + SUM(`10.5`) + SUM(`11`) + SUM(`11.5`) + SUM(`12`) + SUM(`12.5`) + SUM(`13`) + SUM(`13.5`) + 
-    SUM(`14`) + SUM(`14.5`) + SUM(`15`) + SUM(`15.5`) + SUM(`16`) + SUM(`16.5`) + SUM(`17`) AS nb_reception_total FROM `epaisseur` where `lieu`='Cranteuse';";
+    SUM(`14`) + SUM(`14.5`) + SUM(`15`) + SUM(`15.5`) + SUM(`16`) + SUM(`16.5`) + SUM(`17`) AS nb_reception_total FROM `epaisseur` where `lieu`='Niambour';";
     // On prépare la requête
     $query = $db->prepare($sql);
 
@@ -29,7 +29,7 @@ include "../../connexion/conexiondb.php";
 //** Fin nombre des bobines total
 
 //** Debut select de stockage pour Metal1
-    $sqlepaisseur = "SELECT * FROM `matiere` where `actif`=1 AND `nbbobineactuel`>0 and `lieutransfert`='Cranteuse'  ORDER BY `idmatiere` DESC;";
+    $sqlepaisseur = "SELECT * FROM `matiere` where `nbbobineactuel`>0 and `actif`=1 and `lieutransfert`='Niambour'  ORDER BY `idmatiere` DESC;";
 
     // On prépare la requête
     $queryepaisseur = $db->prepare($sqlepaisseur);
@@ -38,7 +38,7 @@ include "../../connexion/conexiondb.php";
     $queryepaisseur->execute();
 
     // On récupère les valeurs dans un tableau associatif
-    $stockCranteuse = $queryepaisseur->fetchAll();
+    $stockNiambour = $queryepaisseur->fetchAll();
 //** Fin select de stockage pour Metal1
 
 ?>
@@ -91,14 +91,14 @@ include "../../connexion/conexiondb.php";
             })
         //Pour le loading
     </script>
-
+    
 </head>
 
 <body id="page-top">
 
     <!-- Page Wrapper -->
     <div id="wrapper">
-            
+
         <!-- Contient la nav bar gauche -->
             <?php include "./navGaucheStockage.php" ?>
         <!-- End  -->
@@ -352,8 +352,8 @@ include "../../connexion/conexiondb.php";
                     <ul class="row list-group-horizontal mt-5 ml-5">
                         <li class="list-group mr-4"><a href="stockage.php" class="list-group-item list-group-item-action" aria-current="true">METAL 1</a></li>
                         <li class="list-group mr-4"><a href="stockageMetalMbao.php" class="list-group-item list-group-item-action">METAL MBAO</a></li>
-                        <li class="list-group mr-4"><a href="stockageNiambour.php" class="list-group-item list-group-item-action">NIAMBOUR</a></li>
-                        <li class="list-group mr-4"><a href="stockageCranteuse.php" class="list-group-item list-group-item-action active">MACHINE CRANTEUSE</a></li>
+                        <li class="list-group mr-4"><a href="stockageNiambour.php" class="list-group-item list-group-item-action active">NIAMBOUR</a></li>
+                        <li class="list-group mr-4"><a href="stockageCranteuse.php" class="list-group-item list-group-item-action">MACHINE CRANTEUSE</a></li>
                         <li class="list-group mr-4"><a href="stockageTrefilage.php" class="list-group-item list-group-item-action">MACHINE TREFILAGE</a></li>
                         <li class="list-group mr-4"><a href="stockageDresseuse.php" class="list-group-item list-group-item-action">MACHINE DRESSEUSE</a></li>
                     </ul>
@@ -366,7 +366,7 @@ include "../../connexion/conexiondb.php";
                     <div class="col-lg-12 mt-3">
                         <div class="card position-relative">
                             <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary">Nombre de bobine stocké à la machine Cranteuse : <?php echo $nbReception; ?></h6>
+                                <h6 class="m-0 font-weight-bold text-primary">Nombre de bobine stocké à Niambour : <?php echo $nbReception; ?></h6>
                             </div>
                             <div class="row m-2">
                                 <div class="table-responsive">
@@ -392,7 +392,7 @@ include "../../connexion/conexiondb.php";
                                     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                         <thead>
                                             <tr>       
-                                                <th>Numéro fil machine</th>                                                                                
+                                                <th>Code stockage</th>                                                                                
                                                 <th>Epaisseur</th>
                                                 <th>DF</th>
                                                 <th>Nombre bobine</th>
@@ -405,24 +405,22 @@ include "../../connexion/conexiondb.php";
                                         <tbody>
                                             <?php
                                                 $i=0;
-                                                foreach($stockCranteuse as $stock){
+                                                foreach($stockNiambour as $stock){
                                                     $i++;
                                                     //if($article['status'] == 'termine'){
                                             ?>
                                                 <tr>
                                                     <td style="background-color:#4e73df ; color:white;">
-                                                        <a style="text-decoration: none; font-family: arial; font-size: 20px; color:white;" href="javascript:void(0);" data-toggle="modal" data-target="#Information<?php echo $i; ?>" title="Voir details du produit" class="link-offset-2 link-underline"><?php echo $stock['numbobine']; ?></a>
+                                                        <a style="text-decoration: none; font-family: arial; font-size: 20px; color:white;" href="javascript:void(0);" data-toggle="modal" data-target="#Information<?php echo $i; ?>" title="Voir details du produit"  class="link-offset-2 link-underline"><?php echo "REC00".$stock['idreception']."-BOB-0".$stock['idmatiere']; ?></a>
                                                         <!--<a style="text-decoration: none; font-family: arial; font-size: 20px; color:white;" title="Allez vers la reception planifiée correspondante" href="detailsReceptionPlanifie.php?idreception=<?= $stock['idreception'] ?>" class="link-offset-2 link-underline"><?php echo "REC-0".$stock['idreception']."-BOB-0".$stock['idmatiere'] ?></a>!-->
                                                     </td>
                                                     <td style="background-color:#4e73df ; color:white;"> <?= $stock['epaisseur'] ?> </td>
-                                                    <td style="background-color:#4e73df ; color:white;"> <?= $stock['entetedf'] ?> </td>
                                                     <td style="background-color:#4e73df ; color:white;"><?= $stock['nbbobineactuel'] ?></td>
                                                     <td style="background-color:#4e73df ; color:white;"><?= $stock['poidsdeclare'] ?></td>
                                                     <td style="background-color:#4e73df ; color:white;"><?= $stock['poidspese'] ?></td>
                                                     <td style="background-color:#4e73df ; color:white;"><?= $stock['etatbobine'] ?></td>
                                                     <td style="background-color:#4e73df ; color:white;"><?= $stock['dateajout'] ?></td>
                                                 </tr>
-                                                
                                                 <!-- Pour le status !--> 
                                                 <div class="modal fade " id="Information<?php echo $i; ?>" tabindex="-1" aria-labelledby="fileModalLabel" aria-hidden="true" >
                                                     <div class="modal-dialog modal-xl modal-dialog-centered" style="width=750px">

@@ -2,6 +2,7 @@
 
 session_start(); 
 
+
 if(!$_SESSION){
     header("location: ../../404.php");
     return 0;
@@ -15,10 +16,10 @@ include "../../connexion/conexiondb.php";
 //** Nombre des bobines total
     $sql = "SELECT SUM(`3`) + SUM(`3.5`) + SUM(`4`) + SUM(`4.5`) + SUM(`5`) + SUM(`5.5`) + SUM(`6`) + SUM(`6.5`) + SUM(`7`) + SUM(`7.5`)
     + SUM(`8`) + SUM(`8.5`) + SUM(`9`) + SUM(`9.5`) + SUM(`10`) + SUM(`10.5`) + SUM(`11`) + SUM(`11.5`) + SUM(`12`) + SUM(`12.5`) + SUM(`13`) + SUM(`13.5`) + 
-    SUM(`14`) + SUM(`14.5`) + SUM(`15`) + SUM(`15.5`) + SUM(`16`) + SUM(`16.5`) + SUM(`17`) AS nb_reception_total FROM `epaisseur` where `lieu`='Cranteuse';";
+    SUM(`14`) + SUM(`14.5`) + SUM(`15`) + SUM(`15.5`) + SUM(`16`) + SUM(`16.5`) + SUM(`17`) AS nb_reception_total FROM `epaisseur` where `lieu`='Metal1';";
     // On prépare la requête
     $query = $db->prepare($sql);
-
+    
     // On exécute
     $query->execute();
 
@@ -26,10 +27,95 @@ include "../../connexion/conexiondb.php";
     $result = $query->fetch();
 
     $nbReception = (int) $result['nb_reception_total'];
-//** Fin nombre des bobines total
+//** Fin nombre des bobines total 
+
+//** Nombre des bobines total à Metal 1 
+    $sql = "SELECT SUM(`3`) + SUM(`3.5`) + SUM(`4`) + SUM(`4.5`) + SUM(`5`) + SUM(`5.5`) + SUM(`6`) + SUM(`6.5`) + SUM(`7`) + SUM(`7.5`)
+    + SUM(`8`) + SUM(`8.5`) + SUM(`9`) + SUM(`9.5`) + SUM(`10`) + SUM(`10.5`) + SUM(`11`) + SUM(`11.5`) + SUM(`12`) + SUM(`12.5`) + SUM(`13`) + SUM(`13.5`) + 
+    SUM(`14`) + SUM(`14.5`) + SUM(`15`) + SUM(`15.5`) + SUM(`16`) + SUM(`16.5`) + SUM(`17`) AS nb_reception_total FROM `epaisseur` where `lieu`='Metal1';";
+    // On prépare la requête
+    $query = $db->prepare($sql);
+
+
+    // On exécute
+    $query->execute();
+
+    // On récupère le nombre d'artic les
+    $result = $query->fetch();
+
+    $nombreMetal1 = (int) $result['nb_reception_total'];
+//** Fin nombre des bobines total Metal 1  
+
+//** Nombre des bobines total à Cranteuse
+    $sql = "SELECT SUM(`3`) + SUM(`3.5`) + SUM(`4`) + SUM(`4.5`) + SUM(`5`) + SUM(`5.5`) + SUM(`6`) + SUM(`6.5`) + SUM(`7`) + SUM(`7.5`)
+    + SUM(`8`) + SUM(`8.5`) + SUM(`9`) + SUM(`9.5`) + SUM(`10`) + SUM(`10.5`) + SUM(`11`) + SUM(`11.5`) + SUM(`12`) + SUM(`12.5`) + SUM(`13`) + SUM(`13.5`) + 
+    SUM(`14`) + SUM(`14.5`) + SUM(`15`) + SUM(`15.5`) + SUM(`16`) + SUM(`16.5`) + SUM(`17`) AS nb_reception_total FROM `epaisseur` where `lieu`='Cranteuse';";
+    // On prépare la requête
+    $query = $db->prepare($sql);
+
+
+    // On exécute
+    $query->execute();
+
+    // On récupère le nombre d'artic les
+    $result = $query->fetch();
+
+    $nombreCranteuse = (int) $result['nb_reception_total'];
+//** Fin nombre des bobines total Cranteuse  
+
+//** Nombre des bobines total à Mbao
+    $sql = "SELECT SUM(`3`) + SUM(`3.5`) + SUM(`4`) + SUM(`4.5`) + SUM(`5`) + SUM(`5.5`) + SUM(`6`) + SUM(`6.5`) + SUM(`7`) + SUM(`7.5`)
+    + SUM(`8`) + SUM(`8.5`) + SUM(`9`) + SUM(`9.5`) + SUM(`10`) + SUM(`10.5`) + SUM(`11`) + SUM(`11.5`) + SUM(`12`) + SUM(`12.5`) + SUM(`13`) + SUM(`13.5`) + 
+    SUM(`14`) + SUM(`14.5`) + SUM(`15`) + SUM(`15.5`) + SUM(`16`) + SUM(`16.5`) + SUM(`17`) AS nb_reception_total FROM `epaisseur` where `lieu`='Metal Mbao';";
+    // On prépare la requête
+    $query = $db->prepare($sql);
+
+
+    // On exécute
+    $query->execute();
+
+    // On récupère le nombre d'artic les
+    $result = $query->fetch();
+
+    $nombreMbao = (int) $result['nb_reception_total'];
+//** Fin nombre des bobines total Mbao  
+
+//** Nombre des bobines total à Trefilage
+    $sql = "SELECT SUM(`3`) + SUM(`3.5`) + SUM(`4`) + SUM(`4.5`) + SUM(`5`) + SUM(`5.5`) + SUM(`6`) + SUM(`6.5`) + SUM(`7`) + SUM(`7.5`)
+    + SUM(`8`) + SUM(`8.5`) + SUM(`9`) + SUM(`9.5`) + SUM(`10`) + SUM(`10.5`) + SUM(`11`) + SUM(`11.5`) + SUM(`12`) + SUM(`12.5`) + SUM(`13`) + SUM(`13.5`) + 
+    SUM(`14`) + SUM(`14.5`) + SUM(`15`) + SUM(`15.5`) + SUM(`16`) + SUM(`16.5`) + SUM(`17`) AS nb_reception_total FROM `epaisseur` where `lieu`='Trefilage';";
+    // On prépare la requête
+    $query = $db->prepare($sql);
+
+
+    // On exécute
+    $query->execute();
+
+    // On récupère le nombre d'artic les
+    $result = $query->fetch();
+
+    $nombreTrefilage = (int) $result['nb_reception_total'];
+//** Fin nombre des bobines total Trefilage  
+
+//** Nombre des bobines total à Niambour
+    $sql = "SELECT SUM(`3`) + SUM(`3.5`) + SUM(`4`) + SUM(`4.5`) + SUM(`5`) + SUM(`5.5`) + SUM(`6`) + SUM(`6.5`) + SUM(`7`) + SUM(`7.5`)
+    + SUM(`8`) + SUM(`8.5`) + SUM(`9`) + SUM(`9.5`) + SUM(`10`) + SUM(`10.5`) + SUM(`11`) + SUM(`11.5`) + SUM(`12`) + SUM(`12.5`) + SUM(`13`) + SUM(`13.5`) + 
+    SUM(`14`) + SUM(`14.5`) + SUM(`15`) + SUM(`15.5`) + SUM(`16`) + SUM(`16.5`) + SUM(`17`) AS nb_reception_total FROM `epaisseur` where `lieu`='Niambour';";
+    // On prépare la requête
+    $query = $db->prepare($sql);
+
+    // On exécute
+    $query->execute();
+
+    // On récupère le nombre d'artic les
+    $result = $query->fetch();
+
+    $nombreNiambour = (int) $result['nb_reception_total'];
+//** Fin nombre des bobines total Niambour  
+
 
 //** Debut select de stockage pour Metal1
-    $sqlepaisseur = "SELECT * FROM `matiere` where `actif`=1 AND `nbbobineactuel`>0 and `lieutransfert`='Cranteuse'  ORDER BY `idmatiere` DESC;";
+    $sqlepaisseur = "SELECT * FROM `cranteuseq1production` where `actif`=1 and `actifdresseuse`=1 and `prodnbbobine`=1  ORDER BY `idcranteuseq1production` DESC;";
 
     // On prépare la requête
     $queryepaisseur = $db->prepare($sqlepaisseur);
@@ -40,6 +126,7 @@ include "../../connexion/conexiondb.php";
     // On récupère les valeurs dans un tableau associatif
     $stockCranteuse = $queryepaisseur->fetchAll();
 //** Fin select de stockage pour Metal1
+
 
 ?>
 
@@ -98,7 +185,7 @@ include "../../connexion/conexiondb.php";
 
     <!-- Page Wrapper -->
     <div id="wrapper">
-            
+
         <!-- Contient la nav bar gauche -->
             <?php include "./navGaucheStockage.php" ?>
         <!-- End  -->
@@ -344,29 +431,25 @@ include "../../connexion/conexiondb.php";
                             </div>    
                         </div>
                     </div>
-
                 </nav>
                 <!-- End of Topbar -->
-
                 <div class="col-lg-12 mt-3 mr-5">
                     <ul class="row list-group-horizontal mt-5 ml-5">
                         <li class="list-group mr-4"><a href="stockage.php" class="list-group-item list-group-item-action" aria-current="true">METAL 1</a></li>
                         <li class="list-group mr-4"><a href="stockageMetalMbao.php" class="list-group-item list-group-item-action">METAL MBAO</a></li>
                         <li class="list-group mr-4"><a href="stockageNiambour.php" class="list-group-item list-group-item-action">NIAMBOUR</a></li>
-                        <li class="list-group mr-4"><a href="stockageCranteuse.php" class="list-group-item list-group-item-action active">MACHINE CRANTEUSE</a></li>
+                        <li class="list-group mr-4"><a href="stockageCranteuse.php" class="list-group-item list-group-item-action">MACHINE CRANTEUSE</a></li>
                         <li class="list-group mr-4"><a href="stockageTrefilage.php" class="list-group-item list-group-item-action">MACHINE TREFILAGE</a></li>
-                        <li class="list-group mr-4"><a href="stockageDresseuse.php" class="list-group-item list-group-item-action">MACHINE DRESSEUSE</a></li>
+                        <li class="list-group mr-4"><a href="stockageDresseuse.php" class="list-group-item list-group-item-action active">MACHINE DRESSEUSE</a></li>
                     </ul>
                 </div>
-
                 <!-- Begin Page Content -->
                 <div class="row mt-5 ml-5 mr-5">
                     <!-- DataTales Example -->
-                    <!-- Fade In Utility -->
-                    <div class="col-lg-12 mt-3">
+                    <div class="col-lg-12 mt-5">
                         <div class="card position-relative">
                             <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary">Nombre de bobine stocké à la machine Cranteuse : <?php echo $nbReception; ?></h6>
+                                <h6 class="m-0 font-weight-bold text-primary">Nombre de rouleau cranté et non encore utilisé à la machine Cranteuse : <?php echo sizeof($stockCranteuse); ?></h6>
                             </div>
                             <div class="row m-2">
                                 <div class="table-responsive">
@@ -395,11 +478,12 @@ include "../../connexion/conexiondb.php";
                                                 <th>Numéro fil machine</th>                                                                                
                                                 <th>Epaisseur</th>
                                                 <th>DF</th>
-                                                <th>Nombre bobine</th>
+                                                <th>Nomenclature</th>
+                                                <th>Nombre rouleaux</th>
                                                 <th>Poids déclaré</th>
-                                                <th>Poids pesé</th>
-                                                <th>Etat bobine</th>
-                                                <th>Derniére modification</th>
+                                                <th>Londgueur échantillon</th>
+                                                <th>Poids échantillon</th>
+                                                <th>DF échantillon</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -410,114 +494,15 @@ include "../../connexion/conexiondb.php";
                                                     //if($article['status'] == 'termine'){
                                             ?>
                                                 <tr>
-                                                    <td style="background-color:#4e73df ; color:white;">
-                                                        <a style="text-decoration: none; font-family: arial; font-size: 20px; color:white;" href="javascript:void(0);" data-toggle="modal" data-target="#Information<?php echo $i; ?>" title="Voir details du produit" class="link-offset-2 link-underline"><?php echo $stock['numbobine']; ?></a>
-                                                        <!--<a style="text-decoration: none; font-family: arial; font-size: 20px; color:white;" title="Allez vers la reception planifiée correspondante" href="detailsReceptionPlanifie.php?idreception=<?= $stock['idreception'] ?>" class="link-offset-2 link-underline"><?php echo "REC-0".$stock['idreception']."-BOB-0".$stock['idmatiere'] ?></a>!-->
-                                                    </td>
-                                                    <td style="background-color:#4e73df ; color:white;"> <?= $stock['epaisseur'] ?> </td>
-                                                    <td style="background-color:#4e73df ; color:white;"> <?= $stock['entetedf'] ?> </td>
-                                                    <td style="background-color:#4e73df ; color:white;"><?= $stock['nbbobineactuel'] ?></td>
-                                                    <td style="background-color:#4e73df ; color:white;"><?= $stock['poidsdeclare'] ?></td>
-                                                    <td style="background-color:#4e73df ; color:white;"><?= $stock['poidspese'] ?></td>
-                                                    <td style="background-color:#4e73df ; color:white;"><?= $stock['etatbobine'] ?></td>
-                                                    <td style="background-color:#4e73df ; color:white;"><?= $stock['dateajout'] ?></td>
+                                                    <td style="background-color:#4e73df ; color:white;"> <?= $stock['prodnumerofin'] ?> </td>
+                                                    <td style="background-color:#4e73df ; color:white;"> <?= $stock['proddiametre'] ?> </td>
+                                                    <td style="background-color:#4e73df ; color:white;"> <?= $stock['prodnomenclature'] ?> </td>
+                                                    <td style="background-color:#4e73df ; color:white;"><?= $stock['prodnbbobine'] ?></td>
+                                                    <td style="background-color:#4e73df ; color:white;"><?= $stock['prodpoids'] ?></td>
+                                                    <td style="background-color:#4e73df ; color:white;"><?= $stock['echanlongueur'] ?></td>
+                                                    <td style="background-color:#4e73df ; color:white;"><?= $stock['echanpoids'] ?></td>
+                                                    <td style="background-color:#4e73df ; color:white;"><?= $stock['echandf'] ?></td>
                                                 </tr>
-                                                
-                                                <!-- Pour le status !--> 
-                                                <div class="modal fade " id="Information<?php echo $i; ?>" tabindex="-1" aria-labelledby="fileModalLabel" aria-hidden="true" >
-                                                    <div class="modal-dialog modal-xl modal-dialog-centered" style="width=750px">
-                                                        <div class="modal-content">
-                                                            <div class="card">
-                                                                <div class="card-header bg-primary text-center">
-                                                                    <h5 class="modal-title" id="fileModalLabel" style="color:white">Details du produit consommé correspondant :</h5>
-                                                                </div>
-                                                                <div class="card-body">
-                                                                    <div class="col-lg-12 mt-5 mb-5">
-                                                                        <?php
-                                                                            $IDM = $stock['idmatiere'];
-                                                                            $IDR = $stock['idreception'];
-                                                                            //** Debut select des receptions
-                                                                                $sql = "SELECT * FROM `matiere` where `actif`=1 and `idmatiere`=$IDM;";
-                                                                    
-                                                                                // On prépare la requête
-                                                                                $query = $db->prepare($sql);
-                                                                    
-                                                                                // On exécute
-                                                                                $query->execute();
-                                                                    
-                                                                                // On récupère les valeurs dans un tableau associatif
-                                                                                $Matiere = $query->fetch();
-                                                                            //** Fin select des receptions
-
-                                                                            //** Debut select des receptions
-                                                                                $sql = "SELECT * FROM `reception` where `actif`=1 and `idreception`=$IDR;";
-
-                                                                                // On prépare la requête
-                                                                                $query = $db->prepare($sql);
-
-                                                                                // On exécute
-                                                                                $query->execute();
-
-                                                                                // On récupère les valeurs dans un tableau associatif
-                                                                                $Reception = $query->fetch();
-
-                                                                            //** Fin select des receptions
-
-                                                                        ?>
-                                                                        <div class="form-group row">
-                                                                            <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Nom de la DF : </span><?php echo $Reception['entetedf']; ?></h5></label>
-                                                                            <div class="col-sm-4">
-                                                                                <h5 style="color:blue;"></h5>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="form-group row">
-                                                                            <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Code réception : </span><?php echo "REC00-".$Reception['idreception']; ?></h5></label>
-                                                                            <div class="col-sm-4">
-                                                                                <h5 style=""></h5>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="form-group row">
-                                                                            <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Date réception : </span><?php echo $Reception['datereception']; ?></h5></label>
-                                                                            <div class="col-sm-4">
-                                                                                <h5></h5>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="form-group row">
-                                                                            <label for="staticEmail" class="col-sm-8 col-form-label"><h5 style="color: #199AF3">Commentaire associé : </h5></label><br>
-                                                                            <div class="col-sm-8 ml-5">
-                                                                                <h5><?php echo $Reception['commentaire']; ?></h5>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="form-group row">
-                                                                            <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Nom du récepteur : </span> <?php echo $Reception['nomrecepteur']; ?></h5></label>
-                                                                            <div class="col-sm-6">
-                                                                                <h5></h5>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="form-group row">
-                                                                            <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Matricule du camion :  </span><?php echo $Reception['matriculecamion']; ?></h5></label>
-                                                                            <div class="col-sm-6">
-                                                                                <h5></h5>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="form-group row">
-                                                                            <label for="staticEmail" class="col-sm-4 col-form-label"><h5><span class="mr-3" style="color: #199AF3">Numéro de BL : </span><?php echo $Reception['bl']; ?></h5></label>
-                                                                            <div class="col-sm-6">
-                                                                                <h5></h5>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="col text-center">
-                                                                        <a href="" class="btn btn-primary text-center">Retour</a>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="card-footer bg-primary text-muted text-center">
-                                                                    <h5 style="color:white">METAL *** AFRIQUE</h5>
-                                                                </div>
-                                                            </div>
-                                                        </div>    
-                                                    </div>
-                                                </div>
                                             <?php
                                                 }
                                             ?>
@@ -525,7 +510,6 @@ include "../../connexion/conexiondb.php";
                                     </table>
                                 </div>
                             </div>
-                            <!-- Tableau d'en bas -->
                         </div>
                     </div>
                 </div>
@@ -550,7 +534,7 @@ include "../../connexion/conexiondb.php";
     </a>
 
 
-    <!-- Bootstrap core JavaScript-->
+
     <script src="../../indexPage/vendor/jquery/jquery.min.js"></script>
     <script src="../../indexPage/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
@@ -567,6 +551,7 @@ include "../../connexion/conexiondb.php";
     <!-- Page level custom scripts -->
     <script src="../../indexPage/js/demo/datatables-demo.js"></script>
 
+    <!-- Page level custom scripts -->
 </body>
 
 </html>

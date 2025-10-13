@@ -415,7 +415,6 @@ include "../../connexion/conexiondb.php";
                                                         <!--<a style="text-decoration: none; font-family: arial; font-size: 20px; color:white;" title="Allez vers la reception planifiée correspondante" href="detailsReceptionPlanifie.php?idreception=<?= $stock['idreception'] ?>" class="link-offset-2 link-underline"><?php echo "REC-0".$stock['idreception']."-BOB-0".$stock['idmatiere'] ?></a>!-->
                                                     </td>
                                                     <td style="background-color:#4e73df ; color:white;"> <?= $stock['epaisseur'] ?> </td>
-                                                    <td style="background-color:#4e73df ; color:white;"> <?= $stock['entetedf'] ?> </td>
                                                     <td style="background-color:#4e73df ; color:white;"><?= $stock['nbbobineactuel'] ?></td>
                                                     <td style="background-color:#4e73df ; color:white;"><?= $stock['poidsdeclare'] ?></td>
                                                     <td style="background-color:#4e73df ; color:white;"><?= $stock['poidspese'] ?></td>

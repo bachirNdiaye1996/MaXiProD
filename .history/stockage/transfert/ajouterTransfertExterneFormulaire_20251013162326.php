@@ -173,9 +173,9 @@
                     // Fin ajouter le nombre de bobine dans le lieu de depart
                 }else{ */
                     // Ajouter le nombre de bobine dans le lieu d'arrive
-                        $insertUser=$db->prepare("INSERT INTO `matiere` (`idmatiere`, `epaisseur`, `poidsdeclare`, `poidspese`, `dateajout`,`nbbobine`,`lieutransfert`,`idreception`,`etatbobine`,`nbbobineactuel`,`idmatierereception`,`entetedf`) 
-                        VALUES (NULL, ?, ?, ?, current_timestamp(), ?, ?, ?, ?, ?, ?, ?);");
-                        $insertUser->execute(array($epaisseur,$poidsdeclare, $poidspese,$nbbobine,$pointarrive, $IdReception, $etatbobine, $nbbobine,$idmatierereception,$entetedf));  
+                        $insertUser=$db->prepare("INSERT INTO `matiere` (`idmatiere`, `epaisseur`, `poidsdeclare`, `poidspese`, `dateajout`,`nbbobine`,`lieutransfert`,`idreception`,`etatbobine`,`nbbobineactuel`,`idmatierereception`) 
+                        VALUES (NULL, ?, ?, ?, current_timestamp(), ?, ?, ?, ?, ?, ?);");
+                        $insertUser->execute(array($epaisseur,$poidsdeclare, $poidspese,$nbbobine,$pointarrive, $IdReception, $etatbobine, $nbbobine,$idmatierereception));  
                     // Fin ajouter le nombre de bobine dans le lieu d'arrive
                 //}
                 

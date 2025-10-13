@@ -65,7 +65,7 @@ include "../connexion/conexiondb.php";
             //$user=$_POST['user'];
             $nbbobine=$_POST['nbbobine'];
 
-            $sql = "UPDATE `matiere` SET `poidspese` = '$poidspese', `entetedf` = '$entetedf', `etatbobine` = '$etatbobine', `epaisseur` = '$epaisseur',`lieutransfert` = '$lieutransfert',`poidsdeclare` = '$poidsdeclare'
+            $sql = "UPDATE `matiere` SET `poidspese` = '$poidspese', `etatbobine` = '$etatbobine', `epaisseur` = '$epaisseur',`lieutransfert` = '$lieutransfert',`poidsdeclare` = '$poidsdeclare'
             , `nbbobine` = '$nbbobine', `nbbobineactuel` = '$nbbobine', `couleurhistorique` = '2' WHERE `idmatiere` = ?;";
             //$result = $db->query($sql); 
             $sth = $db->prepare($sql);    
