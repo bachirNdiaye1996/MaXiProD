@@ -54,6 +54,7 @@ $idtransfert = $_GET['idtransfert'];  // On recupére l'ID de la réception par 
 //Fin insertion details reception 
 
 
+
 // Pour la suppression details reception en groupe 
     if(isset($_POST['supprimer'])){
         if(isset($_POST['checksuppression'])){
@@ -69,13 +70,13 @@ $idtransfert = $_GET['idtransfert'];  // On recupére l'ID de la réception par 
                 $pointdepart = $checks[6];                          // Nombre bobine
                 $poidspese = $checks[7];                            // .
                 $user = $checks[8];                                 // .
-                $numbobine = $checks[9];                                 // .
+                $numbobine = $checks[8];                                 // .
 
                 $sql = "UPDATE `transfertdetails` set `actif`=0, `couleurhistorique`=1 where idtransfertdetail=$idtransfertDemandeRectifier";
                 $db->query($sql);
 
                 // Enlever le num bobine
-                    $req ="UPDATE matiere SET `numbobine`='', `actif`=0 where `numbobine`=?;";
+                    $req ="UPDATE matiere SET `numbobine` ='', `actif`=0 where `numbobine`=?;";
                     $reqtitre = $db->prepare($req);
                     $reqtitre->execute(array($numbobine));
                 // Fin enlever le num bobine
@@ -946,7 +947,7 @@ $ReceptionStock = $query->fetchAll();
                                                         <?php if(($transfert['acceptereceptionmodif'] == 0) && ($transfert['actifapprouvtransfert'] == 1) && ($_SESSION['niveau']=='pontbascule')){?>
                                                             <td class="text-center d-print-none"><span>
                                                                 <input type="checkbox" class="multi_checkbox checkall" style="width: 20px; height: 20px;" name="checksuppression[]"
-                                                                value="<?= $transfert['idtransfertdetail'] ?>&&<?= $_GET['idtransfert'] ?>&&<?= $transfert['epaisseur'] ?>&&<?= $transfert['nbbobine'] ?>&&<?= $transfert['idmatierearrive'] ?>&&<?= $transfert['pointarrive'] ?>&&<?= $transfert['pointdepart'] ?>&&<?= $transfert['poidspese'] ?>&&<?php echo $_SESSION['nomcomplet'];?>&&<?= $transfert['numbobine'] ?>">
+                                                                value="<?= $transfert['idtransfertdetail'] ?>&&<?= $_GET['idtransfert'] ?>&&<?= $transfert['epaisseur'] ?>&&<?= $transfert['nbbobine'] ?>&&<?= $transfert['idmatierearrive'] ?>&&<?= $transfert['pointarrive'] ?>&&<?= $transfert['pointdepart'] ?>&&<?= $transfert['poidspese'] ?>&&<?php echo $_SESSION['nomcomplet'];?>&&=<?= $transfert['numbobine'] ?>">
                                                                 </span>
                                                             </td>
                                                         <?php }?>

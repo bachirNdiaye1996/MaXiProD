@@ -441,7 +441,7 @@ include "../../connexion/conexiondb.php";
                         <li class="list-group mr-4"><a href="stockageCranteuse.php" class="list-group-item list-group-item-action">MACHINE CRANTEUSE</a></li>
                         <li class="list-group mr-4"><a href="stockageTrefilage.php" class="list-group-item list-group-item-action">MACHINE TREFILAGE</a></li>
                         <li class="list-group mr-4"><a href="stockageDresseuse.php" class="list-group-item list-group-item-action">MACHINE DRESSEUSE</a></li>
-                        <li class="list-group mr-4"><a href="fmParDf.php" class="list-group-item list-group-item-action">FM PAR DF</a></li>
+                        <li class="list-group mr-4"><a href="stockageDresseuse.php" class="list-group-item list-group-item-action">FM PAR DF</a></li>
                     </ul>
                 </div>
                 <!-- Begin Page Content -->

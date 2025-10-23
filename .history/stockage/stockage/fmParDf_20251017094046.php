@@ -1,7 +1,25 @@
 <?php   
-
 session_start(); 
 
+if(!$_SESSION){
+    header("location: ../../404.php");
+    return 0;
+}
+
+include "../../connexion/conexiondb.php";
+
+//Variables
+$PeriodeReel = "'Aucun travailleur'";
+$dt = time();
+$moisPourPDF = date( "m", $dt );  // On extrait le mois courant.
+
+//** Debut select des receptions
+    $sql = "SELECT * FROM `utilisateur` where `actif`=1 ORDER BY `id` DESC;";
+
+    // On prépare la requête
+    $query = $db->prepare($sql);
+
+// On exécute<?php   
 
 if(!$_SESSION){
     header("location: ../../404.php");
@@ -435,13 +453,13 @@ include "../../connexion/conexiondb.php";
                 <!-- End of Topbar -->
                 <div class="col-lg-12 mt-5 mr-5">
                     <ul class="row list-group-horizontal mt-4 ml-5">
-                        <li class="list-group mr-4"><a href="stockage.php" class="list-group-item list-group-item-action active" aria-current="true">METAL 1</a></li>
+                        <li class="list-group mr-4"><a href="stockage.php" class="list-group-item list-group-item-action" aria-current="true">METAL 1</a></li>
                         <li class="list-group mr-4"><a href="stockageMetalMbao.php" class="list-group-item list-group-item-action">METAL MBAO</a></li>
                         <li class="list-group mr-4"><a href="stockageNiambour.php" class="list-group-item list-group-item-action">NIAMBOUR</a></li>
                         <li class="list-group mr-4"><a href="stockageCranteuse.php" class="list-group-item list-group-item-action">MACHINE CRANTEUSE</a></li>
                         <li class="list-group mr-4"><a href="stockageTrefilage.php" class="list-group-item list-group-item-action">MACHINE TREFILAGE</a></li>
                         <li class="list-group mr-4"><a href="stockageDresseuse.php" class="list-group-item list-group-item-action">MACHINE DRESSEUSE</a></li>
-                        <li class="list-group mr-4"><a href="fmParDf.php" class="list-group-item list-group-item-action">FM PAR DF</a></li>
+                        <li class="list-group mr-4"><a href="fmParDf.php" class="list-group-item list-group-item-action active">FM PAR DF</a></li>
                     </ul>
                 </div>
                 <!-- Begin Page Content -->
@@ -449,6 +467,21 @@ include "../../connexion/conexiondb.php";
                     <!-- DataTales Example -->
                     <!-- Fade In Utility -->
                     <div class="col-lg-12 mt-3">
+                        
+                    <!-- RECHERCHE -->
+                        <div class="mt-5 mr-3 mb-5">
+                            <form method="POST" enctype="multipart/form-data" class="row g-3">
+                                <div class="col-md-2 mt-3">
+                                    <div class="mb-1 text-start">
+                                        <input class="form-control" id="validationDefault01" type="text" name="recherche" value="" placeholder="Mettez le DF" required>                                               
+                                    </div>
+                                </div>
+                                <div class="mt-3">                           
+                                    <input class="btn btn-success bouton mr-3 ml-5" name="ChercheDF" type="submit" value="RECHERCHER">
+                                </div>
+                            </form> 
+                        </div>
+                    <!-- RECHERCHE -->
                         <div class="card position-relative">
                             <div class="card-header py-3">
                                 <h6 class="m-0 font-weight-bold text-primary">Nombre de bobine stocké à Métal 1 : <?php echo $nbReception; ?></h6>
@@ -660,3 +693,4 @@ include "../../connexion/conexiondb.php";
 </body>
 
 </html>
+

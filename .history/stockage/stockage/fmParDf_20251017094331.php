@@ -1,132 +1,217 @@
 <?php   
+    session_start(); 
 
-session_start(); 
+    if(!$_SESSION){
+        header("location: ../../404.php");
+        return 0;
+    }
 
+    include "../../connexion/conexiondb.php";
 
-if(!$_SESSION){
-    header("location: ../../404.php");
-    return 0;
-}
+    //Variables
+    $PeriodeReel = "'Aucun travailleur'";
+    $dt = time();
+    $moisPourPDF = date( "m", $dt );  // On extrait le mois courant.
 
-include "../../connexion/conexiondb.php";
-
-
-//Variables
-
-//** Nombre des bobines total
-    $sql = "SELECT SUM(`3`) + SUM(`3.5`) + SUM(`4`) + SUM(`4.5`) + SUM(`5`) + SUM(`5.5`) + SUM(`6`) + SUM(`6.5`) + SUM(`7`) + SUM(`7.5`)
-    + SUM(`8`) + SUM(`8.5`) + SUM(`9`) + SUM(`9.5`) + SUM(`10`) + SUM(`10.5`) + SUM(`11`) + SUM(`11.5`) + SUM(`12`) + SUM(`12.5`) + SUM(`13`) + SUM(`13.5`) + 
-    SUM(`14`) + SUM(`14.5`) + SUM(`15`) + SUM(`15.5`) + SUM(`16`) + SUM(`16.5`) + SUM(`17`) AS nb_reception_total FROM `epaisseur` where `lieu`='Metal1';";
-    // On prépare la requête
-    $query = $db->prepare($sql);
+    //** Debut select des receptions
+        $sql = "SELECT * FROM `utilisateur` where `actif`=1 ORDER BY `id` DESC;";
     
-    // On exécute
-    $query->execute();
-
-    // On récupère le nombre d'articles
-    $result = $query->fetch();
-
-    $nbReception = (int) $result['nb_reception_total'];
-//** Fin nombre des bobines total 
-
-//** Nombre des bobines total à Metal 1 
-    $sql = "SELECT SUM(`3`) + SUM(`3.5`) + SUM(`4`) + SUM(`4.5`) + SUM(`5`) + SUM(`5.5`) + SUM(`6`) + SUM(`6.5`) + SUM(`7`) + SUM(`7.5`)
-    + SUM(`8`) + SUM(`8.5`) + SUM(`9`) + SUM(`9.5`) + SUM(`10`) + SUM(`10.5`) + SUM(`11`) + SUM(`11.5`) + SUM(`12`) + SUM(`12.5`) + SUM(`13`) + SUM(`13.5`) + 
-    SUM(`14`) + SUM(`14.5`) + SUM(`15`) + SUM(`15.5`) + SUM(`16`) + SUM(`16.5`) + SUM(`17`) AS nb_reception_total FROM `epaisseur` where `lieu`='Metal1';";
-    // On prépare la requête
-    $query = $db->prepare($sql);
+        // On prépare la requête
+        $query = $db->prepare($sql);
+    
+        // On exécute
+        $query->execute();
+    
+        // On récupère les valeurs dans un tableau associatif
+        $Utilisateurs = $query->fetchAll();
+    //** Fin select des receptions
+    $NBUSERS = count($Utilisateurs);
 
 
-    // On exécute
-    $query->execute();
+    if($_SERVER["REQUEST_METHOD"]=='POST'){
+    //Recherche une fiche
+        if(isset($_POST['ChercheTempsArret'])){
+            $dateFiche=htmlspecialchars($_POST['dateFiche']); 
+            $mois = explode( "-", $dateFiche); 
+            $moisPourPDF = $mois[0]; 
 
-    // On récupère le nombre d'artic les
-    $result = $query->fetch();
+            //** Debut select des production cranteuse
+                $sql = "SELECT * FROM `fichecranteuseq1` WHERE `actif`=1 AND MONTH(`dateCreation`)='$dateFiche';";          // On tire les fiches du mois courant
+            
+                // On prépare la requête
+                $query = $db->prepare($sql);
+            
+                // On exécute
+                $query->execute();
+            
+                // On récupère les valeurs dans un tableau associatif
+                $FichesCranteuse = $query->fetchAll();
+            //** Fin select des production cranteuse
 
-    $nombreMetal1 = (int) $result['nb_reception_total'];
-//** Fin nombre des bobines total Metal 1  
+            //** Debut select des production (Poids,...)
+                $sql = "SELECT SUM(prodpoids) as prodpoids, idfichecranteuseq1 as idfichecranteuseq1 FROM `cranteuseq1production` WHERE `actif`=1 AND MONTH(`dateCreation`)='$dateFiche' GROUP BY `idfichecranteuseq1`;";          
+            
+                // On prépare la requête
+                $query = $db->prepare($sql);
+            
+                // On exécute
+                $query->execute();
+            
+                // On récupère les valeurs dans un tableau associatif
+                $CrantProduction = $query->fetchAll();
+            //** Fin select des production (Poids,...)
 
-//** Nombre des bobines total à Cranteuse
-    $sql = "SELECT SUM(`3`) + SUM(`3.5`) + SUM(`4`) + SUM(`4.5`) + SUM(`5`) + SUM(`5.5`) + SUM(`6`) + SUM(`6.5`) + SUM(`7`) + SUM(`7.5`)
-    + SUM(`8`) + SUM(`8.5`) + SUM(`9`) + SUM(`9.5`) + SUM(`10`) + SUM(`10.5`) + SUM(`11`) + SUM(`11.5`) + SUM(`12`) + SUM(`12.5`) + SUM(`13`) + SUM(`13.5`) + 
-    SUM(`14`) + SUM(`14.5`) + SUM(`15`) + SUM(`15.5`) + SUM(`16`) + SUM(`16.5`) + SUM(`17`) AS nb_reception_total FROM `epaisseur` where `lieu`='Cranteuse';";
-    // On prépare la requête
-    $query = $db->prepare($sql);
+            //** Debut select des temps d'arret (duree,...)
+                $sql = "SELECT SUM(duree) as duree, idfichecranteuseq1 as idfichecranteuseq1, dateCreation as dateCreation FROM `cranteuseq1arret` WHERE `actif`=1 AND MONTH(`dateCreation`)='$dateFiche' GROUP BY `idfichecranteuseq1`;";          
+            
+                // On prépare la requête
+                $query = $db->prepare($sql);
+            
+                // On exécute
+                $query->execute();
+            
+                // On récupère les valeurs dans un tableau associatif
+                $CrantTempsArret = $query->fetchAll();
+            //** Fin select des temps d'arret (duree,...)
+
+        }
+    }else{
+        $dt = time();
+        $dtm = date( "m", $dt );  // On extrait le mois courant.
+
+        //** Debut select des production cranteuse
+            $sql = "SELECT * FROM `fichecranteuseq1` WHERE `actif`=1 AND MONTH(`dateCreation`)='$dtm';";          // On tire les fiches du mois courant
+        
+            // On prépare la requête
+            $query = $db->prepare($sql);
+        
+            // On exécute
+            $query->execute();
+        
+            // On récupère les valeurs dans un tableau associatif
+            $FichesCranteuse = $query->fetchAll();
+        //** Fin select des production cranteuse
+
+        //** Debut select des production (Poids,...)
+            $sql = "SELECT SUM(prodpoids) as prodpoids, idfichecranteuseq1 as idfichecranteuseq1 FROM `cranteuseq1production` WHERE `actif`=1 AND MONTH(`dateCreation`)='$dtm' GROUP BY `idfichecranteuseq1`;";          
+        
+            // On prépare la requête
+            $query = $db->prepare($sql);
+        
+            // On exécute
+            $query->execute();
+        
+            // On récupère les valeurs dans un tableau associatif
+            $CrantProduction = $query->fetchAll();
+        //** Fin select des production (Poids,...)
+
+        //** Debut select des temps d'arret (duree,...)
+            $sql = "SELECT SUM(duree) as duree, idfichecranteuseq1 as idfichecranteuseq1, dateCreation as dateCreation FROM `cranteuseq1arret` WHERE `actif`=1 AND MONTH(`dateCreation`)='$dtm' GROUP BY `idfichecranteuseq1`;";          
+        
+            // On prépare la requête
+            $query = $db->prepare($sql);
+        
+            // On exécute
+            $query->execute();
+        
+            // On récupère les valeurs dans un tableau associatif
+            $CrantTempsArret = $query->fetchAll();
+        //** Fin select des temps d'arret (duree,...)
+    }
+
+    
+    $controleur1 = array_unique(array_column($FichesCranteuse,'controleur1'));
+    $controleur2 = array_unique(array_column($FichesCranteuse,'controleur2'));
+    //$array3 = $controleur1 + $controleur2;
+
+    $unions = array_unique(array_merge($controleur1,$controleur2));
+
+    // Récupération des fiches par controleur
+    $ArrayFichesParControleur = array(array());
+    $IdFichesCranteuse = array(array());
+    $CompteurFichesCranteuse = array(array());
+    foreach($unions as $union){
+        foreach($FichesCranteuse as $fichesCranteuse){
+            if($fichesCranteuse['controleur1']=="$union" || $fichesCranteuse['controleur2']=="$union"){
+                $ArrayFichesParControleur["$union"][] = $fichesCranteuse;
+                $IdFichesCranteuse["$union"][] = $fichesCranteuse['idfichecranteuseq1'];
+                $CompteurFichesCranteuse["$union"][] = $fichesCranteuse['compteurfin']-$fichesCranteuse['compteurdebut'];
+            }
+        }
+    }
+
+    // Récupération des productions par controleur
+    $i=0;
+    $ProductionParControleur = array ( array ());
+    foreach($IdFichesCranteuse as $key => $idFichesCranteuses){
+        $tempProductionParControleur=null;
+        foreach($idFichesCranteuses as $idFichesCranteuse){
+            foreach($CrantProduction as $crantProduction){
+                if($crantProduction['idfichecranteuseq1'] == $idFichesCranteuse){
+                    $tempProductionParControleur += $crantProduction['prodpoids'];
+                }
+            }
+        }
+        $tempTempsArretParControleur=null;
+        foreach($idFichesCranteuses as $idFichesCranteuse){
+            foreach($CrantTempsArret as $crantTempsArret){
+                if($crantTempsArret['idfichecranteuseq1'] == $idFichesCranteuse){
+                    $tempTempsArretParControleur += $crantTempsArret['duree'];
+                }
+                // Prendre le mois
+                $Periode = $crantTempsArret['dateCreation'];
+            }
+        }
+        $ProductionParControleur[$key]["poids"] = $tempProductionParControleur;
+        $ProductionParControleur[$key]["tempsarret"] = $tempTempsArretParControleur;
+        $i++;
+    }
+
+    //
+    if(isset($Periode)){
+        $mois = explode( "-", $Periode); 
+        switch ($mois[1]) {
+            case "01":
+                $PeriodeReel = "Janvier";
+                break;
+            case "02":
+                $PeriodeReel = "Fevrier";
+                break;
+            case "03":
+                $PeriodeReel = "Mars";
+                break;
+            case "04":
+                $PeriodeReel = "Avril";
+                break;
+            case "05":
+                $PeriodeReel = "Mai";
+                break;
+            case "06":
+                $PeriodeReel = "Juin";
+                break;
+            case "07":
+                $PeriodeReel = "Juillet";
+                break;
+            case "08":
+                $PeriodeReel = "Aout";
+                break;
+            case "09":
+                $PeriodeReel = "Septembre";
+                break;
+            case "10":
+                $PeriodeReel = "Octobre";
+                break;
+            case "11":
+                $PeriodeReel = "Novembre";
+                break;
+            case "12":
+                $PeriodeReel = "Decembre";
+                break;
+        }
+    }
 
 
-    // On exécute
-    $query->execute();
-
-    // On récupère le nombre d'artic les
-    $result = $query->fetch();
-
-    $nombreCranteuse = (int) $result['nb_reception_total'];
-//** Fin nombre des bobines total Cranteuse  
-
-//** Nombre des bobines total à Mbao
-    $sql = "SELECT SUM(`3`) + SUM(`3.5`) + SUM(`4`) + SUM(`4.5`) + SUM(`5`) + SUM(`5.5`) + SUM(`6`) + SUM(`6.5`) + SUM(`7`) + SUM(`7.5`)
-    + SUM(`8`) + SUM(`8.5`) + SUM(`9`) + SUM(`9.5`) + SUM(`10`) + SUM(`10.5`) + SUM(`11`) + SUM(`11.5`) + SUM(`12`) + SUM(`12.5`) + SUM(`13`) + SUM(`13.5`) + 
-    SUM(`14`) + SUM(`14.5`) + SUM(`15`) + SUM(`15.5`) + SUM(`16`) + SUM(`16.5`) + SUM(`17`) AS nb_reception_total FROM `epaisseur` where `lieu`='Metal Mbao';";
-    // On prépare la requête
-    $query = $db->prepare($sql);
-
-
-    // On exécute
-    $query->execute();
-
-    // On récupère le nombre d'artic les
-    $result = $query->fetch();
-
-    $nombreMbao = (int) $result['nb_reception_total'];
-//** Fin nombre des bobines total Mbao  
-
-//** Nombre des bobines total à Trefilage
-    $sql = "SELECT SUM(`3`) + SUM(`3.5`) + SUM(`4`) + SUM(`4.5`) + SUM(`5`) + SUM(`5.5`) + SUM(`6`) + SUM(`6.5`) + SUM(`7`) + SUM(`7.5`)
-    + SUM(`8`) + SUM(`8.5`) + SUM(`9`) + SUM(`9.5`) + SUM(`10`) + SUM(`10.5`) + SUM(`11`) + SUM(`11.5`) + SUM(`12`) + SUM(`12.5`) + SUM(`13`) + SUM(`13.5`) + 
-    SUM(`14`) + SUM(`14.5`) + SUM(`15`) + SUM(`15.5`) + SUM(`16`) + SUM(`16.5`) + SUM(`17`) AS nb_reception_total FROM `epaisseur` where `lieu`='Trefilage';";
-    // On prépare la requête
-    $query = $db->prepare($sql);
-
-
-    // On exécute
-    $query->execute();
-
-    // On récupère le nombre d'artic les
-    $result = $query->fetch();
-
-    $nombreTrefilage = (int) $result['nb_reception_total'];
-//** Fin nombre des bobines total Trefilage  
-
-//** Nombre des bobines total à Niambour
-    $sql = "SELECT SUM(`3`) + SUM(`3.5`) + SUM(`4`) + SUM(`4.5`) + SUM(`5`) + SUM(`5.5`) + SUM(`6`) + SUM(`6.5`) + SUM(`7`) + SUM(`7.5`)
-    + SUM(`8`) + SUM(`8.5`) + SUM(`9`) + SUM(`9.5`) + SUM(`10`) + SUM(`10.5`) + SUM(`11`) + SUM(`11.5`) + SUM(`12`) + SUM(`12.5`) + SUM(`13`) + SUM(`13.5`) + 
-    SUM(`14`) + SUM(`14.5`) + SUM(`15`) + SUM(`15.5`) + SUM(`16`) + SUM(`16.5`) + SUM(`17`) AS nb_reception_total FROM `epaisseur` where `lieu`='Niambour';";
-    // On prépare la requête
-    $query = $db->prepare($sql);
-
-    // On exécute
-    $query->execute();
-
-    // On récupère le nombre d'artic les
-    $result = $query->fetch();
-
-    $nombreNiambour = (int) $result['nb_reception_total'];
-//** Fin nombre des bobines total Niambour  
-
-
-//** Debut select de stockage pour Metal1
-    $sqlepaisseur = "SELECT * FROM `matiere` where `actif`=1 AND `nbbobineactuel`>0 and `lieutransfert`='Metal1' ORDER BY `idmatiere` DESC;";
-
-    // On prépare la requête
-    $queryepaisseur = $db->prepare($sqlepaisseur);
-
-    // On exécute
-    $queryepaisseur->execute();
-
-    // On récupère les valeurs dans un tableau associatif
-    $stockMetal1 = $queryepaisseur->fetchAll();
-//** Fin select de stockage pour Metal1
-
+    //print_r(($moisPourPDF));
 
 ?>
 
@@ -435,13 +520,13 @@ include "../../connexion/conexiondb.php";
                 <!-- End of Topbar -->
                 <div class="col-lg-12 mt-5 mr-5">
                     <ul class="row list-group-horizontal mt-4 ml-5">
-                        <li class="list-group mr-4"><a href="stockage.php" class="list-group-item list-group-item-action active" aria-current="true">METAL 1</a></li>
+                        <li class="list-group mr-4"><a href="stockage.php" class="list-group-item list-group-item-action" aria-current="true">METAL 1</a></li>
                         <li class="list-group mr-4"><a href="stockageMetalMbao.php" class="list-group-item list-group-item-action">METAL MBAO</a></li>
                         <li class="list-group mr-4"><a href="stockageNiambour.php" class="list-group-item list-group-item-action">NIAMBOUR</a></li>
                         <li class="list-group mr-4"><a href="stockageCranteuse.php" class="list-group-item list-group-item-action">MACHINE CRANTEUSE</a></li>
                         <li class="list-group mr-4"><a href="stockageTrefilage.php" class="list-group-item list-group-item-action">MACHINE TREFILAGE</a></li>
                         <li class="list-group mr-4"><a href="stockageDresseuse.php" class="list-group-item list-group-item-action">MACHINE DRESSEUSE</a></li>
-                        <li class="list-group mr-4"><a href="fmParDf.php" class="list-group-item list-group-item-action">FM PAR DF</a></li>
+                        <li class="list-group mr-4"><a href="fmParDf.php" class="list-group-item list-group-item-action active">FM PAR DF</a></li>
                     </ul>
                 </div>
                 <!-- Begin Page Content -->
@@ -449,6 +534,21 @@ include "../../connexion/conexiondb.php";
                     <!-- DataTales Example -->
                     <!-- Fade In Utility -->
                     <div class="col-lg-12 mt-3">
+                        
+                    <!-- RECHERCHE -->
+                        <div class="mt-5 mr-3 mb-5">
+                            <form method="POST" enctype="multipart/form-data" class="row g-3">
+                                <div class="col-md-2 mt-3">
+                                    <div class="mb-1 text-start">
+                                        <input class="form-control" id="validationDefault01" type="text" name="recherche" value="" placeholder="Mettez le DF" required>                                               
+                                    </div>
+                                </div>
+                                <div class="mt-3">                           
+                                    <input class="btn btn-success bouton mr-3 ml-5" name="ChercheDF" type="submit" value="RECHERCHER">
+                                </div>
+                            </form> 
+                        </div>
+                    <!-- RECHERCHE -->
                         <div class="card position-relative">
                             <div class="card-header py-3">
                                 <h6 class="m-0 font-weight-bold text-primary">Nombre de bobine stocké à Métal 1 : <?php echo $nbReception; ?></h6>
@@ -660,3 +760,4 @@ include "../../connexion/conexiondb.php";
 </body>
 
 </html>
+
