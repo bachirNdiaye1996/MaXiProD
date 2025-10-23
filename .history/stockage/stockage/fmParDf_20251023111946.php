@@ -1,45 +1,37 @@
 <?php   
+    session_start(); 
 
-session_start(); 
+    if(!$_SESSION){
+        header("location: ../../404.php");
+        return 0;
+    }
 
-if(!$_SESSION){
-    header("location: ../../404.php");
-    return 0;
-}
+    include "../../connexion/conexiondb.php";
 
-include "../../connexion/conexiondb.php";
+    //Variables
+    $matieres = array();
+    $df=null;
 
+    if($_SERVER["REQUEST_METHOD"]=='POST'){
+        //Recherche une fiche
+            if(isset($_POST['ChercheDF'])){
+                $df=htmlspecialchars($_POST['recherche']); 
 
-//Variables
-
-//** Nombre des bobines total
-    $sql = "SELECT SUM(`3`) + SUM(`3.5`) + SUM(`4`) + SUM(`4.5`) + SUM(`5`) + SUM(`5.5`) + SUM(`6`) + SUM(`6.5`) + SUM(`7`) + SUM(`7.5`)
-    + SUM(`8`) + SUM(`8.5`) + SUM(`9`) + SUM(`9.5`) + SUM(`10`) + SUM(`10.5`) + SUM(`11`) + SUM(`11.5`) + SUM(`12`) + SUM(`12.5`) + SUM(`13`) + SUM(`13.5`) + 
-    SUM(`14`) + SUM(`14.5`) + SUM(`15`) + SUM(`15.5`) + SUM(`16`) + SUM(`16.5`) + SUM(`17`) AS nb_reception_total FROM `epaisseur` where `lieu`='Tréfilage';";
-    // On prépare la requête
-    $query = $db->prepare($sql);
-
-    // On exécute
-    $query->execute();
-
-    // On récupère le nombre d'articles
-    $result = $query->fetch();
-
-    $nbReception = (int) $result['nb_reception_total'];
-//** Fin nombre des bobines total
-
-//** Debut select de stockage pour Metal1
-$sqlepaisseur = "SELECT * FROM `matiere` where `actif`=1 AND `nbbobineactuel`>0 and `lieutransfert`='Tréfilage'  ORDER BY `idmatiere` DESC;";
-
-// On prépare la requête
-$queryepaisseur = $db->prepare($sqlepaisseur);
-
-// On exécute
-$queryepaisseur->execute();
-
-// On récupère les valeurs dans un tableau associatif
-$stockTrefilage = $queryepaisseur->fetchAll();
-//** Fin select de stockage pour Metal1
+                //** Debut select des production cranteuse
+                    $sql = "SELECT * FROM `matiere` WHERE `actif`=1 AND `entetedf`='$df' AND `nbbobineactuel`>0;";          // On tire les fiches du mois courant
+                
+                    // On prépare la requête
+                    $query = $db->prepare($sql);
+                
+                    // On exécute
+                    $query->execute();
+                
+                    // On récupère les valeurs dans un tableau associatif
+                    $matieres = $query->fetchAll();
+                //** Fin select des production cranteuse
+            }
+        //
+    }
 
 ?>
 
@@ -91,7 +83,7 @@ $stockTrefilage = $queryepaisseur->fetchAll();
             })
         //Pour le loading
     </script>
-    
+
 </head>
 
 <body id="page-top">
@@ -344,7 +336,6 @@ $stockTrefilage = $queryepaisseur->fetchAll();
                             </div>    
                         </div>
                     </div>
-
                 </nav>
                 <!-- End of Topbar -->
                 <div class="col-lg-12 mt-5 mr-5">
@@ -353,9 +344,9 @@ $stockTrefilage = $queryepaisseur->fetchAll();
                         <li class="list-group mr-4"><a href="stockageMetalMbao.php" class="list-group-item list-group-item-action">METAL MBAO</a></li>
                         <li class="list-group mr-4"><a href="stockageNiambour.php" class="list-group-item list-group-item-action">NIAMBOUR</a></li>
                         <li class="list-group mr-4"><a href="stockageCranteuse.php" class="list-group-item list-group-item-action">MACHINE CRANTEUSE</a></li>
-                        <li class="list-group mr-4"><a href="stockageTrefilage.php" class="list-group-item list-group-item-action active">MACHINE TREFILAGE</a></li>
+                        <li class="list-group mr-4"><a href="stockageTrefilage.php" class="list-group-item list-group-item-action">MACHINE TREFILAGE</a></li>
                         <li class="list-group mr-4"><a href="stockageDresseuse.php" class="list-group-item list-group-item-action">MACHINE DRESSEUSE</a></li>
-                        <li class="list-group mr-4"><a href="fmParDf.php" class="list-group-item list-group-item-action">FM PAR DF</a></li>
+                        <li class="list-group mr-4"><a href="fmParDf.php" class="list-group-item list-group-item-action active">FM PAR DF</a></li>
                     </ul>
                 </div>
                 <!-- Begin Page Content -->
@@ -363,13 +354,31 @@ $stockTrefilage = $queryepaisseur->fetchAll();
                     <!-- DataTales Example -->
                     <!-- Fade In Utility -->
                     <div class="col-lg-12 mt-3">
+                        
+                    <!-- RECHERCHE -->
+                        <div class="mt-5 mr-3 mb-5">
+                            <form method="POST" enctype="multipart/form-data" class="row g-3">
+                                <div class="col-md-2 mt-3">
+                                    <div class="mb-1 text-start">
+                                        <input class="form-control" id="validationDefault01" type="text" name="recherche" value="" placeholder="Mettez le DF" required>                                               
+                                    </div>
+                                </div>
+                                <div class="mt-3">                           
+                                    <input class="btn btn-success bouton mr-3 ml-5" name="ChercheDF" type="submit" value="RECHERCHER">
+                                </div>
+                            </form> 
+                        </div>
+                    <!-- RECHERCHE -->
                         <div class="card position-relative">
                             <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary">Nombre de bobine stocké à la machine Tréfilage : <?php echo $nbReception; ?></h6>
+                                <?php if($df){ ?>
+                                    <h6 class="m-0 font-weight-bold text-primary">Nombre de bobine pour le DF <?php echo $df; ?> : <?php echo array_sum(array_column($matieres, 'nbbobineactuel')); ?></h6>
+                                <?php } ?>
                             </div>
                             <div class="row m-2">
-                                <!-- Page Loader -->
-                                    <div id="loader">
+                                <div class="table-responsive">
+                                    <!-- Page Loader -->
+                                        <div id="loader">
                                             <span class="lettre">M</span>
                                             <span class="lettre">E</span>
                                             <span class="lettre">T</span>
@@ -387,15 +396,15 @@ $stockTrefilage = $queryepaisseur->fetchAll();
                                             <span class="lettre">E</span>
                                         </div>
                                     <!-- Page Loader -->
-                                <div class="table-responsive">
                                     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                         <thead>
                                             <tr>       
-                                                <th>Numéro fil machine</th>                                                                                
+                                                <th>Code stockage</th>                                                                                
                                                 <th>Epaisseur</th>
                                                 <th>DF</th>
                                                 <th>Nombre bobine</th>
                                                 <th>Poids déclaré</th>
+                                                <th>Lieu</th>
                                                 <th>Poids pesé</th>
                                                 <th>Etat bobine</th>
                                                 <th>Derniére modification</th>
@@ -404,13 +413,13 @@ $stockTrefilage = $queryepaisseur->fetchAll();
                                         <tbody>
                                             <?php
                                                 $i=0;
-                                                foreach($stockTrefilage as $stock){
+                                                foreach($matieres as $stock){
                                                     $i++;
                                                     //if($article['status'] == 'termine'){
                                             ?>
                                                 <tr>
                                                     <td style="background-color:#4e73df ; color:white;">
-                                                        <a style="text-decoration: none; font-family: arial; font-size: 20px; color:white;" href="javascript:void(0);" href="javascript:void(0);" data-toggle="modal" data-target="#Information<?php echo $i; ?>" title="Voir details du produit" class="link-offset-2 link-underline"><?php echo $stock['numbobine']; ?></a>
+                                                        <a style="text-decoration: none; font-family: arial; font-size: 20px; color:white;" href="javascript:void(0);" data-toggle="modal" data-target="#Information<?php echo $i; ?>" title="Voir details du produit" class="link-offset-2 link-underline"><?php echo "REC00".$stock['idreception']."-BOB-0".$stock['idmatiere']; ?></a>
                                                         <!--<a style="text-decoration: none; font-family: arial; font-size: 20px; color:white;" title="Allez vers la reception planifiée correspondante" href="detailsReceptionPlanifie.php?idreception=<?= $stock['idreception'] ?>" class="link-offset-2 link-underline"><?php echo "REC-0".$stock['idreception']."-BOB-0".$stock['idmatiere'] ?></a>!-->
                                                     </td>
                                                     <td style="background-color:#4e73df ; color:white;"> <?= $stock['epaisseur'] ?> </td>
@@ -548,7 +557,7 @@ $stockTrefilage = $queryepaisseur->fetchAll();
     </a>
 
 
-    <!-- Bootstrap core JavaScript-->
+
     <script src="../../indexPage/vendor/jquery/jquery.min.js"></script>
     <script src="../../indexPage/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
@@ -565,6 +574,8 @@ $stockTrefilage = $queryepaisseur->fetchAll();
     <!-- Page level custom scripts -->
     <script src="../../indexPage/js/demo/datatables-demo.js"></script>
 
+    <!-- Page level custom scripts -->
 </body>
 
 </html>
+
