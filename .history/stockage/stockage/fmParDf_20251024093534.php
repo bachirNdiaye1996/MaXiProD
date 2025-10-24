@@ -18,7 +18,7 @@
                 $df=htmlspecialchars($_POST['recherche']); 
 
                 //** Debut select des production cranteuse
-                    $sql = "SELECT * FROM `matiere` WHERE `actif`=1 AND `entetedf`='$df' AND `nbbobineactuel`>0;";          // On tire les fiches du mois courant
+                    $sql = "SELECT * FROM `matiere` WHERE `actif`=1 AND `entetedf`='$df' AND `nbbobineactuel`>0 AND `lieutransfert` != 'Tréfilage' AND `lieutransfert` != 'Cranteuse';";          // On tire les fiches du mois courant
                 
                     // On prépare la requête
                     $query = $db->prepare($sql);

@@ -372,7 +372,7 @@
                         <div class="card position-relative">
                             <div class="card-header py-3">
                                 <?php if($df){ ?>
-                                    <h6 class="m-0 font-weight-bold text-primary">Nombre de bobine pour le DF <?php echo $df; ?> : <?php echo array_sum(array_column($matieres, 'nbbobineactuel')); ?> Rouleaux</h6>
+                                    <h6 class="m-0 font-weight-bold text-primary">Nombre de bobine pour le DF <?php echo $df; ?> : <?php echo array_sum(array_column($matieres, 'nbbobineactuel')); ?></h6>
                                 <?php } ?>
                             </div>
                             <div class="row m-2">
